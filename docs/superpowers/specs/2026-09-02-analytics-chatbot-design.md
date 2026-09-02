@@ -35,7 +35,7 @@ The boundaries remain framework-neutral. The agent depends on a gateway protocol
 
 ## Dataset
 
-The setup command generates 25,000 reproducible synthetic orders covering 24 months from a fixed seed. It contains enough variation and edge cases to support realistic business questions without external downloads while remaining fast to create on a laptop.
+The setup command generates 25,000 reproducible synthetic orders covering 24 months from a fixed seed. Generation returns a Polars `LazyFrame`; derived financial columns remain lazy and are streamed to Parquet before DuckDB materializes explicitly typed decimal columns. This contains enough variation and edge cases to support realistic business questions without external downloads while remaining fast and memory-conscious on a laptop.
 
 The primary `orders` table includes:
 

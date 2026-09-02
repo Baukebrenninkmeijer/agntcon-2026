@@ -6,7 +6,7 @@
 
 **Architecture:** A small Python package owns a deterministic synthetic dataset, two guarded local tools, a typed OpenAI Responses-compatible gateway boundary, and a bounded agent loop. Gateway requests are attributed to the project-scoped key, fixed tags, a conversation thread, and filterable metadata; a local run store preserves the complete multi-request trajectory.
 
-**Tech Stack:** Python 3.11+, uv, DuckDB, OpenAI Python SDK, Pydantic Settings, Typer, Rich, sqlglot, pytest.
+**Tech Stack:** Python 3.11+, uv, Polars lazy/streaming execution, DuckDB, OpenAI Python SDK, Pydantic Settings, Typer, Rich, sqlglot, pytest.
 
 ## Global Constraints
 
@@ -30,7 +30,7 @@
 - `.gitignore`: generated database, run artifacts, `.env`, caches, and virtual environment.
 - `src/analytics_chatbot/config.py`: validated settings and trace-context construction.
 - `src/analytics_chatbot/models.py`: shared Pydantic models and gateway protocol.
-- `src/analytics_chatbot/data.py`: deterministic order generation and DuckDB creation.
+- `src/analytics_chatbot/data.py`: deterministic Polars `LazyFrame` generation, streaming Parquet staging, and DuckDB creation.
 - `src/analytics_chatbot/sql_tool.py`: SQL validation and bounded read-only execution.
 - `src/analytics_chatbot/insights.py`: run-scoped structured insight persistence.
 - `src/analytics_chatbot/run_store.py`: partial JSONL audit log and atomic finalization.
