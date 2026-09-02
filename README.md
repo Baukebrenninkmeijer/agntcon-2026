@@ -8,6 +8,8 @@ later evaluation loop. It intentionally contains no self-learning or evaluator i
 ## Setup
 
 Requirements: Python 3.11+, `uv`, and an orq project API key with Responses write access.
+The package loads `.env` with `python-dotenv` using `override=True`, so its project-scoped key wins
+over a stale inherited shell value.
 
 ```bash
 uv sync
@@ -62,8 +64,8 @@ print(result.tool_calls)
 ## Observability and safety
 
 Every gateway request uses model `deepseek/deepseek-v4-flash`, trace name
-`PyData2026-AnalyticsChatbot`, tags `pydata2026`, `analytics-chatbot`, and the bounded run kind, plus
-a stable conversation thread. Identity is used for caller/evaluation-actor grouping. String metadata
+`PyData2026-AnalyticsChatbot`, and a stable conversation thread tagged `pydata2026`,
+`analytics-chatbot`, and the bounded run kind. Identity is used for caller/evaluation-actor grouping. String metadata
 contains dataset version, agent version, evaluation split, case ID, interface, and run kind. The
 public reporting surface can aggregate by project, identity, and tag; arbitrary metadata is useful
 for filtering traces rather than `group_by`.

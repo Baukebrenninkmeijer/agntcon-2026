@@ -92,8 +92,8 @@ Gateway requests use:
 
 - `name`: `PyData2026-AnalyticsChatbot`;
 - project: the orq project `pydata2026` when project attribution is supported by the selected API key;
-- tags: `pydata2026`, `analytics-chatbot`, plus one bounded run-mode tag such as `interactive` or `eval`;
-- thread: one stable ID per conversation;
+- thread: one stable ID per conversation, with tags `pydata2026`, `analytics-chatbot`, plus one
+  bounded run-mode tag such as `interactive` or `eval`;
 - identity: the actual caller or evaluation actor when supplied, not a substitute for arbitrary grouping;
 - metadata: string-valued `dataset_version`, `agent_version`, `evaluation_split`, `case_id`, `interface`, and `run_kind` fields.
 
@@ -129,7 +129,7 @@ CLI output is readable by default and offers JSON output for scripts and later e
 Configuration is environment-driven and documented in `.env.example`:
 
 - `ORQ_API_KEY`;
-- `ORQ_GATEWAY_BASE_URL`, defaulting to the current Responses router URL;
+- `ORQ_GATEWAY_BASE_URL`, defaulting to `https://api.orq.ai/v3/router`;
 - `ANALYTICS_CHATBOT_MODEL`, defaulting to the Model Garden identifier `deepseek/deepseek-v4-flash` (`DeepSeek-V4-Flash-0731`);
 - database and run-artifact paths;
 - maximum tool steps, query rows, and query duration;

@@ -3,8 +3,11 @@
 from pathlib import Path
 from typing import Any, Literal
 
+from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv(override=True)
 
 RunKind = Literal["interactive", "eval", "smoke"]
 Interface = Literal["python", "cli", "pytest"]
@@ -22,7 +25,7 @@ class Settings(BaseSettings):
 
     orq_api_key: str | None = Field(default=None, validation_alias="ORQ_API_KEY")
     gateway_base_url: str = Field(
-        default="https://my.orq.ai/v3/router",
+        default="https://api.orq.ai/v3/router",
         validation_alias="ORQ_GATEWAY_BASE_URL",
     )
     model: str = "deepseek/deepseek-v4-flash"
@@ -53,8 +56,10 @@ class TraceContext(BaseModel):
 
         body: dict[str, Any] = {
             "name": "PyData2026-AnalyticsChatbot",
-            "tags": ["pydata2026", "analytics-chatbot", self.run_kind],
-            "thread": {"id": thread_id},
+            "thread": {
+                "id": thread_id,
+                "tags": ["pydata2026", "analytics-chatbot", self.run_kind],
+            },
             "metadata": {
                 "dataset_version": self.dataset_version,
                 "agent_version": self.agent_version,

@@ -1,4 +1,8 @@
-from analytics_chatbot.config import TraceContext
+from analytics_chatbot.config import Settings, TraceContext
+
+
+def test_settings_use_current_gateway_endpoint() -> None:
+    assert Settings().gateway_base_url == "https://api.orq.ai/v3/router"
 
 
 def test_trace_context_uses_bounded_tags_and_string_metadata() -> None:
@@ -7,8 +11,11 @@ def test_trace_context_uses_bounded_tags_and_string_metadata() -> None:
     body = context.extra_body(thread_id="thread-1")
 
     assert body["name"] == "PyData2026-AnalyticsChatbot"
-    assert body["tags"] == ["pydata2026", "analytics-chatbot", "eval"]
-    assert body["thread"] == {"id": "thread-1"}
+    assert "tags" not in body
+    assert body["thread"] == {
+        "id": "thread-1",
+        "tags": ["pydata2026", "analytics-chatbot", "eval"],
+    }
     assert body["metadata"]["evaluation_split"] == "test"
     assert body["metadata"]["case_id"] == "case-7"
     assert all(isinstance(value, str) for value in body["metadata"].values())

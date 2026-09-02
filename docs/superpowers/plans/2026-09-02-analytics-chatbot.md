@@ -12,7 +12,7 @@
 
 - Distribution name: `analytics-chatbot`; import package: `analytics_chatbot`; CLI: `analytics-chatbot`.
 - Default gateway model: `deepseek/deepseek-v4-flash` (`DeepSeek-V4-Flash-0731`).
-- Gateway base URL: `https://my.orq.ai/v3/router`.
+- Gateway base URL: `https://api.orq.ai/v3/router`.
 - Generate exactly 25,000 orders covering 24 complete months from a fixed seed.
 - Source data is read-only; `save_insight` is available only when the user explicitly requests persistence.
 - Gateway trace name: `PyData2026-AnalyticsChatbot`; bounded base tags: `pydata2026`, `analytics-chatbot`.
@@ -90,7 +90,7 @@ Define Python `>=3.11` and dependencies `duckdb`, `openai`, `pydantic`, `pydanti
 `Settings` defaults:
 
 ```python
-gateway_base_url = "https://my.orq.ai/v3/router"
+gateway_base_url = "https://api.orq.ai/v3/router"
 model = "deepseek/deepseek-v4-flash"
 database_path = Path("data/analytics.duckdb")
 runs_path = Path("runs")
@@ -293,7 +293,7 @@ The system prompt requires factual claims to be supported by SQL, instructs the 
 
 - [ ] **Step 4: Implement the orq gateway adapter**
 
-Initialize `OpenAI(api_key=..., base_url="https://my.orq.ai/v3/router")`. Call `responses.create` with model, instructions, input, tools, `previous_response_id`, `store=True`, and `extra_body=trace_context.extra_body(thread_id)`. Normalize text, function calls, usage, response ID, and provider errors into shared models.
+Initialize `OpenAI(api_key=..., base_url="https://api.orq.ai/v3/router")`. Call `responses.create` with model, instructions, input, tools, `previous_response_id`, `store=True`, and `extra_body=trace_context.extra_body(thread_id)`. Normalize text, function calls, usage, response ID, and provider errors into shared models.
 
 - [ ] **Step 5: Implement atomic run storage**
 

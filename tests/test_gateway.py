@@ -26,8 +26,10 @@ def test_gateway_sends_orq_attribution(mocker) -> None:
 
     kwargs = create.call_args.kwargs
     assert kwargs["model"] == "deepseek/deepseek-v4-flash"
-    assert kwargs["extra_body"]["tags"] == ["pydata2026", "analytics-chatbot", "eval"]
-    assert kwargs["extra_body"]["thread"] == {"id": "thread-1"}
+    assert kwargs["extra_body"]["thread"] == {
+        "id": "thread-1",
+        "tags": ["pydata2026", "analytics-chatbot", "eval"],
+    }
     assert kwargs["store"] is True
     assert "previous_response_id" not in kwargs
     assert response.text == "ok"
