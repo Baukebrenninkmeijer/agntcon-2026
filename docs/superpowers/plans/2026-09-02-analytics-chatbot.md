@@ -64,8 +64,10 @@ def test_trace_context_uses_bounded_tags_and_string_metadata():
     context = TraceContext(run_kind="eval", evaluation_split="test", case_id="case-7")
     body = context.extra_body(thread_id="thread-1")
     assert body["name"] == "PyData2026-AnalyticsChatbot"
-    assert body["tags"] == ["pydata2026", "analytics-chatbot", "eval"]
-    assert body["thread"] == {"id": "thread-1"}
+    assert body["thread"] == {
+        "id": "thread-1",
+        "tags": ["pydata2026", "analytics-chatbot", "eval"],
+    }
     assert all(isinstance(value, str) for value in body["metadata"].values())
 
 
@@ -272,7 +274,9 @@ def test_gateway_sends_orq_attribution(mocker, settings):
     )
     kwargs = create.call_args.kwargs
     assert kwargs["model"] == "deepseek/deepseek-v4-flash"
-    assert kwargs["extra_body"]["tags"] == ["pydata2026", "analytics-chatbot", "eval"]
+    assert kwargs["extra_body"]["thread"]["tags"] == [
+        "pydata2026", "analytics-chatbot", "eval"
+    ]
     assert kwargs["extra_body"]["thread"] == {"id": "thread-1"}
 ```
 
@@ -456,7 +460,7 @@ First read the live capability catalog. Then create a project-scoped key with re
 ```bash
 orq api-keys create \
   --name pydata2026-analytics-chatbot \
-  --project-scope '{"single":{"project_id":"<PROJECT_ID>"}}' \
+  --project-scope '{"project_id":"<PROJECT_ID>"}' \
   --permission-mode PERMISSION_MODE_RESTRICTED \
   --access '{"responses":"ACCESS_LEVEL_WRITE","model":"ACCESS_LEVEL_READ"}' \
   --json
