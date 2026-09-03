@@ -183,6 +183,9 @@ Do not use `wrap_simulation_agent(target=callable)` for this stateful target; it
 ## Task 9: Add online trace import and reviewed prompt iteration
 
 - [ ] Reuse the trace importer to produce `trace-eval-v1` rows, then evaluate them with `run_trace_evaluation` and the native evaluatorq experiment flow. Do not add a post-hoc evaluator service, ledger-driven scorer, or machine-as-human annotation path.
+- [ ] Treat public trace replay as capability-gated. Import only a hydrated, non-evaluator span lineage that contains the exact user conversation and final assistant output. Hosted Responses-agent traces may expose JSON-encoded `gen_ai.input`/`gen_ai.output` with tool evidence, while observed Analytics Chatbot trace payloads expose only summaries and identifiers.
+- [ ] Do not stitch `thread_id`/`previous_response_id` roots into a valid-looking conversation when message or tool-result values are absent. Those identifiers can establish order, but they cannot recover omitted evidence; Responses retrieval alone is also not an exact fallback because it omits submitted continuation inputs/tool results.
+- [ ] When the public trace payload lacks exact replay evidence, import the successfully finalized local run-audit JSONL artifact. Fail clearly when neither an exact hydrated trace nor the corresponding audit artifact is available.
 - [ ] Select production samples by actual identity and bounded tags; use metadata for trace filtering/joins. Mark post-hoc results as machine evaluations.
 - [ ] Preserve source trace/span IDs in every imported evaluatorq row so Experiment results remain joinable to source traces.
 - [ ] Add an operator error-analysis command/report that clusters written critiques with Polars and emits proposed prompt changes. It never edits prompts.

@@ -1,0 +1,46 @@
+{
+  "trace_id": "trace-otel",
+  "span_id": "span-otel",
+  "parent_span_id": "root-otel",
+  "type": "gen_ai.chat",
+  "attributes": {
+    "gen_ai.output.messages": "[{\"role\":\"assistant\",\"parts\":[{\"type\":\"text\",\"content\":\"Gross revenue was 52.\"}]}]",
+    "session.id": "session-otel",
+    "user.id": "otel-actor",
+    "metadata.case_id": "case-otel",
+    "gen_ai.request.model": "example-model"
+  },
+  "events": [
+    {
+      "name": "gen_ai.system.message",
+      "body": {"content": "Use the warehouse."}
+    },
+    {
+      "name": "gen_ai.user.message",
+      "body": {"content": "What was gross revenue?"}
+    },
+    {
+      "name": "gen_ai.assistant.message",
+      "body": {
+        "tool_calls": [
+          {
+            "id": "call-otel-1",
+            "name": "query_sql",
+            "arguments": {"query": "SELECT 52 AS gross_revenue"}
+          }
+        ]
+      }
+    },
+    {
+      "name": "gen_ai.tool.message",
+      "body": {
+        "id": "call-otel-1",
+        "content": {"gross_revenue": 52}
+      }
+    },
+    {
+      "name": "gen_ai.assistant.message",
+      "body": {"content": "Gross revenue was 52."}
+    }
+  ]
+}

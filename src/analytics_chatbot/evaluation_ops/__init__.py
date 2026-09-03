@@ -16,6 +16,12 @@ from evaluatorq import DataPoint, EvaluationResult, evaluatorq, job, llm_jury
 from evaluatorq.types import DataPointResult, Evaluator, ScorerParameter
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from analytics_chatbot.evaluation_ops.trace_import import (
+    TraceImportError,
+    import_orq_trace,
+    import_run_audit,
+)
+
 SCHEMA_VERSION = "trace-eval-v1"
 DEFAULT_JUDGES = (
     "openai/gpt-5.6-luna",
@@ -365,8 +371,11 @@ __all__ = [
     "DEFAULT_JUDGES",
     "SCHEMA_VERSION",
     "TraceBackedEvaluationRow",
+    "TraceImportError",
     "VERDICT_LABELS",
     "build_atomic_evaluators",
+    "import_orq_trace",
+    "import_run_audit",
     "replay_trace_response",
     "run_trace_evaluation",
 ]

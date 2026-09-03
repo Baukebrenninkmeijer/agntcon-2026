@@ -45,13 +45,13 @@
 |---|---|---|---|
 | Analytics chatbot core | `VERIFIED` | Deterministic data, guarded SQL, insight state, agent loop, CLI, local run audit, and Orq tracing are implemented on local `main` | Preserve behavior while introducing hosted configuration |
 | evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
-| Orq trace importer | `ACTIVE` | An isolated task is implementing multi-format trace normalization and evaluatorq replay inputs | Validate against real multi-step agent traces and merge onto current `main` |
+| Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
 | Hosted resources and simulation | `ACTIVE` | An isolated task is implementing agent/tool/evaluator YAML, shared YAML-to-Orq SDK transformation/sync, Make targets, the row-aware local-tool bridge, and the 50-case corpus | Finish offline tests for all resource kinds, reconcile live state safely, verify bridge, then freeze the corpus |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated on local `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Re-run the same gate after dependency or hosted-resource changes; remote-run evidence awaits publication |
 | Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
 
-The latest local verification for the integrated tree is `45 passed, 1 deselected` for the non-live pytest selection and `All checks passed` from Ruff on 2026-09-03. This evidence covers local `main`, not unmerged active worktrees.
+The latest local verification for the integrated tree is `57 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-03. This evidence covers local `main`, not unmerged active worktrees.
 
 ## Objectives
 
@@ -153,11 +153,12 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [x] The bespoke post-hoc evaluation service/loop/ledger architecture is marked superseded in the current design.
 - [x] Offline CI is integrated on local `main` with pinned actions, no credentials, explicit live-marker exclusion, lint, tests, package build, and an optional hosted-resource YAML validation hook.
 - [x] Root agent guidance requires maintaining this living plan in the same task and commit whenever delivery reality changes; `AGENTS.md` resolves to the canonical `CLAUDE.md`.
-- [x] Integrated-tree validation passed on 2026-09-03: 45 non-live tests passed, one live test was deselected, and Ruff passed.
+- [x] Chat Completions, Responses API, and OpenTelemetry GenAI trace shapes plus successfully finalized local run audits normalize into evaluatorq replay inputs without guessing missing messages or rerunning a target.
+- [x] Integrated-tree validation passed on 2026-09-03: 57 non-live tests passed, one live test was deselected, Ruff passed, and the sdist/wheel build succeeded.
 
 ### Active
 
-- [ ] WS2: Finish trace normalization for supported Chat Completions, Responses, and OpenTelemetry GenAI shapes without inferring absent content.
+- [ ] WS2: Adapt the integrated generic evaluatorq replay `DataPoint` output to the accepted `TraceBackedEvaluationRow` / `trace-eval-v1` contract without losing normalized evidence.
 - [ ] WS2: Validate on genuine multi-step agent traces from unscoped or populated research projects; response-only traces are insufficient.
 - [ ] WS2: Ensure recorded final assistant output is replayed without a target-agent call and source linkage remains in `DataPoint` inputs.
 - [ ] WS2: Provide a small Orq evaluator scorer factory; retain evaluator invocation linkage locally only if it is truly required.
@@ -423,6 +424,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-03 | WS2 | Integrated multi-format trace and exact finalized-run-audit normalization on local `main`; synthetic fixtures cover Chat Completions, Responses API, OpenTelemetry GenAI, lineage/evaluator exclusion, tool evidence, explicit malformed-input failures, and audit fallback; integrated checks passed with 57 non-live tests, one deselection, Ruff, and package build | Convert the generic replay `DataPoint` to `trace-eval-v1`, add the Orq scorer factory, validate genuine multi-step traces, then rotate the temporary trace-access key |
 | 2026-09-03 | WS0/WS1 | Confirmed local `main` contains the verified chatbot core and evaluator-native judge framework; non-live suite passed with 45 tests and one deselection; Ruff passed | Preserve baseline while rebasing active work |
 | 2026-09-03 | WS2 | Trace importer is active in an isolated worktree with multi-format fixtures/tests under development | Reconcile to the integrated row contract; validate real agent traces; do not mark complete yet |
 | 2026-09-03 | WS3 | Hosted YAML/SDK sync now explicitly covers agent/tools plus two deterministic and four LLM judge evaluator resources, one YAML file each; Make targets, row-aware bridge, and 50-case corpus remain active in an isolated task | Finish offline validation for every resource kind, remove tracked runtime IDs, then review the unified remote plan before any apply |
@@ -431,7 +433,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 ## Next Actions
 
-1. WS2 owner: rebase onto local `main`, emit the accepted trace-backed row/`DataPoint`, add the small Orq scorer factory, and validate no-inference replay on genuine multi-step agent traces.
+1. WS2 owner: adapt the integrated generic replay `DataPoint` to the accepted trace-backed row contract, add the small Orq scorer factory, validate no-inference replay on genuine multi-step agent traces, and rotate the temporary trace-access key afterward.
 2. WS3a owner: finish YAML/SDK sync tests for agent, tools, two deterministic evaluators, and four LLM judge evaluators; enforce one file per evaluator, remove hard-coded remote IDs, and produce a reviewed unified dry-run against `pydata2026`; perform apply only under the active task's explicit authorization.
 3. WS3b owner: prove the hosted/local function protocol, finish the row-aware bridge, then generate/review/freeze the 50-case corpus with executable oracles.
 4. Coordinator: keep WS4's offline workflow aligned with integrated dependency commands and rerun it after each dependency boundary.
