@@ -82,12 +82,19 @@ store, keep, or preserve a finding, and it writes only within the active run dir
 
 ## Tests
 
+The offline CI gate requires no Orq credentials and runs the same checks on pull requests and pushes
+to `main`. Run it locally with the locked environment:
+
 ```bash
-uv run pytest -m "not live" -q
-uv run ruff check .
+uv sync --locked --dev
+uv run --no-sync ruff check .
+uv run --no-sync pytest -m "not live and not simulation_live and not alignment_live" -q
+uv build
 ```
 
-The live gateway smoke test is opt-in:
+CI also loads and validates `orq/resources` when the repository's local resource loader is present.
+It never runs resource synchronization or any other command that contacts Orq. Live tests remain
+explicitly opt-in:
 
 ```bash
 ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -q
