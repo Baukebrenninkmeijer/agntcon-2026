@@ -1,10 +1,12 @@
 # Analytics Chatbot Design
 
+> **Revision, 2026-09-03:** The operational loop and function execution remain local, but the model, instructions, and function declarations now live in a hosted orq Agent. The evaluation layer is now in scope through `docs/superpowers/plans/2026-09-03-orq-agent-simulation.md`. This revision supersedes the original hosted-agent and evaluator exclusions below; it does not introduce remote function execution or a self-learning loop.
+
 ## Purpose
 
 Build the operational data-analysis agent used throughout the PyData 2026 talk. The example must be small enough to teach from, realistic enough to produce meaningful agent failures, and observable enough to evaluate its final answer, tool trajectory, multi-turn behavior, and state changes.
 
-The agent runs locally. Model requests go through the orq AI Gateway so the platform captures traces. The repository and orq project are named `pydata2026`; the Python distribution is `analytics-chatbot`, the import package is `analytics_chatbot`, and the CLI command is `analytics-chatbot`.
+The orchestration loop, DuckDB access, and function execution run locally. Model configuration lives in a hosted orq Agent, and model requests use the orq AI Gateway Responses API so the platform captures traces. The repository and orq project are named `pydata2026`; the Python distribution is `analytics-chatbot`, the import package is `analytics_chatbot`, and the CLI command is `analytics-chatbot`.
 
 ## Scope
 
@@ -18,7 +20,7 @@ The first version includes:
 - Gateway trace attribution and a local JSONL audit trail.
 - Unit, integration, and opt-in live smoke tests.
 
-It explicitly excludes evaluators, judge alignment, prompt optimization, a self-learning loop, a web UI, a hosted orq agent, and the previous flight-delay dataset. Those concerns belong to the later evaluation layer described by the talk.
+The initial implementation excluded evaluators and hosted configuration. The 2026-09-03 evaluation plan adds hosted Agent configuration, evaluators, judge alignment, and reviewed prompt iteration as a separate operational layer. A self-learning loop, unreviewed prompt mutation, a web UI, and the previous flight-delay dataset remain excluded.
 
 ## Architecture
 

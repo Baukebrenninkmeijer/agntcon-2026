@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "duckdb>=1.4",
+    "evaluatorq==1.33.0",
     "openai>=2.8",
     "polars>=1.35",
     "pydantic>=2.12",
