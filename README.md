@@ -2,8 +2,25 @@
 
 The operational data-analysis agent for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md).
 It answers business questions against a deterministic local DuckDB dataset, calls the model through
-the orq AI Gateway, and records the final response, tool trajectory, and state changes needed by a
-later evaluation loop. It intentionally contains no self-learning or evaluator implementation.
+the orq AI Gateway, and records the final response, tool trajectory, and state changes needed by the
+evaluation loop. Improvements remain human-reviewed and versioned; there is no self-learning loop.
+
+## The production evaluation flywheel
+
+![Production evaluation flywheel: interactions with the analytics agent create traces; recorded responses are replayed as evaluatorq DataPoints, scored by deterministic checks and four atomic judges, aligned to human labels, and used for reviewed improvements.](docs/assets/evaluation-flywheel.svg)
+
+Production interactions call guarded local tools, emit Orq traces, and write exact local run audits.
+A read-only adapter imports hydrated supported traces—or a successfully finalized audit when the
+public trace omits replay evidence—into an evaluatorq `DataPoint` without guessing. Its current
+generic replay input is being adapted to the versioned row that preserves retrievals, errors, and
+state. evaluatorq replays the recorded answer without calling the target agent, then routes only the
+evidence each deterministic check or atomic judge needs. Human labels and disagreement analysis
+calibrate those judges before reviewed changes return to the agent or evaluators.
+
+The visual also marks delivery state without conflating it with architecture: the local runtime,
+trace capture, DataPoint contract, and evaluator framework are integrated; trace import, hosted
+resources, and the hosted/local bridge are active; human alignment and the improvement loop remain
+dependency-gated. The SVG is the canonical, slide-ready asset.
 
 ## Setup
 
@@ -101,4 +118,5 @@ ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -
 ```
 
 See the [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md) for the
-component boundaries and trace semantics.
+component boundaries and trace semantics, or [open the flywheel SVG directly](docs/assets/evaluation-flywheel.svg)
+for presentation use.

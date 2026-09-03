@@ -119,6 +119,7 @@ The paths below are ownership boundaries, not claims that every active file is a
 | Resource transform/sync | `src/analytics_chatbot/orq_resources.py`, `orq_sync.py`, `scripts/sync_orq_resources.py`, `Makefile` | Validate agent/tool/evaluator YAML, build SDK requests, semantic diff, safe apply, repeat-run no-op verification |
 | Stateful simulation bridge | Focused modules under `src/analytics_chatbot/evaluation_ops/` | Row-aware evaluatorq `AgentTarget`, per-conversation local session, trace/audit correlation |
 | Offline automation | `.github/workflows/` and test/lint configuration | Network-free PR verification with no live secrets |
+| Architecture communication | `docs/assets/evaluation-flywheel.svg`, `README.md` | Canonical presentation-ready view of the production trace-evaluation loop and its integrated, active, and gated boundaries |
 | Agent guidance | `CLAUDE.md`, with `AGENTS.md` as a relative symlink | Require coding agents to keep this living plan synchronized with implementation and verification reality |
 
 When active branches are integrated, prefer focused modules over expanding `evaluation_ops/__init__.py` indefinitely. Preserve the public row and evaluator interfaces while splitting by responsibility.
@@ -154,6 +155,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [x] Offline CI is integrated on local `main` with pinned actions, no credentials, explicit live-marker exclusion, lint, tests, package build, and an optional hosted-resource YAML validation hook.
 - [x] Root agent guidance requires maintaining this living plan in the same task and commit whenever delivery reality changes; `AGENTS.md` resolves to the canonical `CLAUDE.md`.
 - [x] Chat Completions, Responses API, and OpenTelemetry GenAI trace shapes plus successfully finalized local run audits normalize into evaluatorq replay inputs without guessing missing messages or rerunning a target.
+- [x] The README includes a canonical, accessible SVG of the production evaluation flywheel; it distinguishes integrated, active, and dependency-gated boundaries without presenting the architecture as a status dashboard.
 - [x] Integrated-tree validation passed on 2026-09-03: 57 non-live tests passed, one live test was deselected, Ruff passed, and the sdist/wheel build succeeded.
 
 ### Active
@@ -415,6 +417,7 @@ Do not run the apply command from this documentation task. Live simulation/align
 | 2026-09-03 | Manage hosted agent, tools, and evaluator resources via YAML transformed through the Orq SDK with repeatable Make targets | Active; each of two deterministic and four LLM judge evaluators gets one YAML file, and runtime IDs remain untracked |
 | 2026-09-03 | Target the existing `pydata2026` project rather than creating another project | Accepted; live state must be freshly reconciled |
 | 2026-09-03 | Build offline CI as an independent workstream | Accepted and integrated locally; live checks remain protected/manual, and remote-run evidence awaits publication |
+| 2026-09-03 | Keep one hand-authored SVG as the architecture visual source of truth | Accepted; the README embeds the same slide-ready asset, with semantic text and status encoded accessibly |
 | 2026-09-03 | Make the project status document a required living plan for every relevant coding task | Accepted and integrated through canonical root `CLAUDE.md` guidance plus an `AGENTS.md` symlink |
 | 2026-09-03 | Integrate verified work into local `main` and do not push by default | Accepted |
 
@@ -424,6 +427,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-03 | Architecture communication | Added the canonical SVG evaluation flywheel and README narrative; inspected rendered output at README and 16:9 slide scales, and verified SVG structure/accessibility locally | Reuse the SVG directly in talk materials; update it when architecture or delivery boundaries materially change |
 | 2026-09-03 | WS2 | Integrated multi-format trace and exact finalized-run-audit normalization on local `main`; synthetic fixtures cover Chat Completions, Responses API, OpenTelemetry GenAI, lineage/evaluator exclusion, tool evidence, explicit malformed-input failures, and audit fallback; integrated checks passed with 57 non-live tests, one deselection, Ruff, and package build | Convert the generic replay `DataPoint` to `trace-eval-v1`, add the Orq scorer factory, validate genuine multi-step traces, then rotate the temporary trace-access key |
 | 2026-09-03 | WS0/WS1 | Confirmed local `main` contains the verified chatbot core and evaluator-native judge framework; non-live suite passed with 45 tests and one deselection; Ruff passed | Preserve baseline while rebasing active work |
 | 2026-09-03 | WS2 | Trace importer is active in an isolated worktree with multi-format fixtures/tests under development | Reconcile to the integrated row contract; validate real agent traces; do not mark complete yet |

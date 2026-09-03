@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" width="1400" height="800" role="img" aria-labelledby="title description">
+  <title id="title">Production evaluation flywheel for the PyData 2026 analytics agent</title>
+  <desc id="description">A six-stage flywheel. Multi-turn interactions enter an Orq analytics agent that executes guarded tools locally and records traces. Traces become evaluatorq DataPoints. Recorded responses are replayed without rerunning the agent, then deterministic checks and four evidence-scoped LLM judges score them. Human labels and disagreement analysis align the judges. Reviewed, versioned improvements return to the agent and evaluators. Integrated, in-progress, and gated work are visually distinguished.</desc>
+
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBFAF7"/>
+      <stop offset="1" stop-color="#F1F3F7"/>
+    </linearGradient>
+    <linearGradient id="agent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#24283F"/>
+      <stop offset="1" stop-color="#493A70"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#273143" flood-opacity=".10"/>
+    </filter>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#5E4CB3" opacity=".11"/>
+    </pattern>
+    <marker id="arrow-dark" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1l10 5-10 5z" fill="#445064"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1l10 5-10 5z" fill="#B56A18"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1l10 5-10 5z" fill="#8791A1"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1l10 5-10 5z" fill="#6755B5"/>
+    </marker>
+    <style>
+      text { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .eyebrow { font-size: 13px; font-weight: 750; letter-spacing: 1.7px; }
+      .title { font-size: 36px; font-weight: 760; letter-spacing: -1.2px; fill: #172131; }
+      .subtitle { font-size: 17px; fill: #596575; }
+      .card-title { font-size: 23px; font-weight: 730; letter-spacing: -.35px; fill: #172131; }
+      .body { font-size: 16px; fill: #475467; }
+      .small { font-size: 13px; fill: #5E6878; }
+      .status { font-size: 11px; font-weight: 760; letter-spacing: 1.25px; }
+      .number { font-size: 14px; font-weight: 800; text-anchor: middle; dominant-baseline: middle; }
+      .flow { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="800" rx="28" fill="url(#canvas)"/>
+  <path d="M0 0h420L170 800H0z" fill="url(#dots)"/>
+
+  <g aria-label="Figure heading">
+    <text x="62" y="54" class="eyebrow" fill="#6755B5">PYDATA 2026 · EVALUATING AGENTS AT SCALE</text>
+    <text x="62" y="96" class="title">From production traces to trusted improvement</text>
+    <text x="62" y="127" class="subtitle">The recorded response moves through the loop. The agent does not run again during evaluation.</text>
+  </g>
+
+  <g aria-label="Delivery status legend" transform="translate(1025 48)">
+    <rect width="313" height="74" rx="18" fill="#FFFFFF" stroke="#D7DCE4"/>
+    <circle cx="24" cy="25" r="5" fill="#25836D"/>
+    <text x="36" y="29" class="small">integrated</text>
+    <circle cx="132" cy="25" r="5" fill="#C27A22"/>
+    <text x="144" y="29" class="small">in progress</text>
+    <circle cx="247" cy="25" r="5" fill="#FFFFFF" stroke="#8791A1" stroke-width="2"/>
+    <text x="259" y="29" class="small">gated</text>
+    <text x="24" y="55" class="small" fill="#7A8492">Status stays secondary to the system story.</text>
+  </g>
+
+  <g aria-hidden="true">
+    <path class="flow" d="M370 317C414 317 442 326 479 348" stroke="#445064" stroke-width="5" marker-end="url(#arrow-dark)"/>
+    <path class="flow" d="M921 348C959 326 985 317 1025 317" stroke="#445064" stroke-width="5" marker-end="url(#arrow-dark)"/>
+    <path class="flow" d="M1190 410C1227 449 1237 482 1224 526" stroke="#B56A18" stroke-width="5" stroke-dasharray="12 10" marker-end="url(#arrow-amber)"/>
+    <path class="flow" d="M1034 638C1001 666 978 679 954 684" stroke="#B56A18" stroke-width="5" stroke-dasharray="12 10" marker-end="url(#arrow-amber)"/>
+    <path class="flow" d="M649 686C633 686 621 686 606 686" stroke="#8791A1" stroke-width="5" stroke-dasharray="5 11" marker-end="url(#arrow-muted)"/>
+    <path class="flow" d="M345 684C321 677 307 664 286 640" stroke="#8791A1" stroke-width="5" stroke-dasharray="5 11" marker-end="url(#arrow-muted)"/>
+    <path class="flow" d="M172 528C174 476 213 448 271 438C337 426 393 439 488 423" stroke="#6755B5" stroke-width="5" stroke-dasharray="5 11" marker-end="url(#arrow-purple)"/>
+  </g>
+
+  <text x="62" y="181" class="eyebrow" fill="#727D8D">PRODUCTION</text>
+  <line x1="159" y1="176" x2="1338" y2="176" stroke="#D9DDE4"/>
+
+  <g aria-label="Stage 1: workload" transform="translate(60 238)" filter="url(#shadow)">
+    <rect width="310" height="172" rx="24" fill="#FFFFFF" stroke="#C8D0DA" stroke-width="1.5"/>
+    <circle cx="34" cy="34" r="18" fill="#E9EDF3"/>
+    <text x="34" y="34" class="number" fill="#354155">1</text>
+    <circle cx="284" cy="29" r="5" fill="#25836D"/>
+    <text x="268" y="56" class="status" fill="#25836D" text-anchor="end">CORE INTEGRATED</text>
+    <text x="25" y="87" class="card-title">Ask &amp; act</text>
+    <text x="25" y="116" class="body">Multi-turn questions enter the agent.</text>
+    <text x="25" y="142" class="body">Tool use can change local run state.</text>
+  </g>
+
+  <g aria-label="Analytics agent and guarded local tools" transform="translate(489 215)" filter="url(#shadow)">
+    <rect width="432" height="286" rx="32" fill="url(#agent)"/>
+    <text x="31" y="39" class="eyebrow" fill="#C8BDF8">THE SYSTEM UNDER EVALUATION</text>
+    <circle cx="393" cy="34" r="5" fill="#D7973A"/>
+    <text x="381" y="61" class="status" fill="#F0C982" text-anchor="end">HOSTED HANDOFF ACTIVE</text>
+    <text x="31" y="93" font-size="31" font-weight="760" letter-spacing="-.8" fill="#FFFFFF">Analytics agent</text>
+    <text x="31" y="122" font-size="16" fill="#D7D9E7">Instructions + function calls hosted on Orq</text>
+    <path d="M31 145H401" stroke="#FFFFFF" stroke-opacity=".16"/>
+    <rect x="31" y="166" width="370" height="91" rx="19" fill="#FFFFFF" fill-opacity=".10" stroke="#FFFFFF" stroke-opacity=".19"/>
+    <text x="55" y="195" class="eyebrow" fill="#D7D9E7">GUARDED LOCAL EXECUTION</text>
+    <g transform="translate(55 213)">
+      <rect width="131" height="29" rx="14.5" fill="#E9F7F3"/>
+      <circle cx="16" cy="14.5" r="4" fill="#25836D"/>
+      <text x="29" y="19" font-size="14" font-weight="680" fill="#205E51">query_sql</text>
+      <rect x="143" width="157" height="29" rx="14.5" fill="#E9F7F3"/>
+      <circle cx="159" cy="14.5" r="4" fill="#25836D"/>
+      <text x="172" y="19" font-size="14" font-weight="680" fill="#205E51">save_insight</text>
+    </g>
+  </g>
+
+  <g aria-label="Stage 2: trace capture" transform="translate(1025 238)" filter="url(#shadow)">
+    <rect width="313" height="172" rx="24" fill="#EAF7F2" stroke="#3D8C79" stroke-width="1.5"/>
+    <circle cx="34" cy="34" r="18" fill="#CDECE2"/>
+    <text x="34" y="34" class="number" fill="#205E51">2</text>
+    <circle cx="287" cy="29" r="5" fill="#25836D"/>
+    <text x="271" y="56" class="status" fill="#25836D" text-anchor="end">INTEGRATED</text>
+    <text x="25" y="87" class="card-title">Observe the trace</text>
+    <text x="25" y="116" class="body">Responses · ordered tool activity</text>
+    <text x="25" y="142" class="body">Errors · retrievals · state changes</text>
+  </g>
+
+  <text x="62" y="476" class="eyebrow" fill="#727D8D">OFFLINE EVALUATION &amp; REVIEW</text>
+  <line x1="279" y1="471" x2="1338" y2="471" stroke="#D9DDE4"/>
+
+  <g aria-label="Stage 6: reviewed improvement" transform="translate(60 528)" filter="url(#shadow)">
+    <rect width="226" height="166" rx="24" fill="#F5F3FA" stroke="#9186BB" stroke-width="1.5" stroke-dasharray="6 6"/>
+    <circle cx="34" cy="34" r="18" fill="#E6E1F5"/>
+    <text x="34" y="34" class="number" fill="#5E4CB3">6</text>
+    <circle cx="200" cy="29" r="5" fill="#FFFFFF" stroke="#8791A1" stroke-width="2"/>
+    <text x="184" y="55" class="status" fill="#737D8C" text-anchor="end">GATED</text>
+    <text x="24" y="87" class="card-title">Improve</text>
+    <text x="24" y="115" class="body">Review and version agent</text>
+    <text x="24" y="139" class="body">or evaluator changes.</text>
+  </g>
+
+  <g aria-label="Stage 5: human alignment" transform="translate(345 570)" filter="url(#shadow)">
+    <rect width="261" height="180" rx="24" fill="#F5F6F8" stroke="#98A2B3" stroke-width="1.5" stroke-dasharray="6 6"/>
+    <circle cx="34" cy="34" r="18" fill="#E8EBEF"/>
+    <text x="34" y="34" class="number" fill="#4E5969">5</text>
+    <circle cx="235" cy="29" r="5" fill="#FFFFFF" stroke="#8791A1" stroke-width="2"/>
+    <text x="219" y="55" class="status" fill="#737D8C" text-anchor="end">GATED</text>
+    <text x="24" y="90" class="card-title">Align with people</text>
+    <text x="24" y="119" class="body">Human labels establish gold.</text>
+    <text x="24" y="145" class="body">Disagreement reveals where</text>
+    <text x="24" y="169" class="body">judges still need work.</text>
+  </g>
+
+  <g aria-label="Stage 4: deterministic checks and atomic judges" transform="translate(649 555)" filter="url(#shadow)">
+    <rect width="305" height="195" rx="24" fill="#FFF5E5" stroke="#D08A2D" stroke-width="1.5"/>
+    <circle cx="34" cy="34" r="18" fill="#F9DCAD"/>
+    <text x="34" y="34" class="number" fill="#805018">4</text>
+    <circle cx="279" cy="29" r="5" fill="#C27A22"/>
+    <text x="263" y="55" class="status" fill="#A45F14" text-anchor="end">RESOURCES ACTIVE</text>
+    <text x="24" y="88" class="card-title">Score atomically</text>
+    <rect x="24" y="106" width="257" height="30" rx="15" fill="#FFFFFF" fill-opacity=".8"/>
+    <text x="39" y="126" font-size="14" font-weight="680" fill="#7B4A15">Deterministic invariants</text>
+    <text x="24" y="159" class="small">ANSWER · QUERY · EVIDENCE · CONTEXT</text>
+    <text x="24" y="181" class="body">Four isolated LLM judges</text>
+  </g>
+
+  <g aria-label="Stage 3: trace backed DataPoint replay" transform="translate(1034 526)" filter="url(#shadow)">
+    <rect width="304" height="168" rx="24" fill="#FFF5E5" stroke="#D08A2D" stroke-width="1.5"/>
+    <circle cx="34" cy="34" r="18" fill="#F9DCAD"/>
+    <text x="34" y="34" class="number" fill="#805018">3</text>
+    <circle cx="278" cy="29" r="5" fill="#C27A22"/>
+    <text x="262" y="55" class="status" fill="#A45F14" text-anchor="end">IMPORT ACTIVE</text>
+    <text x="24" y="88" class="card-title">Replay as a DataPoint</text>
+    <text x="24" y="117" class="body">Preserve raw evidence and source.</text>
+    <rect x="24" y="134" width="199" height="24" rx="12" fill="#F4D39C"/>
+    <text x="37" y="151" font-size="12.5" font-weight="720" fill="#754510">RECORDED RESPONSE · NO RERUN</text>
+  </g>
+
+  <g aria-label="Feedback loop annotation">
+    <rect x="297" y="492" width="184" height="28" rx="14" fill="#FFFFFF" stroke="#D6D1E8"/>
+    <text x="389" y="511" font-size="12.5" font-weight="700" text-anchor="middle" fill="#6755B5">HUMAN-REVIEWED FEEDBACK</text>
+  </g>
+
+  <text x="1338" y="778" class="small" text-anchor="end">Solid = integrated path · amber dash = in progress · grey/purple dash = dependency-gated</text>
+</svg>
