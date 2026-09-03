@@ -2,15 +2,15 @@
 
 > **Execution:** use `executing-plans`, `orq-cli`, `evaluatorq`, and `orq-simulate-agent`. Never use `orqi`.
 
-**Goal:** Run the analytics chatbot as a hosted Orq Agent whose functions execute locally, then build the human-reviewed, multi-turn evaluation workflow promised by `abstract.md`: final-response, trajectory, and state-change evaluation; LLM-judge alignment; nondeterminism measurement; CI; and post-hoc online trace evaluation.
+**Goal:** Run the analytics chatbot as a hosted Orq Agent whose functions execute locally, then build the human-reviewed, multi-turn evaluation workflow promised by `abstract.md`: atomic trace-backed evaluation, LLM-judge alignment, nondeterminism measurement, CI, and online trace import.
 
 **Boundary:** Orq owns model selection, instructions, and function declarations. A local session owns DuckDB, insight state, authorization, function execution, and the exact audit record. evaluatorq owns simulated users, multi-turn orchestration, jury execution, experiment upload, and standard simulation scorers.
 
 ## Relationship to existing specs
 
 - This plan and the revision note in `docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md` supersede that spec's original exclusions of a hosted agent and evaluators. The local execution and safety boundaries remain authoritative.
-- The post-hoc design remains a separate workflow. This plan reuses it for online samples instead of creating another trace mapper or ledger.
-- New simulation code lives in `src/analytics_chatbot/evaluation_ops/`. It must not collide with the existing/planned `src/analytics_chatbot/evaluation.py` post-hoc module.
+- `docs/superpowers/specs/2026-09-03-evaluator-native-trace-evaluation-design.md` supersedes the post-hoc evaluator-executor architecture. Online samples reuse the trace importer and the same evaluatorq row contract; there is no separate judge runner or ledger-driven scoring path.
+- Simulation and evaluator-native code lives in `src/analytics_chatbot/evaluation_ops/`.
 - “Use only the Orq CLI” applies to platform control-plane CRUD and stored-evaluator invocation. The user explicitly approved the Responses runtime and evaluatorq Experiment upload; those are the two non-CLI runtime paths.
 - No self-learning or unreviewed automatic prompt mutation is in scope. Natural-language failure feedback may drive a manual, versioned prompt revision.
 
@@ -21,8 +21,8 @@
 - Hosted agent / Responses model: `analytics-chatbot` / `agent/analytics-chatbot`.
 - Target model selector: provider `deepseek`, `model_id=deepseek-v4-flash`, function calling required. Current UUID: `6c88a908-a85f-4f9a-83af-31cf11292599`.
 - Generator and simulated user: `openai/gpt-5.6-luna` through Responses.
-- Four binary rubrics: `final_response`, `trajectory`, `state_change`, and `overall`. The first three are the dimensions from the abstract. `overall` is a separately aligned holistic release verdict and must not be presented as a fourth evaluation dimension.
-- Each rubric uses the same three-model strict-majority jury:
+- Four atomic categorical rubrics: `answer_correctness`, `query_semantics`, `evidence_faithfulness`, and `multi_turn_consistency`. Each is aligned independently; correctness and faithfulness must not share oracle/evidence inputs.
+- Each applicable rubric uses the same three-model strict-majority jury:
   - `openai/gpt-5.6-luna`, UUID `45a6f5c0-e3ac-416e-9538-d48d80f2b68d`, enabled;
   - `groq/qwen/qwen3.8-27b`, UUID `e30d9593-a54f-5b83-a716-16d707ebfe2f`, currently disabled;
   - `google-ai/gemini-3.5-flash-lite`, UUID `589e98c5-f88f-4e68-9b94-c9f015787a49`, enabled.
@@ -32,7 +32,7 @@
 - Freeze 50 accepted simulation cases and a 30-dev/20-test split before target inference.
 - Generate organically, then enforce explicit coverage presence—not numeric quotas—for every failure mode listed below.
 - One canonical observed conversation per case forms the 50 hand-reviewed examples. Dev has one reviewer; test has two independent reviewers and an adjudicated result.
-- Trust a jury rubric only if held-out κ ≥ 0.70, balanced accuracy ≥ 0.80, and false-pass rate ≤ 0.10. All four must qualify before automated jury gating.
+- Trust a jury rubric only if held-out κ ≥ 0.70, balanced accuracy ≥ 0.80, and false-pass rate ≤ 0.10. Exclude deterministically routed `not_applicable` rows from binary metrics and report their coverage separately. All four must qualify before automated jury gating.
 - Run a five-case generation pilot, then a distinct five-case live simulation pilot. Name them explicitly; never call both merely “pilot.”
 - Stability baseline: 50 cases × 3 independent target runs = 150 conversations.
 - CI: offline tests per PR, fixed five-case live canary on demand for trusted PRs, full baseline scheduled/manual.
@@ -150,24 +150,25 @@ Do not use `wrap_simulation_agent(target=callable)` for this stateful target; it
 - [ ] Reuse evaluatorq's `goal_achieved` and `criteria_met` simulation scorers against the cached `SimulationResult`; add only the genuinely project-specific tool-integrity and state-policy scorers.
 - [ ] Test clone isolation, cache correlation under parallel completion, timeout cleanup, retry count, transcript/tool conversion, result-less calls, and missing-cache failure.
 
-## Task 6: Create the 50 human-reviewed observed examples
+## Task 6: Import the 50 trace-backed observed examples
 
 - [ ] Run the fixed five-case **live simulation pilot** sequentially. Verify hosted/local handshake, one shared session per conversation, state isolation, trace linkage, and raw-cache scoring.
-- [ ] Run one canonical calibration conversation for every frozen case with juries disabled. This produces the 50 observed examples that humans label; cases alone are not treated as labeled examples.
+- [ ] Run one canonical calibration conversation for every frozen case with juries disabled. Import each completed trace into `TraceBackedEvaluationRow` (`trace-eval-v1`) with complete conversation, raw tools/results, retrievals, state snapshots, oracle, split, and source trace/span IDs. This produces the 50 observed examples that humans label; cases alone are not treated as labeled examples.
 - [ ] Pre-register the canonical run/row mapping and do not rerun selectively based on output quality.
 - [ ] Build review packets from the exact observed final answer, tool trajectory/results, state snapshots, executable oracle, and trace link.
-- [ ] For each of four rubrics, store `{value, explanation}`. One reviewer labels dev; two reviewers independently label test before adjudication. Reject empty explanations.
+- [ ] For each applicable atomic rubric, store `{value, explanation}` using the exact `pass`/`fail`/`not_applicable` verdict space. One reviewer labels dev; two reviewers independently label test before adjudication. Reject empty explanations.
 - [ ] Commit only accepted `gold-labels.jsonl` and provenance hashes. Keep reviewer packets and transient trace exports ignored.
 
-## Task 7: Add native invariants and aligned LLM juries
+## Task 7: Run and align native evaluatorq atomic judges
 
-- [ ] Invoke stored Python evaluators through `orq evals invoke <id> --stdin --json --no-input`, wrapped as evaluatorq scorers. They gate immediately and fail closed.
-- [ ] Build each rubric with evaluatorq 1.33 `llm_jury`: boolean categorical verdict, three exact model refs, `assignment="all"`, `aggregator="majority"`, `min_successful_judges=2`, structured output, Responses routing, and one repetition.
-- [ ] Wrap each jury scorer so its input is an evidence projection from the raw cache: user conversation, final response, ordered calls/results, state before/after, oracle result, and rubric-specific reference. This prevents a converted output from hiding required evidence.
-- [ ] Preserve evaluatorq's `{value, explanation, pass}` result contract. Four aggregate Experiment columns are first-class; the 12 child judgments remain auditable in child spans/jury deliberation rather than being falsely promised as columns.
+- [ ] Feed imported `TraceBackedEvaluationRow.to_datapoint()` rows to one native `evaluatorq(...)` call with the replay job and four routed evaluators. Do not build a bespoke post-hoc evaluator executor or invoke one evaluator per loop.
+- [ ] Build each rubric with evaluatorq 1.33 `llm_jury`: categorical labels `pass`, `fail`, `not_applicable`; three exact model refs; `assignment="all"`; `aggregator="majority"`; `min_successful_judges=2`; structured output; Responses routing; and one repetition.
+- [ ] Route before inference: correctness needs an expected answer; query semantics needs an executed query and semantic reference; faithfulness needs raw evidence; consistency needs two user turns. Routed rows return `not_applicable`, `pass=None`, and a reason without making judge calls.
+- [ ] Project raw trace-backed evidence per rubric. Correctness sees the oracle but no execution evidence; faithfulness sees execution/retrieval evidence but no oracle; query semantics sees executed SQL plus semantic constraints; consistency sees full conversation, tools, and state.
+- [ ] Preserve evaluatorq's supported template variables and `{value, explanation, pass}` result contract. Four aggregate Experiment columns are first-class; child judgments remain auditable in jury deliberation rather than being falsely promised as columns.
 - [ ] Jury ties, quorum failures, timeouts, and malformed outputs are inconclusive, never passing.
 - [ ] Acknowledge Luna's generator/simulator/judge overlap in the alignment report. Mitigate it with hidden generation provenance, executable non-LLM oracles, independent human gold, two other model families, per-model error analysis, and majority voting; do not claim model independence.
-- [ ] Align prompts on dev only. On the frozen test set, compute per-rubric confusion matrix, balanced accuracy, false-pass rate, jury-vs-gold κ, human-human κ, and per-model disagreement with Polars.
+- [ ] Align prompts on imported dev rows only using the same evaluator builders and native evaluatorq experiment/scoring lifecycle. On the frozen imported test rows, compute per-rubric confusion matrix, balanced accuracy, false-pass rate, jury-vs-gold κ, human-human κ, and per-model disagreement with Polars. Report routed coverage separately.
 - [ ] `alignment/status.yaml` stays `shadow` unless all thresholds pass. Promotion to `gating` is an explicit reviewed repository edit.
 - [ ] Test evidence projection, rubric isolation, 3–0/2–1/tie/quorum outcomes, explanation preservation, imbalanced labels, zero denominators, exact thresholds, and tamper hashes.
 
@@ -179,11 +180,11 @@ Do not use `wrap_simulation_agent(target=callable)` for this stateful target; it
 - [ ] Run 50 × 3 only after calibration labels and alignment reporting exist. Human alignment claims apply to the canonical 50 observed examples; report the 150-run jury stability as a separate generalization/nondeterminism analysis, not additional human-labeled accuracy.
 - [ ] Report per-case/rubric pass variance, judge disagreement, tool/state invariant failure, termination reason, token use, latency, and available cost.
 
-## Task 9: Add online/post-hoc operations and reviewed prompt iteration
+## Task 9: Add online trace import and reviewed prompt iteration
 
-- [ ] Reuse `map_trace_to_evaluation_context`, `PosthocTraceEvaluator`, and the append-only evaluation ledger from the post-hoc design. Do not build another trace mapper or machine-as-human annotation path.
+- [ ] Reuse the trace importer to produce `trace-eval-v1` rows, then evaluate them with `run_trace_evaluation` and the native evaluatorq experiment flow. Do not add a post-hoc evaluator service, ledger-driven scorer, or machine-as-human annotation path.
 - [ ] Select production samples by actual identity and bounded tags; use metadata for trace filtering/joins. Mark post-hoc results as machine evaluations.
-- [ ] Run stored evaluators through the established runtime path and link source/evaluation trace IDs in the ledger.
+- [ ] Preserve source trace/span IDs in every imported evaluatorq row so Experiment results remain joinable to source traces.
 - [ ] Add an operator error-analysis command/report that clusters written critiques with Polars and emits proposed prompt changes. It never edits prompts.
 - [ ] Apply prompt changes manually in YAML, bump agent/jury versions, review the semantic Orq diff, rerun dev, then evaluate the frozen test once. This is the abstract's feedback-driven optimization loop without self-learning.
 
@@ -212,7 +213,8 @@ uv run analytics-chatbot simulate-live --mode live-pilot --cases 5 --repetitions
 uv run analytics-chatbot simulate-live --mode calibration --cases 50 --repetitions 1
 uv run analytics-chatbot export-label-packets
 # humans label dev/test; accepted gold-labels.jsonl is reviewed and committed
-uv run analytics-chatbot align-evaluators --split dev     # replay recorded calibration evidence; no target rerun
+uv run analytics-chatbot import-simulation-traces         # validate trace-eval-v1 rows
+uv run analytics-chatbot align-evaluators --split dev     # native evaluatorq replay; no target rerun
 uv run analytics-chatbot align-evaluators --split test --frozen
 uv run analytics-chatbot simulate-live --mode baseline --cases 50 --repetitions 3 --confirm-large-run
 ```
@@ -225,10 +227,10 @@ uv run analytics-chatbot simulate-live --mode baseline --cases 50 --repetitions 
 - Conversation-scoped state persists across turns; unauthorized saves cannot mutate state.
 - Fifty cases have executable, reproducible oracles and a frozen 30/20 split.
 - Fifty observed conversations have accepted human labels with explanations.
-- Experiments expose built-in simulation scores, deterministic invariant scores, and four majority jury columns.
+- Experiments expose built-in simulation scores, deterministic invariant scores, and four independently routed atomic majority-jury columns.
 - Alignment reports reproduce from accepted JSONL with the locked thresholds and clearly separate canonical accuracy from 150-run stability.
 - Traces preserve actor identity and are filterable/joinable through the documented metadata.
-- The post-hoc workflow evaluates online samples without representing machine verdicts as human labels.
+- Online trace imports use the same evaluatorq-native scoring path without representing machine verdicts as human labels.
 - No secret, candidate pool, transient review packet, or raw temporary export is committed.
 
 ## Authoritative implementation references
