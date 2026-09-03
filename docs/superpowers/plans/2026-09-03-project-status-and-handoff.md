@@ -46,12 +46,12 @@
 | Analytics chatbot core | `VERIFIED` | Deterministic data, guarded SQL, insight state, agent loop, CLI, local run audit, and Orq tracing are implemented on local `main` | Preserve behavior while introducing hosted configuration |
 | evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
-| Hosted resources and simulation | `ACTIVE` | An isolated task is implementing agent/tool/evaluator YAML, shared YAML-to-Orq SDK transformation/sync, Make targets, the row-aware local-tool bridge, and the 50-case corpus | Finish offline tests for all resource kinds, reconcile live state safely, verify bridge, then freeze the corpus |
+| Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, and a three-attempt pilot review; the third attempt awaits explicit user review | Remove the tracked project ID, obtain a fresh read-only remote plan, accept or reject pilot attempt three, then finish the row-aware bridge and human corpus review |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated on local `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Re-run the same gate after dependency or hosted-resource changes; remote-run evidence awaits publication |
 | Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
 
-The latest local verification for the integrated tree is `57 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-03. This evidence covers local `main`, not unmerged active worktrees.
+The latest local verification for the integrated tree is `71 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-03. Resource loading found one agent, two tools, two deterministic evaluators, and four human-label-gated LLM evaluators. The 50-case corpus reproduced exactly from freshly executed DuckDB oracles with a 30-dev/20-test split. The primary checkout had no `.env`, so a fresh remote dry-run was unavailable; no remote request or mutation occurred.
 
 ## Objectives
 
@@ -156,7 +156,10 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [x] Root agent guidance requires maintaining this living plan in the same task and commit whenever delivery reality changes; `AGENTS.md` resolves to the canonical `CLAUDE.md`.
 - [x] Chat Completions, Responses API, and OpenTelemetry GenAI trace shapes plus successfully finalized local run audits normalize into evaluatorq replay inputs without guessing missing messages or rerunning a target.
 - [x] The README includes a canonical, accessible SVG of the production evaluation flywheel; it distinguishes integrated, active, and dependency-gated boundaries without presenting the architecture as a status dashboard.
-- [x] Integrated-tree validation passed on 2026-09-03: 57 non-live tests passed, one live test was deselected, Ruff passed, and the sdist/wheel build succeeded.
+- [x] Repository YAML, SDK transformation/reconciliation, safe Make targets, two deterministic evaluator definitions, and four atomic LLM evaluator drafts are integrated; LLM evaluator apply fails closed until each definition records at least 100 human labels.
+- [x] Recorded live evidence establishes the hosted agent/tool handshake and explicit-save behavior; the hosted prompt includes the ambiguity and SQL-returned-number corrections found during smoke and pilot review.
+- [x] Exactly 50 deterministic candidate cases are integrated with stable unique IDs, executable DuckDB oracles, required coverage labels, evaluatorq serialization, and a reproducible 30-dev/20-test split.
+- [x] Integrated-tree validation passed on 2026-09-03: 71 non-live tests passed, one live test was deselected, Ruff passed, and the sdist/wheel build succeeded.
 
 ### Active
 
@@ -164,12 +167,12 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [ ] WS2: Validate on genuine multi-step agent traces from unscoped or populated research projects; response-only traces are insufficient.
 - [ ] WS2: Ensure recorded final assistant output is replayed without a target-agent call and source linkage remains in `DataPoint` inputs.
 - [ ] WS2: Provide a small Orq evaluator scorer factory; retain evaluator invocation linkage locally only if it is truly required.
-- [ ] WS3a: Finish hosted analytics-agent and local tool YAML validation plus YAML-to-current-Orq-SDK transformation.
-- [ ] WS3a: Add and validate one YAML file per evaluator for both deterministic evaluators and the four atomic LLM-as-a-judge evaluators; keep their prompts, evidence boundaries, model settings, and stable keys reviewable.
-- [ ] WS3a: Finish a dry-run-first, idempotent Make target scoped to the existing `pydata2026` project.
-- [ ] WS3a: Prove hosted function-call/local-execution continuation before migrating runtime ownership.
+- [ ] WS3a: Remove the tracked opaque project ID from desired state and preserve fail-closed project selection through the stable `pydata2026` key before M3 acceptance.
+- [ ] WS3a: Obtain a fresh credentialed read-only semantic plan from integrated `main`; the integration checkout had no `.env`, and no remote apply is authorized.
+- [ ] WS3a: Keep the four LLM evaluator resources blocked from apply until their independent human-label and alignment gates pass; do not create remote evaluator or dataset resources yet.
 - [ ] WS3b: Finish the row-aware, conversation-scoped local-tool bridge.
-- [ ] WS3b: Generate, review, and freeze exactly 50 evaluatorq cases with executable oracles and stable split/provenance.
+- [ ] WS3b: Explicitly accept or reject the third one-case pilot attempt; do not run the remaining 49 before approval.
+- [ ] WS3b: Human-review and freeze the 50 integrated candidate cases; code/oracle validation does not make them accepted cases.
 
 ### Blocked
 
@@ -347,8 +350,8 @@ Required evidence:
 
 1. Keep WS0 and WS1 as the baseline on local `main`; rerun the non-live suite before integrating other branches.
 2. Rebase or transplant WS2 onto current local `main`. Resolve its output against `TraceBackedEvaluationRow` and the four-judge API, then run focused and full offline checks. Merge only after real agent-trace validation evidence is scrubbed and the temporary key is queued for rotation.
-3. Integrate WS3a resource schemas/transformation/sync next, including the agent, tools, two deterministic evaluators, and four atomic LLM judge evaluators. Resolve overlapping dependency-lock and README changes deliberately. Remove any hard-coded runtime IDs before acceptance. Review the unified semantic plan before any separately authorized apply.
-4. Integrate the WS3b local-tool bridge on top of WS3a and WS2 so simulation emits the accepted trace/evidence contract. Freeze and commit only the accepted 50-case corpus after oracle/review checks.
+3. WS3a resource schemas/transformation/sync are integrated, including the agent, tools, two deterministic evaluators, and four atomic LLM judge drafts. Remove the tracked project ID and review a fresh unified semantic plan before any separately authorized apply; evaluator creation remains label-gated.
+4. The initial WS3b target adapter and 50 candidate cases are integrated. Accept or reject pilot attempt three before any remaining-case run, then finish the row-aware bridge so simulation emits the accepted trace/evidence contract and freeze the corpus only after human review.
 5. Keep the integrated WS4 workflow logically independent and network-free; rerun it after dependency-lock or resource-schema changes from WS2/WS3.
 6. Create and integrate human labels/alignment reports only after the corpus and canonical-observation mappings are frozen.
 7. Add protected live canary and scheduled/manual baseline operations last, after alignment qualification and budget controls.
@@ -427,6 +430,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-03 | WS3a/WS3b | Integrated the hosted-resource reconciler, corrected agent prompt, two deterministic and four gated LLM evaluator definitions, initial evaluatorq target, 50-case candidate corpus, and three-attempt pilot review on local `main`; fresh offline evidence: resource bundle/gate validation, exact oracle reproduction, 30/20 split, 71 non-live tests, Ruff, and package build. A fresh remote dry-run was unavailable because the checkout has no `.env`; no remote mutation occurred | Remove the tracked project ID, run a fresh credentialed read-only plan, obtain explicit review of pilot attempt three, and do not create evaluators/datasets or run the remaining 49 before their gates |
 | 2026-09-03 | Architecture communication | Added the canonical SVG evaluation flywheel and README narrative; inspected rendered output at README and 16:9 slide scales, and verified SVG structure/accessibility locally | Reuse the SVG directly in talk materials; update it when architecture or delivery boundaries materially change |
 | 2026-09-03 | WS2 | Integrated multi-format trace and exact finalized-run-audit normalization on local `main`; synthetic fixtures cover Chat Completions, Responses API, OpenTelemetry GenAI, lineage/evaluator exclusion, tool evidence, explicit malformed-input failures, and audit fallback; integrated checks passed with 57 non-live tests, one deselection, Ruff, and package build | Convert the generic replay `DataPoint` to `trace-eval-v1`, add the Orq scorer factory, validate genuine multi-step traces, then rotate the temporary trace-access key |
 | 2026-09-03 | WS0/WS1 | Confirmed local `main` contains the verified chatbot core and evaluator-native judge framework; non-live suite passed with 45 tests and one deselection; Ruff passed | Preserve baseline while rebasing active work |
@@ -438,8 +442,8 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 ## Next Actions
 
 1. WS2 owner: adapt the integrated generic replay `DataPoint` to the accepted trace-backed row contract, add the small Orq scorer factory, validate no-inference replay on genuine multi-step agent traces, and rotate the temporary trace-access key afterward.
-2. WS3a owner: finish YAML/SDK sync tests for agent, tools, two deterministic evaluators, and four LLM judge evaluators; enforce one file per evaluator, remove hard-coded remote IDs, and produce a reviewed unified dry-run against `pydata2026`; perform apply only under the active task's explicit authorization.
-3. WS3b owner: prove the hosted/local function protocol, finish the row-aware bridge, then generate/review/freeze the 50-case corpus with executable oracles.
+2. WS3a owner: remove the tracked project ID while retaining stable-key project checks, then produce a fresh credentialed read-only plan against `pydata2026`; do not create remote evaluators or datasets before their gates and separate authorization.
+3. User/coordinator: review pilot attempt three in `orq/resources/datasets/simulation-pilot-review.json`; only after explicit acceptance may WS3b run additional cases, finish the row-aware bridge, and human-review/freeze the 50-case corpus.
 4. Coordinator: keep WS4's offline workflow aligned with integrated dependency commands and rerun it after each dependency boundary.
 5. Coordinator: integrate verified branches in the order above, rerun full offline checks after each dependency boundary, rotate the temporary trace-access key after WS2 validation, and update this log.
 

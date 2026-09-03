@@ -6,6 +6,41 @@
 
 **Boundary:** Orq owns model selection, instructions, and function declarations. A local session owns DuckDB, insight state, authorization, function execution, and the exact audit record. evaluatorq owns simulated users, multi-turn orchestration, jury execution, experiment upload, and standard simulation scorers.
 
+## Implementation checkpoint — 2026-09-03
+
+This plan remains the target architecture. Local `main` contains a smaller, verified foundation
+and deliberately stops at its review and alignment gates:
+
+- Repository YAML plus an idempotent `orq-ai-sdk` reconciler now own the two local function
+  declarations, the hosted `analytics-chatbot` agent, two deterministic Python evaluator drafts,
+  and four atomic LLM evaluator drafts. `make sync-orq` is the safe dry-run and
+  `make sync-orq-apply` is the explicit mutation target.
+- The live `pydata2026` project contains the two tools and hosted agent. A second plan reports them
+  as no-ops. It contains no evaluator or dataset resources yet.
+- LLM evaluator apply fails closed until each YAML validation record documents at least 100 human
+  labels. The current atomic drafts are answer correctness, query semantics, evidence
+  faithfulness, and multi-turn consistency; they are not aligned or production gates.
+- The hosted/local function handshake and explicit-save behavior work in live smoke runs. An
+  ambiguity smoke exposed a prompt gap, which was corrected and reverified. The prompt now also
+  requires every reported number to be returned directly by successful SQL.
+- Fifty deterministic evaluatorq-native case definitions exist as five personas by ten scenarios,
+  with executable DuckDB oracles where calculation is applicable and a stable 30-dev/20-test
+  split. They are generated from a reproducible grid, not yet from evaluatorq's LLM generator, and
+  have not completed human acceptance review.
+- `AnalyticsChatbotTarget` preserves a hosted Responses conversation per evaluatorq clone and
+  returns native evaluatorq tool/output items. A conversation-scoped `AnalyticsSession`, persistent
+  cross-turn insight store, row-aware cache, and timeout registry remain open work from Task 3/5.
+- Four direct smoke scenarios (five turns) pass. The one-case simulation pilot required three
+  iterations: manual review rejected an arithmetic error the first automated judge missed; the
+  second judge rejected unsupported derived claims; the third is the candidate transcript awaiting
+  explicit user review. The remaining 49 simulations must not start before that approval.
+- Current Orq CLI trace hydration exposes identity, thread, response-chain, status, and metadata but
+  omits concrete assistant messages and tool arguments/results. The local `runs/*/events.jsonl`
+  audit must enrich trace imports before `inference=False` replay is possible.
+
+Unchecked items below remain unchecked unless the complete planned behavior—not merely this
+foundation—has been delivered.
+
 ## Relationship to existing specs
 
 - This plan and the revision note in `docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md` supersede that spec's original exclusions of a hosted agent and evaluators. The local execution and safety boundaries remain authoritative.

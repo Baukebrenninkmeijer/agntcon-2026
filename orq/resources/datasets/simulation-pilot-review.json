@@ -1,0 +1,63 @@
+{
+  "case_id": "data-analyst--net-by-region",
+  "corpus_version": "simulation-v1",
+  "simulator_model": "openai/gpt-5.6-luna",
+  "target": "agent/analytics-chatbot",
+  "max_turns": 3,
+  "attempts": [
+    {
+      "attempt": 1,
+      "automated_goal_achieved": true,
+      "automated_criteria_met": true,
+      "manual_status": "rejected",
+      "manual_reason": "The reported grand total was 1000 lower than the sum of the four tool-returned regional values."
+    },
+    {
+      "attempt": 2,
+      "automated_goal_achieved": true,
+      "automated_criteria_met": false,
+      "manual_status": "rejected",
+      "manual_reason": "The assistant added an unqueried derived margin and unqueried cancellation/refund claims."
+    },
+    {
+      "attempt": 3,
+      "automated_goal_achieved": true,
+      "automated_criteria_met": true,
+      "manual_status": "awaiting_user_review",
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Validate with SQL: Compare total net revenue across all regions for the full dataset."
+        },
+        {
+          "role": "assistant",
+          "tool_call": {
+            "name": "query_sql",
+            "arguments": {
+              "query": "SELECT region, SUM(net_revenue) AS total_net_revenue FROM orders GROUP BY region ORDER BY total_net_revenue DESC;"
+            }
+          }
+        },
+        {
+          "role": "tool",
+          "name": "query_sql",
+          "result": {
+            "ok": true,
+            "columns": ["region", "total_net_revenue"],
+            "rows": [
+              ["EMEA", "20932151.63"],
+              ["APAC", "20705780.15"],
+              ["North America", "20661468.03"],
+              ["LATAM", "20540732.02"]
+            ]
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Total net revenue across all regions: EMEA 20,932,151.63; APAC 20,705,780.15; North America 20,661,468.03; LATAM 20,540,732.02. Ordered highest to lowest: EMEA, APAC, North America, LATAM. Supporting SQL is the executed grouped SUM(net_revenue) query."
+        }
+      ]
+    }
+  ],
+  "provenance": "Scrubbed review artifact; opaque response, trace, thread, span, and tool-call identifiers are intentionally omitted."
+}

@@ -1,12 +1,15 @@
+import asyncio
 import json
 from collections import deque
 from pathlib import Path
 
 import duckdb
 import pytest
+from evaluatorq.contracts import Message
 
 from analytics_chatbot.agent import AgentLoopError, AnalyticsChatbot
 from analytics_chatbot.config import Settings
+from analytics_chatbot.evaluation_ops.target import AnalyticsChatbotTarget
 from analytics_chatbot.models import GatewayFunctionCall, GatewayResponse
 
 
@@ -139,3 +142,26 @@ def test_step_limit_is_enforced(chatbot) -> None:
 
     with pytest.raises(AgentLoopError, match="step limit"):
         bot.ask("Analyze revenue")
+
+
+def test_evaluatorq_target_preserves_case_and_conversation(chatbot) -> None:
+    bot, gateway = chatbot
+    gateway.text("First answer")
+    gateway.text("Follow-up answer")
+    target = AnalyticsChatbotTarget(
+        bot.settings,
+        {"Start the case": "case-01"},
+        chatbot=bot,
+    )
+
+    async def run_turns():
+        first = await target.respond([Message(role="user", content="Start the case")])
+        second = await target.respond([Message(role="user", content="Follow up")])
+        return first, second
+
+    first, second = asyncio.run(run_turns())
+
+    assert first.output[-1].text == "First answer"
+    assert second.output[-1].text == "Follow-up answer"
+    assert target.case_id == "case-01"
+    assert gateway.calls[0]["conversation"].thread_id == gateway.calls[1]["conversation"].thread_id

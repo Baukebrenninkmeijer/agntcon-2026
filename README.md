@@ -57,7 +57,8 @@ stdlib-only, AST-checked, and unit-executed locally. To reconcile only an alread
 pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync script; the Makefile target
 always covers the complete bundle.
 
-Generate the deterministic 50-case evaluatorq corpus and run a bounded pilot with:
+Generate the deterministic 50-case evaluatorq corpus and, after explicit review approval, run one
+bounded pilot case with:
 
 ```bash
 uv run python scripts/generate_simulation_cases.py
@@ -67,8 +68,10 @@ uv run python scripts/run_simulation.py \
   --output runs/evaluatorq-pilot.jsonl
 ```
 
-Review the pilot transcript before increasing `--limit`; this is a required simulation quality
-gate. Simulation outputs and exact local run artifacts remain under ignored runtime directories.
+The committed pilot review records two rejected attempts and a third candidate awaiting explicit
+user review. Do not run the remaining 49 cases or increase `--limit` until that candidate is
+accepted; this is a required simulation quality gate. Simulation outputs and exact local run
+artifacts remain under ignored runtime directories.
 
 Data generation uses a Polars `LazyFrame`, streams 25,000 fixed-seed orders to Parquet, then
 materializes explicitly typed decimal columns in DuckDB. The generated database and manifest are
