@@ -1,0 +1,25 @@
+kind: evaluator
+type: python_eval
+key: analytics-tool-execution-integrity
+display_name: Analytics tool execution integrity
+description: >-
+  Deterministically checks that an applied calculation case contains at least one successful
+  query_sql tool result. Apply only to cases whose routing metadata requires a calculation.
+path: evaluators/python
+output:
+  type: boolean
+  passing: [true]
+input_mapping:
+  input.user_query: last user request
+  output.tools_called: ordered tool calls and results
+code: |
+  def evaluate(log):
+      calls = [call for call in log["tool_calls"] if call.get("tool_name") == "query_sql"]
+      if not calls:
+          return False
+      for call in calls:
+          response = call.get("response") or {}
+          raw = response.get("raw_response")
+          if raw is not None and "error" not in str(raw).lower():
+              return True
+      return False

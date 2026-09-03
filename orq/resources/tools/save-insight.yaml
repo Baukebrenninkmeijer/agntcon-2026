@@ -1,0 +1,40 @@
+kind: tool
+key: save-insight
+display_name: Save an analytics insight
+path: tools
+execution: local
+description: >-
+  Use this tool only when the current user turn explicitly asks to save, remember, store, keep,
+  or preserve a finding. It appends a structured insight to the current local session and returns
+  the saved record. Do NOT use it for ordinary analysis, implicit preferences, or any request
+  without current-turn authorization. Validation or authorization failures return an explicit
+  error and make no state change.
+function:
+  name: save_insight
+  description: >-
+    Persist a user-authorized analytics finding in the current local session. Use only after a
+    successful supporting query and explicit save intent in the current turn. Do NOT call for
+    read-only questions or infer authorization from an earlier turn. Returns the saved insight on
+    success, or an explicit error_code and error without mutation on failure.
+  strict: true
+  parameters:
+    type: object
+    properties:
+      title:
+        type: string
+        minLength: 1
+        description: "Short descriptive title; for example, EMEA net revenue in 2025."
+      summary:
+        type: string
+        minLength: 1
+        description: "Evidence-backed finding with the relevant value, unit, segment, and period."
+      supporting_sql:
+        type: string
+        minLength: 1
+        description: "The successful read-only SQL statement that supports the saved finding."
+      tags:
+        type: array
+        items: {type: string}
+        description: "Optional short classification tags; for example, [revenue, EMEA, 2025]."
+    required: [title, summary, supporting_sql]
+    additionalProperties: false

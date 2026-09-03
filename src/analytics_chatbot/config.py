@@ -29,6 +29,7 @@ class Settings(BaseSettings):
         validation_alias="ORQ_GATEWAY_BASE_URL",
     )
     model: str = "deepseek/deepseek-v4-flash"
+    hosted_agent_model: str = "agent/analytics-chatbot"
     database_path: Path = Path("data/analytics.duckdb")
     runs_path: Path = Path("runs")
     max_tool_steps: int = Field(default=8, ge=1, le=32)

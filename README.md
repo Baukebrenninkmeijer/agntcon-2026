@@ -35,6 +35,41 @@ cp .env.example .env
 uv run analytics-chatbot seed-data
 ```
 
+## Sync hosted Orq resources
+
+Repository-owned definitions for the hosted agent, its two local function tools, and evaluators
+live under `orq/resources/`. Preview the semantic reconciliation plan first, then apply it
+explicitly:
+
+```bash
+make sync-orq
+make sync-orq-apply
+```
+
+Both commands require the existing `pydata2026` project's `ORQ_API_KEY` in `.env`. The sync verifies
+the locked project key and ID, follows list pagination, refuses duplicate resource keys, and never
+creates a project. Repeating the apply command is safe: a successful second pass reports only
+no-op resources.
+
+The four LLM judge definitions are intentionally blocked from remote apply until their YAML
+validation records show at least 100 human-labeled examples. The two Python evaluators are
+stdlib-only, AST-checked, and unit-executed locally. To reconcile only an already-reviewed subset,
+pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync script; the Makefile target
+always covers the complete bundle.
+
+Generate the deterministic 50-case evaluatorq corpus and run a bounded pilot with:
+
+```bash
+uv run python scripts/generate_simulation_cases.py
+uv run python scripts/run_agent_smoke.py
+uv run python scripts/run_simulation.py \
+  --case-id data-analyst--net-by-region \
+  --output runs/evaluatorq-pilot.jsonl
+```
+
+Review the pilot transcript before increasing `--limit`; this is a required simulation quality
+gate. Simulation outputs and exact local run artifacts remain under ignored runtime directories.
+
 Data generation uses a Polars `LazyFrame`, streams 25,000 fixed-seed orders to Parquet, then
 materializes explicitly typed decimal columns in DuckDB. The generated database and manifest are
 ignored by Git.

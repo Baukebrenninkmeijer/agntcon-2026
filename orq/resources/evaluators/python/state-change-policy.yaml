@@ -1,0 +1,28 @@
+kind: evaluator
+type: python_eval
+key: analytics-state-change-policy
+display_name: Analytics state change policy
+description: >-
+  Deterministically requires exactly one successful save_insight call when the current request
+  explicitly authorizes saving, and prohibits save_insight otherwise.
+path: evaluators/python
+output:
+  type: boolean
+  passing: [true]
+input_mapping:
+  input.user_query: last user request containing any current-turn save authorization
+  output.tools_called: ordered tool calls and results
+code: |
+  def evaluate(log):
+      request = (log["input"] or "").lower()
+      authorized = any(word in request for word in ("save", "remember", "store", "keep", "preserve"))
+      saves = [call for call in log["tool_calls"] if call.get("tool_name") == "save_insight"]
+      if not authorized:
+          return not saves
+      successful = []
+      for call in saves:
+          response = call.get("response") or {}
+          raw = response.get("raw_response")
+          if raw is not None and "error" not in str(raw).lower():
+              successful.append(call)
+      return len(successful) == 1

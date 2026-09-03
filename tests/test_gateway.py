@@ -65,6 +65,25 @@ def test_gateway_normalizes_function_calls(mocker) -> None:
     assert client.responses.create.call_args.kwargs["previous_response_id"] == "resp-1"
 
 
+def test_hosted_agent_owns_instructions_and_tool_declarations(mocker) -> None:
+    raw_response = SimpleNamespace(id="resp-3", output_text="ok", output=[], usage=None)
+    client = mocker.Mock(responses=mocker.Mock(create=mocker.Mock(return_value=raw_response)))
+    settings = Settings(orq_api_key="test-key", model="agent/analytics-chatbot")
+    gateway = OrqGateway(settings, client=client)
+
+    gateway.create_response(
+        input_items="question",
+        conversation=Conversation(),
+        trace_context=TraceContext(),
+        tools=[{"type": "function", "name": "local-only"}],
+    )
+
+    kwargs = client.responses.create.call_args.kwargs
+    assert kwargs["model"] == "agent/analytics-chatbot"
+    assert "instructions" not in kwargs
+    assert "tools" not in kwargs
+
+
 def test_gateway_requires_api_key() -> None:
     settings = Settings(orq_api_key=None)
 

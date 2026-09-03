@@ -1,0 +1,30 @@
+kind: tool
+key: query-sql
+display_name: Query analytics data
+path: tools
+execution: local
+description: >-
+  Use this tool when the user asks for a factual calculation or comparison from the local
+  orders dataset. It executes one guarded, read-only DuckDB statement and returns columns,
+  typed rows, truncation status, and the executed query. Do NOT use it to modify data, access
+  external files or URLs, or persist insights. Unsafe, malformed, or failed queries return an
+  explicit error result that must not be treated as evidence.
+function:
+  name: query_sql
+  description: >-
+    Run exactly one read-only query against the local orders table when analytics evidence is
+    needed. Aggregate before returning large results. Do NOT use for mutations, external data,
+    or saving findings. Returns query, columns, rows, and truncated on success, or an explicit
+    error_code and error on failure.
+  strict: true
+  parameters:
+    type: object
+    properties:
+      query:
+        type: string
+        minLength: 1
+        description: >-
+          One DuckDB SELECT, WITH, DESCRIBE, or EXPLAIN statement against the local orders
+          table; for example, SELECT region, SUM(net_revenue) FROM orders GROUP BY region.
+    required: [query]
+    additionalProperties: false

@@ -1,0 +1,3 @@
+kind: project
+key: pydata2026
+project_id: ${ORQ_PROJECT_ID}

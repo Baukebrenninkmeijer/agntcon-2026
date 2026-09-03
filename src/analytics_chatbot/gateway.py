@@ -36,12 +36,13 @@ class OrqGateway:
     ) -> GatewayResponse:
         request: dict[str, Any] = {
             "model": self.settings.model,
-            "instructions": SYSTEM_PROMPT,
             "input": input_items if isinstance(input_items, str) else list(input_items),
-            "tools": list(tools),
             "store": True,
             "extra_body": trace_context.extra_body(conversation.thread_id),
         }
+        if not self.settings.model.startswith("agent/"):
+            request["instructions"] = SYSTEM_PROMPT
+            request["tools"] = list(tools)
         if conversation.previous_response_id:
             request["previous_response_id"] = conversation.previous_response_id
 
