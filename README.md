@@ -3,7 +3,86 @@
 The operational data-analysis agent for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md).
 It answers business questions against a deterministic local DuckDB dataset, calls the model through
 the orq AI Gateway, and records the final response, tool trajectory, and state changes needed by a
-later evaluation loop. It intentionally contains no self-learning or evaluator implementation.
+later evaluation loop. Evaluation operations remain separate from the runtime, and improvements are
+reviewed and versioned rather than applied by a self-learning loop.
+
+## Evaluation flywheel
+
+<!--
+Source of truth for docs/assets/evaluation-flywheel.svg.
+Regenerate the slide asset from this Mermaid block; do not edit the SVG diagram by hand.
+-->
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif", "primaryTextColor": "#182230", "lineColor": "#475467", "clusterBkg": "#F8FAFC", "clusterBorder": "#98A2B3"}, "flowchart": {"curve": "basis", "htmlLabels": true}}}%%
+flowchart TB
+    accTitle: PyData 2026 analytics-agent evaluation flywheel
+    accDescr: Simulated users enter an Orq-hosted agent that calls guarded local tools and records traces; local evaluatorq processing replays trace-backed DataPoints through deterministic checks and four atomic judges before human review drives manual, versioned improvement.
+
+    SIM["Simulated users and cases<br/>ACTIVE"]
+
+    subgraph ORQ["Orq platform"]
+        direction TB
+        AGENT["YAML-synced Orq<br/>analytics agent<br/>ACTIVE"]
+        TRACE["Orq traces<br/>VERIFIED capture"]
+    end
+
+    subgraph RUNTIME["Local tool execution"]
+        TOOLS["Guarded local tools<br/>query_sql · save_insight<br/>VERIFIED core · ACTIVE bridge"]
+    end
+
+    subgraph EVAL["Local evaluatorq processing"]
+        direction LR
+        IMPORT["Trace → trace-eval-v1<br/>DataPoints<br/>VERIFIED contract · ACTIVE importer"]
+        REPLAY["Native evaluatorq replay<br/>VERIFIED framework"]
+        CHECKS["Deterministic routing<br/>and invariant checks<br/>VERIFIED routing · ACTIVE checks"]
+        JUDGES["Four atomic LLM judges<br/>VERIFIED framework"]
+        REVIEW["Human alignment and<br/>disagreement review<br/>PLANNED"]
+        IMPROVE["Reviewed, versioned agent<br/>and evaluator improvements<br/>PLANNED · ↺ back to YAML agent"]
+
+        IMPORT --> REPLAY
+        REPLAY -->|"no target re-run"| CHECKS
+        REPLAY -->|"evidence-scoped"| JUDGES
+        CHECKS --> REVIEW
+        JUDGES --> REVIEW
+        REVIEW --> IMPROVE
+    end
+
+    SIM -->|"multi-turn workload"| AGENT
+    AGENT -->|"function calls"| TOOLS
+    TOOLS -.->|"validated results"| AGENT
+    AGENT -->|"responses and spans"| TRACE
+    TRACE -->|"read-only import"| EVAL
+
+    class SIM,AGENT active
+    class TRACE,REPLAY,JUDGES verified
+    class TOOLS,IMPORT,CHECKS mixed
+    class REVIEW,IMPROVE planned
+    classDef verified fill:#E8F7F1,stroke:#19735B,color:#123A31,stroke-width:2px
+    classDef active fill:#FFF3D6,stroke:#A15C00,color:#4A2A00,stroke-width:2px
+    classDef mixed fill:#FFF8E8,stroke:#A15C00,color:#4A2A00,stroke-width:2px,stroke-dasharray:6 3
+    classDef planned fill:#F2F4F7,stroke:#667085,color:#344054,stroke-width:2px,stroke-dasharray:6 3
+    style ORQ fill:#F5F3FF,stroke:#6941C6,stroke-width:2px,color:#42307D
+    style RUNTIME fill:#F8FAFC,stroke:#475467,stroke-width:2px,color:#344054
+    style EVAL fill:#F8FAFC,stroke:#475467,stroke-width:2px,color:#344054
+    linkStyle default stroke:#475467,stroke-width:1.6px,color:#344054
+```
+
+*Figure: the evaluation flywheel and its repository delivery status. `VERIFIED` means integrated
+and checked; `ACTIVE` means work exists outside the integrated baseline; `PLANNED` means the design
+is agreed but no accepted implementation exists. Mixed-status nodes name both states explicitly.*
+
+**Text alternative:**
+
+Simulated multi-turn workloads enter the YAML-defined analytics agent on Orq. The hosted agent calls
+locally guarded query and save tools, receives their validated results, and records responses and
+spans as Orq traces. A read-only local importer converts those traces into `trace-eval-v1` evaluatorq
+`DataPoint`s. Native evaluatorq replay returns the recorded answer without rerunning the target, then
+fans out to deterministic checks and four evidence-isolated LLM judges: answer correctness, query
+semantics, evidence faithfulness, and multi-turn consistency. Human alignment and disagreement review
+inform reviewed, versioned agent or evaluator changes, closing a manual—not self-learning—loop.
+
+[Download the slide-ready SVG](docs/assets/evaluation-flywheel.svg).
 
 ## Setup
 
