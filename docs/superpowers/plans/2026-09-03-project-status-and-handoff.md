@@ -25,7 +25,7 @@
 
 ## Document Maintenance
 
-**Status date:** 2026-09-03, Europe/Amsterdam.
+**Status date:** 2026-09-04, Europe/Amsterdam.
 
 **Last-updated rule:** Change the status date whenever a checkbox, workstream state, dependency, acceptance result, remote-state observation, or decision changes. Add one compact changelog entry containing the date, affected workstream, evidence, and next handoff. Do not mark work complete from code presence alone.
 
@@ -46,7 +46,7 @@
 | Analytics chatbot core | `VERIFIED` | Deterministic data, guarded SQL, insight state, agent loop, CLI, local run audit, and Orq tracing are implemented on local `main` | Preserve behavior while introducing hosted configuration |
 | evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
-| Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, and a three-attempt pilot review; the third attempt awaits explicit user review | Remove the tracked project ID, obtain a fresh read-only remote plan, accept or reject pilot attempt three, then finish the row-aware bridge and human corpus review |
+| Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, and a three-attempt pilot review with complete scrubbed Responses transcripts; the third attempt awaits explicit user review | Remove the tracked project ID, obtain a fresh read-only remote plan, accept or reject pilot attempt three, then finish the row-aware bridge and human corpus review |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated on local `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Re-run the same gate after dependency or hosted-resource changes; remote-run evidence awaits publication |
 | Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
@@ -430,6 +430,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-04 | WS3b | Retrieved all six Responses steps for the three pilot attempts from Orq, matched them to the ignored evaluatorq exports, and expanded the tracked review artifact so every attempt preserves ordered reasoning summaries, tool calls/results, and final output without runtime identifiers | Review the now-complete attempt-three transcript before authorizing any remaining-case run |
 | 2026-09-03 | WS3a/WS3b | Integrated the hosted-resource reconciler, corrected agent prompt, two deterministic and four gated LLM evaluator definitions, initial evaluatorq target, 50-case candidate corpus, and three-attempt pilot review on local `main`; fresh offline evidence: resource bundle/gate validation, exact oracle reproduction, 30/20 split, 71 non-live tests, Ruff, and package build. A fresh remote dry-run was unavailable because the checkout has no `.env`; no remote mutation occurred | Remove the tracked project ID, run a fresh credentialed read-only plan, obtain explicit review of pilot attempt three, and do not create evaluators/datasets or run the remaining 49 before their gates |
 | 2026-09-03 | Architecture communication | Added the canonical SVG evaluation flywheel and README narrative; inspected rendered output at README and 16:9 slide scales, and verified SVG structure/accessibility locally | Reuse the SVG directly in talk materials; update it when architecture or delivery boundaries materially change |
 | 2026-09-03 | WS2 | Integrated multi-format trace and exact finalized-run-audit normalization on local `main`; synthetic fixtures cover Chat Completions, Responses API, OpenTelemetry GenAI, lineage/evaluator exclusion, tool evidence, explicit malformed-input failures, and audit fallback; integrated checks passed with 57 non-live tests, one deselection, Ruff, and package build | Convert the generic replay `DataPoint` to `trace-eval-v1`, add the Orq scorer factory, validate genuine multi-step traces, then rotate the temporary trace-access key |

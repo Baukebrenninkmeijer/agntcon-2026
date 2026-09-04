@@ -6,6 +6,8 @@ from evaluatorq.simulation import SimulationDatapoint
 
 from analytics_chatbot.evaluation_ops.cases import build_cases, write_cases
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def test_builds_fifty_stable_oracle_backed_cases(tmp_path: Path) -> None:
     database = tmp_path / "analytics.duckdb"
@@ -41,3 +43,27 @@ def test_builds_fifty_stable_oracle_backed_cases(tmp_path: Path) -> None:
     assert [SimulationDatapoint.model_validate(row).id for row in loaded] == [
         record["id"] for record in records
     ]
+
+
+def test_pilot_review_preserves_every_attempt_transcript() -> None:
+    review = json.loads(
+        (ROOT / "orq/resources/datasets/simulation-pilot-review.json").read_text()
+    )
+
+    assert [attempt["attempt"] for attempt in review["attempts"]] == [1, 2, 3]
+    for attempt in review["attempts"]:
+        transcript = attempt["transcript"]
+        assert transcript[0]["role"] == "user"
+        assert transcript[-1]["role"] == "assistant"
+        assert transcript[-1].get("content")
+        assert sum(item.get("type") == "reasoning_summary" for item in transcript) == 2
+        tool_calls = [item for item in transcript if "tool_call" in item]
+        tool_results = [item for item in transcript if item["role"] == "tool"]
+        assert len(tool_calls) == len(tool_results) >= 1
+        assert [item["tool_call"]["name"] for item in tool_calls] == [
+            item["name"] for item in tool_results
+        ]
+
+    serialized = json.dumps(review)
+    for forbidden_key in ('"trace_id"', '"span_id"', '"thread_id"', '"call_id"'):
+        assert forbidden_key not in serialized
