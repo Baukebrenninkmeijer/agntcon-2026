@@ -72,8 +72,7 @@ def test_builds_fifty_harder_multi_turn_edge_cases(tmp_path: Path) -> None:
     assert sum(record["expected_min_user_turns"] == 3 for record in records) == 15
     assert all(
         any(
-            criterion["type"] == "must_happen"
-            and "follow-up" in criterion["description"].lower()
+            criterion["type"] == "must_happen" and "follow-up" in criterion["description"].lower()
             for criterion in record["scenario"]["criteria"]
         )
         for record in records
@@ -138,18 +137,13 @@ def test_edge_v2_oracles_cover_the_staged_final_request(tmp_path: Path) -> None:
         family_records = [record for record in records if record["id"].endswith(family)]
         assert len(family_records) == 5
         actual = {
-            json.dumps(record["oracle"]["expected"], sort_keys=True)
-            for record in family_records
+            json.dumps(record["oracle"]["expected"], sort_keys=True) for record in family_records
         }
-        assert actual == {
-            json.dumps(expected, sort_keys=True)
-        }
+        assert actual == {json.dumps(expected, sort_keys=True)}
 
 
 def test_pilot_review_preserves_every_attempt_transcript() -> None:
-    review = json.loads(
-        (ROOT / "orq/resources/datasets/simulation-pilot-review.json").read_text()
-    )
+    review = json.loads((ROOT / "orq/resources/datasets/simulation-pilot-review.json").read_text())
 
     assert [attempt["attempt"] for attempt in review["attempts"]] == [1, 2, 3]
     for attempt in review["attempts"]:
@@ -168,3 +162,30 @@ def test_pilot_review_preserves_every_attempt_transcript() -> None:
     serialized = json.dumps(review)
     for forbidden_key in ('"trace_id"', '"span_id"', '"thread_id"', '"call_id"'):
         assert forbidden_key not in serialized
+
+
+def test_v3_is_one_persona_fifty_distinct_situations() -> None:
+    from analytics_chatbot.evaluation_ops.cases_v3 import SCENARIOS, build_v3_cases
+
+    database = ROOT / "data" / "analytics.duckdb"
+    if not database.exists():
+        import pytest
+
+        pytest.skip("pinned DuckDB not present")
+
+    records = build_v3_cases(database)
+
+    assert len(records) == 50
+    assert len({record["id"] for record in records}) == 50
+    assert len({record["first_message"] for record in records}) == 50
+    assert {record["persona"]["name"] for record in records} == {"business-analyst"}
+    assert all(record["corpus_version"] == "simulation-v3" for record in records)
+    assert sum(record["split"] == "dev" for record in records) == 30
+    assert sum(record["oracle"] is None for record in records) == 3
+    assert all(record["oracle"]["expected"]["rows"] for record in records if record["oracle"])
+    assert sum(record["expected_min_user_turns"] > 1 for record in records) == sum(
+        scenario.min_user_turns > 1 for scenario in SCENARIOS
+    )
+    assert [SimulationDatapoint.model_validate(record).id for record in records] == [
+        record["id"] for record in records
+    ]
