@@ -180,17 +180,23 @@ Do not use `wrap_simulation_agent(target=callable)` for this stateful target; it
 - [ ] Implement a task-local `EvaluationContext(case_id, split, repetition, experiment_slug, corpus_version)` that the row-aware job binds before `SimulationRunner.run()`. `AnalyticsChatbotTarget.new()` reads it when the runner clones a per-conversation target.
 - [ ] Use public `SimulationRunner(target_agent=..., target_agent_timeout_ms=60_000, max_target_retries=2, max_turns=5, llm_config=...)`.
 - [ ] Wrap public `runner.run()` in `asyncio.timeout(180)`. Convert timeout/cancellation into an explicit failed row and always close runner/targets.
-- [ ] Maintain a concurrency-safe audit registry keyed by evaluatorq run ID and row. The target clone registers its session artifact; after `runner.run()`, the job caches `{SimulationResult, session audit, case oracle}` by `id(DataPoint)` for scorers.
-- [ ] Return evaluatorq's `to_open_responses(result, runner.model)` as the job output. Scorers that need trajectory/state use the raw cache instead of expecting the converted output to retain local-only fields.
-- [ ] Reuse evaluatorq's `goal_achieved` and `criteria_met` simulation scorers against the cached `SimulationResult`; add only the genuinely project-specific tool-integrity and state-policy scorers.
-- [ ] Test clone isolation, cache correlation under parallel completion, timeout cleanup, retry count, transcript/tool conversion, result-less calls, and missing-cache failure.
+- [ ] Persist evaluatorq's complete raw `SimulationResult` JSONL as the immutable
+  generation artifact. Do not introduce a process-local result cache or a second
+  hand-authored transcript ledger.
+- [ ] Normalize stored results with `simulation_artifacts.normalize_simulation_results`,
+  joining the frozen case by `metadata.datapoint_id`. The adapter owns only light
+  deduplication, tool/result checks, final-assistant ordering, and oracle/split
+  attachment.
+- [ ] Test clone isolation, timeout cleanup, retry count, raw-result persistence,
+  transcript/tool normalization, expected-tool checks, exact duplicate removal,
+  and evaluatorq `DataPoint` round-trip.
 
-## Task 6: Import the 50 trace-backed observed examples
+## Task 6: Normalize the 50 stored observed examples
 
-- [ ] Run the fixed five-case **live simulation pilot** sequentially. Verify hosted/local handshake, one shared session per conversation, state isolation, trace linkage, and raw-cache scoring.
-- [ ] Run one canonical calibration conversation for every frozen case with juries disabled. Import each completed trace into `TraceBackedEvaluationRow` (`trace-eval-v1`) with complete conversation, raw tools/results, retrievals, state snapshots, oracle, split, and source trace/span IDs. This produces the 50 observed examples that humans label; cases alone are not treated as labeled examples.
+- [ ] Run the fixed five-case **live simulation pilot** sequentially. Verify hosted/local handshake, one shared session per conversation, state isolation, and complete raw artifact capture.
+- [ ] Run one canonical calibration conversation for every frozen case with juries disabled. Normalize each stored result into `TraceBackedEvaluationRow` (`trace-eval-v1`) with complete conversation, raw tools/results, state snapshots, oracle, and split. A self-contained simulation row does not require source trace/span IDs. This produces the 50 observed examples that humans label; cases alone are not treated as labeled examples.
 - [ ] Pre-register the canonical run/row mapping and do not rerun selectively based on output quality.
-- [ ] Build review packets from the exact observed final answer, tool trajectory/results, state snapshots, executable oracle, and trace link.
+- [ ] Generate review packets from the exact observed final answer, tool trajectory/results, state snapshots, and executable oracle. Use Orq trace links and reasoning summaries only as optional enrichment.
 - [ ] For each applicable atomic rubric, store `{value, explanation}` using the exact `pass`/`fail`/`not_applicable` verdict space. One reviewer labels dev; two reviewers independently label test before adjudication. Reject empty explanations.
 - [ ] Commit only accepted `gold-labels.jsonl` and provenance hashes. Keep reviewer packets and transient trace exports ignored.
 
