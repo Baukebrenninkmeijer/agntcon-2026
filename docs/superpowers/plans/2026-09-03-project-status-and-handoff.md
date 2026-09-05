@@ -47,11 +47,11 @@
 | evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
 | Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, a three-attempt pilot review, and a lightweight raw-simulation normalizer; all three ignored pilot artifacts pass the adapter's downstream sufficiency checks | Remove the tracked project ID, obtain a fresh read-only remote plan, then human-review/freeze the cases before any bulk live run |
-| Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated on local `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Re-run the same gate after dependency or hosted-resource changes; remote-run evidence awaits publication |
+| Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated and published on `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Confirm the first published workflow run, then re-run the same gate after dependency or hosted-resource changes |
 | Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
 
-The latest local verification for the integrated tree is `71 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-03. Resource loading found one agent, two tools, two deterministic evaluators, and four human-label-gated LLM evaluators. The 50-case corpus reproduced exactly from freshly executed DuckDB oracles with a 30-dev/20-test split. The primary checkout had no `.env`, so a fresh remote dry-run was unavailable; no remote request or mutation occurred.
+The latest local verification for the integrated tree is `78 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-05. Resource loading found one agent, two tools, two deterministic evaluators, and four human-label-gated LLM evaluators. The 50-case corpus reproduced exactly from freshly executed DuckDB oracles with a 30-dev/20-test split. Repository `main` was published to `origin/main` on 2026-09-05; this did not mutate Orq resources. The primary checkout has no `.env`, so a fresh credentialed Orq dry-run remains unavailable.
 
 ## Objectives
 
@@ -379,7 +379,7 @@ Each integration candidate should be a focused commit or reviewable commit serie
 | Offline CI gains a hidden live dependency | Forks fail or expose credentials | Explicit marker exclusion, no secrets, fake clients, and protected separate live jobs |
 | Remote state changes while tasks run | A stale plan overwrites newer resources | Fresh snapshot immediately before apply; semantic diff; fail on unexpected duplicates/mismatch |
 | Temporary key survives after validation | Credential exposure window remains open | Named rotation handoff and explicit completion entry in the task log |
-| Local `main` diverges further from remote | Publication becomes a separate integration problem | Keep local integration evidence; do not claim remote availability or push without a new request |
+| Local `main` diverges from remote | Publication becomes a separate integration problem | `main` was published on explicit request on 2026-09-05; continue to integrate and verify locally before separately authorized pushes |
 
 ## Reproducibility Commands
 
@@ -420,7 +420,7 @@ Do not run the apply command from this documentation task. Live simulation/align
 | 2026-09-03 | Judge four atomic concerns independently with rubric-specific raw evidence | Accepted and integrated at the contract/framework level; alignment remains outstanding |
 | 2026-09-03 | Manage hosted agent, tools, and evaluator resources via YAML transformed through the Orq SDK with repeatable Make targets | Active; each of two deterministic and four LLM judge evaluators gets one YAML file, and runtime IDs remain untracked |
 | 2026-09-03 | Target the existing `pydata2026` project rather than creating another project | Accepted; live state must be freshly reconciled |
-| 2026-09-03 | Build offline CI as an independent workstream | Accepted and integrated locally; live checks remain protected/manual, and remote-run evidence awaits publication |
+| 2026-09-03 | Build offline CI as an independent workstream | Accepted, integrated, and published; live checks remain protected/manual |
 | 2026-09-03 | Keep one hand-authored SVG as the architecture visual source of truth | Accepted; the README embeds the same slide-ready asset, with semantic text and status encoded accessibly |
 | 2026-09-03 | Make the project status document a required living plan for every relevant coding task | Accepted and integrated through canonical root `CLAUDE.md` guidance plus an `AGENTS.md` symlink |
 | 2026-09-03 | Integrate verified work into local `main` and do not push by default | Accepted |
@@ -432,6 +432,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-05 | Delivery | Published the fully integrated `main` history to `origin/main` on explicit request and verified the remote ref; the first published Offline CI run started against that exact commit | Confirm the workflow conclusion; keep Orq resource mutation separately gated |
 | 2026-09-05 | Integration | Audited every registered worktree against `main`, preserved the sole uncommitted talk-outline change, recorded the already-integrated plan and superseded Mermaid visual branches as merged without overwriting newer content, and closed all secondary worktrees; only the clean primary `main` worktree remains | Retain source branches until ordinary branch cleanup is explicitly requested; start future work from primary `main` |
 | 2026-09-05 | Planning | Removed the superseded process-local simulation cache and mandatory simulation-trace import steps from the detailed operations plan; stored `SimulationResult` normalization is now the single simulation-to-evaluatorq path | Do not rebuild a cache/ledger or require trace IDs for self-contained simulation rows |
 | 2026-09-05 | WS3b | Added the lightweight raw `SimulationResult` adapter and optional-source row contract. All three local pilot artifacts were accepted independently (zero rejects/duplicates), retained one/two/one ordered `query_sql` events, ended with the exact assistant output, joined an oracle, and produced evaluatorq `DataPoint`s; 78 non-live tests passed with one deselection, Ruff passed, and package build passed | Keep raw JSONL immutable; human-review/freeze cases before bulk generation, and add trace/reasoning only as optional enrichment |
