@@ -6,10 +6,12 @@ from __future__ import annotations
 import argparse
 import asyncio
 import os
+from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, Protocol
 
+import httpx
 from dotenv import load_dotenv
 
 from analytics_chatbot.evaluation_ops import run_trace_evaluation
@@ -117,6 +119,71 @@ def _available_versions(evals_client: object, evaluator_id: str) -> set[str]:
         cursor = str(records[-1].id)
 
 
+def _validate_evaluation_results(
+    results: Sequence[Any],
+    *,
+    expected_rows: int,
+    expected_evaluator_names: Sequence[str],
+) -> None:
+    row_errors = sum(bool(getattr(result, "error", None)) for result in results)
+    jobs = [job for result in results for job in (getattr(result, "job_results", None) or [])]
+    job_errors = sum(bool(getattr(job, "error", None)) for job in jobs)
+    scores = [
+        score
+        for job in jobs
+        for score in (getattr(job, "evaluator_scores", None) or [])
+    ]
+    evaluator_errors = sum(bool(getattr(score, "error", None)) for score in scores)
+    empty_scores = sum(
+        value is None or (isinstance(value, str) and not value.strip())
+        for score in scores
+        for value in [getattr(getattr(score, "score", None), "value", None)]
+    )
+    expected_score_count = expected_rows * len(expected_evaluator_names)
+    actual_names = [str(getattr(score, "evaluator_name", "")) for score in scores]
+    expected_names = [name for _ in range(expected_rows) for name in expected_evaluator_names]
+    expected_name_counts = Counter(expected_evaluator_names)
+    row_job_shape_errors = 0
+    row_score_set_errors = 0
+    for result in results:
+        result_jobs = list(getattr(result, "job_results", None) or [])
+        if len(result_jobs) != 1:
+            row_job_shape_errors += 1
+            continue
+        result_score_names = Counter(
+            str(getattr(score, "evaluator_name", ""))
+            for score in (getattr(result_jobs[0], "evaluator_scores", None) or [])
+        )
+        if result_score_names != expected_name_counts:
+            row_score_set_errors += 1
+
+    failures: list[str] = []
+    if len(results) != expected_rows:
+        failures.append(f"expected {expected_rows} rows, received {len(results)}")
+    if len(jobs) != expected_rows:
+        failures.append(f"expected {expected_rows} replay jobs, received {len(jobs)}")
+    if len(scores) != expected_score_count:
+        failures.append(f"expected {expected_score_count} scores, received {len(scores)}")
+    if sorted(actual_names) != sorted(expected_names):
+        failures.append("evaluator score names did not match the pinned request")
+    if row_job_shape_errors:
+        failures.append(f"{row_job_shape_errors} row replay-job shape error(s)")
+    if row_score_set_errors:
+        failures.append(f"{row_score_set_errors} row score-set error(s)")
+    if row_errors:
+        failures.append(f"{row_errors} row error(s)")
+    if job_errors:
+        failures.append(f"{job_errors} job error(s)")
+    if evaluator_errors:
+        failures.append(f"{evaluator_errors} evaluator error(s)")
+    if empty_scores:
+        failures.append(f"{empty_scores} empty score(s)")
+    if failures:
+        raise ReplayPreparationError(
+            "Evaluatorq replay failed result validation: " + "; ".join(failures)
+        )
+
+
 async def run(
     args: argparse.Namespace,
     *,
@@ -126,6 +193,7 @@ async def run(
     replay_loader: Callable[..., Any] = load_simulation_replay,
     scorer_factory: Callable[..., Any] = orq_evaluator,
     evaluation_runner: Callable[..., Any] = run_trace_evaluation,
+    async_http_client_factory: Callable[..., Any] = httpx.AsyncClient,
     environ: Mapping[str, str] = os.environ,
     printer: Callable[[str], object] = print,
 ) -> int:
@@ -149,15 +217,6 @@ async def run(
             f"Pinned version(s) {missing} do not exist for evaluator key {EVALUATOR_KEY!r}."
         )
 
-    evaluators = [
-        scorer_factory(
-            client=gateway.client,
-            evaluator_selector=f"{evaluator_id}@{version}",
-            scorer_name=f"answer_correctness@{version}",
-        )
-        for version in versions
-    ]
-
     corpus = replay_loader(cases_path=args.cases, results_path=args.results)
     if len(corpus.samples) != EXPECTED_SAMPLE_COUNT:
         raise ReplayPreparationError(
@@ -168,14 +227,29 @@ async def run(
         f"Running {len(corpus.samples)} stored replay samples with "
         f"{len(corpus.warnings)} QC warning(s) retained."
     )
-    await evaluation_runner(
-        [sample.row for sample in corpus.samples],
-        evaluators=evaluators,
-        experiment_name=args.experiment_name,
-        experiment_path=args.project_path,
-        datapoint_parallelism=args.datapoint_parallelism,
-        llm_parallelism=args.llm_parallelism,
-        print_results=args.print_results,
+    async with async_http_client_factory(timeout=600.0) as evaluator_http_client:
+        evaluators = [
+            scorer_factory(
+                http_client=evaluator_http_client,
+                api_key=api_key,
+                evaluator_selector=f"{evaluator_id}@{version}",
+                scorer_name=f"answer_correctness@{version}",
+            )
+            for version in versions
+        ]
+        results = await evaluation_runner(
+            [sample.row for sample in corpus.samples],
+            evaluators=evaluators,
+            experiment_name=args.experiment_name,
+            experiment_path=args.project_path,
+            datapoint_parallelism=args.datapoint_parallelism,
+            llm_parallelism=args.llm_parallelism,
+            print_results=args.print_results,
+        )
+    _validate_evaluation_results(
+        results,
+        expected_rows=len(corpus.samples),
+        expected_evaluator_names=tuple(f"answer_correctness@{version}" for version in versions),
     )
     return 0
 

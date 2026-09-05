@@ -108,8 +108,16 @@ default. As of 2026-09-05, production still has the known backend issue
 [BOPS-1180](https://linear.app/orqai/issue/BOPS-1180/evaluatorq-experiments-ignore-path-always-land-in-the-default-project):
 the evaluatorq ingest route accepts but ignores that path and places the Experiment
 in the workspace's Default project. Do not retry merely to change placement until
-that fix leaves Testing. Until then, open the latest uniquely named 50-row baseline
-directly: [pydata2026 answer-correctness baseline 1.0.0](https://my.orq.ai/<workspace>/experiments/01M1RGTTZV0XPJ1DWHE0EASXYZ?runId=01M1RGTTZTBA7FSQV07K85HGG8).
+that fix leaves Testing. The latest uniquely named 50-row run is retained only as a
+[diagnostic run with an invalid empty correctness column](https://my.orq.ai/<workspace>/experiments/01M1RGTTZV0XPJ1DWHE0EASXYZ?runId=01M1RGTTZTBA7FSQV07K85HGG8):
+its export contains zero populated scores. The replay scorer now calls the pinned
+evaluator through one shared asynchronous HTTP client because orq-ai-sdk 4.14.7 drops
+the current top-level v3 evaluator response. Run a fresh uniquely named baseline and
+verify 50/50 exported scores before using it for alignment.
+The async scorer has been validated end to end with a
+[three-row evaluatorq smoke Experiment](https://my.orq.ai/<workspace>/experiments/01M1RJ2TZR2WMEEED158F5V72W?runId=01M1RJ2TZQF4QVGRAC10BN0R34):
+the Orq JSONL export contains three rows and three populated
+`answer_correctness@1.0.0` values.
 Repeat `--evaluator-version` after an
 approved evaluator update to create distinct side-by-side columns such as
 `answer_correctness@1.0.0` and `answer_correctness@1.0.1` over identical rows.

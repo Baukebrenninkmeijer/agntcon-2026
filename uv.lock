@@ -13,6 +13,7 @@ source = { editable = "." }
 dependencies = [
     { name = "duckdb" },
     { name = "evaluatorq" },
+    { name = "httpx" },
     { name = "openai" },
     { name = "orq-ai-sdk" },
     { name = "polars" },
@@ -37,6 +38,7 @@ dev = [
 requires-dist = [
     { name = "duckdb", specifier = ">=1.4" },
     { name = "evaluatorq", specifier = "==1.33.0" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "openai", specifier = ">=2.8" },
     { name = "orq-ai-sdk", specifier = ">=4.14.7" },
     { name = "polars", specifier = ">=1.35" },

@@ -6,6 +6,7 @@ import json
 from typing import Any
 
 from evaluatorq import EvaluationResult
+from evaluatorq.common.llm_limit import llm_slot
 from evaluatorq.types import Evaluator, ScorerParameter
 
 
@@ -17,9 +18,11 @@ def _reference_text(value: Any) -> str:
 
 def orq_evaluator(
     *,
-    client: Any,
+    http_client: Any,
+    api_key: str,
     evaluator_selector: str,
     scorer_name: str | None = None,
+    base_url: str = "https://my.orq.ai",
 ) -> Evaluator:
     """Build an answer-correctness scorer backed by one immutable Orq version."""
 
@@ -49,31 +52,44 @@ def orq_evaluator(
         user_query = next(
             message.content for message in reversed(row.conversation) if message.role == "user"
         )
-        response = await client.evals.invoke_async(
-            id=evaluator_selector,
-            query=user_query,
-            output=output,
-            reference=_reference_text(row.oracle.expected_answer),
-            messages=conversation,
-        )
-        remote_result = response.result
-        if remote_result is None:
-            raise RuntimeError(
-                f"Orq evaluator {evaluator_selector!r} returned no result"
+        async with llm_slot():
+            response = await http_client.post(
+                f"{base_url.rstrip('/')}/v3/evaluators/{evaluator_selector}/invoke",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "context": {
+                        "input": {
+                            "user_query": user_query,
+                            "expected_output": _reference_text(row.oracle.expected_answer),
+                        },
+                        "output": {"response": output},
+                        "messages": conversation,
+                    }
+                },
             )
-        if remote_result.value is None:
+        response.raise_for_status()
+        remote_result = response.json()
+        if not isinstance(remote_result, dict):
+            raise RuntimeError(
+                f"Orq evaluator {evaluator_selector!r} returned a non-object result"
+            )
+        value = remote_result.get("value")
+        if value is None or (isinstance(value, str) and not value.strip()):
             raise RuntimeError(
                 f"Orq evaluator {evaluator_selector!r} returned a result without a value"
             )
         raw_output = {
-            key: value
+            key: remote_result[key]
             for key in ("trace_id", "span_id", "evaluator_id")
-            if (value := getattr(remote_result, key, None)) is not None
+            if remote_result.get(key) is not None
         }
         return EvaluationResult(
-            value=remote_result.value,
-            explanation=remote_result.explanation,
-            pass_=remote_result.passed,
+            value=value,
+            explanation=remote_result.get("explanation"),
+            pass_=remote_result.get("passed"),
             raw_output=raw_output or None,
         )
 

@@ -121,7 +121,40 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
 
     async def fake_evaluation_runner(rows: list[object], **kwargs: Any) -> list[object]:
         runner_calls.append((rows, kwargs))
-        return []
+        evaluator_names = [evaluator.name for evaluator in kwargs["evaluators"]]
+        return [
+            SimpleNamespace(
+                error=None,
+                job_results=[
+                    SimpleNamespace(
+                        error=None,
+                        evaluator_scores=[
+                            SimpleNamespace(
+                                evaluator_name=name,
+                                error=None,
+                                score=SimpleNamespace(value="pass"),
+                            )
+                            for name in evaluator_names
+                        ],
+                    )
+                ],
+            )
+            for _row in rows
+        ]
+
+    fake_http_client = SimpleNamespace(post="async-post")
+
+    class FakeAsyncHttpClientContext:
+        async def __aenter__(self) -> object:
+            events.append("http-enter")
+            return fake_http_client
+
+        async def __aexit__(self, *args: object) -> None:
+            events.append("http-exit")
+
+    def fake_async_http_client_factory(**kwargs: Any) -> FakeAsyncHttpClientContext:
+        assert kwargs == {"timeout": 600.0}
+        return FakeAsyncHttpClientContext()
 
     printed: list[str] = []
     args = Namespace(
@@ -144,6 +177,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         replay_loader=fake_replay_loader,
         scorer_factory=fake_scorer_factory,
         evaluation_runner=fake_evaluation_runner,
+        async_http_client_factory=fake_async_http_client_factory,
         environ=environment,
         printer=printed.append,
     )
@@ -172,8 +206,74 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         f"{opaque_evaluator_id}@1.0.0",
         f"{opaque_evaluator_id}@1.1.0",
     ]
+    assert all(call["http_client"] is fake_http_client for call in scorer_calls)
+    assert all(call["api_key"] == "secret-not-for-output" for call in scorer_calls)
+    assert events[-1] == "http-exit"
     assert all(opaque_evaluator_id not in line for line in printed)
     assert any("50" in line and "2 QC warning" in line for line in printed)
+
+
+def test_replay_result_validation_rejects_captured_evaluator_errors() -> None:
+    results = [
+        SimpleNamespace(
+            error=None,
+            job_results=[
+                SimpleNamespace(
+                    error=None,
+                    evaluator_scores=[
+                        SimpleNamespace(
+                            evaluator_name="answer_correctness@1.0.0",
+                            error="remote evaluator failed",
+                            score=SimpleNamespace(value=""),
+                        )
+                    ],
+                )
+            ],
+        )
+    ]
+
+    with pytest.raises(
+        run_evaluatorq_replay.ReplayPreparationError,
+        match="1 evaluator error.*1 empty score",
+    ):
+        run_evaluatorq_replay._validate_evaluation_results(
+            results,
+            expected_rows=1,
+            expected_evaluator_names=("answer_correctness@1.0.0",),
+        )
+
+
+def test_replay_result_validation_rejects_scores_shifted_between_rows() -> None:
+    duplicate_score = SimpleNamespace(
+        evaluator_name="answer_correctness@1.0.0",
+        error=None,
+        score=SimpleNamespace(value="pass"),
+    )
+    results = [
+        SimpleNamespace(
+            error=None,
+            job_results=[
+                SimpleNamespace(
+                    error=None,
+                    evaluator_scores=[duplicate_score, duplicate_score],
+                )
+            ],
+        ),
+        SimpleNamespace(
+            error=None,
+            job_results=[SimpleNamespace(error=None, evaluator_scores=[])],
+        ),
+    ]
+
+    with pytest.raises(
+        run_evaluatorq_replay.ReplayPreparationError,
+        match="2 row score-set error",
+    ):
+        run_evaluatorq_replay._validate_evaluation_results(
+            results,
+            expected_rows=2,
+            expected_evaluator_names=("answer_correctness@1.0.0",),
+        )
 
 
 @pytest.mark.asyncio
