@@ -25,6 +25,7 @@ def empty_snapshot() -> RemoteSnapshot:
             "openai/gpt-5.6-luna": True,
             "google-ai/gemini-3.5-flash-lite": True,
             "tensorix/qwen/qwen3.8-flash-next": True,
+            "wafer/DeepSeek-V4-Flash-0731-Fast": True,
         },
     )
 

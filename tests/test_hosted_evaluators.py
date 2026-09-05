@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any
 
 import pytest
@@ -23,9 +24,7 @@ def _row(*, expected_answer: Any = "EUR 42") -> TraceBackedEvaluationRow:
                 {"role": "assistant", "content": "It was EUR 42."},
             ],
             "assistant_response": "It was EUR 42.",
-            "oracle": None
-            if expected_answer is None
-            else {"expected_answer": expected_answer},
+            "oracle": None if expected_answer is None else {"expected_answer": expected_answer},
         }
     )
 
@@ -73,6 +72,13 @@ async def test_orq_evaluator_routes_answer_correctness_and_maps_result() -> None
         evaluator_selector="evaluator-id@immutable-version",
     )
     row = _row(expected_answer={"value": "EUR 42"})
+    expected_conversation = [
+        {"role": "user", "content": "Use net revenue."},
+        {"role": "assistant", "content": "I will calculate it."},
+        {"role": "tool", "content": '{"private_result": 42}'},
+        {"role": "user", "content": "What was the result?"},
+        {"role": "assistant", "content": "It was EUR 42."},
+    ]
 
     result = await evaluator["scorer"](
         {"data": row.to_datapoint(), "output": "It was EUR 42.", "row": 0}
@@ -98,15 +104,10 @@ async def test_orq_evaluator_routes_answer_correctness_and_maps_result() -> None
                 "context": {
                     "input": {
                         "user_query": "What was the result?",
-                        "expected_output": '{"value": "EUR 42"}',
+                        "all_messages": json.dumps(expected_conversation, ensure_ascii=False),
                     },
                     "output": {"response": "It was EUR 42."},
-                    "messages": [
-                        {"role": "user", "content": "Use net revenue."},
-                        {"role": "assistant", "content": "I will calculate it."},
-                        {"role": "user", "content": "What was the result?"},
-                        {"role": "assistant", "content": "It was EUR 42."},
-                    ],
+                    "messages": expected_conversation,
                 }
             },
         }
@@ -143,9 +144,7 @@ async def test_orq_evaluator_allows_result_without_runtime_linkage() -> None:
         evaluator_selector="runtime-id@1.0.0",
     )
 
-    result = await evaluator["scorer"](
-        {"data": _row().to_datapoint(), "output": "It was EUR 41."}
-    )
+    result = await evaluator["scorer"]({"data": _row().to_datapoint(), "output": "It was EUR 41."})
 
     assert result.raw_output is None
 
@@ -160,9 +159,7 @@ async def test_orq_evaluator_fails_when_http_response_has_no_value() -> None:
     )
 
     with pytest.raises(RuntimeError, match="without a value"):
-        await evaluator["scorer"](
-            {"data": _row().to_datapoint(), "output": "It was EUR 42."}
-        )
+        await evaluator["scorer"]({"data": _row().to_datapoint(), "output": "It was EUR 42."})
 
 
 @pytest.mark.asyncio
@@ -175,47 +172,53 @@ async def test_orq_evaluator_rejects_blank_string_values(value: str) -> None:
     )
 
     with pytest.raises(RuntimeError, match="without a value"):
-        await evaluator["scorer"](
-            {"data": _row().to_datapoint(), "output": "It was EUR 42."}
-        )
+        await evaluator["scorer"]({"data": _row().to_datapoint(), "output": "It was EUR 42."})
 
 
 @pytest.mark.asyncio
-async def test_orq_evaluator_propagates_http_errors() -> None:
+async def test_orq_evaluator_propagates_http_errors_after_retries() -> None:
     http_error = ConnectionError("HTTP unavailable")
-    evaluator = orq_evaluator(
-        http_client=FakeAsyncHttpClient(FakeHttpResponse(error=http_error)),
-        api_key="secret",
-        evaluator_selector="evaluator-id@immutable-version",
-    )
-
-    with pytest.raises(ConnectionError) as raised:
-        await evaluator["scorer"](
-            {"data": _row().to_datapoint(), "output": "It was EUR 42."}
-        )
-
-    assert raised.value is http_error
-
-
-@pytest.mark.asyncio
-async def test_orq_evaluator_routes_non_applicability_without_http_call() -> None:
-    http_client = FakeAsyncHttpClient(
-        FakeHttpResponse(error=AssertionError("HTTP must not be called"))
-    )
+    http_client = FakeAsyncHttpClient(FakeHttpResponse(error=http_error))
     evaluator = orq_evaluator(
         http_client=http_client,
         api_key="secret",
         evaluator_selector="evaluator-id@immutable-version",
+        attempts=3,
+        retry_delay=0,
     )
 
-    result = await evaluator["scorer"](
-        {"data": _row(expected_answer=None).to_datapoint(), "output": "No answer."}
+    with pytest.raises(ConnectionError) as raised:
+        await evaluator["scorer"]({"data": _row().to_datapoint(), "output": "It was EUR 42."})
+
+    assert raised.value is http_error
+    assert len(http_client.calls) == 3
+
+
+@pytest.mark.asyncio
+async def test_orq_evaluator_retries_transient_5xx_then_succeeds() -> None:
+    failing = FakeHttpResponse(payload={"message": "grader execution failed"})
+    failing.status_code = 500
+    failing.text = "grader execution failed"
+    succeeding = FakeHttpResponse({"value": "fail", "passed": False})
+    http_client = FakeAsyncHttpClient(failing)
+    responses = iter([failing, succeeding])
+
+    async def post(url: str, **kwargs: Any) -> Any:
+        http_client.calls.append({"url": url, **kwargs})
+        return next(responses)
+
+    http_client.post = post  # type: ignore[method-assign]
+    evaluator = orq_evaluator(
+        http_client=http_client,
+        api_key="secret",
+        evaluator_selector="evaluator-id@immutable-version",
+        retry_delay=0,
     )
 
-    assert result.value == "not_applicable"
-    assert result.pass_ is None
-    assert result.explanation == "No expected answer/oracle is available."
-    assert http_client.calls == []
+    result = await evaluator["scorer"]({"data": _row().to_datapoint(), "output": "It was EUR 42."})
+
+    assert result.value == "fail"
+    assert len(http_client.calls) == 2
 
 
 def test_orq_evaluator_requires_versioned_selector() -> None:

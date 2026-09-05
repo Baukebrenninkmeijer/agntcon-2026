@@ -38,17 +38,11 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     correctness = evaluator_payloads["analytics-answer-correctness"]
     faithfulness = evaluator_payloads["analytics-evidence-faithfulness"]
     assert correctness["output_type"] == "categorical"
-    assert "model" not in correctness
-    assert correctness["mode"] == "jury"
-    assert correctness["jury"] == {
-        "judges": [
-            {"model": "openai/gpt-5.6-luna"},
-            {"model": "google-ai/gemini-3.5-flash-lite"},
-            {"model": "tensorix/qwen/qwen3.8-flash-next"},
-        ],
-        "min_successful_judges": 2,
-    }
-    assert "{{input.expected_output}}" in correctness["prompt"]
+    assert correctness["mode"] == "single"
+    assert correctness["model"] == "wafer/DeepSeek-V4-Flash-0731-Fast"
+    assert "jury" not in correctness
+    assert "{{input.expected_output}}" not in correctness["prompt"]
+    assert "{{input.all_messages}}" in correctness["prompt"]
     assert "{{output.tools_called}}" not in correctness["prompt"]
     assert "{{output.tools_called}}" in faithfulness["prompt"]
     assert "{{input.expected_output}}" not in faithfulness["prompt"]
@@ -142,25 +136,25 @@ def test_evaluator_mode_switches_between_single_judge_and_jury() -> None:
     assert correctness.model is not None
     assert correctness.judges is not None
 
-    jury_body = next(
-        body for body in bundle.evaluator_payloads() if body["key"] == correctness.key
-    )
-    assert jury_body["mode"] == "jury"
-    assert "model" not in jury_body
-    assert [judge["model"] for judge in jury_body["jury"]["judges"]] == correctness.judges
-
-    single = correctness.model_copy(update={"mode": "single"})
-    single_bundle = bundle.model_copy(
-        update={
-            "evaluators": [
-                single if evaluator.key == correctness.key else evaluator
-                for evaluator in bundle.evaluators
-            ]
-        }
-    )
     single_body = next(
-        body for body in single_bundle.evaluator_payloads() if body["key"] == correctness.key
+        body for body in bundle.evaluator_payloads() if body["key"] == correctness.key
     )
     assert single_body["mode"] == "single"
     assert single_body["model"] == correctness.model
     assert "jury" not in single_body
+
+    jury = correctness.model_copy(update={"mode": "jury"})
+    jury_bundle = bundle.model_copy(
+        update={
+            "evaluators": [
+                jury if evaluator.key == correctness.key else evaluator
+                for evaluator in bundle.evaluators
+            ]
+        }
+    )
+    jury_body = next(
+        body for body in jury_bundle.evaluator_payloads() if body["key"] == correctness.key
+    )
+    assert jury_body["mode"] == "jury"
+    assert "model" not in jury_body
+    assert [judge["model"] for judge in jury_body["jury"]["judges"]] == correctness.judges

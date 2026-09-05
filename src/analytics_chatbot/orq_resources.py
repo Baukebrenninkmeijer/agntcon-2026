@@ -200,9 +200,13 @@ class LlmEvaluatorResource(EvaluatorBase):
         if any(token in self.prompt or token in str(self.input_mapping) for token in secret_tokens):
             raise ValueError("evaluator resources cannot contain credential variables")
         if self.key == "analytics-answer-correctness":
-            forbidden = {"output.tools_called", "input.retrievals"}
-            if forbidden & variables or "input.expected_output" not in variables:
-                raise ValueError("answer correctness must receive oracle but no execution evidence")
+            # Reference-free: the oracle stays out of the judge so it can serve as ground
+            # truth during alignment. Execution evidence arrives via the conversation only.
+            forbidden = {"input.expected_output", "output.tools_called", "input.retrievals"}
+            if forbidden & variables or "input.all_messages" not in variables:
+                raise ValueError(
+                    "answer correctness must be reference-free and read the full conversation"
+                )
         if self.key == "analytics-evidence-faithfulness":
             forbidden = {"input.expected_output", "reference_sql", "query_requirements"}
             if forbidden & variables:

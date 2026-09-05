@@ -136,11 +136,7 @@ def _validate_evaluation_results(
     row_errors = sum(bool(getattr(result, "error", None)) for result in results)
     jobs = [job for result in results for job in (getattr(result, "job_results", None) or [])]
     job_errors = sum(bool(getattr(job, "error", None)) for job in jobs)
-    scores = [
-        score
-        for job in jobs
-        for score in (getattr(job, "evaluator_scores", None) or [])
-    ]
+    scores = [score for job in jobs for score in (getattr(job, "evaluator_scores", None) or [])]
     evaluator_errors = sum(bool(getattr(score, "error", None)) for score in scores)
     empty_scores = sum(
         value is None or (isinstance(value, str) and not value.strip())
@@ -183,7 +179,14 @@ def _validate_evaluation_results(
     if job_errors:
         failures.append(f"{job_errors} job error(s)")
     if evaluator_errors:
-        failures.append(f"{evaluator_errors} evaluator error(s)")
+        distinct = sorted(
+            {
+                str(getattr(score, "error", ""))[:200]
+                for score in scores
+                if getattr(score, "error", None)
+            }
+        )
+        failures.append(f"{evaluator_errors} evaluator error(s): {distinct}")
     if empty_scores:
         failures.append(f"{empty_scores} empty score(s)")
     if failures:
@@ -215,8 +218,10 @@ def _write_local_results(
         records.append(
             json.dumps(
                 {
-                    "schema_version": "evaluatorq-replay-v1",
+                    "schema_version": "evaluatorq-replay-joined-v1",
                     "case_id": row_data["case_id"],
+                    # Full transcript rides along so the file seeds alignment runs directly.
+                    "conversation": row_data.get("conversation"),
                     "transcript_fingerprint": (row_data.get("metadata") or {}).get(
                         "transcript_fingerprint"
                     ),

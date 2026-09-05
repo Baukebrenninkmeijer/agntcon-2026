@@ -25,9 +25,7 @@ def test_parser_requires_an_explicit_evaluator_version() -> None:
 
 
 def test_parser_defaults_experiment_upload_to_pydata_project() -> None:
-    args = run_evaluatorq_replay.build_parser().parse_args(
-        ["--evaluator-version", "1.0.0"]
-    )
+    args = run_evaluatorq_replay.build_parser().parse_args(["--evaluator-version", "1.0.0"])
 
     assert args.project_path == "pydata2026"
 
@@ -109,6 +107,11 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once(tmp_path:
                     "case_id": f"case-{index}",
                     "evaluation_split": "dev" if index < 30 else "test",
                     "assistant_response": f"recorded-{index}",
+                    "conversation": [
+                        {"role": "user", "content": f"question-{index}"},
+                        {"role": "tool", "content": f"evidence-{index}"},
+                        {"role": "assistant", "content": f"recorded-{index}"},
+                    ],
                     "metadata": {"transcript_fingerprint": f"fingerprint-{index}"},
                     "oracle": {"expected_answer": f"expected-{index}"},
                 }
@@ -214,9 +217,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once(tmp_path:
         "llm_parallelism": 3,
         "print_results": False,
     }
-    assert version_calls == [
-        {"id": opaque_evaluator_id, "limit": 200, "starting_after": None}
-    ]
+    assert version_calls == [{"id": opaque_evaluator_id, "limit": 200, "starting_after": None}]
     assert [call["evaluator_selector"] for call in scorer_calls] == [
         f"{opaque_evaluator_id}@1.0.0",
         f"{opaque_evaluator_id}@1.1.0",
@@ -226,15 +227,16 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once(tmp_path:
     assert events[-1] == "http-exit"
     assert all(opaque_evaluator_id not in line for line in printed)
     assert any("50" in line and "2 QC warning" in line for line in printed)
-    local_rows = [
-        json.loads(line)
-        for line in args.output.read_text().splitlines()
-        if line.strip()
-    ]
+    local_rows = [json.loads(line) for line in args.output.read_text().splitlines() if line.strip()]
     assert len(local_rows) == 50
     assert local_rows[0] == {
-        "schema_version": "evaluatorq-replay-v1",
+        "schema_version": "evaluatorq-replay-joined-v1",
         "case_id": "case-0",
+        "conversation": [
+            {"role": "user", "content": "question-0"},
+            {"role": "tool", "content": "evidence-0"},
+            {"role": "assistant", "content": "recorded-0"},
+        ],
         "transcript_fingerprint": "fingerprint-0",
         "evaluation_split": "dev",
         "recorded_output": "recorded-0",

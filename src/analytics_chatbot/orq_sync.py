@@ -380,6 +380,10 @@ class OrqSdkGateway:
         model_rows = list(self.client.models.list().data)
         models = {str(_model_dump(row).get("id")): True for row in model_rows}
         model_slugs = self._model_slugs()
+        # The SDK list only carries workspace-enabled models; the /v2/models catalog
+        # also lists provider-routed refIds (e.g. tencent/deepseek-v4-flash) that
+        # evaluators accept directly, so both count as available.
+        models.update({slug: True for slug in model_slugs.values()})
         tool_rows = [
             row
             for row in self._paginate(self.client.tools.list)

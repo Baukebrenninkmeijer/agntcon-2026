@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
+import httpx
 from evaluatorq import EvaluationResult
 from evaluatorq.common.llm_limit import llm_slot
 from evaluatorq.types import Evaluator, ScorerParameter
@@ -16,6 +18,10 @@ def _reference_text(value: Any) -> str:
     return json.dumps(value, sort_keys=True, default=str)
 
 
+class _Retryable(RuntimeError):
+    """A 5xx the evaluator route returned; retried before surfacing."""
+
+
 def orq_evaluator(
     *,
     http_client: Any,
@@ -23,6 +29,8 @@ def orq_evaluator(
     evaluator_selector: str,
     scorer_name: str | None = None,
     base_url: str = "https://my.orq.ai",
+    attempts: int = 3,
+    retry_delay: float = 2.0,
 ) -> Evaluator:
     """Build an answer-correctness scorer backed by one immutable Orq version."""
 
@@ -34,48 +42,49 @@ def orq_evaluator(
         from analytics_chatbot.evaluation_ops import TraceBackedEvaluationRow
 
         row = TraceBackedEvaluationRow.from_datapoint(params["data"])
-        if row.oracle is None or row.oracle.expected_answer is None:
-            return EvaluationResult(
-                value="not_applicable",
-                explanation="No expected answer/oracle is available.",
-                pass_=None,
-            )
-
         output = params["output"]
         if not isinstance(output, str):
             raise TypeError("answer-correctness evaluation requires a string output")
-        conversation = [
-            message.model_dump(mode="json")
-            for message in row.conversation
-            if message.role != "tool"
-        ]
+        # Reference-free judge: the full ordered conversation, tool turns included, is the
+        # only evidence. The oracle is deliberately withheld so alignment can grade against it.
+        conversation = [message.model_dump(mode="json") for message in row.conversation]
         user_query = next(
             message.content for message in reversed(row.conversation) if message.role == "user"
         )
-        async with llm_slot():
-            response = await http_client.post(
-                f"{base_url.rstrip('/')}/v3/evaluators/{evaluator_selector}/invoke",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
+        payload = {
+            "context": {
+                "input": {
+                    "user_query": user_query,
+                    "all_messages": json.dumps(conversation, ensure_ascii=False),
                 },
-                json={
-                    "context": {
-                        "input": {
-                            "user_query": user_query,
-                            "expected_output": _reference_text(row.oracle.expected_answer),
+                "output": {"response": output},
+                "messages": conversation,
+            }
+        }
+        # A single transient provider failure must not poison a 50-row run: the replay
+        # validator rejects any empty score, so retry 5xx/transport errors a few times.
+        for attempt in range(1, attempts + 1):
+            try:
+                async with llm_slot():
+                    response = await http_client.post(
+                        f"{base_url.rstrip('/')}/v3/evaluators/{evaluator_selector}/invoke",
+                        headers={
+                            "Authorization": f"Bearer {api_key}",
+                            "Content-Type": "application/json",
                         },
-                        "output": {"response": output},
-                        "messages": conversation,
-                    }
-                },
-            )
-        response.raise_for_status()
+                        json=payload,
+                    )
+                if getattr(response, "status_code", 200) >= 500 and attempt < attempts:
+                    raise _Retryable(response.text)
+                response.raise_for_status()
+                break
+            except (_Retryable, httpx.TransportError, ConnectionError, TimeoutError):
+                if attempt >= attempts:
+                    raise
+                await asyncio.sleep(retry_delay * attempt)
         remote_result = response.json()
         if not isinstance(remote_result, dict):
-            raise RuntimeError(
-                f"Orq evaluator {evaluator_selector!r} returned a non-object result"
-            )
+            raise RuntimeError(f"Orq evaluator {evaluator_selector!r} returned a non-object result")
         value = remote_result.get("value")
         if value is None or (isinstance(value, str) and not value.strip()):
             raise RuntimeError(
