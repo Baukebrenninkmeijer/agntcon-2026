@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import os
 from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
@@ -24,6 +25,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESOURCES_PATH = REPOSITORY_ROOT / "orq" / "resources"
 DEFAULT_CASES_PATH = DEFAULT_RESOURCES_PATH / "datasets" / "simulation-cases-v2.jsonl"
 DEFAULT_RESULTS_PATH = REPOSITORY_ROOT / "runs" / "evaluatorq-simulation-v2-20260905.jsonl"
+DEFAULT_OUTPUT_PATH = REPOSITORY_ROOT / "runs" / "evaluatorq-correctness-results.jsonl"
 EVALUATOR_KEY = "analytics-answer-correctness"
 DEFAULT_PROJECT_PATH = "pydata2026"
 EXPECTED_SAMPLE_COUNT = 50
@@ -50,6 +52,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES_PATH)
     parser.add_argument("--results", type=Path, default=DEFAULT_RESULTS_PATH)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT_PATH,
+        help="Local JSONL destination for validated evaluator scores.",
+    )
     parser.add_argument("--resources", type=Path, default=DEFAULT_RESOURCES_PATH)
     parser.add_argument(
         "--evaluator-version",
@@ -184,6 +192,50 @@ def _validate_evaluation_results(
         )
 
 
+def _write_local_results(
+    output_path: Path,
+    *,
+    rows: Sequence[Any],
+    results: Sequence[Any],
+    experiment_url: str | None,
+) -> None:
+    records: list[str] = []
+    for row, result in zip(rows, results, strict=True):
+        row_data = row.model_dump(mode="json") if hasattr(row, "model_dump") else dict(row)
+        oracle = row_data.get("oracle") or {}
+        scores = {
+            str(score.evaluator_name): {
+                "value": score.score.value,
+                "explanation": getattr(score.score, "explanation", None),
+                "pass": getattr(score.score, "pass_", None),
+            }
+            for job in result.job_results
+            for score in job.evaluator_scores
+        }
+        records.append(
+            json.dumps(
+                {
+                    "schema_version": "evaluatorq-replay-v1",
+                    "case_id": row_data["case_id"],
+                    "transcript_fingerprint": (row_data.get("metadata") or {}).get(
+                        "transcript_fingerprint"
+                    ),
+                    "evaluation_split": row_data["evaluation_split"],
+                    "recorded_output": row_data["assistant_response"],
+                    "expected_output": oracle.get("expected_answer"),
+                    "experiment_url": experiment_url,
+                    "scores": scores,
+                },
+                sort_keys=True,
+                default=str,
+            )
+        )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
+    temporary_path.write_text("\n".join(records) + "\n")
+    temporary_path.replace(output_path)
+
+
 async def run(
     args: argparse.Namespace,
     *,
@@ -227,6 +279,8 @@ async def run(
         f"Running {len(corpus.samples)} stored replay samples with "
         f"{len(corpus.warnings)} QC warning(s) retained."
     )
+    rows = [sample.row for sample in corpus.samples]
+    experiment_urls: list[str] = []
     async with async_http_client_factory(timeout=600.0) as evaluator_http_client:
         evaluators = [
             scorer_factory(
@@ -238,19 +292,27 @@ async def run(
             for version in versions
         ]
         results = await evaluation_runner(
-            [sample.row for sample in corpus.samples],
+            rows,
             evaluators=evaluators,
             experiment_name=args.experiment_name,
             experiment_path=args.project_path,
             datapoint_parallelism=args.datapoint_parallelism,
             llm_parallelism=args.llm_parallelism,
             print_results=args.print_results,
+            experiment_url_out=experiment_urls,
         )
     _validate_evaluation_results(
         results,
         expected_rows=len(corpus.samples),
         expected_evaluator_names=tuple(f"answer_correctness@{version}" for version in versions),
     )
+    _write_local_results(
+        args.output,
+        rows=rows,
+        results=results,
+        experiment_url=experiment_urls[-1] if experiment_urls else None,
+    )
+    printer(f"Saved validated evaluator results to {args.output}")
     return 0
 
 

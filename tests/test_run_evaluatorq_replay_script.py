@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from argparse import Namespace
 from pathlib import Path
 from types import SimpleNamespace
@@ -52,7 +53,7 @@ async def test_latest_is_rejected_before_loading_credentials() -> None:
 
 
 @pytest.mark.asyncio
-async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None:
+async def test_run_prepares_all_samples_and_invokes_native_replay_once(tmp_path: Path) -> None:
     events: list[str] = []
     environment: dict[str, str] = {}
     opaque_evaluator_id = "opaque-runtime-evaluator-id"
@@ -102,7 +103,18 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         events.append("replay")
         assert kwargs["cases_path"].name == "simulation-cases-v2.jsonl"
         assert kwargs["results_path"].name == "evaluatorq-simulation-v2-20260905.jsonl"
-        samples = [SimpleNamespace(row={"case_id": f"case-{index}"}) for index in range(50)]
+        samples = [
+            SimpleNamespace(
+                row={
+                    "case_id": f"case-{index}",
+                    "evaluation_split": "dev" if index < 30 else "test",
+                    "assistant_response": f"recorded-{index}",
+                    "metadata": {"transcript_fingerprint": f"fingerprint-{index}"},
+                    "oracle": {"expected_answer": f"expected-{index}"},
+                }
+            )
+            for index in range(50)
+        ]
         samples[7].row["behavioral_failure"] = True
         return SimpleNamespace(
             samples=tuple(samples),
@@ -121,6 +133,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
 
     async def fake_evaluation_runner(rows: list[object], **kwargs: Any) -> list[object]:
         runner_calls.append((rows, kwargs))
+        kwargs["experiment_url_out"].append("https://example.test/experiment/run")
         evaluator_names = [evaluator.name for evaluator in kwargs["evaluators"]]
         return [
             SimpleNamespace(
@@ -167,6 +180,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         datapoint_parallelism=4,
         llm_parallelism=3,
         print_results=False,
+        output=tmp_path / "replay-results.jsonl",
     )
 
     exit_code = await run_evaluatorq_replay.run(
@@ -195,6 +209,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         "evaluators": runner_kwargs["evaluators"],
         "experiment_name": "stored-v2-replay",
         "experiment_path": "pydata2026",
+        "experiment_url_out": runner_kwargs["experiment_url_out"],
         "datapoint_parallelism": 4,
         "llm_parallelism": 3,
         "print_results": False,
@@ -211,6 +226,33 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
     assert events[-1] == "http-exit"
     assert all(opaque_evaluator_id not in line for line in printed)
     assert any("50" in line and "2 QC warning" in line for line in printed)
+    local_rows = [
+        json.loads(line)
+        for line in args.output.read_text().splitlines()
+        if line.strip()
+    ]
+    assert len(local_rows) == 50
+    assert local_rows[0] == {
+        "schema_version": "evaluatorq-replay-v1",
+        "case_id": "case-0",
+        "transcript_fingerprint": "fingerprint-0",
+        "evaluation_split": "dev",
+        "recorded_output": "recorded-0",
+        "expected_output": "expected-0",
+        "experiment_url": "https://example.test/experiment/run",
+        "scores": {
+            "answer_correctness@1.0.0": {
+                "value": "pass",
+                "explanation": None,
+                "pass": None,
+            },
+            "answer_correctness@1.1.0": {
+                "value": "pass",
+                "explanation": None,
+                "pass": None,
+            },
+        },
+    }
 
 
 def test_replay_result_validation_rejects_captured_evaluator_errors() -> None:

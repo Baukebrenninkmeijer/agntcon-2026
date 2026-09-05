@@ -363,6 +363,7 @@ async def run_trace_evaluation(
     datapoint_parallelism: int = 5,
     llm_parallelism: int = 6,
     print_results: bool = True,
+    experiment_url_out: list[str] | None = None,
 ) -> list[DataPointResult]:
     """Score imported rows through evaluatorq's native experiment lifecycle."""
 
@@ -373,15 +374,20 @@ async def run_trace_evaluation(
     selected_evaluators = evaluators or [
         build_atomic_evaluator(AtomicJudge.ANSWER_CORRECTNESS)
     ]
+    runner_arguments: dict[str, Any] = {
+        "data": [row.to_datapoint() for row in rows],
+        "evaluators": selected_evaluators,
+        "path": experiment_path,
+        "inference": False,
+        "datapoint_parallelism": datapoint_parallelism,
+        "llm_parallelism": llm_parallelism,
+        "print_results": print_results,
+    }
+    if experiment_url_out is not None:
+        runner_arguments["_experiment_url_out"] = experiment_url_out
     return await native_runner(
         experiment_name,
-        data=[row.to_datapoint() for row in rows],
-        evaluators=selected_evaluators,
-        path=experiment_path,
-        inference=False,
-        datapoint_parallelism=datapoint_parallelism,
-        llm_parallelism=llm_parallelism,
-        print_results=print_results,
+        **runner_arguments,
     )
 
 

@@ -96,6 +96,7 @@ version with:
 ```bash
 uv run python scripts/run_evaluatorq_replay.py \
   --evaluator-version 1.0.0 \
+  --output runs/evaluatorq-correctness-v1.0.0-20260905.jsonl \
   --datapoint-parallelism 10 \
   --llm-parallelism 10
 ```
@@ -118,6 +119,10 @@ The async scorer has been validated end to end with a
 [three-row evaluatorq smoke Experiment](https://my.orq.ai/<workspace>/experiments/01M1RJ2TZR2WMEEED158F5V72W?runId=01M1RJ2TZQF4QVGRAC10BN0R34):
 the Orq JSONL export contains three rows and three populated
 `answer_correctness@1.0.0` values.
+The accepted [50-row correctness baseline](https://my.orq.ai/<workspace>/experiments/01M1RJVCF5SGV97CRZBWC993BQ?runId=01M1RJVCF5NCTVMFXEX1FB28TX)
+also exports 50/50 populated scores: 47 `pass` and three `fail`. Its validated
+local alignment artifact is written to
+`runs/evaluatorq-correctness-v1.0.0-20260905.jsonl`; `runs/` is gitignored.
 Repeat `--evaluator-version` after an
 approved evaluator update to create distinct side-by-side columns such as
 `answer_correctness@1.0.0` and `answer_correctness@1.0.1` over identical rows.

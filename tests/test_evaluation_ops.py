@@ -221,6 +221,7 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
 ) -> None:
     observed: dict[str, Any] = {}
     scored: dict[str, Any] = {}
+    experiment_urls: list[str] = []
     recorded = "  It was EUR 42.\nNo regeneration — exact bytes.  "
 
     async def exploding_job(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
@@ -259,12 +260,14 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
         experiment_path="pydata2026",
         native_runner=native_runner,
         print_results=False,
+        experiment_url_out=experiment_urls,
     )
 
     assert result == []
     assert observed["name"] == "trace-eval-test"
     assert observed["path"] == "pydata2026"
     assert observed["inference"] is False
+    assert observed["_experiment_url_out"] is experiment_urls
     assert scored["output"] == recorded
     assert scored["output"].encode() == recorded.encode()
     assert observed["evaluators"][0]["name"] == "stub"
