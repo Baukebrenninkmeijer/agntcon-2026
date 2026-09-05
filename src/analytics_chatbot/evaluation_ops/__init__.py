@@ -84,7 +84,7 @@ class TraceBackedEvaluationRow(BaseModel):
     schema_version: Literal["trace-eval-v1"] = SCHEMA_VERSION
     case_id: str = Field(min_length=1)
     evaluation_split: Literal["dev", "test"]
-    source: TraceSource
+    source: TraceSource | None = None
     conversation: list[ConversationMessage] = Field(min_length=2)
     assistant_response: str = Field(min_length=1)
     oracle: OracleEvidence | None = None

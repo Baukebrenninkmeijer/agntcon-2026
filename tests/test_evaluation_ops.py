@@ -55,6 +55,14 @@ def test_trace_row_round_trips_to_evaluatorq_datapoint() -> None:
     assert point.expected_output == "EUR 42"
 
 
+def test_self_contained_simulation_row_needs_no_trace_source() -> None:
+    row = _row(source=None)
+
+    restored = TraceBackedEvaluationRow.from_datapoint(row.to_datapoint())
+
+    assert restored.source is None
+
+
 @pytest.mark.parametrize(
     ("judge", "overrides"),
     [

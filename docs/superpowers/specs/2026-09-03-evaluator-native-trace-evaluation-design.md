@@ -3,9 +3,10 @@
 ## Decision
 
 The evaluation corpus is produced by evaluatorq agent simulation against the
-YAML-defined Orq agent. Completed simulation traces are imported into a stable,
-trace-backed row contract. Evaluation and alignment then run as evaluatorq
-experiments over those imported rows.
+YAML-defined Orq agent. Raw `SimulationResult` artifacts are normalized into a
+stable evaluator-native row contract; arbitrary production traces use the same
+contract through the trace importer. Evaluation and alignment then run as
+evaluatorq experiments over those rows.
 
 There is no project-specific post-hoc evaluator executor. The importer may read
 Orq traces, but it does not invoke judges. `evaluatorq(...)` owns job execution,
@@ -22,7 +23,8 @@ The importer and simulation corpus must emit `trace-eval-v1` rows accepted by
 - `schema_version`: exactly `trace-eval-v1`;
 - `case_id`: stable corpus case identity;
 - `evaluation_split`: `dev` or `test`, assigned before target inference;
-- `source.trace_id` and non-empty `source.span_ids`;
+- optional `source.trace_id` and non-empty `source.span_ids`; source linkage is
+  required for trace imports and optional for self-contained simulation rows;
 - `conversation`: the complete ordered user/assistant/system/tool transcript;
 - `assistant_response`: byte-for-byte equal to the final assistant message;
 - optional `oracle`: `expected_answer`, `reference_sql`, and semantic

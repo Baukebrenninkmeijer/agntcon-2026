@@ -25,7 +25,7 @@
 
 ## Document Maintenance
 
-**Status date:** 2026-09-04, Europe/Amsterdam.
+**Status date:** 2026-09-05, Europe/Amsterdam.
 
 **Last-updated rule:** Change the status date whenever a checkbox, workstream state, dependency, acceptance result, remote-state observation, or decision changes. Add one compact changelog entry containing the date, affected workstream, evidence, and next handoff. Do not mark work complete from code presence alone.
 
@@ -46,7 +46,7 @@
 | Analytics chatbot core | `VERIFIED` | Deterministic data, guarded SQL, insight state, agent loop, CLI, local run audit, and Orq tracing are implemented on local `main` | Preserve behavior while introducing hosted configuration |
 | evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
-| Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, and a three-attempt pilot review with complete scrubbed Responses transcripts; the third attempt awaits explicit user review | Remove the tracked project ID, obtain a fresh read-only remote plan, accept or reject pilot attempt three, then finish the row-aware bridge and human corpus review |
+| Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, a three-attempt pilot review, and a lightweight raw-simulation normalizer; all three ignored pilot artifacts pass the adapter's downstream sufficiency checks | Remove the tracked project ID, obtain a fresh read-only remote plan, then human-review/freeze the cases before any bulk live run |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated on local `main` with pinned actions, explicit live-marker exclusion, lint, tests, package build, and an optional YAML-validation hook | Re-run the same gate after dependency or hosted-resource changes; remote-run evidence awaits publication |
 | Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
@@ -100,6 +100,7 @@ The existing chatbot run JSONL audit under the configured runs directory remains
 | Adapt traces into `DataPoint`s | evaluatorq can replay datasets/experiments but does not directly load arbitrary observability traces | Add a thin read-only Orq trace-to-row/`DataPoint` adapter |
 | Replay the recorded assistant output | Post-hoc evaluation must assess what happened, not create a new response | The final assistant message is preserved exactly and the target agent is never called |
 | Preserve raw evidence in a versioned row | Lossy response conversions and process-local caches cannot support reliable later scoring | Conversation, ordered tools/results/errors, retrievals, state, source linkage, and oracle remain serializable |
+| Treat evaluatorq simulation JSONL as canonical | SimulationResult already contains the observed transcript, calls/results, criteria, usage, and case identity | Normalize offline, join the frozen case oracle/split, and keep Orq trace linkage/reasoning as optional enrichment |
 | Route four atomic judges independently | Correctness, query validity, evidence support, and conversational consistency fail differently | Each rubric has separate applicability, evidence projection, prompt, labels, and alignment metrics |
 | Keep human labels distinct | Machine judgments are not annotations and should not contaminate gold data | Humans label canonical observations; evaluator outputs live in evaluatorq experiments |
 | Separate offline CI from live operations | PR validation must be deterministic, safe for forks, and credential-free | Live canaries and baselines are protected explicit jobs, not default CI |
@@ -159,6 +160,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [x] Repository YAML, SDK transformation/reconciliation, safe Make targets, two deterministic evaluator definitions, and four atomic LLM evaluator drafts are integrated; LLM evaluator apply fails closed until each definition records at least 100 human labels.
 - [x] Recorded live evidence establishes the hosted agent/tool handshake and explicit-save behavior; the hosted prompt includes the ambiguity and SQL-returned-number corrections found during smoke and pilot review.
 - [x] Exactly 50 deterministic candidate cases are integrated with stable unique IDs, executable DuckDB oracles, required coverage labels, evaluatorq serialization, and a reproducible 30-dev/20-test split.
+- [x] Raw evaluatorq `SimulationResult` JSONL normalizes into replay-ready rows with final-assistant ordering, joined oracle/split, paired tool evidence, exact-transcript deduplication, and explicit quality rejection reasons; Orq trace linkage is optional for self-contained simulation rows.
 - [x] Integrated-tree validation passed on 2026-09-03: 71 non-live tests passed, one live test was deselected, Ruff passed, and the sdist/wheel build succeeded.
 
 ### Active
@@ -170,8 +172,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [ ] WS3a: Remove the tracked opaque project ID from desired state and preserve fail-closed project selection through the stable `pydata2026` key before M3 acceptance.
 - [ ] WS3a: Obtain a fresh credentialed read-only semantic plan from integrated `main`; the integration checkout had no `.env`, and no remote apply is authorized.
 - [ ] WS3a: Keep the four LLM evaluator resources blocked from apply until their independent human-label and alignment gates pass; do not create remote evaluator or dataset resources yet.
-- [ ] WS3b: Finish the row-aware, conversation-scoped local-tool bridge.
-- [ ] WS3b: Explicitly accept or reject the third one-case pilot attempt; do not run the remaining 49 before approval.
+- [ ] WS3b: Finish the row-aware, conversation-scoped local-tool bridge for future live generation; the raw artifact-to-evaluation adapter is complete.
 - [ ] WS3b: Human-review and freeze the 50 integrated candidate cases; code/oracle validation does not make them accepted cases.
 
 ### Blocked
@@ -423,6 +424,7 @@ Do not run the apply command from this documentation task. Live simulation/align
 | 2026-09-03 | Keep one hand-authored SVG as the architecture visual source of truth | Accepted; the README embeds the same slide-ready asset, with semantic text and status encoded accessibly |
 | 2026-09-03 | Make the project status document a required living plan for every relevant coding task | Accepted and integrated through canonical root `CLAUDE.md` guidance plus an `AGENTS.md` symlink |
 | 2026-09-03 | Integrate verified work into local `main` and do not push by default | Accepted |
+| 2026-09-05 | Keep evaluatorq's raw simulation JSONL as the canonical corpus artifact and require no trace linkage for complete offline rows | Accepted; use only light deduplication/tool-quality gates and optional Orq trace enrichment |
 
 ## Changelog / Task Log
 
@@ -430,6 +432,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-05 | WS3b | Added the lightweight raw `SimulationResult` adapter and optional-source row contract. All three local pilot artifacts were accepted independently (zero rejects/duplicates), retained one/two/one ordered `query_sql` events, ended with the exact assistant output, joined an oracle, and produced evaluatorq `DataPoint`s; 78 non-live tests passed with one deselection, Ruff passed, and package build passed | Keep raw JSONL immutable; human-review/freeze cases before bulk generation, and add trace/reasoning only as optional enrichment |
 | 2026-09-04 | WS3b | Retrieved all six Responses steps for the three pilot attempts from Orq, matched them to the ignored evaluatorq exports, and expanded the tracked review artifact so every attempt preserves ordered reasoning summaries, tool calls/results, and final output without runtime identifiers | Review the now-complete attempt-three transcript before authorizing any remaining-case run |
 | 2026-09-03 | WS3a/WS3b | Integrated the hosted-resource reconciler, corrected agent prompt, two deterministic and four gated LLM evaluator definitions, initial evaluatorq target, 50-case candidate corpus, and three-attempt pilot review on local `main`; fresh offline evidence: resource bundle/gate validation, exact oracle reproduction, 30/20 split, 71 non-live tests, Ruff, and package build. A fresh remote dry-run was unavailable because the checkout has no `.env`; no remote mutation occurred | Remove the tracked project ID, run a fresh credentialed read-only plan, obtain explicit review of pilot attempt three, and do not create evaluators/datasets or run the remaining 49 before their gates |
 | 2026-09-03 | Architecture communication | Added the canonical SVG evaluation flywheel and README narrative; inspected rendered output at README and 16:9 slide scales, and verified SVG structure/accessibility locally | Reuse the SVG directly in talk materials; update it when architecture or delivery boundaries materially change |
@@ -444,7 +447,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 1. WS2 owner: adapt the integrated generic replay `DataPoint` to the accepted trace-backed row contract, add the small Orq scorer factory, validate no-inference replay on genuine multi-step agent traces, and rotate the temporary trace-access key afterward.
 2. WS3a owner: remove the tracked project ID while retaining stable-key project checks, then produce a fresh credentialed read-only plan against `pydata2026`; do not create remote evaluators or datasets before their gates and separate authorization.
-3. User/coordinator: review pilot attempt three in `orq/resources/datasets/simulation-pilot-review.json`; only after explicit acceptance may WS3b run additional cases, finish the row-aware bridge, and human-review/freeze the 50-case corpus.
+3. WS3b owner: use the raw evaluatorq artifacts as the source of truth, finish the live bridge only when another run is needed, and human-review/freeze the 50-case corpus before bulk generation.
 4. Coordinator: keep WS4's offline workflow aligned with integrated dependency commands and rerun it after each dependency boundary.
 5. Coordinator: integrate verified branches in the order above, rerun full offline checks after each dependency boundary, rotate the temporary trace-access key after WS2 validation, and update this log.
 
