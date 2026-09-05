@@ -55,7 +55,14 @@ The first evaluator version has four independently alignable judges:
    reference SQL. A response may therefore be faithful to incorrect evidence
    while failing correctness.
 4. `multi_turn_consistency` receives the complete multi-turn conversation,
-   ordered tool events, and state snapshots.
+   ordered tool events, and state snapshots. **Out of scope for alignment as of
+   2026-09-05.** The frozen corpus is 42 one-turn, six two-turn, and two
+   three-turn observations, so at most eight rows are ever applicable and the
+   locked thresholds (kappa >= 0.70, balanced accuracy >= 0.80) cannot be met on
+   that sample. The routing, evidence projection, code, and YAML stay exactly as
+   they are; the rubric is excluded from the gating quorum and carries the
+   status `NOT ALIGNABLE - insufficient multi-turn coverage (8 of 50 rows)`.
+   Revisit only if a multi-turn-heavy supplementary corpus is generated.
 
 Applicability is deterministic and runs before an LLM call. Correctness requires
 an expected answer. Query semantics requires an executed query plus a semantic
@@ -86,10 +93,15 @@ only on imported dev rows. The frozen test rows are evaluated once after prompt
 selection, using the same evaluator builders and evaluatorq experiment path.
 Compute confusion matrices, balanced accuracy, false-pass rate, Cohen's kappa,
 human-human agreement, and per-model disagreement from evaluatorq experiment
-results joined to the immutable human labels by `case_id`. Treat
+results joined to the immutable human labels by the
+`(case_id, transcript_fingerprint)` sample identity. Never join by `case_id`
+alone: distinct attempts for one case are distinct observations, and a
+case-level join would silently duplicate labels across them. One human label
+belongs to one observation. Treat
 `not_applicable` as routed coverage, not as a pass or fail, and report its count
 per rubric. Alignment remains rubric-specific; no aggregate verdict can hide a
-failed atomic judge.
+failed atomic judge. The gating quorum is the three alignable rubrics:
+`answer_correctness`, `query_semantics`, and `evidence_faithfulness`.
 
 Live corpus generation, judge calls, and platform resource mutation are separate
 explicit operations and are not part of the offline implementation layer.

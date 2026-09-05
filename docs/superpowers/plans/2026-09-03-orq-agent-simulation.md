@@ -32,11 +32,16 @@ and deliberately stops at its review and alignment gates:
   cross-turn insight store, row-aware cache, and timeout registry remain open work from Task 3/5.
 - Four direct smoke scenarios (five turns) pass. The one-case simulation pilot required three
   iterations: manual review rejected an arithmetic error the first automated judge missed; the
-  second judge rejected unsupported derived claims; the third is the candidate transcript awaiting
-  explicit user review. The remaining 49 simulations must not start before that approval.
-- Current Orq CLI trace hydration exposes identity, thread, response-chain, status, and metadata but
-  omits concrete assistant messages and tool arguments/results. The local `runs/*/events.jsonl`
-  audit must enrich trace imports before `inference=False` replay is possible.
+  second judge rejected unsupported derived claims. The user subsequently gave explicit approval
+  for the bounded full run. It produced 50 unique raw outputs locally and in one Orq Experiment;
+  47 pass strict normalization and three behavioral failures remain preserved for review.
+- `SUPERSEDED` (2026-09-05): this bullet previously claimed Orq CLI trace hydration omits assistant
+  messages and tool arguments/results, and that the local `runs/*/events.jsonl` audit must enrich
+  trace imports before `inference=False` replay is possible. Both claims are false now. All six
+  Responses steps for the pilot attempts were retrieved with ordered reasoning summaries, tool
+  calls/results, and final output, and `inference=False` replay was demonstrated with zero target
+  calls. Raw `SimulationResult` JSONL is the canonical source; Orq traces are optional enrichment.
+  See `../specs/2026-09-05-simulation-artifact-pipeline-design.md`.
 
 Unchecked items below remain unchecked unless the complete planned behavior—not merely this
 foundation—has been delivered.
@@ -54,20 +59,34 @@ foundation—has been delivered.
 - Workspace/project: `<workspace>` / `pydata2026`.
 - Distribution/import: `analytics-chatbot` / `analytics_chatbot`.
 - Hosted agent / Responses model: `analytics-chatbot` / `agent/analytics-chatbot`.
-- Target model selector: provider `deepseek`, `model_id=deepseek-v4-flash`, function calling required. Current UUID: `6c88a908-a85f-4f9a-83af-31cf11292599`.
+- Target model selector: provider `deepseek`, `model_id=deepseek-v4-flash`, function calling required. Resolve the runtime identifier during sync; opaque model IDs are runtime data and stay out of tracked desired state.
 - Generator and simulated user: `openai/gpt-5.6-luna` through Responses.
-- Four atomic categorical rubrics: `answer_correctness`, `query_semantics`, `evidence_faithfulness`, and `multi_turn_consistency`. Each is aligned independently; correctness and faithfulness must not share oracle/evidence inputs.
-- Each applicable rubric uses the same three-model strict-majority jury:
-  - `openai/gpt-5.6-luna`, UUID `45a6f5c0-e3ac-416e-9538-d48d80f2b68d`, enabled;
-  - `groq/qwen/qwen3.8-27b`, UUID `e30d9593-a54f-5b83-a716-16d707ebfe2f`, currently disabled;
-  - `google-ai/gemini-3.5-flash-lite`, UUID `589e98c5-f88f-4e68-9b94-c9f015787a49`, enabled.
+- Four atomic categorical rubrics: `answer_correctness`, `query_semantics`, `evidence_faithfulness`, and `multi_turn_consistency`. Each is aligned independently; correctness and faithfulness must not share oracle/evidence inputs. `multi_turn_consistency` is out of scope for alignment (see below) and is excluded from the gating quorum.
+- Each applicable rubric uses the same three-model jury, selected by catalog slug
+  only, with `mode: jury` and `min_successful_judges: 2`:
+  - `openai/gpt-5.6-luna`;
+  - `google-ai/gemini-3.5-flash-lite`;
+  - `tensorix/qwen/qwen3.8-flash-next`.
+  The earlier `groq/qwen/qwen3.8-27b` entry is replaced: the Groq route is not
+  wanted for this project, and the tensorix route is cheaper. Verified live on
+  2026-09-05: the hosted evaluator accepts slugs and resolves them to catalog
+  model IDs, and a jury invocation returns an aggregated verdict.
+- **Jury invocation returns only the aggregate.** The response carries `value`,
+  `passed`, `status`, and `explanation: "jury majority vote"`. Per-judge verdicts
+  and per-judge critiques are not exposed by the invoke endpoint. Any alignment
+  metric that needs per-model disagreement, and any use of `explanation` as the
+  canonical critique field, cannot be satisfied by a hosted jury through this
+  path alone.
 - evaluatorq `explanation` is the canonical critique field. Repository JSON exports may alias it to `critique`, but must round-trip without loss.
 - Repository YAML is authoritative. Sync is semantic-diff-only by default and mutates only with `--apply`.
 - Local Python is 3.13.2; package support stays `>=3.11`; `evaluatorq==1.33.0` remains exact.
 - Freeze 50 accepted simulation cases and a 30-dev/20-test split before target inference.
 - Generate organically, then enforce explicit coverage presence—not numeric quotas—for every failure mode listed below.
 - One canonical observed conversation per case forms the 50 hand-reviewed examples. Dev has one reviewer; test has two independent reviewers and an adjudicated result.
-- Trust a jury rubric only if held-out κ ≥ 0.70, balanced accuracy ≥ 0.80, and false-pass rate ≤ 0.10. Exclude deterministically routed `not_applicable` rows from binary metrics and report their coverage separately. All four must qualify before automated jury gating.
+- Trust a jury rubric only if held-out κ ≥ 0.70, balanced accuracy ≥ 0.80, and false-pass rate ≤ 0.10. Exclude deterministically routed `not_applicable` rows from binary metrics and report their coverage separately. The three alignable rubrics — `answer_correctness`, `query_semantics`, `evidence_faithfulness` — must all qualify before automated jury gating.
+- `multi_turn_consistency` is `NOT ALIGNABLE - insufficient multi-turn coverage (8 of 50 rows)`. The frozen corpus is 42 one-turn, six two-turn, and two three-turn observations, so its thresholds are unreachable. Code, routing, and YAML are retained unchanged; no plan action targets it.
+- The two deterministic Python evaluators, `tool-execution-integrity` and `state-change-policy`, are `NOT IN SCOPE - no runner defined`. Their YAML stays tracked; no design assigns them an execution path, and no plan action targets them.
+- Hosted LLM evaluator apply is two-tier: `shadow` apply requires at least 10 human labels for that rubric; promotion to `gating` requires at least 30 `dev` labels plus the kappa, balanced-accuracy, and false-pass thresholds measured once on the frozen `test` split. The earlier flat 100-label apply gate is superseded.
 - Run a five-case generation pilot, then a distinct five-case live simulation pilot. Name them explicitly; never call both merely “pilot.”
 - Stability baseline: 50 cases × 3 independent target runs = 150 conversations.
 - CI: offline tests per PR, fixed five-case live canary on demand for trusted PRs, full baseline scheduled/manual.
@@ -98,6 +117,10 @@ Cases may cover several modes. The coverage report is a presence check and revie
 
 ## Resource layout
 
+> The four jury filenames below were corrected on 2026-09-05. They previously read
+> `final-response`, `trajectory`, `state-change`, and `overall` — pre-atomic-rubric names that
+> `SUPERSEDED` the moment the four atomic rubrics were locked. The names below match the repository.
+
 ```text
 orq/resources/
   agents/analytics-chatbot.yaml
@@ -105,10 +128,10 @@ orq/resources/
   tools/save-insight.yaml
   evaluators/python/tool-execution-integrity.yaml
   evaluators/python/state-change-policy.yaml
-  evaluators/jury/final-response.yaml
-  evaluators/jury/trajectory.yaml
-  evaluators/jury/state-change.yaml
-  evaluators/jury/overall.yaml
+  evaluators/jury/answer-correctness.yaml
+  evaluators/jury/query-semantics.yaml
+  evaluators/jury/evidence-faithfulness.yaml
+  evaluators/jury/multi-turn-consistency.yaml
   datasets/analytics-chatbot-simulation.yaml
   datasets/simulation-cases.jsonl
   datasets/gold-labels.jsonl
@@ -193,8 +216,11 @@ Do not use `wrap_simulation_agent(target=callable)` for this stateful target; it
 
 ## Task 6: Normalize the 50 stored observed examples
 
-- [ ] Run the fixed five-case **live simulation pilot** sequentially. Verify hosted/local handshake, one shared session per conversation, state isolation, and complete raw artifact capture.
-- [ ] Run one canonical calibration conversation for every frozen case with juries disabled. Normalize each stored result into `TraceBackedEvaluationRow` (`trace-eval-v1`) with complete conversation, raw tools/results, state snapshots, oracle, and split. A self-contained simulation row does not require source trace/span IDs. This produces the 50 observed examples that humans label; cases alone are not treated as labeled examples.
+- [x] Run one explicitly approved, bounded calibration conversation for every case with 10-way datapoint concurrency, `max_turns=3`, evaluatorq `save=True`, raw JSONL export, and only the built-in goal/criteria simulation scorers.
+- [x] Confirm 50 raw records cover 50 unique expected case IDs; all 169 declared tool calls have paired results, and every failed SQL attempt occurs in a conversation that also has successful query evidence.
+- [x] Generate a separate 50-case edge-v2 definition set with staged two/three-turn goals and run it exactly once with the same concurrency and turn bound. The result contains 50 unique rows, an 8/22/20 one/two/three-turn histogram, 230 paired calls/results, 40 goal successes, and ten retained behavioral failures.
+- [x] Normalize behavioral failures into `TraceBackedEvaluationRow` (`trace-eval-v1`) instead of rejecting them. Keep expected-tool/state misses as non-destructive QC warnings; the v2 run has five warnings and zero structurally rejected rows.
+- [x] Freeze the replay-ready v2 view at all 50 rows. Preserve the five expected-save warnings as informational metadata and do not rerun either completed corpus to replace failures.
 - [ ] Pre-register the canonical run/row mapping and do not rerun selectively based on output quality.
 - [ ] Generate review packets from the exact observed final answer, tool trajectory/results, state snapshots, and executable oracle. Use Orq trace links and reasoning summaries only as optional enrichment.
 - [ ] For each applicable atomic rubric, store `{value, explanation}` using the exact `pass`/`fail`/`not_applicable` verdict space. One reviewer labels dev; two reviewers independently label test before adjudication. Reject empty explanations.

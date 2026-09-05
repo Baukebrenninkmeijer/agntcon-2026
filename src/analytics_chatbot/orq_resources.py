@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -101,16 +102,23 @@ class EvaluatorOutput(BaseModel):
         return self
 
 
+MIN_GATING_LABELS = 30
+
+
 class EvaluatorValidation(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    status: Literal["pending_human_labels", "validated"]
+    status: Literal["pending_human_labels", "shadow", "validated"]
     human_labeled_examples: int = Field(ge=0)
 
     @model_validator(mode="after")
     def validate_sample_count(self) -> EvaluatorValidation:
-        if self.status == "validated" and self.human_labeled_examples < 100:
-            raise ValueError("validated LLM evaluators require at least 100 human labels")
+        # ponytail: two tiers only. `shadow` may sync with zero labels because a hosted
+        # evaluator must exist before it can be aligned; `validated` is the gating tier.
+        if self.status == "validated" and self.human_labeled_examples < MIN_GATING_LABELS:
+            raise ValueError(
+                f"validated LLM evaluators require at least {MIN_GATING_LABELS} human labels"
+            )
         return self
 
 
@@ -157,11 +165,30 @@ class PythonEvaluatorResource(EvaluatorBase):
 
 class LlmEvaluatorResource(EvaluatorBase):
     type: Literal["llm_eval"]
-    mode: Literal["single"]
-    model: str
+    mode: Literal["single", "jury"]
+    model: str | None = None
+    judges: list[str] | None = None
+    min_successful_judges: int = Field(default=2, ge=1)
     repetitions: int = Field(ge=1, le=10)
     validation: EvaluatorValidation
     prompt: str
+
+    @model_validator(mode="after")
+    def validate_mode_shape(self) -> LlmEvaluatorResource:
+        # `model` and `judges` may both be declared so switching between a single
+        # judge and a jury is a one-word `mode:` edit. Only the active mode is sent.
+        if self.judges is not None:
+            if len(self.judges) < 2:
+                raise ValueError("a declared jury requires at least two judges")
+            if len(set(self.judges)) != len(self.judges):
+                raise ValueError("jury judges must be distinct models")
+            if self.min_successful_judges > len(self.judges):
+                raise ValueError("min_successful_judges cannot exceed the judge count")
+        if self.mode == "jury" and not self.judges:
+            raise ValueError("jury mode requires a `judges` list")
+        if self.mode == "single" and not self.model:
+            raise ValueError("single mode requires a `model`")
+        return self
 
     @model_validator(mode="after")
     def validate_prompt_contract(self) -> LlmEvaluatorResource:
@@ -262,7 +289,8 @@ class ResourceBundle(BaseModel):
                 "type": evaluator.type,
                 "key": evaluator.key,
                 "description": evaluator.description,
-                "path": self._project_path(evaluator.path),
+                # ponytail: the evals API rejects `path` alongside `project_id`
+                # ("Provide either `path` or `project_id`, not both. Prefer `project_id`.")
                 "project_id": self.project.project_id,
                 "output_type": evaluator.output.type,
             }
@@ -288,24 +316,31 @@ class ResourceBundle(BaseModel):
                 body.update(
                     {
                         "mode": evaluator.mode,
-                        "model": evaluator.model,
                         "repetitions": evaluator.repetitions,
                         "prompt": evaluator.prompt,
                     }
                 )
+                if evaluator.mode == "jury":
+                    body["jury"] = {
+                        "judges": [{"model": model} for model in evaluator.judges or []],
+                        "min_successful_judges": evaluator.min_successful_judges,
+                    }
+                else:
+                    body["model"] = evaluator.model
             payloads.append(body)
         return payloads
 
-    def assert_llm_evaluators_validated(self) -> None:
+    def assert_llm_evaluators_syncable(self, keys: Sequence[str] | None = None) -> None:
         pending = [
             evaluator.key
             for evaluator in self.evaluators
             if isinstance(evaluator, LlmEvaluatorResource)
-            and evaluator.validation.status != "validated"
+            and evaluator.validation.status not in {"shadow", "validated"}
+            and (keys is None or evaluator.key in keys)
         ]
         if pending:
             raise ResourceError(
-                "LLM evaluators require 100+ held-out human labels before remote sync: "
+                "LLM evaluators must be `shadow` or `validated` before remote sync: "
                 f"{', '.join(sorted(pending))}"
             )
 

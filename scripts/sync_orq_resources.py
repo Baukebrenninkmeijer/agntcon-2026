@@ -32,7 +32,21 @@ def build_parser() -> argparse.ArgumentParser:
         default=("tool", "agent", "evaluator"),
         help="resource kinds to include; defaults to the complete bundle",
     )
+    parser.add_argument(
+        "--keys",
+        nargs="+",
+        default=None,
+        help="resource keys to include; defaults to every key of the selected kinds",
+    )
     return parser
+
+
+def _select(actions: list, args: argparse.Namespace) -> list:
+    return [
+        action
+        for action in actions
+        if action.kind in args.kinds and (args.keys is None or action.key in args.keys)
+    ]
 
 
 def _summary(plan: object) -> dict[str, object]:
@@ -58,22 +72,19 @@ def main() -> int:
     gateway = OrqSdkGateway(api_key)
     reconciler = OrqReconciler(bundle)
     before = reconciler.plan(gateway.snapshot(bundle))
-    before = before.model_copy(
-        update={"actions": [action for action in before.actions if action.kind in args.kinds]}
-    )
+    before = before.model_copy(update={"actions": _select(before.actions, args)})
     result = _summary(before)
     result["mode"] = "apply" if args.apply else "dry-run"
     print(json.dumps(result, indent=2))
     if not args.apply:
         return 0
 
-    if "evaluator" in args.kinds:
-        bundle.assert_llm_evaluators_validated()
+    bundle.assert_llm_evaluators_syncable(
+        keys=[action.key for action in before.actions if action.kind == "evaluator"]
+    )
     gateway.apply(before.actions)
     after = reconciler.plan(gateway.snapshot(bundle))
-    after = after.model_copy(
-        update={"actions": [action for action in after.actions if action.kind in args.kinds]}
-    )
+    after = after.model_copy(update={"actions": _select(after.actions, args)})
     if after.changed:
         pending = [
             f"{action.kind}:{action.key}:{action.operation}"

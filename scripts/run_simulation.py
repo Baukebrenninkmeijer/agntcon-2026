@@ -7,13 +7,9 @@ import argparse
 import asyncio
 import json
 from pathlib import Path
+from typing import Any
 
-from evaluatorq.contracts import LLMCallConfig
-from evaluatorq.simulation import SimulationDatapoint, simulate
-from evaluatorq.simulation.utils.dataset_export import export_results_to_jsonl
-
-from analytics_chatbot.config import Settings
-from analytics_chatbot.evaluation_ops.target import AnalyticsChatbotTarget
+from dotenv import load_dotenv
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -26,11 +22,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--case-id", help="run exactly one stable case id")
     parser.add_argument("--limit", type=int, default=1, help="maximum cases to run")
     parser.add_argument("--max-turns", type=int, default=3)
+    parser.add_argument(
+        "--evaluation-name",
+        default="pydata2026-analytics-chatbot-simulation",
+    )
+    parser.add_argument("--report", type=Path)
     parser.add_argument("--output", type=Path, default=Path("runs/evaluatorq-simulation.jsonl"))
     return parser
 
 
-def _load(path: Path) -> list[SimulationDatapoint]:
+def _load(path: Path) -> list[Any]:
+    from evaluatorq.simulation import SimulationDatapoint
+
     return [
         SimulationDatapoint.model_validate(json.loads(line))
         for line in path.read_text(encoding="utf-8").splitlines()
@@ -39,6 +42,15 @@ def _load(path: Path) -> list[SimulationDatapoint]:
 
 
 def main() -> None:
+    load_dotenv(override=True)
+
+    from evaluatorq.contracts import LLMCallConfig
+    from evaluatorq.simulation import simulate
+    from evaluatorq.simulation.utils.dataset_export import export_results_to_jsonl
+
+    from analytics_chatbot.config import Settings
+    from analytics_chatbot.evaluation_ops.target import AnalyticsChatbotTarget
+
     args = build_parser().parse_args()
     datapoints = _load(args.cases)
     if args.case_id:
@@ -57,7 +69,7 @@ def main() -> None:
     )
     results = asyncio.run(
         simulate(
-            evaluation_name="pydata2026-analytics-chatbot-simulation",
+            evaluation_name=args.evaluation_name,
             target=target,
             datapoints=datapoints,
             max_turns=args.max_turns,
@@ -66,11 +78,14 @@ def main() -> None:
                 api="responses",
                 retry_count=1,
             ),
-            datapoint_parallelism=1,
-            llm_parallelism=2,
+            evaluator_names=["goal_achieved", "criteria_met"],
+            datapoint_parallelism=10,
+            llm_parallelism=10,
             max_target_retries=2,
+            per_simulation_timeout_s=180,
             upload_results=True,
             save=True,
+            report=args.report,
             executive_summary=False,
             recommendations=False,
         )

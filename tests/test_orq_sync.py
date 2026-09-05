@@ -22,7 +22,9 @@ def empty_snapshot() -> RemoteSnapshot:
         project_id="${ORQ_PROJECT_ID}",
         models={
             "deepseek/deepseek-v4-flash": True,
-            "openai/gpt-5.6-sol": True,
+            "openai/gpt-5.6-luna": True,
+            "google-ai/gemini-3.5-flash-lite": True,
+            "tensorix/qwen/qwen3.8-flash-next": True,
         },
     )
 

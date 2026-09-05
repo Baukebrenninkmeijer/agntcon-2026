@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from analytics_chatbot.orq_resources import ResourceError, load_resource_bundle
+from analytics_chatbot.orq_resources import (
+    EvaluatorValidation,
+    ResourceError,
+    load_resource_bundle,
+)
 
 RESOURCE_ROOT = Path(__file__).parents[1] / "orq" / "resources"
 
@@ -34,7 +38,16 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     correctness = evaluator_payloads["analytics-answer-correctness"]
     faithfulness = evaluator_payloads["analytics-evidence-faithfulness"]
     assert correctness["output_type"] == "categorical"
-    assert correctness["model"] == "openai/gpt-5.6-sol"
+    assert "model" not in correctness
+    assert correctness["mode"] == "jury"
+    assert correctness["jury"] == {
+        "judges": [
+            {"model": "openai/gpt-5.6-luna"},
+            {"model": "google-ai/gemini-3.5-flash-lite"},
+            {"model": "tensorix/qwen/qwen3.8-flash-next"},
+        ],
+        "min_successful_judges": 2,
+    }
     assert "{{input.expected_output}}" in correctness["prompt"]
     assert "{{output.tools_called}}" not in correctness["prompt"]
     assert "{{output.tools_called}}" in faithfulness["prompt"]
@@ -72,11 +85,30 @@ def test_python_evaluators_execute_against_documented_log_shape() -> None:
     )
 
 
-def test_unvalidated_llm_evaluators_are_blocked_from_remote_sync() -> None:
+def test_pending_llm_evaluators_are_blocked_from_remote_sync(tmp_path: Path) -> None:
     bundle = load_resource_bundle(RESOURCE_ROOT)
+    pending = [
+        evaluator
+        for evaluator in bundle.evaluators
+        if getattr(evaluator, "validation", None) is not None
+        and evaluator.validation.status == "pending_human_labels"
+    ]
+    if not pending:
+        pytest.skip("no pending LLM evaluators in the tracked bundle")
 
-    with pytest.raises(ResourceError, match=r"100\+ held-out human labels"):
-        bundle.assert_llm_evaluators_validated()
+    with pytest.raises(ResourceError, match=r"`shadow` or `validated`"):
+        bundle.assert_llm_evaluators_syncable()
+
+
+def test_shadow_llm_evaluators_may_sync_with_zero_labels() -> None:
+    validation = EvaluatorValidation(status="shadow", human_labeled_examples=0)
+
+    assert validation.human_labeled_examples == 0
+
+
+def test_validated_llm_evaluators_require_the_gating_label_floor() -> None:
+    with pytest.raises(ValueError, match=r"at least 30 human labels"):
+        EvaluatorValidation(status="validated", human_labeled_examples=29)
 
 
 def test_agent_instructions_must_use_yaml_block_scalar(tmp_path: Path) -> None:
@@ -97,3 +129,38 @@ def test_agent_instructions_must_use_yaml_block_scalar(tmp_path: Path) -> None:
 
     with pytest.raises(ResourceError, match="block scalar"):
         load_resource_bundle(root)
+
+
+def test_evaluator_mode_switches_between_single_judge_and_jury() -> None:
+    bundle = load_resource_bundle(RESOURCE_ROOT)
+    correctness = next(
+        evaluator
+        for evaluator in bundle.evaluators
+        if evaluator.key == "analytics-answer-correctness"
+    )
+    # Both shapes stay declared, so flipping `mode` is the only edit needed.
+    assert correctness.model is not None
+    assert correctness.judges is not None
+
+    jury_body = next(
+        body for body in bundle.evaluator_payloads() if body["key"] == correctness.key
+    )
+    assert jury_body["mode"] == "jury"
+    assert "model" not in jury_body
+    assert [judge["model"] for judge in jury_body["jury"]["judges"]] == correctness.judges
+
+    single = correctness.model_copy(update={"mode": "single"})
+    single_bundle = bundle.model_copy(
+        update={
+            "evaluators": [
+                single if evaluator.key == correctness.key else evaluator
+                for evaluator in bundle.evaluators
+            ]
+        }
+    )
+    single_body = next(
+        body for body in single_bundle.evaluator_payloads() if body["key"] == correctness.key
+    )
+    assert single_body["mode"] == "single"
+    assert single_body["model"] == correctness.model
+    assert "jury" not in single_body

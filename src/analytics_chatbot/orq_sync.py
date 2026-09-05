@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -128,8 +128,10 @@ class OrqReconciler:
             key=lambda body: (body["type"] != "python_eval", body["key"]),
         )
         for body in evaluator_bodies:
-            if body["type"] == "llm_eval" and not snapshot.models.get(body["model"], False):
-                raise SyncError(f"required evaluator model {body['model']!r} is unavailable")
+            if body["type"] == "llm_eval":
+                for required in _evaluator_models(body):
+                    if not snapshot.models.get(required, False):
+                        raise SyncError(f"required evaluator model {required!r} is unavailable")
             remote = remote_evaluators.get(body["key"])
             operation: Operation = "create"
             if remote is not None:
@@ -213,7 +215,9 @@ def normalize_remote_agent(value: Any) -> dict[str, Any]:
     }
 
 
-def normalize_remote_evaluator(value: Any) -> dict[str, Any]:
+def normalize_remote_evaluator(
+    value: Any, model_slugs: Mapping[str, str] | None = None
+) -> dict[str, Any]:
     """Project a hydrated evaluator onto repository-owned semantic fields."""
 
     body = _model_dump(value)
@@ -221,7 +225,6 @@ def normalize_remote_evaluator(value: Any) -> dict[str, Any]:
         "type": body.get("type"),
         "key": body.get("key"),
         "description": body.get("description") or "",
-        "path": body.get("path"),
         "project_id": body.get("project_id"),
         "output_type": body.get("output_type"),
     }
@@ -254,18 +257,52 @@ def normalize_remote_evaluator(value: Any) -> dict[str, Any]:
     if body.get("type") == "python_eval":
         result["code"] = body.get("code")
     else:
-        model = body.get("model")
-        if isinstance(model, dict):
-            model = model.get("id")
         result.update(
             {
                 "mode": body.get("mode"),
-                "model": model,
                 "repetitions": body.get("repetitions"),
                 "prompt": body.get("prompt"),
             }
         )
+        if body.get("mode") == "jury":
+            jury = body.get("jury") or {}
+            if not isinstance(jury, dict):
+                jury = _model_dump(jury)
+            # The API resolves catalog slugs to opaque model IDs, so translate them
+            # back before the semantic diff; otherwise every plan reports an update.
+            slugs = model_slugs or {}
+            result["jury"] = {
+                "judges": [
+                    {"model": slugs.get(model, model)}
+                    for model in _judge_models(jury.get("judges"))
+                ],
+                "min_successful_judges": jury.get("min_successful_judges", 2),
+            }
+        else:
+            model = body.get("model")
+            if isinstance(model, dict):
+                model = model.get("id")
+            result["model"] = (model_slugs or {}).get(str(model), model)
     return result
+
+
+def _judge_models(judges: Any) -> list[str]:
+    models: list[str] = []
+    for judge in judges or []:
+        if not isinstance(judge, dict):
+            judge = _model_dump(judge)
+        model = judge.get("model")
+        if isinstance(model, dict):
+            model = model.get("id")
+        if model:
+            models.append(str(model))
+    return models
+
+
+def _evaluator_models(body: dict[str, Any]) -> list[str]:
+    if body.get("mode") == "jury":
+        return _judge_models((body.get("jury") or {}).get("judges"))
+    return [body["model"]] if body.get("model") else []
 
 
 class OrqSdkGateway:
@@ -279,6 +316,34 @@ class OrqSdkGateway:
 
             client = Orq(api_key=api_key, timeout_ms=timeout_ms)
         self.client = client
+        self._api_key = api_key
+        self._catalog_base = "https://my.orq.ai"
+
+    def _model_slugs(self) -> dict[str, str]:
+        """Map opaque model IDs to catalog slugs.
+
+        The SDK model list exposes only slugs and the evaluator API stores only IDs,
+        so the `/v2/models` catalog is the one place both appear together.
+        """
+
+        import httpx  # local import keeps the offline test path free of network deps
+
+        try:
+            response = httpx.get(
+                f"{self._catalog_base}/v2/models",
+                headers={"Authorization": f"Bearer {self._api_key}"},
+                timeout=30,
+            )
+            response.raise_for_status()
+            rows = response.json()
+        except Exception:  # ponytail: slug translation is a diff nicety, not a gate
+            return {}
+        slugs: dict[str, str] = {}
+        for row in rows if isinstance(rows, list) else []:
+            model_id, ref = row.get("id"), row.get("refId")
+            if model_id and ref:
+                slugs[str(model_id)] = str(ref)
+        return slugs
 
     @staticmethod
     def _paginate(method: Any, *, limit: int = 200) -> list[Any]:
@@ -314,6 +379,7 @@ class OrqSdkGateway:
 
         model_rows = list(self.client.models.list().data)
         models = {str(_model_dump(row).get("id")): True for row in model_rows}
+        model_slugs = self._model_slugs()
         tool_rows = [
             row
             for row in self._paginate(self.client.tools.list)
@@ -367,7 +433,7 @@ class OrqSdkGateway:
                     kind="evaluator",
                     key=str(row.get("key")),
                     entity_id=str(row.get("id") or row.get("_id")),
-                    body=normalize_remote_evaluator(row),
+                    body=normalize_remote_evaluator(row, model_slugs),
                 )
                 for row in evaluator_rows
             ],

@@ -16,6 +16,7 @@ from evaluatorq import DataPoint, EvaluationResult, evaluatorq, job, llm_jury
 from evaluatorq.types import DataPointResult, Evaluator, ScorerParameter
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from analytics_chatbot.evaluation_ops.hosted_evaluators import orq_evaluator
 from analytics_chatbot.evaluation_ops.trace_import import (
     TraceImportError,
     import_orq_trace,
@@ -136,7 +137,13 @@ def _conversation(row: TraceBackedEvaluationRow) -> list[dict[str, str]]:
 
 
 def _answer_correctness_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
-    return {"conversation": _conversation(row)}
+    return {
+        "conversation": [
+            message.model_dump(mode="json")
+            for message in row.conversation
+            if message.role != "tool"
+        ]
+    }
 
 
 def _query_semantics_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
@@ -279,6 +286,50 @@ def _project_datapoint(row: TraceBackedEvaluationRow, spec: _JudgeSpec) -> DataP
     )
 
 
+def build_atomic_evaluator(
+    judge: AtomicJudge,
+    *,
+    judges: Sequence[str] = DEFAULT_JUDGES,
+    jury_factory: Callable[..., Evaluator] = llm_jury,
+) -> Evaluator:
+    """Build one routed evaluatorq jury for an independently selectable rubric."""
+
+    selected_judge = AtomicJudge(judge)
+    spec = next(spec for spec in _SPECS if spec.judge is selected_judge)
+    jury = jury_factory(
+        name=spec.judge.value,
+        prompt=_PROMPT.format(criterion=spec.criterion),
+        judges=list(judges),
+        repetitions=1,
+        assignment="all",
+        min_successful_judges=2,
+        verdict_kind="categorical",
+        labels=list(VERDICT_LABELS),
+        passing_labels=["pass"],
+        aggregator="majority",
+        structured_output=True,
+    )
+    jury_scorer = jury["scorer"]
+
+    async def routed_scorer(params: ScorerParameter) -> EvaluationResult | dict[str, Any]:
+        row = TraceBackedEvaluationRow.from_datapoint(params["data"])
+        if not spec.applies(row):
+            return EvaluationResult(
+                value="not_applicable",
+                explanation=spec.not_applicable_reason,
+                pass_=None,
+            )
+        projected: ScorerParameter = {
+            "data": _project_datapoint(row, spec),
+            "output": params["output"],
+        }
+        if "row" in params:
+            projected["row"] = params["row"]
+        return await jury_scorer(projected)
+
+    return {"name": spec.judge.value, "scorer": routed_scorer}
+
+
 def build_atomic_evaluators(
     *,
     judges: Sequence[str] = DEFAULT_JUDGES,
@@ -286,48 +337,10 @@ def build_atomic_evaluators(
 ) -> list[Evaluator]:
     """Build four routed evaluatorq juries with a stable categorical verdict space."""
 
-    evaluators: list[Evaluator] = []
-    for spec in _SPECS:
-        jury = jury_factory(
-            name=spec.judge.value,
-            prompt=_PROMPT.format(criterion=spec.criterion),
-            judges=list(judges),
-            repetitions=1,
-            assignment="all",
-            min_successful_judges=2,
-            verdict_kind="categorical",
-            labels=list(VERDICT_LABELS),
-            passing_labels=["pass"],
-            aggregator="majority",
-            structured_output=True,
-        )
-        jury_scorer = jury["scorer"]
-
-        async def routed_scorer(
-            params: ScorerParameter,
-            *,
-            current_spec: _JudgeSpec = spec,
-            current_scorer: Callable[
-                [ScorerParameter], Awaitable[EvaluationResult | dict[str, Any]]
-            ] = jury_scorer,
-        ) -> EvaluationResult | dict[str, Any]:
-            row = TraceBackedEvaluationRow.from_datapoint(params["data"])
-            if not current_spec.applies(row):
-                return EvaluationResult(
-                    value="not_applicable",
-                    explanation=current_spec.not_applicable_reason,
-                    pass_=None,
-                )
-            projected: ScorerParameter = {
-                "data": _project_datapoint(row, current_spec),
-                "output": row.assistant_response,
-            }
-            if "row" in params:
-                projected["row"] = params["row"]
-            return await current_scorer(projected)
-
-        evaluators.append({"name": spec.judge.value, "scorer": routed_scorer})
-    return evaluators
+    return [
+        build_atomic_evaluator(spec.judge, judges=judges, jury_factory=jury_factory)
+        for spec in _SPECS
+    ]
 
 
 @job("trace-backed-response")
@@ -354,12 +367,16 @@ async def run_trace_evaluation(
 
     if not rows:
         raise ValueError("at least one trace-backed row is required")
+    if evaluators is not None and not evaluators:
+        raise ValueError("at least one evaluator is required when evaluators are provided")
+    selected_evaluators = evaluators or [
+        build_atomic_evaluator(AtomicJudge.ANSWER_CORRECTNESS)
+    ]
     return await native_runner(
         experiment_name,
         data=[row.to_datapoint() for row in rows],
-        jobs=[replay_trace_response],
-        evaluators=evaluators or build_atomic_evaluators(),
-        inference=True,
+        evaluators=selected_evaluators,
+        inference=False,
         datapoint_parallelism=datapoint_parallelism,
         llm_parallelism=llm_parallelism,
         print_results=print_results,
@@ -373,9 +390,11 @@ __all__ = [
     "TraceBackedEvaluationRow",
     "TraceImportError",
     "VERDICT_LABELS",
+    "build_atomic_evaluator",
     "build_atomic_evaluators",
     "import_orq_trace",
     "import_run_audit",
+    "orq_evaluator",
     "replay_trace_response",
     "run_trace_evaluation",
 ]

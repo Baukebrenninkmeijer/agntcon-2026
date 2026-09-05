@@ -57,21 +57,56 @@ stdlib-only, AST-checked, and unit-executed locally. To reconcile only an alread
 pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync script; the Makefile target
 always covers the complete bundle.
 
-Generate the deterministic 50-case evaluatorq corpus and, after explicit review approval, run one
-bounded pilot case with:
+Generate the deterministic 50-case evaluatorq input corpus and run a bounded simulation with:
 
 ```bash
 uv run python scripts/generate_simulation_cases.py
 uv run python scripts/run_agent_smoke.py
 uv run python scripts/run_simulation.py \
-  --case-id data-analyst--net-by-region \
-  --output runs/evaluatorq-pilot.jsonl
+  --limit 50 \
+  --max-turns 3 \
+  --output runs/evaluatorq-simulation-50-20260905.jsonl
 ```
 
-The committed pilot review records two rejected attempts and a third candidate awaiting explicit
-user review. Do not run the remaining 49 cases or increase `--limit` until that candidate is
-accepted; this is a required simulation quality gate. Simulation outputs and exact local run
-artifacts remain under ignored runtime directories.
+The harder multi-turn corpus is generated separately:
+
+```bash
+uv run python scripts/generate_simulation_cases.py --variant edge-v2
+```
+
+Its single approved live run used the tracked v2 definitions, a distinct
+evaluation name, and distinct ignored output/report paths. It produced 50
+unique rows: eight one-turn, 22 two-turn, and 20 three-turn conversations.
+Forty rows achieved their simulated goal and ten behavioral failures were
+retained. Do not rerun the frozen v2 corpus to replace failures.
+
+`scripts/run_simulation.py` loads `.env` with `override=True` before importing evaluatorq, passes
+`save=True`, and exports the returned raw `SimulationResult` rows to `--output`. Datapoints run with
+bounded concurrency while each conversation retains isolated state. On 2026-09-05 the explicitly
+approved baseline run produced 50 unique local outputs. The separate edge-v2
+run produced 50 more. Simulation outcomes are not structural validity gates:
+the adapter retains failed behavior and reports expected-tool misses as QC
+warnings. Preserve and replay all 50 v2 rows; warnings are informational and do
+not filter the corpus. Simulation outputs and exact local run artifacts remain
+under ignored runtime directories.
+
+Replay the frozen edge-v2 observations through an explicit hosted evaluator
+version with:
+
+```bash
+uv run python scripts/run_evaluatorq_replay.py \
+  --evaluator-version 1.0.0 \
+  --datapoint-parallelism 10 \
+  --llm-parallelism 10
+```
+
+The command resolves the stable `analytics-answer-correctness` key at runtime,
+verifies the requested version exists, rejects `latest`, and runs all 50 stored
+responses with evaluatorq `inference=False`. It uploads a native Orq Experiment
+and hides local score output by default. Repeat `--evaluator-version` after an
+approved evaluator update to create distinct side-by-side columns such as
+`answer_correctness@1.0.0` and `answer_correctness@1.0.1` over identical rows.
+Runtime evaluator IDs remain untracked.
 
 Data generation uses a Polars `LazyFrame`, streams 25,000 fixed-seed orders to Parquet, then
 materializes explicitly typed decimal columns in DuckDB. The generated database and manifest are

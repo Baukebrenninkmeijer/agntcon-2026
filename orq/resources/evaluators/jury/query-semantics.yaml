@@ -6,8 +6,15 @@ description: >-
   Judges whether executed SQL implements the requested metric, filters, joins, aggregation, and
   time boundaries. This draft must be aligned against human labels before remote sync.
 path: evaluators/jury
-mode: single
-model: openai/gpt-5.6-sol
+# Switch between a single judge and the jury by changing `mode` only; both the
+# `model` and `judges` declarations below stay valid and reviewed either way.
+mode: jury
+model: tensorix/qwen/qwen3.8-flash-next
+judges:
+  - openai/gpt-5.6-luna
+  - google-ai/gemini-3.5-flash-lite
+  - tensorix/qwen/qwen3.8-flash-next
+min_successful_judges: 2
 repetitions: 1
 output:
   type: categorical

@@ -1,8 +1,15 @@
 from __future__ import annotations
 
 import copy
+import json
+from pathlib import Path
 
-from analytics_chatbot.evaluation_ops.simulation_artifacts import normalize_simulation_results
+from evaluatorq.evaluatorq import extract_recorded_response
+
+from analytics_chatbot.evaluation_ops.simulation_artifacts import (
+    load_simulation_replay,
+    normalize_simulation_results,
+)
 
 
 def _case(**overrides: object) -> dict[str, object]:
@@ -64,6 +71,7 @@ def test_normalizes_raw_result_for_evaluatorq_replay() -> None:
 
     assert batch.rejected == []
     assert batch.duplicates == []
+    assert batch.warnings == []
     assert len(batch.rows) == 1
     row = batch.rows[0]
     assert row.source is None
@@ -99,8 +107,12 @@ def test_drops_only_exact_duplicates_and_keeps_distinct_attempts() -> None:
     assert batch.duplicates[0].case_id == "analyst--regional-revenue"
 
 
-def test_rejects_failed_runs_and_missing_expected_tools() -> None:
-    failed = _result(goal_achieved=False)
+def test_keeps_behavioral_failures_and_warns_on_missing_expected_tools() -> None:
+    failed = _result(
+        goal_achieved=False,
+        criteria_verified=False,
+        terminated_by="max_turns",
+    )
     missing_tool = _result(
         messages=[
             {"role": "user", "content": "Compare regional net revenue."},
@@ -111,9 +123,12 @@ def test_rejects_failed_runs_and_missing_expected_tools() -> None:
 
     batch = normalize_simulation_results([failed, missing_tool], [_case()])
 
-    assert batch.rows == []
-    assert [item.reasons for item in batch.rejected] == [
-        ["goal_not_achieved"],
+    assert len(batch.rows) == 2
+    assert batch.rows[0].metadata["goal_achieved"] is False
+    assert batch.rows[0].metadata["criteria_verified"] is False
+    assert batch.rows[0].metadata["terminated_by"] == "max_turns"
+    assert batch.rejected == []
+    assert [item.reasons for item in batch.warnings] == [
         ["missing_expected_tool:query_sql"],
     ]
 
@@ -159,5 +174,61 @@ def test_enforces_save_expectation() -> None:
     )
     unexpected_save = normalize_simulation_results([unexpected_save_result], [no_save_case])
 
-    assert missing_save.rejected[0].reasons == ["missing_expected_tool:save_insight"]
-    assert unexpected_save.rejected[0].reasons == ["unexpected_tool:save_insight"]
+    assert len(missing_save.rows) == 1
+    assert missing_save.warnings[0].reasons == ["missing_expected_tool:save_insight"]
+    assert len(unexpected_save.rows) == 1
+    assert unexpected_save.warnings[0].reasons == ["unexpected_tool:save_insight"]
+
+
+def test_loads_deterministic_replay_samples_without_filtering_qc_warnings(
+    tmp_path: Path,
+) -> None:
+    cases_path = tmp_path / "cases.jsonl"
+    results_path = tmp_path / "results.jsonl"
+    cases = [
+        _case(id="case-b", state_expectation={"authorized": True}),
+        _case(id="case-a"),
+    ]
+    results = [
+        _result(
+            goal_achieved=False,
+            criteria_verified=False,
+            terminated_by="max_turns",
+            metadata={
+                "datapoint_id": "case-b",
+                "persona": "analyst",
+                "scenario": "regional-revenue",
+            },
+        ),
+        _result(
+            metadata={
+                "datapoint_id": "case-a",
+                "persona": "analyst",
+                "scenario": "regional-revenue",
+            }
+        ),
+    ]
+    cases_path.write_text("".join(json.dumps(case) + "\n" for case in cases))
+    results_path.write_text("".join(json.dumps(result) + "\n" for result in results))
+
+    replay = load_simulation_replay(cases_path=cases_path, results_path=results_path)
+    replay_again = load_simulation_replay(cases_path=cases_path, results_path=results_path)
+
+    assert [sample.case_id for sample in replay.samples] == ["case-a", "case-b"]
+    assert [sample.identity for sample in replay.samples] == [
+        sample.identity for sample in replay_again.samples
+    ]
+    assert all(len(sample.transcript_fingerprint) == 64 for sample in replay.samples)
+    assert all(
+        sample.row.metadata["transcript_fingerprint"] == sample.transcript_fingerprint
+        for sample in replay.samples
+    )
+    assert replay.samples[1].row.metadata["goal_achieved"] is False
+    assert replay.rejected == []
+    assert replay.duplicates == []
+    assert [warning.reasons for warning in replay.warnings] == [
+        ["missing_expected_tool:save_insight"]
+    ]
+    for sample in replay.samples:
+        point = sample.to_datapoint()
+        assert extract_recorded_response(point.inputs["messages"]) == sample.row.assistant_response

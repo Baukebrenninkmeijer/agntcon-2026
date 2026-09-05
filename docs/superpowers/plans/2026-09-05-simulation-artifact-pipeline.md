@@ -1,6 +1,9 @@
 # Simulation Artifact Pipeline Implementation Plan
 
-> **Status:** approved lightweight implementation; no live runs or remote writes.
+> **Status:** `COMPLETE`. The adapter is integrated on local `main`. A bounded
+> 50-case live simulation was subsequently approved and run, so the "no live
+> runs" scope note below applied only to this plan's own implementation work,
+> not to the project as a whole. No remote resource was written by this plan.
 
 **Goal:** Prove evaluatorq's raw simulation artifact contains everything needed
 for native downstream evaluation, with only light deduplication and quality
@@ -35,8 +38,11 @@ checks.
 
 **Files:** `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md`
 
-1. Validate the three existing local raw pilot artifacts through the adapter
-   without modifying or committing them.
+1. Validate the local raw pilot artifacts through the adapter without modifying
+   or committing them. Originally three pilot artifacts; the approved 50-case
+   run has since replaced them with 50 raw results in the ignored run
+   directory. The edge-v2 follow-up run also has 50 raw results; all 50 are
+   structurally valid and behavioral failures remain replayable.
 2. Record field sufficiency, accepted/rejected counts, and any limitations in
    the living plan.
 3. Run Ruff, the full non-live test suite, and package build.

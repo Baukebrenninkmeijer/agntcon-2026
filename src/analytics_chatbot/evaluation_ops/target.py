@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 
 from evaluatorq.contracts import AgentResponse as EvaluatorqAgentResponse
@@ -40,7 +41,8 @@ class AnalyticsChatbotTarget(AgentTarget):
         message = messages[-1].content
         if self.case_id is None:
             self.case_id = self.case_by_first_message.get(message, "unmapped-simulation-case")
-        result = self.chatbot.ask(
+        result = await asyncio.to_thread(
+            self.chatbot.ask,
             message,
             conversation=self.conversation,
             context=TraceContext(

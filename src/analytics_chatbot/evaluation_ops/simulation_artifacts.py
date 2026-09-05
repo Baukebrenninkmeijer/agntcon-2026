@@ -6,7 +6,10 @@ import hashlib
 import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
+
+from evaluatorq import DataPoint
 
 from analytics_chatbot.evaluation_ops import (
     ConversationMessage,
@@ -32,6 +35,37 @@ class SimulationArtifactBatch:
     rows: list[TraceBackedEvaluationRow]
     rejected: list[SimulationArtifactIssue]
     duplicates: list[SimulationArtifactIssue]
+    warnings: list[SimulationArtifactIssue]
+
+
+@dataclass(frozen=True)
+class SimulationReplaySample:
+    """One stable, replay-ready observed response."""
+
+    case_id: str
+    transcript_fingerprint: str
+    row: TraceBackedEvaluationRow
+
+    @property
+    def identity(self) -> tuple[str, str]:
+        """Return the stable case/transcript identity used for replay."""
+
+        return (self.case_id, self.transcript_fingerprint)
+
+    def to_datapoint(self) -> DataPoint:
+        """Convert the stored observation without invoking the target agent."""
+
+        return self.row.to_datapoint()
+
+
+@dataclass(frozen=True)
+class SimulationReplayCorpus:
+    """Deterministically ordered replay samples plus non-filtering QC results."""
+
+    samples: list[SimulationReplaySample]
+    rejected: list[SimulationArtifactIssue]
+    duplicates: list[SimulationArtifactIssue]
+    warnings: list[SimulationArtifactIssue]
 
 
 def _as_mapping(value: Any) -> Mapping[str, Any] | None:
@@ -98,19 +132,8 @@ def _json_value(value: Any) -> Any:
         return value
 
 
-def _normal_termination(result: Mapping[str, Any]) -> bool:
-    value = str(result.get("terminated_by") or "").lower()
-    return value not in {"error", "timeout", "max_turns", "exception"}
-
-
 def _preflight(result: Mapping[str, Any]) -> list[str]:
     reasons: list[str] = []
-    if result.get("goal_achieved") is not True:
-        reasons.append("goal_not_achieved")
-    if not _normal_termination(result):
-        reasons.append("abnormal_termination")
-    if result.get("criteria_verified") is False:
-        reasons.append("criteria_not_verified")
     if _as_sequence(result.get("messages")) is None:
         reasons.append("missing_messages")
     return reasons
@@ -256,6 +279,7 @@ def _metadata(result: Mapping[str, Any]) -> dict[str, str | int | float | bool |
     fields: dict[str, Any] = {
         "persona": raw.get("persona"),
         "scenario": raw.get("scenario"),
+        "goal_achieved": result.get("goal_achieved"),
         "terminated_by": result.get("terminated_by"),
         "goal_completion_score": result.get("goal_completion_score"),
         "criteria_verified": result.get("criteria_verified"),
@@ -288,6 +312,7 @@ def normalize_simulation_results(
     rows: list[TraceBackedEvaluationRow] = []
     rejected: list[SimulationArtifactIssue] = []
     duplicates: list[SimulationArtifactIssue] = []
+    warnings: list[SimulationArtifactIssue] = []
     seen: set[tuple[str, str]] = set()
 
     for result in results:
@@ -304,8 +329,6 @@ def normalize_simulation_results(
         assert fingerprint is not None
 
         conversation, events, reasons = _normalize_conversation(result["messages"])
-        if not reasons:
-            reasons.extend(_tool_expectations(case, events))
         assistant_response = next(
             (message.content for message in reversed(conversation) if message.role == "assistant"),
             None,
@@ -319,6 +342,10 @@ def normalize_simulation_results(
         if reasons:
             rejected.append(SimulationArtifactIssue(case_id, reasons, fingerprint))
             continue
+
+        tool_warnings = _tool_expectations(case, events)
+        if tool_warnings:
+            warnings.append(SimulationArtifactIssue(case_id, tool_warnings, fingerprint))
 
         identity = (case_id, fingerprint)
         if identity in seen:
@@ -334,8 +361,63 @@ def normalize_simulation_results(
                 assistant_response=assistant_response,
                 oracle=_oracle(case),
                 tool_events=events,
-                metadata=_metadata(result),
+                metadata={
+                    **_metadata(result),
+                    "transcript_fingerprint": fingerprint,
+                },
             )
         )
 
-    return SimulationArtifactBatch(rows=rows, rejected=rejected, duplicates=duplicates)
+    return SimulationArtifactBatch(
+        rows=rows,
+        rejected=rejected,
+        duplicates=duplicates,
+        warnings=warnings,
+    )
+
+
+def _load_jsonl_objects(path: str | Path) -> list[dict[str, Any]]:
+    source = Path(path)
+    records: list[dict[str, Any]] = []
+    for line_number, line in enumerate(source.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError as error:
+            message = f"invalid JSONL in {source} on line {line_number}: {error.msg}"
+            raise ValueError(message) from error
+        if not isinstance(value, dict):
+            raise ValueError(f"JSONL record in {source} on line {line_number} is not an object")
+        records.append(value)
+    return records
+
+
+def load_simulation_replay(
+    *,
+    cases_path: str | Path,
+    results_path: str | Path,
+) -> SimulationReplayCorpus:
+    """Load stored simulation results into deterministic evaluatorq replay samples."""
+
+    batch = normalize_simulation_results(
+        _load_jsonl_objects(results_path),
+        _load_jsonl_objects(cases_path),
+    )
+    samples = sorted(
+        (
+            SimulationReplaySample(
+                case_id=row.case_id,
+                transcript_fingerprint=str(row.metadata["transcript_fingerprint"]),
+                row=row,
+            )
+            for row in batch.rows
+        ),
+        key=lambda sample: sample.identity,
+    )
+    return SimulationReplayCorpus(
+        samples=samples,
+        rejected=batch.rejected,
+        duplicates=batch.duplicates,
+        warnings=batch.warnings,
+    )

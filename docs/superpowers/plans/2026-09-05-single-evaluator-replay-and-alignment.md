@@ -1,15 +1,20 @@
 # Single-Evaluator Replay and Alignment Implementation Plan
 
-> **Status:** proposed; execution has not started.
+> **Status:** `ACTIVE`. The 50-case simulation and local artifact validation are
+> complete. `analytics-answer-correctness` is applied in `pydata2026` at version
+> `1.0.0` in `shadow` status. All 50 edge-v2 observations were replayed through
+> that pinned version with `inference=False` and uploaded as one Orq Experiment.
+> Remaining gates are human labels, repeated-run cost approval, and an approved
+> evaluator update.
 
-**Goal:** Recover ten existing development observations, replay them through
-evaluatorq without target inference, compare two immutable versions of the
-answer-correctness evaluator, and validate the evaluator-alignment skill's
-grey-zone workflow twice.
+**Goal:** Replay all 50 existing edge-v2 observations through evaluatorq without
+target inference using pinned answer-correctness evaluator versions, align from
+human feedback on development rows, and compare baseline and updated versions
+side by side on identical datapoints.
 
 **Design:** [Single-Evaluator Replay and Alignment Design](../specs/2026-09-05-single-evaluator-replay-and-alignment-design.md)
 
-**Constraints:** Do not rerun simulation, inspect the frozen test split, create
+**Constraints:** Do not rerun the completed simulation corpus, inspect the frozen test split, create
 remote resources without explicit approval, or make paid repeated judge calls
 before presenting their cost estimate.
 
@@ -25,7 +30,7 @@ The hosted version comparison waits for tracks 1 and 2, a fetchable evaluator,
 human labels, a project key, and cost approval. Integration and full verification
 run only after all accepted tracks land on the same branch.
 
-## Task 1: Re-establish live-run authentication safely
+## Task 1: Re-establish live-run authentication safely (`COMPLETE`)
 
 **Files:** `.env` (ignored), `CLAUDE.md`,
 `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md`
@@ -39,49 +44,43 @@ run only after all accepted tracks land on the same branch.
 4. Run the documented run-key preflight without exposing identifiers or tokens.
 5. Record only the authentication outcome and rotation obligation in the living
    plan.
+6. Confirmed working on 2026-09-05 through the SDK sync path, which loads the
+   key with `load_dotenv(override=True)`. Two operator traps were observed and
+   must not be mistaken for a bad key: a different `ORQ_API_KEY` exported from
+   the shell profile shadows `.env` for bare `orq` CLI calls and fails every
+   read with `API key is not valid for this workspace`; and
+   `orq evals --project pydata2026` returns `404 Project not found` for this key
+   while the SDK resolves the same project correctly. Diagnose the CLI and the
+   run path independently, in both directions.
 
-## Task 2: Choose one existing-observation source
+## Task 2: Choose one existing-observation source (`SUPERSEDED`)
 
-**Files:** `src/analytics_chatbot/evaluation_ops/trace_import.py`,
-`src/analytics_chatbot/evaluation_ops/simulation_artifacts.py`,
-`tests/test_trace_import.py`, `tests/test_simulation_artifacts.py`, ignored run
-artifacts
+Retained as historical context only; must not be implemented.
 
-1. Add two failing comparison fixtures that represent the same completed
-   attempts in simulation and Responses-trace form.
-2. Retrieve the two latest matching multi-step agent traces using OAuth read
-   access and hydrate their Responses steps. Keep runtime identifiers and raw
-   content out of Git.
-3. Compare ordered messages, final output, tool call arguments, tool results,
-   call errors, case linkage, and reasoning availability in a scrubbed matrix.
-4. Select raw simulation results when they are recoverable and complete;
-   otherwise select trace import only if it preserves all required acceptance
-   evidence. Document one canonical path and leave the other optional.
-5. Add regression tests for every material format gap found. Explicitly reject
-   response-only or summary-only records that cannot reconstruct the agent
-   conversation without guessing.
+The explicitly approved 50-case evaluatorq run settled the canonical source: the
+raw local `SimulationResult` export. Orq traces remain optional enrichment. The
+originally planned two-record simulation-versus-trace comparison, its fixtures,
+its scrubbed comparison matrix, and its format-gap regression tests were
+cancelled by that approval and were never executed. The rejection of
+response-only or summary-only records survives in the simulation-artifact
+pipeline acceptance checks and in M2 of the living plan.
 
-## Task 3: Recover and freeze ten development observations
+## Task 3: Load and freeze the observation set (`COMPLETE`)
 
 **Files:** `src/analytics_chatbot/evaluation_ops/simulation_artifacts.py` or
 `src/analytics_chatbot/evaluation_ops/trace_import.py`,
 `tests/test_simulation_artifacts.py` or `tests/test_trace_import.py`, ignored
 canonical run directory
 
-1. Locate existing raw results or complete traces; do not invoke the target
-   agent or simulation generator.
-2. Add failing tests that require a stable transcript fingerprint to survive
-   normalization and use `(case_id, transcript_fingerprint)` as sample identity.
-3. Normalize only distinct, oracle-bearing observations whose case definition
-   is already assigned to `dev`.
-4. Apply light checks: final assistant output, ordered tool pairing, expected
-   `query_sql`, resolvable oracle, and exact-transcript deduplication.
-5. Produce a scrubbed manifest with 10 distinct sample identities, source type,
-   case split, tool counts, acceptance result, and corpus digest. If fewer than
-   10 existing observations are available, stop and mark the workstream blocked;
-   do not manufacture the remainder.
+1. Load the completed 50-row edge-v2 evaluatorq export; do not rerun the target.
+2. Preserve `(case_id, transcript_fingerprint)` as sample identity.
+3. Normalize all distinct structurally valid rows, including behavioral
+   failures, max-turn outcomes, and expected-tool warnings.
+4. Fresh evidence: 50 samples, 50 unique identities, zero structural rejects,
+   zero duplicates, five non-filtering warnings, and exact recorded-response
+   extraction for 50/50 evaluatorq `DataPoint`s.
 
-## Task 4: Make replay genuinely no-inference and single-rubric
+## Task 4: Make replay genuinely no-inference and single-rubric (`COMPLETE`)
 
 **Files:** `src/analytics_chatbot/evaluation_ops/__init__.py`,
 `tests/test_evaluation_ops.py`
@@ -99,7 +98,7 @@ canonical run directory
    but not recorded tool results.
 5. Implement the minimal runner changes and run the focused tests.
 
-## Task 5: Add the versioned hosted-evaluator scorer
+## Task 5: Add the versioned hosted-evaluator scorer (`COMPLETE`)
 
 **Files:** `src/analytics_chatbot/evaluation_ops/hosted_evaluators.py`,
 `src/analytics_chatbot/evaluation_ops/__init__.py`,
@@ -108,14 +107,25 @@ canonical run directory
 1. Write failing fake-client tests for an immutable `id@version` selector,
    answer-correctness context routing, result mapping, missing-result failure,
    SDK error propagation, and local non-applicability without an SDK call.
-2. Implement the small `orq_evaluator(...)` factory around
+2. Implement the small `orq_evaluator(...)` factory on SDK 4.14.7
    `client.evals.invoke_async` and return evaluatorq `EvaluationResult` values.
+   The installed response models expose typed result/value/explanation/passed
+   fields; fake-client tests cover success and malformed responses.
 3. Resolve the YAML stable key to a runtime evaluator ID only through ignored
    state or a fresh remote lookup; never add an opaque ID to tracked YAML.
-4. If the evaluator does not exist, stop at the explicit hosted-resource
-   creation gate. Do not bypass the current human-label gate implicitly.
+4. `analytics-answer-correctness` was applied on 2026-09-05 in `shadow` status
+   after a reviewed single-key dry-run; the immediate second plan was a no-op.
+   It is the only evaluator in `pydata2026`; the other five remain unapplied.
+5. The immutable selector is verified working: `orq evals list-versions` reports
+   version `1.0.0` with checksum `fc82a2611ea2877a`, and
+   `orq evals invoke <id>@1.0.0` returned `value: pass`, `passed: true`, and an
+   explanation. Evaluator `name` is null workspace-wide; `key` is the identity
+   field, and the runtime ID stays out of tracked files.
+6. The replay CLI requires explicit versions, rejects `latest`, resolves the
+   stable key at runtime, verifies version history, and assigns distinct
+   versioned evaluatorq column names.
 
-## Task 6: Label the development pilot and compare two versions
+## Task 6: Label, align, and compare two versions (`ACTIVE`)
 
 **Files:** accepted human-label artifact under `orq/resources/alignment/`,
 comparison/report module and tests, ignored evaluatorq run artifacts
@@ -123,16 +133,21 @@ comparison/report module and tests, ignored evaluatorq run artifacts
 1. Define and validate one answer-correctness verdict and explanation per sample,
    bound to the sample identity and corpus digest. Machine scores never populate
    this artifact.
-2. Fetch the baseline evaluator and record its immutable version selector.
-3. Estimate the cost of both singleton ten-row runs and obtain explicit approval
-   before invoking the hosted judge.
-4. Run evaluatorq once for the baseline and once for the candidate with
-   `inference=False`, identical ordered rows, and exactly one evaluator per
-   experiment.
-5. Join results one-to-one by sample identity. Report pass/fail transitions,
+2. [x] Resolve the baseline evaluator at runtime and pin `id@1.0.0`.
+3. [x] Replay all 50 rows once with `inference=False`, no jobs, one pinned scorer,
+   and ten-way bounded concurrency. evaluatorq uploaded all 50 Experiment rows;
+   local result printing stayed disabled.
+4. Produce human labels only from development rows. Machine scores never
+   populate this artifact, and test outcomes stay out of prompt decisions.
+5. Estimate the repeated alignment job and obtain explicit approval before
+   stability calls.
+6. After approval of the rewritten prompt, create a new immutable evaluator
+   version and run both pinned versions together over identical ordered rows.
+7. Join results one-to-one by the `(case_id, transcript_fingerprint)` sample
+   identity, never by `case_id` alone. Report pass/fail transitions,
    disagreement count, pass-rate delta, and errors; exclude N/A and errors from
    pass-rate denominators.
-6. Label the report as development-only same-row evidence and leave evaluator
+8. Label development evidence separately from the frozen-test result and leave evaluator
    status `shadow`.
 
 ## Task 7: Bridge and repeat the grey-zone workflow

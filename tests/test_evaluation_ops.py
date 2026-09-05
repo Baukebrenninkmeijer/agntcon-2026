@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import pytest
@@ -8,6 +9,7 @@ from evaluatorq import EvaluationResult
 from analytics_chatbot.evaluation_ops import (
     AtomicJudge,
     TraceBackedEvaluationRow,
+    build_atomic_evaluator,
     build_atomic_evaluators,
     run_trace_evaluation,
 )
@@ -147,6 +149,43 @@ async def test_each_judge_receives_only_its_evidence_projection() -> None:
     assert correctness["row"] == faithfulness["row"] == 7
 
 
+@pytest.mark.asyncio
+async def test_answer_correctness_excludes_recorded_tool_contents() -> None:
+    captured: dict[str, Any] = {}
+
+    def jury_factory(**kwargs: Any) -> dict[str, Any]:
+        async def scorer(params: dict[str, Any]) -> EvaluationResult:
+            captured.update(params)
+            return EvaluationResult(value="pass", pass_=True)
+
+        return {"name": kwargs["name"], "scorer": scorer}
+
+    evaluator = build_atomic_evaluator(
+        AtomicJudge.ANSWER_CORRECTNESS,
+        jury_factory=jury_factory,
+    )
+    row = _row(
+        conversation=[
+            {"role": "user", "content": "What was EMEA net revenue in Q1?"},
+            {"role": "assistant", "content": "I will calculate that."},
+            {"role": "tool", "content": '{"secret_tool_result": 42}'},
+            {"role": "assistant", "content": "It was EUR 42."},
+        ]
+    )
+    replayed_output = "  It was EUR 42.\nRecorded bytes stay intact.  "
+
+    await evaluator["scorer"]({"data": row.to_datapoint(), "output": replayed_output})
+
+    evidence = captured["data"].inputs["evidence"]
+    assert [message["role"] for message in evidence["conversation"]] == [
+        "user",
+        "assistant",
+        "assistant",
+    ]
+    assert "secret_tool_result" not in json.dumps(evidence)
+    assert captured["output"].encode() == replayed_output.encode()
+
+
 def test_jury_configuration_preserves_template_variables_and_verdict_space() -> None:
     captured: list[dict[str, Any]] = []
 
@@ -177,18 +216,45 @@ def test_jury_configuration_preserves_template_variables_and_verdict_space() -> 
 
 
 @pytest.mark.asyncio
-async def test_run_trace_evaluation_uses_native_evaluatorq_flow() -> None:
+async def test_run_trace_evaluation_replays_recorded_output_without_inference(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     observed: dict[str, Any] = {}
+    scored: dict[str, Any] = {}
+    recorded = "  It was EUR 42.\nNo regeneration — exact bytes.  "
+
+    async def exploding_job(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
+        raise AssertionError("a target/replay job must not run")
+
+    monkeypatch.setattr(
+        "analytics_chatbot.evaluation_ops.replay_trace_response",
+        exploding_job,
+    )
+
+    async def scorer(params: dict[str, Any]) -> EvaluationResult:
+        scored.update(params)
+        return EvaluationResult(value=True)
 
     async def native_runner(name: str, **kwargs: Any) -> list[Any]:
         observed.update(name=name, **kwargs)
-        job_result = await kwargs["jobs"][0](kwargs["data"][0], 0)
-        observed["job_result"] = job_result
+        assert "jobs" not in kwargs
+        output = kwargs["data"][0].inputs["messages"][-1]["content"]
+        await kwargs["evaluators"][0]["scorer"](
+            {"data": kwargs["data"][0], "output": output, "row": 0}
+        )
         return []
 
     result = await run_trace_evaluation(
-        [_row()],
-        evaluators=[{"name": "stub", "scorer": _unused_scorer}],
+        [
+            _row(
+                conversation=[
+                    {"role": "user", "content": "What was EMEA net revenue in Q1?"},
+                    {"role": "assistant", "content": recorded},
+                ],
+                assistant_response=recorded,
+            )
+        ],
+        evaluators=[{"name": "stub", "scorer": scorer}],
         experiment_name="trace-eval-test",
         native_runner=native_runner,
         print_results=False,
@@ -196,12 +262,43 @@ async def test_run_trace_evaluation_uses_native_evaluatorq_flow() -> None:
 
     assert result == []
     assert observed["name"] == "trace-eval-test"
-    assert observed["job_result"] == {
-        "name": "trace-backed-response",
-        "output": "It was EUR 42.",
-    }
-    assert observed["inference"] is True
+    assert observed["inference"] is False
+    assert scored["output"] == recorded
+    assert scored["output"].encode() == recorded.encode()
     assert observed["evaluators"][0]["name"] == "stub"
+
+
+@pytest.mark.asyncio
+async def test_run_trace_evaluation_defaults_to_one_answer_correctness_evaluator() -> None:
+    observed: dict[str, Any] = {}
+
+    async def native_runner(name: str, **kwargs: Any) -> list[Any]:
+        observed.update(name=name, **kwargs)
+        return []
+
+    await run_trace_evaluation(
+        [_row()],
+        native_runner=native_runner,
+        print_results=False,
+    )
+
+    assert [evaluator["name"] for evaluator in observed["evaluators"]] == [
+        AtomicJudge.ANSWER_CORRECTNESS.value
+    ]
+
+
+@pytest.mark.asyncio
+async def test_run_trace_evaluation_rejects_explicitly_empty_evaluators() -> None:
+    async def native_runner(_name: str, **_kwargs: Any) -> list[Any]:
+        raise AssertionError("invalid input must fail before evaluatorq runs")
+
+    with pytest.raises(ValueError, match="at least one evaluator"):
+        await run_trace_evaluation(
+            [_row()],
+            evaluators=[],
+            native_runner=native_runner,
+            print_results=False,
+        )
 
 
 async def _unused_scorer(_params: dict[str, Any]) -> EvaluationResult:
