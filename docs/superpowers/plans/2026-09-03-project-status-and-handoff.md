@@ -48,7 +48,7 @@
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
 | Hosted resources and simulation | `ACTIVE` | Local `main` contains the YAML/SDK reconciler, hosted agent/tools, six gated evaluator drafts, an initial target adapter, 50 deterministic candidate cases, a three-attempt pilot review, and a lightweight raw-simulation normalizer; all three ignored pilot artifacts pass the adapter's downstream sufficiency checks | Remove the tracked project ID, obtain a fresh read-only remote plan, then human-review/freeze the cases before any bulk live run |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated and published on `main`; its first remote run passed lint, offline tests, hosted-resource YAML validation, and package build | Re-run the same gate after dependency or hosted-resource changes |
-| Human labeling and judge alignment | `NOT STARTED` | Rubrics and thresholds are designed, but accepted labels and alignment reports do not exist | Requires frozen cases and canonical observed traces |
+| Human labeling and judge alignment | `ACTIVE` | A focused answer-correctness development-pilot design exists and the grey-zone skill path passed two deterministic fixture-backed smoke runs; real alignment data, labels, evaluator ID, project key, and stability outputs do not yet exist | Recover 10 existing oracle-bearing dev observations without simulation reruns, then satisfy cost and hosted-resource gates |
 | Live stability baseline and post-hoc operations | `NOT STARTED` | The run shape is designed, but no accepted baseline or operations report exists | Requires aligned judges, budgets, and live-run controls |
 
 The latest local verification for the integrated tree is `78 passed, 1 deselected` for the non-live pytest selection, `All checks passed` from Ruff, and a successful sdist/wheel build on 2026-09-05. Resource loading found one agent, two tools, two deterministic evaluators, and four human-label-gated LLM evaluators. The 50-case corpus reproduced exactly from freshly executed DuckDB oracles with a 30-dev/20-test split. Repository `main` was published to `origin/main` on 2026-09-05; this did not mutate Orq resources. The primary checkout has no `.env`, so a fresh credentialed Orq dry-run remains unavailable.
@@ -101,6 +101,7 @@ The existing chatbot run JSONL audit under the configured runs directory remains
 | Replay the recorded assistant output | Post-hoc evaluation must assess what happened, not create a new response | The final assistant message is preserved exactly and the target agent is never called |
 | Preserve raw evidence in a versioned row | Lossy response conversions and process-local caches cannot support reliable later scoring | Conversation, ordered tools/results/errors, retrievals, state, source linkage, and oracle remain serializable |
 | Treat evaluatorq simulation JSONL as canonical | SimulationResult already contains the observed transcript, calls/results, criteria, usage, and case identity | Normalize offline, join the frozen case oracle/split, and keep Orq trace linkage/reasoning as optional enrichment |
+| Start alignment with one development-only rubric | Ten rows are the skill's minimum signal floor, not a credible held-out split, and answer correctness has executable oracles | Recover 10 existing oracle-bearing dev observations; run only answer correctness; preserve the frozen 30/20 split for the later full evaluation |
 | Route four atomic judges independently | Correctness, query validity, evidence support, and conversational consistency fail differently | Each rubric has separate applicability, evidence projection, prompt, labels, and alignment metrics |
 | Keep human labels distinct | Machine judgments are not annotations and should not contaminate gold data | Humans label canonical observations; evaluator outputs live in evaluatorq experiments |
 | Separate offline CI from live operations | PR validation must be deterministic, safe for forks, and credential-free | Live canaries and baselines are protected explicit jobs, not default CI |
@@ -137,7 +138,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 | WS3a | `hosted-agent-yaml-sync` | `ACTIVE` | Agent/tool YAML plus one YAML file for each of two deterministic and four LLM-as-a-judge evaluators, shared YAML-to-Orq SDK transform, idempotent Make target, and remote reconciliation evidence | WS0; WS1 evaluator contract; compatible SDK; project access | WS2, WS4 |
 | WS3b | `row-aware-simulation-corpus` | `ACTIVE` | Local-tool bridge and exactly 50 accepted simulation cases | WS3a hosted/local protocol; WS0 data/oracles | WS2 after row contract agreement |
 | WS4 | `offline-ci` | `VERIFIED` | Credential-free Ruff, pytest, package-build, and optional resource-validation workflow | Integrated dependency set | WS2, WS3 |
-| WS5 | `human-labels-and-alignment` | `NOT STARTED` | Canonical observations, accepted human labels, rubric-specific alignment reports | WS2, WS3b | None on frozen test evaluation |
+| WS5 | `human-labels-and-alignment` | `ACTIVE` | Ten-row answer-correctness development pilot, paired evaluator-version report, and repeated grey-zone workflow | Canonical observed rows; hosted evaluator/version; project key; cost approval | Offline adapter/error work can run with WS2/WS3b |
 | WS6 | `stability-and-operations` | `NOT STARTED` | Budgeted 50×3 baseline, protected canary, post-hoc sampling, reviewed prompt loop | WS5 qualification | Offline maintenance |
 
 ## Status Checklists
@@ -174,6 +175,9 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [ ] WS3a: Keep the four LLM evaluator resources blocked from apply until their independent human-label and alignment gates pass; do not create remote evaluator or dataset resources yet.
 - [ ] WS3b: Finish the row-aware, conversation-scoped local-tool bridge for future live generation; the raw artifact-to-evaluation adapter is complete.
 - [ ] WS3b: Human-review and freeze the 50 integrated candidate cases; code/oracle validation does not make them accepted cases.
+- [ ] WS5: Recover 10 distinct existing oracle-bearing development observations; the checkout currently retains zero raw simulation results and the three-attempt review covers only one case.
+- [ ] WS5: Switch the focused runner to evaluatorq `inference=False` with no jobs, one answer-correctness evaluator, and immutable sample identities.
+- [ ] WS5: Materialize real grey-zone inputs and repeat assembly/application twice after the evaluator, labels, key, stability evidence, and cost gates exist.
 
 ### Blocked
 
@@ -377,6 +381,9 @@ Each integration candidate should be a focused commit or reviewable commit serie
 | Corpus oracle is LLM-invented or assigned after inference | Gold answers or splits are unreliable | Execute reference SQL against pinned data; freeze IDs/splits/oracles before target inference |
 | Stateful simulations leak across rows | Multi-turn and save-policy labels become invalid | One session per target clone; concurrency-safe row/audit correlation and isolation tests |
 | Offline CI gains a hidden live dependency | Forks fail or expose credentials | Explicit marker exclusion, no secrets, fake clients, and protected separate live jobs |
+| Case definitions are mistaken for observed datapoints | Alignment appears to have 50 examples while no recorded outputs exist | Report definitions, observations, repetitions, and labels separately; block the ten-row pilot unless 10 distinct existing observations are recovered |
+| A ten-row development retest is presented as held-out validation | Same-row prompt iteration overstates generalization | Use only existing `dev` cases, retain the frozen 30/20 split, keep status `shadow`, and label paired results as development-only |
+| Grey-zone prerequisites fail opaquely | Operators see a Python traceback or fabricate missing queue/stability artifacts | Add an adapter from canonical rows, validate prerequisites up front, and return actionable errors without inventing project evidence |
 | Remote state changes while tasks run | A stale plan overwrites newer resources | Fresh snapshot immediately before apply; semantic diff; fail on unexpected duplicates/mismatch |
 | Temporary key survives after validation | Credential exposure window remains open | Named rotation handoff and explicit completion entry in the task log |
 | Local `main` diverges from remote | Publication becomes a separate integration problem | `main` was published on explicit request on 2026-09-05; continue to integrate and verify locally before separately authorized pushes |
@@ -425,6 +432,7 @@ Do not run the apply command from this documentation task. Live simulation/align
 | 2026-09-03 | Make the project status document a required living plan for every relevant coding task | Accepted and integrated through canonical root `CLAUDE.md` guidance plus an `AGENTS.md` symlink |
 | 2026-09-03 | Integrate verified work into local `main` and do not push by default | Accepted |
 | 2026-09-05 | Keep evaluatorq's raw simulation JSONL as the canonical corpus artifact and require no trace linkage for complete offline rows | Accepted; use only light deduplication/tool-quality gates and optional Orq trace enrichment |
+| 2026-09-05 | Use a ten-row answer-correctness development pilot before the full alignment | Accepted planning default; recover existing observations only, run baseline/candidate as singleton no-inference experiments, and preserve the frozen test split |
 
 ## Changelog / Task Log
 
@@ -432,6 +440,8 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-05 | WS5 | Designed a ten-row, answer-correctness-only replay/alignment increment. Audits confirmed 50 definitions but zero retained raw observations; evaluatorq 1.33 replayed recorded output with zero target calls; two fixture-backed grey-zone passes produced identical artifacts, while a direct repo run exposed an uncaught missing-queue error | Recover 10 existing dev observations without rerunning simulation; then resolve the hosted evaluator/key and obtain cost approval before real stability calls |
+| 2026-09-05 | Operations | Added shared agent guidance distinguishing OAuth trace-read access from evaluatorq/SDK run-key access and requiring active project keys to be preserved in the primary checkout's ignored `.env` before worktree removal | Mint or restore a `pydata2026` project key in the primary `.env`; never infer run readiness from successful OAuth trace reads |
 | 2026-09-05 | Delivery | Published the fully integrated `main` history to `origin/main` on explicit request, verified the remote ref, and confirmed the first published Offline CI run passed lint, 78 offline tests, Orq YAML validation, and package build | Keep Orq resource mutation separately gated |
 | 2026-09-05 | Integration | Audited every registered worktree against `main`, preserved the sole uncommitted talk-outline change, recorded the already-integrated plan and superseded Mermaid visual branches as merged without overwriting newer content, and closed all secondary worktrees; only the clean primary `main` worktree remains | Retain source branches until ordinary branch cleanup is explicitly requested; start future work from primary `main` |
 | 2026-09-05 | Planning | Removed the superseded process-local simulation cache and mandatory simulation-trace import steps from the detailed operations plan; stored `SimulationResult` normalization is now the single simulation-to-evaluatorq path | Do not rebuild a cache/ledger or require trace IDs for self-contained simulation rows |
@@ -448,10 +458,10 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 ## Next Actions
 
-1. WS2 owner: adapt the integrated generic replay `DataPoint` to the accepted trace-backed row contract, add the small Orq scorer factory, validate no-inference replay on genuine multi-step agent traces, and rotate the temporary trace-access key afterward.
-2. WS3a owner: remove the tracked project ID while retaining stable-key project checks, then produce a fresh credentialed read-only plan against `pydata2026`; do not create remote evaluators or datasets before their gates and separate authorization.
-3. WS3b owner: use the raw evaluatorq artifacts as the source of truth, finish the live bridge only when another run is needed, and human-review/freeze the 50-case corpus before bulk generation.
-4. Coordinator: keep WS4's offline workflow aligned with integrated dependency commands and rerun it after each dependency boundary.
-5. Coordinator: integrate verified branches in the order above, rerun full offline checks after each dependency boundary, rotate the temporary trace-access key after WS2 validation, and update this log.
+1. WS5 owner: compare two matched local/Orq attempts, choose one complete source, and recover 10 distinct existing oracle-bearing development observations; do not rerun simulation to fill a shortfall.
+2. WS2/WS5 owner: switch the focused evaluatorq runner to genuine `inference=False`, no jobs, one answer-correctness evaluator, and a stable transcript-derived sample identity.
+3. WS3a owner: restore a project-scoped key in the primary ignored `.env`, resolve whether an answer-correctness evaluator exists, and stop at the explicit resource-creation/cost gates when it does not.
+4. WS5 owner: run baseline and candidate as separate singleton experiments on the identical ten rows, then adapt the results to the alignment skill and execute grey-zone assembly/application twice.
+5. Coordinator: keep WS4 aligned, rerun full offline verification after integration, update this log, and preserve the frozen 30/20 split for the later full evaluation.
 
 Do not begin human alignment or the 50 × 3 stability baseline until the trace adapter, hosted/local bridge, frozen corpus, and offline validation gates are all accepted.
