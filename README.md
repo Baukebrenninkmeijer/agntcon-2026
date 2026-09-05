@@ -103,7 +103,12 @@ uv run python scripts/run_evaluatorq_replay.py \
 The command resolves the stable `analytics-answer-correctness` key at runtime,
 verifies the requested version exists, rejects `latest`, and runs all 50 stored
 responses with evaluatorq `inference=False`. It uploads a native Orq Experiment
-and hides local score output by default. Repeat `--evaluator-version` after an
+with `pydata2026` as the requested project path and hides local score output by
+default. As of 2026-09-05, production still has the known backend issue
+[BOPS-1180](https://linear.app/orqai/issue/BOPS-1180/evaluatorq-experiments-ignore-path-always-land-in-the-default-project):
+the evaluatorq ingest route accepts but ignores that path and places the Experiment
+in the workspace's Default project. Do not retry merely to change placement until
+that fix leaves Testing. Repeat `--evaluator-version` after an
 approved evaluator update to create distinct side-by-side columns such as
 `answer_correctness@1.0.0` and `answer_correctness@1.0.1` over identical rows.
 Runtime evaluator IDs remain untracked.

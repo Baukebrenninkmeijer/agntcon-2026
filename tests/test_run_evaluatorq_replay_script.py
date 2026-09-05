@@ -23,6 +23,14 @@ def test_parser_requires_an_explicit_evaluator_version() -> None:
         parser.parse_args([])
 
 
+def test_parser_defaults_experiment_upload_to_pydata_project() -> None:
+    args = run_evaluatorq_replay.build_parser().parse_args(
+        ["--evaluator-version", "1.0.0"]
+    )
+
+    assert args.project_path == "pydata2026"
+
+
 @pytest.mark.asyncio
 async def test_latest_is_rejected_before_loading_credentials() -> None:
     dotenv_called = False
@@ -122,6 +130,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
         resources=run_evaluatorq_replay.DEFAULT_RESOURCES_PATH,
         evaluator_version=["1.0.0", "1.1.0"],
         experiment_name="stored-v2-replay",
+        project_path="pydata2026",
         datapoint_parallelism=4,
         llm_parallelism=3,
         print_results=False,
@@ -151,6 +160,7 @@ async def test_run_prepares_all_samples_and_invokes_native_replay_once() -> None
     assert runner_kwargs == {
         "evaluators": runner_kwargs["evaluators"],
         "experiment_name": "stored-v2-replay",
+        "experiment_path": "pydata2026",
         "datapoint_parallelism": 4,
         "llm_parallelism": 3,
         "print_results": False,

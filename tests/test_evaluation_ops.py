@@ -256,12 +256,14 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
         ],
         evaluators=[{"name": "stub", "scorer": scorer}],
         experiment_name="trace-eval-test",
+        experiment_path="pydata2026",
         native_runner=native_runner,
         print_results=False,
     )
 
     assert result == []
     assert observed["name"] == "trace-eval-test"
+    assert observed["path"] == "pydata2026"
     assert observed["inference"] is False
     assert scored["output"] == recorded
     assert scored["output"].encode() == recorded.encode()

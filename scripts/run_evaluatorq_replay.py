@@ -23,6 +23,7 @@ DEFAULT_RESOURCES_PATH = REPOSITORY_ROOT / "orq" / "resources"
 DEFAULT_CASES_PATH = DEFAULT_RESOURCES_PATH / "datasets" / "simulation-cases-v2.jsonl"
 DEFAULT_RESULTS_PATH = REPOSITORY_ROOT / "runs" / "evaluatorq-simulation-v2-20260905.jsonl"
 EVALUATOR_KEY = "analytics-answer-correctness"
+DEFAULT_PROJECT_PATH = "pydata2026"
 EXPECTED_SAMPLE_COUNT = 50
 
 
@@ -58,6 +59,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--experiment-name",
         default="analytics-chatbot-stored-simulation-v2",
+    )
+    parser.add_argument(
+        "--project-path",
+        default=DEFAULT_PROJECT_PATH,
+        help="Orq project/folder path for the uploaded Experiment.",
     )
     parser.add_argument("--datapoint-parallelism", type=_positive_int, default=5)
     parser.add_argument("--llm-parallelism", type=_positive_int, default=6)
@@ -166,6 +172,7 @@ async def run(
         [sample.row for sample in corpus.samples],
         evaluators=evaluators,
         experiment_name=args.experiment_name,
+        experiment_path=args.project_path,
         datapoint_parallelism=args.datapoint_parallelism,
         llm_parallelism=args.llm_parallelism,
         print_results=args.print_results,
