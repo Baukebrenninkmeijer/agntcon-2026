@@ -55,11 +55,12 @@ no-op resources.
 The repository contains one pending `analytics-decision-support-quality` LLM jury and two
 historical Python evaluator definitions. The jury is reference-free, uses the approved three-model
 panel with three repetitions, and accepts only the full ordered conversation plus final response.
-Its `pending_human_labels` status blocks remote sync; it has zero human labels, and no hosted apply
-is authorized by the repository change. Previewing or applying hosted changes requires separate,
-explicit operator action. The Python evaluators are stdlib-only, AST-checked, and unit-executed
-locally. To reconcile only an already-reviewed subset, pass `--kinds tool`, `--kinds agent`, or
-`--kinds evaluator` to the sync script; the Makefile target always covers the complete bundle.
+Its `pending_human_labels` status blocks remote apply; it has zero human labels, and no hosted apply
+is authorized by the repository change. An authenticated read-only snapshot and dry-run semantic
+plan remain allowed; applying hosted changes requires separate, explicit operator authorization.
+The Python evaluators are stdlib-only, AST-checked, and unit-executed locally. To reconcile only an
+already-reviewed subset, pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync
+script; the Makefile target always covers the complete bundle.
 
 ## Current v4 review pool
 
