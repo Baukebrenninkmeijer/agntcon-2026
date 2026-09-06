@@ -12,6 +12,13 @@ def test_settings_default_to_sphere_versions() -> None:
     assert settings.agent_version == "sphere-baseline-v1"
 
 
+def test_trace_context_defaults_to_sphere_versions() -> None:
+    context = TraceContext()
+
+    assert context.dataset_version == "sphere-orders-v1"
+    assert context.agent_version == "sphere-baseline-v1"
+
+
 def test_trace_context_uses_bounded_tags_and_string_metadata() -> None:
     context = TraceContext(run_kind="eval", evaluation_split="test", case_id="case-7")
 

@@ -49,8 +49,8 @@ class TraceContext(BaseModel):
     case_id: str = ""
     interface: Interface = "python"
     identity_id: str | None = None
-    dataset_version: str = "revenue-v1"
-    agent_version: str = "v1"
+    dataset_version: str = "sphere-orders-v1"
+    agent_version: str = "sphere-baseline-v1"
 
     def extra_body(self, thread_id: str) -> dict[str, Any]:
         """Return orq request attribution using each mechanism for one purpose."""
