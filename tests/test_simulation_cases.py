@@ -189,3 +189,30 @@ def test_v3_is_one_persona_fifty_distinct_situations() -> None:
     assert [SimulationDatapoint.model_validate(record).id for record in records] == [
         record["id"] for record in records
     ]
+
+
+def test_v4_enriches_all_fifty_distinct_v3_situations() -> None:
+    from analytics_chatbot.evaluation_ops.cases_v4 import build_v4_cases
+
+    records = build_v4_cases(ROOT / "data" / "analytics.duckdb")
+
+    assert len(records) == 50
+    assert len({record["id"] for record in records}) == 50
+    assert {record["corpus_version"] for record in records} == {"simulation-v4"}
+    assert sum(record["split"] == "dev" for record in records) == 30
+    assert sum(record["split"] == "test" for record in records) == 20
+    assert all(record["id"].startswith("sphere-stakeholder--v4-") for record in records)
+    assert all(
+        set(record["decision_context"])
+        == {"stakeholder", "decision", "delivery_setting", "communication_need"}
+        for record in records
+    )
+    assert all(
+        all(value.strip() for value in record["decision_context"].values())
+        for record in records
+    )
+    assert all("Sphere.com" in record["first_message"] for record in records)
+    assert not any(
+        old in json.dumps(records)
+        for old in ("Software", "Hardware", "Services", "Data", "SMB", "Mid-Market", "Enterprise")
+    )

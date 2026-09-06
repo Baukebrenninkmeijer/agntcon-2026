@@ -71,3 +71,28 @@ def test_edge_v2_variant_defaults_to_separate_output_path(tmp_path: Path) -> Non
     records = [json.loads(line) for line in output.read_text().splitlines()]
     assert len(records) == 50
     assert not (tmp_path / "orq/resources/datasets/simulation-cases.jsonl").exists()
+
+
+def test_v4_variant_defaults_to_separate_output_path(tmp_path: Path) -> None:
+    environment = os.environ.copy()
+    environment["ANALYTICS_CHATBOT_DATABASE_PATH"] = str(ROOT / "data/analytics.duckdb")
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/generate_simulation_cases.py"),
+            "--variant",
+            "v4",
+        ],
+        cwd=tmp_path,
+        env=environment,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    output = tmp_path / "orq/resources/datasets/simulation-cases-v4.jsonl"
+    records = [json.loads(line) for line in output.read_text().splitlines()]
+    assert len(records) == 50
+    assert {record["corpus_version"] for record in records} == {"simulation-v4"}
+    assert not (tmp_path / "orq/resources/datasets/simulation-cases.jsonl").exists()
