@@ -41,10 +41,7 @@ def test_sync_plan_orders_tools_agent_and_mixed_evaluators() -> None:
         ("create", "agent", "analytics-chatbot"),
         ("create", "evaluator", "analytics-state-change-policy"),
         ("create", "evaluator", "analytics-tool-execution-integrity"),
-        ("create", "evaluator", "analytics-answer-correctness"),
-        ("create", "evaluator", "analytics-evidence-faithfulness"),
-        ("create", "evaluator", "analytics-multi-turn-consistency"),
-        ("create", "evaluator", "analytics-query-semantics"),
+        ("create", "evaluator", "analytics-decision-support-quality"),
     ]
 
 
@@ -145,7 +142,7 @@ def test_remote_evaluator_shapes_normalize_to_repository_semantics() -> None:
     expected = next(
         body
         for body in bundle.evaluator_payloads()
-        if body["key"] == "analytics-answer-correctness"
+        if body["key"] == "analytics-decision-support-quality"
     )
     noisy = {
         **expected,

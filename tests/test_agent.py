@@ -11,6 +11,7 @@ from analytics_chatbot.agent import AgentLoopError, AnalyticsChatbot
 from analytics_chatbot.config import Settings
 from analytics_chatbot.evaluation_ops.target import AnalyticsChatbotTarget
 from analytics_chatbot.models import GatewayFunctionCall, GatewayResponse
+from analytics_chatbot.prompts import SYSTEM_PROMPT
 
 
 class FakeGateway:
@@ -38,6 +39,24 @@ class FakeGateway:
         if isinstance(response, Exception):
             raise response
         return response
+
+
+def test_system_prompt_is_a_rudimentary_sphere_baseline() -> None:
+    prompt = " ".join(SYSTEM_PROMPT.lower().split())
+
+    assert "sphere.com" in prompt
+    assert "wholesale home-appliance orders" in prompt
+    assert "use query_sql before making factual claims" in prompt
+    assert "never claim that an insight was saved unless the tool succeeds" in prompt
+    assert "do not recommend an action unless the user explicitly asks for one" in prompt
+    for coaching_phrase in (
+        "foreground",
+        "decision impact",
+        "adapt detail",
+        "recommend next steps",
+        "board narrative",
+    ):
+        assert coaching_phrase not in prompt
 
 
 @pytest.fixture

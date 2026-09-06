@@ -4,6 +4,7 @@ import pytest
 
 from analytics_chatbot.orq_resources import (
     EvaluatorValidation,
+    LlmEvaluatorResource,
     ResourceError,
     load_resource_bundle,
 )
@@ -17,7 +18,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert bundle.project.key == "pydata2026"
     assert bundle.project.project_id == "${ORQ_PROJECT_ID}"
     assert [tool.key for tool in bundle.tools] == ["query-sql", "save-insight"]
-    assert len(bundle.evaluators) == 6
+    assert len(bundle.evaluators) == 3
 
     query = bundle.tool_payloads()[0]
     assert query["path"] == "pydata2026/tools"
@@ -32,22 +33,72 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
         "query-sql",
         "save-insight",
     ]
-    assert "Use query_sql before making factual claims" in agent["instructions"]
+    instructions = " ".join(agent["instructions"].lower().split())
+    assert "sphere.com" in instructions
+    assert "wholesale home-appliance orders" in instructions
+    assert "use query_sql before making factual claims" in instructions
+    assert "never claim a save succeeded unless the tool result confirms it" in instructions
+    assert "do not recommend an action unless the user explicitly asks for one" in instructions
+    for coaching_phrase in (
+        "foreground",
+        "decision impact",
+        "adapt detail",
+        "recommend next steps",
+        "board narrative",
+    ):
+        assert coaching_phrase not in instructions
+
+    llm_resources = [
+        evaluator
+        for evaluator in bundle.evaluators
+        if isinstance(evaluator, LlmEvaluatorResource)
+    ]
+    llm_keys = {evaluator.key for evaluator in llm_resources}
+    assert llm_keys == {"analytics-decision-support-quality"}
+    for evaluator in llm_resources:
+        assert evaluator.mode == "jury"
+        assert evaluator.judges == [
+            "openai/gpt-5.6-luna",
+            "google-ai/gemini-3.5-flash-lite",
+            "tensorix/qwen/qwen3.8-flash-next",
+        ]
+        assert evaluator.min_successful_judges == 2
+        assert evaluator.repetitions == 3
+        assert evaluator.validation.status == "pending_human_labels"
+        assert evaluator.validation.human_labeled_examples == 0
+        assert evaluator.input_mapping == {
+            "input.all_messages": "full ordered conversation including tool calls and results",
+            "output.response": "final assistant response",
+        }
+        assert [label["value"] for label in evaluator.output.labels] == [
+            "pass",
+            "fail",
+            "not_applicable",
+        ]
+        serialized = str(evaluator.model_dump()).lower()
+        for reference_family in (
+            "input.decision_context",
+            "input.expected_output",
+            "reference_sql",
+            "query_requirements",
+        ):
+            assert reference_family not in serialized
 
     evaluator_payloads = {body["key"]: body for body in bundle.evaluator_payloads()}
-    correctness = evaluator_payloads["analytics-answer-correctness"]
-    faithfulness = evaluator_payloads["analytics-evidence-faithfulness"]
-    assert correctness["output_type"] == "categorical"
-    assert correctness["mode"] == "single"
-    assert correctness["model"] == "wafer/DeepSeek-V4-Flash-0731-Fast"
-    assert "jury" not in correctness
-    assert "{{input.expected_output}}" not in correctness["prompt"]
-    assert "{{input.all_messages}}" in correctness["prompt"]
-    assert "{{output.tools_called}}" not in correctness["prompt"]
-    assert "{{output.tools_called}}" in faithfulness["prompt"]
-    assert "{{input.expected_output}}" not in faithfulness["prompt"]
-    assert "input_mapping" not in correctness
-    assert "validation" not in correctness
+    decision_support = evaluator_payloads["analytics-decision-support-quality"]
+    assert decision_support["output_type"] == "categorical"
+    assert decision_support["mode"] == "jury"
+    assert decision_support["repetitions"] == 3
+    assert [judge["model"] for judge in decision_support["jury"]["judges"]] == [
+        "openai/gpt-5.6-luna",
+        "google-ai/gemini-3.5-flash-lite",
+        "tensorix/qwen/qwen3.8-flash-next",
+    ]
+    assert decision_support["jury"]["min_successful_judges"] == 2
+    assert "{{input.all_messages}}" in decision_support["prompt"]
+    assert "{{output.response}}" in decision_support["prompt"]
+    assert "input_mapping" not in decision_support
+    assert "validation" not in decision_support
 
 
 def test_python_evaluators_execute_against_documented_log_shape() -> None:
@@ -125,36 +176,53 @@ def test_agent_instructions_must_use_yaml_block_scalar(tmp_path: Path) -> None:
         load_resource_bundle(root)
 
 
-def test_evaluator_mode_switches_between_single_judge_and_jury() -> None:
+def test_decision_support_prompt_requires_subjective_trace_evidence() -> None:
     bundle = load_resource_bundle(RESOURCE_ROOT)
-    correctness = next(
+    evaluator = next(
         evaluator
         for evaluator in bundle.evaluators
-        if evaluator.key == "analytics-answer-correctness"
+        if evaluator.key == "analytics-decision-support-quality"
     )
-    # Both shapes stay declared, so flipping `mode` is the only edit needed.
-    assert correctness.model is not None
-    assert correctness.judges is not None
+    source = evaluator.model_dump()
 
-    single_body = next(
-        body for body in bundle.evaluator_payloads() if body["key"] == correctness.key
-    )
-    assert single_body["mode"] == "single"
-    assert single_body["model"] == correctness.model
-    assert "jury" not in single_body
-
-    jury = correctness.model_copy(update={"mode": "jury"})
-    jury_bundle = bundle.model_copy(
-        update={
-            "evaluators": [
-                jury if evaluator.key == correctness.key else evaluator
-                for evaluator in bundle.evaluators
-            ]
+    for missing_variable in ("input.all_messages", "output.response"):
+        invalid = source | {
+            "prompt": evaluator.prompt.replace(f"{{{{{missing_variable}}}}}", "missing evidence")
         }
+        with pytest.raises(ValueError, match="requires the full conversation and final response"):
+            LlmEvaluatorResource.model_validate(invalid)
+
+
+@pytest.mark.parametrize(
+    "forbidden_reference",
+    [
+        "{{input.decision_context}}",
+        "{{input.expected_output}}",
+        "reference_sql",
+        "query_requirements",
+        "A reference answer exists.",
+        "Compare against the ideal answer.",
+    ],
+)
+def test_decision_support_prompt_rejects_reference_evidence(
+    forbidden_reference: str,
+) -> None:
+    bundle = load_resource_bundle(RESOURCE_ROOT)
+    evaluator = next(
+        evaluator
+        for evaluator in bundle.evaluators
+        if evaluator.key == "analytics-decision-support-quality"
     )
-    jury_body = next(
-        body for body in jury_bundle.evaluator_payloads() if body["key"] == correctness.key
+    source = evaluator.model_dump()
+    forbidden_mapping = (
+        {forbidden_reference[2:-2]: "forbidden"}
+        if forbidden_reference.startswith("{{")
+        else {}
     )
-    assert jury_body["mode"] == "jury"
-    assert "model" not in jury_body
-    assert [judge["model"] for judge in jury_body["jury"]["judges"]] == correctness.judges
+    invalid = source | {
+        "input_mapping": evaluator.input_mapping | forbidden_mapping,
+        "prompt": f"{evaluator.prompt}\n{forbidden_reference}",
+    }
+
+    with pytest.raises(ValueError, match="must remain reference-free"):
+        LlmEvaluatorResource.model_validate(invalid)
