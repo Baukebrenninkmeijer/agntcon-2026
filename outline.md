@@ -1,275 +1,285 @@
 # Evaluating Agents at Scale — talk outline
 
-30 minutes: 25 speaking + 5 Q&A. PyData audience, technically literate, industry-heavy.
-No hand-holding, no listicle. All slides static for the first delivery.
+30 minutes: 25 speaking + 5 Q&A. PyData audience, technically literate and industry-heavy.
 
-Design constraints settled during planning:
+The submitted abstract is the spine. Sphere.com and `decision_support_quality` are the running
+example, not the structure of the talk.
 
-- The talk presents **our method and our findings**, not a to-do list for the attendee.
-- We present the alignment **protocol**, not measured agreement — we have no human labels yet,
-  so no numeric threshold appears on a slide. The honesty about that gap is load-bearing, not an
-  apology.
-- The simulation harness' own scorer numbers stay off the slides. They are a second unvalidated
-  instrument and putting them on screen invites the audience to read them as agent quality.
-- The running example is a **real production pipeline** and every artifact on the slides comes from
-  a real run (n8n execution 9267, 4 September 2026, in `docs/examples/podcast-run-2026-09-04/`). The
-  judge, the rubrics, and the alignment session for it are **illustrative**: the structural findings
-  the talk reports come from a real alignment run on a different agent. No invented number is ever
-  read as a measurement.
-- The infrastructure war stories (jury vote discarding, empty SDK response, experiment
-  misplacement) are cut. One argument per talk.
+The story follows two related lifecycles:
+
+- the evaluator lifecycle: human judgment → aligned judge → regression signal;
+- the application lifecycle: observed failure → structural analysis → reviewed improvement.
+
+The central claim:
+
+> An LLM judge is another model. It earns trust only by demonstrating alignment with human
+> judgment on the boundary we actually care about.
+
+Honesty constraints:
+
+- The fifty v4 cases are a review pool until humans have actually annotated them.
+- Jury consensus and consistency are annotation signals, not ground truth.
+- No measured human alignment is claimed before labels exist.
+- CI, online evaluation, and the software factory are next stages, not completed work.
+- The talk uses only the analytics agent. There are no podcast examples.
 
 ---
 
-## 1. Why evaluation, and why now (5 min)
+## 1. The evaluation gap (3 min)
 
-Four beats, in this order.
+### Slide: Two correct answers, one useful answer
 
-**1a. Origin: we came for optimization and got stuck on the signal.**
-We set out to automate agent improvement — feed evaluation critiques back as an optimization
-signal and let the system improve its own prompt. We could not do it, because we could not trust
-the signal. An unaligned judge optimizes the agent toward the judge's own errors. That ordering
-constraint is the reason this talk is about alignment and not about optimization:
+Introduce Sphere.com, an Amsterdam-based B2B wholesaler of physical home appliances.
 
-> You cannot use evals to improve an agent before the eval is aligned.
+The board is asking about quality of growth: discounts, refunds, cancellations, and regional and
+category mix. The analytics agent can query order data and explain the result.
 
-Told from the historical angle: this is what made us look closely at evaluation as its own
-object of study, with its own lifecycle, rather than as a test suite bolted onto the agent.
+Put two plausible answers to the same CFO question on screen. Both can contain the right number.
+Only one makes the relevant comparison clear enough to support the stated decision.
 
-**1b. The lineage: hard metrics to judgement metrics.**
-Information retrieval and NLP already went through this. Retrieval had crisp, countable targets
-and then had to move to human relevance judgements — and the moment humans were the target,
-assessors disagreed with each other. Generation went the same way: n-gram overlap metrics gave a
-number that stopped correlating with quality. The field's answer, repeatedly, was to bring in
-human judgement and then measure how much the humans agreed.
+That is the evaluation gap. Reference matching can verify a number, but it cannot determine whether
+the response used sound judgment about emphasis, explanation, caveats, and scope.
 
-We do not need to name specific test collections. The point is the shape of the move: as the task
-got more open-ended, the metric got softer, and the *agreement* between judges became the thing
-that had to be measured.
+### Slide: Agents widen the gap
 
-**1c. Agents break it again, in several ways at once.**
-Non-deterministic across multiple calls. Trajectories branch — many valid paths to one answer.
-State mutates in external systems, so "did it do the thing" must be checked rather than inferred.
-And correctness is judged along several axes simultaneously.
+An agent is not a single model call. Its path can branch, its tool usage can differ, earlier context
+can disappear, and its actions can change external state.
 
-**1d. The double loop.**
-Two lifecycles, not one. The application loop: build, ship, observe failures, change the agent.
-The evaluation loop: define criteria, annotate, align the judge, discover the criteria were wrong,
-redefine. They are coupled but they are not in lockstep — it is not true that each agent change
-implies an eval change. What is true is that the evaluation loop has to reach a certain maturity
-before the application loop can use it at all.
-
-Land the framing line here: **an evaluation system is another system with a prompt, a dataset,
-versions, and a human reviewer.** Same object, moustache and hat. Payoff comes at the end.
-
-## 2. The grey zone (2 min)
-
-Stay high level and generic here. The audience has no context on our agent yet, so use a familiar
-classic — sentiment on movie reviews, or similar.
-
-Start with a classifier picture everyone recognises: two classes, points in a space, a clean
-decision boundary. Then pan to evaluation and the boundary dissolves into a gradient band.
-
-Animate **several different, all defensible, boundary placements** over the same points. Not
-multiple agent trajectories — that is a different idea and it belongs in section 7. The point
-here is that the criterion itself is what is under dispute.
-
-Name it: **the grey zone.** Every evaluation has one. Every evaluation also has a set of
-sub-dimensions it is implicitly grading, and you only discover what they are by iterating on
-actual data. Deliberately do not label the axes — the axes are whatever you turn out to be
-measuring, and you do not know that yet.
-
-Close the section on the open question, and leave it open: *who decides where the boundary goes?*
-
-## 3. The agent and the corpus (3 min)
-
-Introduce the running example properly, with context. A weekly job reads the AI newsletters that
-piled up in an inbox, condenses them, rewrites the result as spoken text, sends that to
-text-to-speech, and delivers the audio over Telegram. The listener plays it on a walk. Nobody reads
-anything. It is my own pipeline and it has been running in production for months.
-
-Put one real run on screen. Ten newsletters in, 310,647 characters. A 2,600 character digest in the
-middle. A 535 word script out, about three and a half minutes of audio. That ratio is the whole
-problem in one number: 99.8 percent of the input does not survive, and every question a rubric can
-ask is a question about what belongs in the surviving fraction.
-
-Then show the prompt that does it, as it actually runs. It says to convert dates into spoken form,
-replace bullet points with transitions, produce one continuous text, and emit no markdown, no
-speaker names, no stage directions. Every rule in it exists because the output is spoken. None of
-them is a fact about email. And nothing in the pipeline checks a single one. That is how most LLM
-features ship, and it is on screen in my own production code rather than in a strawman.
-
-Failure modes we care about: the consequential story buried in the middle, a claim the newsletters
-do not support, editorial colour invented to sound engaging, and prose that is still a list.
-
-The corpus: **one listener, many weeks.** Vary the situation, not the person. A week with one
-enormous story, a week with nothing, a week where two newsletters contradict each other, a week
-where the same launch is covered five times.
-
-Why one listener: an earlier corpus of ours crossed five personas with ten scenarios. When we
-measured the judge's consistency on it, three of the four cases it kept changing its mind about
-were the *same scenario* worn by different personas. The grid had bought fifty rows and ten
-situations. Persona variation is cheap; situation variation is what finds the grey zone.
-
-The important design choice: **we deliberately keep the failures.** Weeks the pipeline handled badly
-are retained rather than regenerated. A corpus of successes teaches you nothing, and those retained
-failures are what catches the judge out.
-
-## 4. Cheap graders first (2 min)
-
-Before any judge. Half of what makes a brief listenable is decidable by code: a regular expression
-finds URLs and version strings that were never converted to spoken form; a word count checks the
-budget; a scan finds the markdown the prompt explicitly forbade and got anyway. And the delivery is
-checkable directly, because either the audio was produced and sent or it was not.
-
-Rule: if code can grade it, never pay a model to. This is the highest-return hour in the whole
-process and it is the section most evaluation talks skip entirely.
-
-*Compress to 60 seconds if running long.*
-
-## 5. Decomposing the judge (3 min)
-
-"Is this a good brief?" is not alignable. It is several questions wearing one coat, and annotators
-disagree with themselves on it. This is the grey zone from section 2, restated concretely.
-
-We cut it into atomic rubrics: content selection, faithfulness, listenability, actionability. Each
-has a narrower grey zone than the union did.
-
-**We align one: content selection.** It has the widest grey zone and it is where the product
-decisions live. The others are deferred, because aligning one rubric properly beats aligning four
-thinly. Then we decompose *that one* further, because selection is still several judgements: is this
-item newsworthy at all, is this thread ripe enough to mention, is a thread the listener is only
-copied on their business, does automated mail count, and does the ordering put the most consequential
-item first.
-
-**The downstream medium writes half the rubric, and that is the slide to stop on.** Ask the room what
-audio does to the output and they derive the rules with you. One pass and no scroll-back, so the ask
-goes first. Eyes and hands busy, so no URLs and no identifiers. A linear medium, so no nesting and no
-six-item list. A fixed budget, so coverage and depth are in direct conflict and the rubric has to say
-which wins. None of those are facts about email. They are consequences of how the output is consumed,
-and that is where evaluation criteria actually come from.
-
-**The judge is reference-free, and here it has no choice.** There is no correct brief, and nobody can
-write one, because writing it would mean settling every open question in the next section first. So
-the judge gets the source messages, the tool calls the agent made, and the produced script, and it
-decides whether the selection was defensible on that evidence. Show the line from the prompt:
-
-> You have no reference brief, and none exists. Decide from the source messages and the agent's
-> recorded tool calls whether the selection is defensible, and whether anything material to the
-> listener was dropped.
-
-In production there is never a reference. A judge that needs one is a test fixture, not an evaluator.
-
-## 6. Alignment (6 min) — the centre of the talk
-
-**6a. The protocol.** Treat the judge exactly as you would treat an outsourced annotator. Binary
-pass/fail plus a written critique — the critique is the asset, the label is just an index into it.
-Dev/test split applied to the evaluation itself. Iterate on *disagreement patterns*, never on
-individual rows.
-
-**6b. The bar is human agreement.** The judge is held to the same standard as a second human
-annotator: it must agree with the human reviewer about as often as two careful humans agree with
-each other on the same rows. That inter-annotator agreement is measured first and becomes the
-ceiling; the judge's agreement with the humans is then read against it. Say why the false pass is
-the error to watch: it is asymmetric, because a false pass ships. Do not put specific numeric
-thresholds on the slide — we have not measured human agreement yet, and any number would be
-invented.
-
-**6c. Audience places the boundary.** This is where the grey zone becomes concrete and the room
-participates. Three calls from the real script on screen, all of them content and faithfulness
-questions, none of them settled by looking anything up.
-
-*Editorial colour.* The digest is neutral. The script calls it an UNBELIEVABLE week, describes a
-cybersecurity threshold as a major milestone, calls safety interventions frustrating, and tells the
-listener not to worry. None of that came from the source. All of it is exactly what the production
-prompt asked for, because the prompt demands an engaging conversational tone. The pipeline is
-compliant with its spec and unfaithful to its input at the same time. Two rubrics in direct
-conflict; the room picks.
-
-*Lost attribution.* The digest carries numbered citations. The script drops them, correctly, because
-reading footnote markers aloud is absurd. Now no claim is attributable. Does faithfulness in audio
-require saying "according to AINews", at several seconds a claim, or is dropping attribution right
-for a personal brief?
-
-*Coverage against budget.* Nothing was cut. Four launches, three action items, three projects to
-explore, all of it, in three and a half minutes. Is total coverage the goal, or should it have
-picked two stories and dropped the rest? Both are defensible products and they need different
-rubrics.
-
-Collect the split, then show our reading and where it was contested. This is the answer to the
-question section 2 left open.
-
-**6d. What the protocol finds, before any human label.** Two things.
-
-First, an unaligned judge produces a number that looks like a result and is not one. Run it over a
-corpus that contains conversations you deliberately kept because the agent handled them badly, and
-watch how many of them it passes. The pass rate is a measurement of the judge, not of the agent, and
-until it is aligned you cannot tell those apart.
-
-Second, consistency. Ask the judge the same question eight times over at temperature 1 and see where
-it changes its mind. Two things fall out. The rows it wavers on are the grey zone, located by the
-judge itself rather than guessed at. And when the wavering rows cluster — when three of the four are
-the same situation wearing different costumes — the measurement has found a corpus design flaw before
-it found a judge flaw. That is what sent us back to section 3.
-
-Then the limit, and say it plainly because it is the honest half. **Consistency is a ceiling, not
-proof.** A judge can be wrong the same way every time and score perfectly here. Near the end the real script
-announces three standout projects and then reads three in a row: the prompt banned bullet points and
-got prose that is still a list. Suppose the judge passes that passage every time, and every
-explanation says the same thing: all the material items were covered. It is right about that.
-Nothing in the rubric says three items in a row is unusable in audio, so it has no reason to object, and asking eight more times will never
-reveal it. Consistency measurement finds what a judge is unsure about. It structurally cannot find
-what it is confidently wrong about.
-
-What does find it: reading what the judge says it believes. The explanations name the judgement it
-keeps blessing, someone who has actually listened to the episode on a walk recognises it as wrong, and one
-correction covers every row that shares it. No reference answer is involved, which matters, because
-here there is none to be had.
-
-**6e. Where we actually are.** Zero human labels so far, and therefore no measured human agreement to
-hold the judge against. What we have is the protocol and the judge's self-consistency map. Say it
-plainly — the gap is the reason the talk exists.
-
-## 7. Trajectory and state (2 min)
-
-The dimensions that only appear once the system is an agent.
-
-Replay recorded runs without re-invoking the agent. You judge the recorded artifact rather than a
-fresh non-deterministic run, which is what makes agent evaluation reproducible at all.
-
-State: assert the audio was produced and delivered, and that it holds what the pipeline claimed. Never ask a model
-whether the agent did something you can check directly.
-
-Non-determinism at scale: pass@k for capability, pass^k for reliability. One slide, keep moving.
-
-*Compress to one slide if running long.*
-
-## 8. Where this goes, and the closing (2 min)
-
-Return to the origin from section 1a. Once the judge is aligned, its critiques become an
-optimization signal — every failure produces an English critique, and the critiques drive
-targeted changes rather than prompt-tinkering. That is what we wanted at the start, and the
-ordering constraint is the price of admission.
-
-The close, and the only thing they need to keep:
-
-**The grey zone does not go away. Your job is to locate it deliberately instead of pretending it
-is not there — and alignment is how you locate it.**
-
-Then the practical lesson underneath it: **start small, validate small components, then increase
-scope.** One rubric aligned properly is worth more than four rubrics guessed at. The same holds
-as scope grows — to multi-agent systems, to software factories, to anything where the output is
-judged rather than checked. The open questions live at that level, not in our toy dataset.
+The final answer is therefore only the visible endpoint. We need a way to evaluate open-ended
+behavior without pretending that one ideal response exists.
 
 ---
 
-## Cut list, if running long
+## 2. Start with humans, not infrastructure (5 min)
 
-1. Section 4 down to 60 seconds.
-2. Section 7 down to one slide.
-3. Never cut section 6.
+### Slide: Begin with a small human-reviewed corpus
 
-## Deliberately not in this talk
+Build roughly fifty diverse cases around real decisions. Each Sphere.com case includes the
+stakeholder, decision, delivery setting, communication need, and analytical question.
 
-Decision trees for choosing metrics; annotation-era history tables; the Mechanical Turk framing;
-prompt-learning mechanics and benchmark results; vendor bug stories; a live demo.
+The cases vary the situation rather than multiplying cosmetic personas. Include easy cases,
+ambiguous requests, multi-turn corrections, missing data, and answers that look plausible but are
+not useful for the decision.
+
+Until review is complete, call this the **fifty-case review pool**. It becomes “roughly fifty
+hand-reviewed examples” only after those judgments exist.
+
+### Slide: Binary verdict, written critique
+
+For every applicable case, the reviewer must choose `pass` or `fail` and explain why. The critique
+contains the nuance; the label makes the boundary operational.
+
+The practical benefits highlighted in the ECIR material are:
+
+- a binary decision is clear and actionable;
+- it avoids false precision from inconsistently interpreted 1–5 scales;
+- it lowers cognitive load and increases annotation throughput;
+- agreement, precision, recall, and false-pass rate become directly measurable.
+
+The important cost is also the point: binary grading offers no “maybe” bucket. Forcing the judge to
+go either way does not eliminate ambiguity. It forces every ambiguous case onto one side of the
+boundary.
+
+That makes alignment harder and more important. Instability and disagreement reveal where the
+judge does not know how humans place the boundary.
+
+`not_applicable` is reserved for cases where the criterion genuinely does not apply. It is not an
+escape hatch for uncertainty.
+
+Source note: see slides 7, 13, and 14 of the ECIR keynote material captured in
+`docs/reference/ecir-2026-keynote-slide-deck-plan.md`.
+
+The consistency and throughput benefits are also summarized in O’Reilly’s
+[What We Learned from a Year of Building with LLMs](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/).
+
+### Slide: One criterion at a time
+
+For this talk we align only `decision_support_quality`:
+
+> Does the response turn the analysis into clear, appropriately scoped input to the stakeholder’s
+> stated decision, using sound judgment about emphasis, explanation, caveats, and next steps?
+
+The evaluator does not recompute the analysis or compare the response with an ideal answer. It
+judges the conversation, visible tool evidence, and final response against the stated decision.
+
+---
+
+## 3. Align an LLM-as-a-judge (7 min)
+
+### Slide: The historical method
+
+Show the conventional workflow first:
+
+1. Randomly sample cases.
+2. Ask humans to review all of them.
+3. Record pass/fail labels and critiques.
+4. Split the annotations into development and test sets.
+5. Rewrite the judge on development disagreements.
+6. Measure human–judge agreement on the untouched test set.
+
+This is methodologically clean and expensive in expert attention.
+
+### Slide: We are lazy—make the queue smarter
+
+We still need human judgment, but we do not have to review cases in random order.
+
+Run the unaligned evaluator as a three-model jury, with three repetitions per model. This yields two
+signals before annotation:
+
+- **self-wobble:** one model changes its verdict across repetitions;
+- **jury disagreement:** different models place the same case on different sides.
+
+Prioritize those cases for human review, then add a sample of unanimous cases to catch confidently
+wrong consensus. Continue until the reviewed set is broad enough to support alignment claims.
+
+The jury accelerates annotation; it does not annotate for us. Humans still decide where the
+boundary belongs.
+
+### Slide: Align the evaluator like any other model
+
+Use the 30-case development split to study disagreement patterns and revise the evaluator. Do not
+patch individual rows or expose the held-out cases during iteration.
+
+Use the 20-case test split only to measure agreement, precision, recall, and especially false-pass
+behavior. A false pass matters most because it allows a bad answer to ship.
+
+A panel reduces dependence on one model’s preferences. Consensus still does not prove correctness;
+it only tells us the models agree.
+
+### Short walkthrough
+
+Follow one recorded Sphere.com case through:
+
+1. stakeholder question and decision context;
+2. recorded agent response and tool evidence;
+3. nine verdicts from three judges × three repetitions;
+4. disagreement or wobble signal;
+5. human pass/fail decision and critique;
+6. the evaluator rule that critique suggests.
+
+Use a recorded artifact if it exists. Otherwise present this as a static protocol walkthrough and
+do not describe it as a completed measurement.
+
+---
+
+## 4. What makes agent evaluation different (4 min)
+
+### Slide: The answer is only the endpoint
+
+Keep this high level. Do not introduce a hierarchy of evaluation levels.
+
+Agent evaluation can inspect:
+
+- the full trajectory rather than only the final text;
+- which tools were selected and how their outputs were used;
+- assumptions or unsupported claims introduced between steps;
+- context, definitions, or constraints lost across turns;
+- state changes such as saving an insight or performing a write.
+
+Trajectory evidence can explain why an answer failed. Tool calls reveal whether the response rests
+on observed data. Multi-turn replay exposes context drift that a final-answer judge cannot see.
+
+For Sphere.com, `decision_support_quality` remains one focused subjective verdict. The conversation
+and tool events provide context for that verdict; they are not turned into additional evaluators in
+this stage.
+
+### Slide: Replay, do not regenerate
+
+Evaluate recorded runs without invoking the target agent again. The object under review must stay
+fixed while the judge changes.
+
+This separates target non-determinism from evaluator non-determinism and lets humans and jury
+members inspect the same behavior.
+
+---
+
+## 5. Scaling: offline, online, continuous (3 min)
+
+### Slide: Three operating modes
+
+Keep this slide about where and when evaluation runs:
+
+- **Offline:** curated cases used during development, alignment, and model or prompt comparison.
+- **Online:** sampled production traces used to find real failures, new situations, and drift.
+- **Continuous:** automated checks triggered by changes and repeated over time.
+
+These are operating modes, not three different definitions of quality. The same aligned criterion
+can move between them, provided the production slice still resembles the slice validated by humans.
+
+CI becomes appropriate only after the evaluator has earned that trust. A failed check should name
+the affected cases and preserve the evidence needed for review.
+
+Do not put structural error analysis or automated improvement on this slide. That is the software
+factory’s job.
+
+---
+
+## 6. Evals in the software factory (2 min)
+
+### Slide: A finding is not yet knowledge
+
+An evaluator produces a finding: a failed case plus a critique. The finding becomes reusable only
+after repeated failures are analyzed into a structural rule.
+
+Show the relationship explicitly:
+
+| Artifact | Role |
+|---|---|
+| Finding | Evidence that a specific behavior failed |
+| Structural analysis | Explanation of the recurring cause |
+| Evaluator | Defines how success and failure are recognized |
+| Skill | Teaches the agent domain knowledge, criteria, and task-specific behavior |
+| System prompt | Holds the small set of global identity, safety, and behavioral invariants |
+
+The evaluator says what failed. The skill teaches the agent what to know or do differently. Do not
+blindly paste evaluator prose into the system prompt.
+
+Domain-specific knowledge belongs primarily in skills because it can be scoped, versioned, tested,
+and loaded for the relevant task. Only genuinely global rules should move into the system prompt.
+
+If the finding shows that the evaluator misunderstood the boundary, update the evaluator instead of
+teaching the agent to satisfy a broken judge.
+
+### Slide: Automate preparation, preserve human authority
+
+The software-factory loop is:
+
+1. The evaluator identifies failures or changed behavior.
+2. An analysis agent clusters cases and proposes a structural cause.
+3. The analysis is presented to a human with the underlying evidence.
+4. An improvement agent prepares a skill, prompt, tool, or code change and opens a PR.
+5. A separate validation agent runs the regression set and reviews the proposed change.
+6. A human decides whether the diagnosis is valid and whether the PR should merge.
+
+Example: several failures show that the agent does not understand a company-specific revenue
+definition.
+
+The factory proposes a tested skill update containing that domain rule and examples. It opens a PR
+and attaches the affected cases and validation results for review.
+
+CI asks whether a change can ship. The software factory investigates what went wrong and prepares a
+reviewable response.
+
+This closes the application lifecycle without collapsing it into the evaluator lifecycle.
+
+Agent knowledge can improve while the definition of quality stays fixed. The evaluator changes only
+when human review shows that its boundary is wrong.
+
+---
+
+## 7. Takeaways and Q&A (6 min)
+
+### Takeaways (1 min)
+
+1. Humans define the boundary; the judge does not invent it.
+2. Binary verdicts make the boundary actionable and make ambiguity visible as disagreement.
+3. Repeated juries can route human attention, but consensus is not ground truth.
+4. Agent evaluation can inspect trajectories, tool use, context drift, and state—not only answers.
+5. Aligned findings can drive reviewed improvements through skills, PRs, and regression checks.
+
+Close with:
+
+> Trust automation only inside the slice tested against humans. Stop when disagreement, drift, or
+> false passes show that you have left it.
+
+### Q&A (5 min)
