@@ -98,17 +98,13 @@
   .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
   .fork{font-size:62px;color:var(--teal);text-align:center}
   .stack{display:grid;gap:28px}
-  .life{display:grid;grid-template-columns:1fr 260px 1fr;align-items:center;gap:34px}
-  .life-stage{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative}
-  .life-stage::before{content:"";position:absolute;left:12%;right:12%;top:48px;border-top:4px solid var(--teal);z-index:0}
-  .life-stage.guard::before{border-color:var(--orange)}
-  .life-step{position:relative;z-index:1;text-align:center;font-size:25px;color:var(--ink2)}
-  .life-step i{display:block;width:36px;height:36px;margin:30px auto 20px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 14px var(--bg)}
-  .guard .life-step i{background:var(--orange)}
-  .life-core{grid-column:1/-1;margin:34px auto 0;border:3px solid var(--teal);border-radius:18px;padding:20px 46px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--teal-deep)}
-  .guard .life-core{border-color:var(--orange);color:var(--orange-dark)}
-  .bridge{text-align:center;font-family:var(--mono);font-size:19px;line-height:1.5;color:var(--muted)}
-  .bridge .arrow{display:block;font-family:var(--sans);font-size:72px;line-height:.8;color:var(--teal)}
+  .life-simple{display:grid;grid-template-columns:1fr 320px 1fr;align-items:center;gap:30px;margin-top:20px}
+  .life-loop{height:350px;position:relative;display:grid;place-items:center}
+  .life-loop svg{position:absolute;inset:0;width:100%;height:100%}
+  .life-loop strong{position:relative;font-size:38px;font-weight:500;text-align:center;line-height:1.2}
+  .life-bridge{text-align:center;font-size:29px;color:var(--ink2)}
+  .life-bridge span{display:block;font-size:72px;line-height:.9;color:var(--teal)}
+  .life-return{width:72%;margin:14px auto 0;padding-top:20px;border-top:3px dashed var(--muted);text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.06em;color:var(--muted)}
   .route{display:grid;grid-template-columns:300px 80px 340px 80px 1fr;align-items:center;gap:14px}
   .routes{display:grid;gap:16px}
   .route-card{border:3px solid var(--teal);border-radius:16px;background:var(--paper);padding:19px 28px;font-size:27px}
@@ -462,14 +458,13 @@
 
 <!-- 16 · Lifecycle -->
 <section class="slide">
-  <div class="eyebrow">CI and the promotion gate</div>
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
-  <div class="life" aria-label="Evaluation build lifecycle followed by regression lifecycle">
-    <div class="life-stage"><div class="life-step"><i></i>label by hand</div><div class="life-step"><i></i>measure agreement</div><div class="life-step"><i></i>revise the rubric</div><div class="life-core">STAGE ONE · BUILD · HUMANS IN THE LOOP</div></div>
-    <div class="bridge">human alignment holds on test cases<span class="arrow">→</span>the judge becomes evidence</div>
-    <div class="life-stage guard"><div class="life-step"><i></i>commit</div><div class="life-step"><i></i>compare with baseline</div><div class="life-step"><i></i>run review set</div><div class="life-core">STAGE TWO · GUARD · AUTOMATED REGRESSION</div></div>
+  <div class="life-simple" aria-label="Evaluation build lifecycle followed by regression lifecycle">
+    <div class="life-loop"><svg viewBox="0 0 520 350" aria-hidden="true"><defs><marker id="cycleT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker></defs><path d="M112 250 A155 155 0 1 1 408 250" fill="none" stroke="var(--teal)" stroke-width="7" marker-end="url(#cycleT)"/><path d="M385 290 A155 155 0 0 1 135 290" fill="none" stroke="var(--teal)" stroke-width="7" marker-end="url(#cycleT)"/></svg><strong>Build with<br>humans</strong></div>
+    <div class="life-bridge">Alignment holds<span>→</span></div>
+    <div class="life-loop"><svg viewBox="0 0 520 350" aria-hidden="true"><defs><marker id="cycleO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--orange)"/></marker></defs><path d="M112 250 A155 155 0 1 1 408 250" fill="none" stroke="var(--orange)" stroke-width="7" marker-end="url(#cycleO)"/><path d="M385 290 A155 155 0 0 1 135 290" fill="none" stroke="var(--orange)" stroke-width="7" marker-end="url(#cycleO)"/></svg><strong>Guard every<br>commit</strong></div>
   </div>
-  <div class="feedback">↶ WHAT ESCAPES THE GATE BECOMES A NEW REVIEW CASE</div>
+  <div class="life-return">← Escapes become review cases</div>
 </section>
 
 <!-- 17 · Finding to knowledge -->
