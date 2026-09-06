@@ -11,10 +11,11 @@ Design constraints settled during planning:
   apology.
 - The simulation harness' own scorer numbers stay off the slides. They are a second unvalidated
   instrument and putting them on screen invites the audience to read them as agent quality.
-- The running example on the slides is **illustrative**. The method and the structural findings come
-  from a real alignment run on a different agent; the inbox transcripts and judge explanations are
-  written to teach. One real morning appears on screen in section 3, redacted. No invented number is
-  ever read as a measurement.
+- The running example is a **real production pipeline** and every artifact on the slides comes from
+  a real run (n8n execution 9267, 4 September 2026, in `docs/examples/podcast-run-2026-09-04/`). The
+  judge, the rubrics, and the alignment session for it are **illustrative**: the structural findings
+  the talk reports come from a real alignment run on a different agent. No invented number is ever
+  read as a measurement.
 - The infrastructure war stories (jury vote discarding, empty SDK response, experiment
   misplacement) are cut. One argument per talk.
 
@@ -82,43 +83,44 @@ Close the section on the open question, and leave it open: *who decides where th
 
 ## 3. The agent and the corpus (3 min)
 
-Introduce the running example properly, with context. An agent reads the morning's email and
-produces a five-minute audio brief. The listener plays it while commuting or making coffee. They
-are not at a laptop, and they will act on it later.
+Introduce the running example properly, with context. A weekly job reads the AI newsletters that
+piled up in an inbox, condenses them, rewrites the result as spoken text, sends that to
+text-to-speech, and delivers the audio over Telegram. The listener plays it on a walk. Nobody reads
+anything. It is my own pipeline and it has been running in production for months.
 
-It has tools: search the inbox over a window, expand a thread to its full history, check the
-calendar to know whether the meeting an email argues about has already happened, resolve who a
-sender is, and write the finished script to a file. It decides what to fetch and how deep to go.
-Those decisions happen before a word of the script is written, and they are the interesting part.
+Put one real run on screen. Ten newsletters in, 310,647 characters. A 2,600 character digest in the
+middle. A 535 word script out, about three and a half minutes of audio. That ratio is the whole
+problem in one number: 99.8 percent of the input does not survive, and every question a rubric can
+ask is a question about what belongs in the surviving fraction.
 
-Show one real morning on screen: the source messages on the left, the produced script on the right.
-One slide, real data, redacted. Everything after this point is easier once the room has seen the
-artifact.
+Then show the prompt that does it, as it actually runs. It says to convert dates into spoken form,
+replace bullet points with transitions, produce one continuous text, and emit no markdown, no
+speaker names, no stage directions. Every rule in it exists because the output is spoken. None of
+them is a fact about email. And nothing in the pipeline checks a single one. That is how most LLM
+features ship, and it is on screen in my own production code rather than in a strawman.
 
-Failure modes we care about: an item that should have led buried in the middle, a claim the mail
-does not support, a thread summarised as settled when it was not, and a script that is unusable in
-audio because it reads out a list or a URL.
+Failure modes we care about: the consequential story buried in the middle, a claim the newsletters
+do not support, editorial colour invented to sound engaging, and prose that is still a list.
 
-The corpus: **one listener, many mornings.** Vary the situation, not the person. A quiet inbox, a
-crisis, a day that is all newsletters, a thread that resolves itself between its first and last
-message, a meeting that has already happened by the time the brief plays.
+The corpus: **one listener, many weeks.** Vary the situation, not the person. A week with one
+enormous story, a week with nothing, a week where two newsletters contradict each other, a week
+where the same launch is covered five times.
 
 Why one listener: an earlier corpus of ours crossed five personas with ten scenarios. When we
 measured the judge's consistency on it, three of the four cases it kept changing its mind about
 were the *same scenario* worn by different personas. The grid had bought fifty rows and ten
 situations. Persona variation is cheap; situation variation is what finds the grey zone.
 
-The important design choice: **we deliberately keep the failures.** Mornings the agent handled
-badly are retained rather than regenerated. A corpus of successes teaches you nothing, and those
-retained failures are what catches the judge out.
+The important design choice: **we deliberately keep the failures.** Weeks the pipeline handled badly
+are retained rather than regenerated. A corpus of successes teaches you nothing, and those retained
+failures are what catches the judge out.
 
 ## 4. Cheap graders first (2 min)
 
 Before any judge. Half of what makes a brief listenable is decidable by code: a regular expression
-finds URLs, ticket numbers, and order identifiers, none of which survive being spoken aloud; a word
-count checks the five-minute budget; a parser finds nested structure a listener cannot hold in
-memory. And the state change is checkable directly, because either the script file exists or it does
-not.
+finds URLs and version strings that were never converted to spoken form; a word count checks the
+budget; a scan finds the markdown the prompt explicitly forbade and got anyway. And the delivery is
+checkable directly, because either the audio was produced and sent or it was not.
 
 Rule: if code can grade it, never pay a model to. This is the highest-return hour in the whole
 process and it is the section most evaluation talks skip entirely.
@@ -174,20 +176,25 @@ thresholds on the slide — we have not measured human agreement yet, and any nu
 invented.
 
 **6c. Audience places the boundary.** This is where the grey zone becomes concrete and the room
-participates. Two cases, both content-selection calls, both of which split a room, and neither
-settled by looking anything up.
+participates. Three calls from the real script on screen, all of them content and faithfulness
+questions, none of them settled by looking anything up.
 
-*The thread you are only copied on.* Four messages arguing about a vendor renewal. No decision was
-reached and no question is aimed at the listener. The brief includes one line: the vendor renewal is
-still unresolved. Pass or fail? For pass: they want to know a decision they care about is stuck, and
-one line is cheap. For fail: nothing is asked of them, nothing changed, and twenty seconds of a
-five-minute budget went to something they cannot act on. Which reading is right depends on whether
-the product is a news service or a to-do list. Somebody has to decide that on purpose.
+*Editorial colour.* The digest is neutral. The script calls it an UNBELIEVABLE week, describes a
+cybersecurity threshold as a major milestone, calls safety interventions frustrating, and tells the
+listener not to worry. None of that came from the source. All of it is exactly what the production
+prompt asked for, because the prompt demands an engaging conversational tone. The pipeline is
+compliant with its spec and unfaithful to its input at the same time. Two rubrics in direct
+conflict; the room picks.
 
-*The inferred noun.* An email says "can you look at this before Thursday?" with a file attached
-called `Q3-review-deck.pdf`. The brief says Priya needs the deck reviewed by Thursday. Faithful,
-because the attachment name is evidence sitting right there? Or fabricated, because the sender never
-said the word and the agent guessed what "this" meant? Move one detail and the room changes its mind.
+*Lost attribution.* The digest carries numbered citations. The script drops them, correctly, because
+reading footnote markers aloud is absurd. Now no claim is attributable. Does faithfulness in audio
+require saying "according to AINews", at several seconds a claim, or is dropping attribution right
+for a personal brief?
+
+*Coverage against budget.* Nothing was cut. Four launches, three action items, three projects to
+explore, all of it, in three and a half minutes. Is total coverage the goal, or should it have
+picked two stories and dropped the rest? Both are defensible products and they need different
+rubrics.
 
 Collect the split, then show our reading and where it was contested. This is the answer to the
 question section 2 left open.
@@ -206,15 +213,16 @@ the same situation wearing different costumes — the measurement has found a co
 it found a judge flaw. That is what sent us back to section 3.
 
 Then the limit, and say it plainly because it is the honest half. **Consistency is a ceiling, not
-proof.** A judge can be wrong the same way every time and score perfectly here. Imagine it passes,
-every time, a brief that reads out six items in a row, and every explanation says the same thing:
-all the material items were covered. It is right about that. Nothing in the rubric says six items in
-a row is unusable in audio, so it has no reason to object, and asking eight more times will never
+proof.** A judge can be wrong the same way every time and score perfectly here. Near the end the real script
+announces three standout projects and then reads three in a row: the prompt banned bullet points and
+got prose that is still a list. Suppose the judge passes that passage every time, and every
+explanation says the same thing: all the material items were covered. It is right about that.
+Nothing in the rubric says three items in a row is unusable in audio, so it has no reason to object, and asking eight more times will never
 reveal it. Consistency measurement finds what a judge is unsure about. It structurally cannot find
 what it is confidently wrong about.
 
 What does find it: reading what the judge says it believes. The explanations name the judgement it
-keeps blessing, someone who has actually listened to a brief in a car recognises it as wrong, and one
+keeps blessing, someone who has actually listened to the episode on a walk recognises it as wrong, and one
 correction covers every row that shares it. No reference answer is involved, which matters, because
 here there is none to be had.
 
@@ -229,7 +237,7 @@ The dimensions that only appear once the system is an agent.
 Replay recorded runs without re-invoking the agent. You judge the recorded artifact rather than a
 fresh non-deterministic run, which is what makes agent evaluation reproducible at all.
 
-State: assert the script file exists and holds what the agent claimed it wrote. Never ask a model
+State: assert the audio was produced and delivered, and that it holds what the pipeline claimed. Never ask a model
 whether the agent did something you can check directly.
 
 Non-determinism at scale: pass@k for capability, pass^k for reliability. One slide, keep moving.

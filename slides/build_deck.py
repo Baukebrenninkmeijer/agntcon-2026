@@ -41,10 +41,10 @@ html = r'''<!doctype html>
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__SB__) format("woff2");font-weight:600;font-display:swap}
   @font-face{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,__MONO__) format("truetype");font-weight:500;font-display:swap}
 
-  /* Design tokens — Orq palette on black */
+  /* Design tokens — Orq palette on sand */
   :root{
-    --bg:#0b0b0c; --bg-2:#141416;
-    --ink:#f9f8f6; --ink-2:#b9b7b1; --ink-3:#6f6e69;
+    --bg:#f9f8f6; --bg-2:#ffffff;
+    --ink:#25232e; --ink-2:#55535c; --ink-3:#8c8a91;
     --orange:#ff8f34; --orange-dark:#df5325;
     --teal:#299D8F; --teal-deep:#025558; --cyan:#28FFE2;
     --sans:"Kurrent",-apple-system,"Inter",system-ui,sans-serif;
@@ -59,14 +59,14 @@ html = r'''<!doctype html>
   .slide.active{opacity:1;pointer-events:auto}
 
   /* Type — template sizes ×2 */
-  .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:40px}
+  .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:40px}
   h1{font-weight:600;font-size:128px;line-height:1.02;letter-spacing:-.025em;margin-bottom:36px}
   h2{font-weight:600;font-size:84px;line-height:1.06;letter-spacing:-.02em;margin-bottom:56px;max-width:1700px}
   .sub{font-size:36px;line-height:1.45;color:var(--ink-2);max-width:1300px}
   .body{font-size:36px;line-height:1.45;color:var(--ink-2)}
   .body b{color:var(--ink);font-weight:500}
-  .hl{color:var(--orange)}
-  .tl{color:var(--teal)}
+  .hl{color:var(--orange-dark)}
+  .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
   .byline{margin-top:90px;font-family:var(--mono);font-size:24px;color:var(--ink-3);display:flex;gap:56px}
 
@@ -87,7 +87,7 @@ html = r'''<!doctype html>
   .stats{display:grid;grid-auto-flow:column;gap:40px;margin-top:20px}
   .stat{border-top:2px solid var(--teal-deep);padding-top:28px}
   .stat .n{font-size:var(--n,132px);font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--ink)}
-  .stat .n.hl{color:var(--orange)}
+  .stat .n.hl{color:var(--orange-dark)}
   .stat .l{margin-top:18px;font-size:28px;color:var(--ink-2);line-height:1.35}
 
   /* Quote */
@@ -237,9 +237,9 @@ html = r'''<!doctype html>
     <svg class="gz" data-gz="0" viewBox="0 0 1200 700" width="1150" height="670" aria-label="Grey zone: from a blurry band to a crisp boundary">
       <defs>
         <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stop-color="#9a9a9a" stop-opacity="0"/>
-          <stop offset=".5" stop-color="#9a9a9a" stop-opacity=".55"/>
-          <stop offset="1" stop-color="#9a9a9a" stop-opacity="0"/>
+          <stop offset="0" stop-color="#6f6e69" stop-opacity="0"/>
+          <stop offset=".5" stop-color="#6f6e69" stop-opacity=".45"/>
+          <stop offset="1" stop-color="#6f6e69" stop-opacity="0"/>
         </linearGradient>
         <filter id="blur"><feGaussianBlur stdDeviation="28"/></filter>
         <radialGradient id="fade" cx=".5" cy=".5" r=".55"><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>

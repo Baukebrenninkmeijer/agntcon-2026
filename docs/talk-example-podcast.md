@@ -1,14 +1,18 @@
-# Running example for the talk: the inbox brief
+# Running example for the talk: the newsletter podcast
 
 This file holds the worked example the talk uses on stage. It replaces the analytics agent as the
 running example in the slides.
 
-**Status: illustrative.** Nothing here is backed by a run. The transcripts, judge explanations, and
-counts below were written to teach the method, not measured. The method itself, and the structural
-findings the talk reports, come from the real alignment work on the analytics agent recorded in
-[the session log](alignment-session-log.md). Keep that line clean on stage: describe the protocol
-and the shape of what it finds, and never read an invented number as though it were measured. Where
-a slide needs a count, say "in a run like this you typically see" or drop the number.
+The pipeline is real and it runs weekly in production, in n8n on the home server. The run captured
+here is execution 9267 from 4 September 2026. Its artifacts are in
+[`examples/podcast-run-2026-09-04/`](examples/podcast-run-2026-09-04/): the source messages, the
+intermediate digest, the delivered script, and the production prompt that produces it.
+
+**What is real and what is not.** The pipeline, the run, and every artifact on the slides are real.
+The judge, the rubrics, and the alignment session for this task are not: they are written to teach.
+The structural findings the talk reports come from a real alignment run on a different agent,
+recorded in [the session log](alignment-session-log.md). Keep that line clean on stage. Show the
+real artifacts, describe the protocol, and never read an invented number as a measurement.
 
 ## Why this example and not the analytics agent
 
@@ -17,144 +21,142 @@ it raised was whether refunds are already subtracted inside the revenue column. 
 answer, written down in a data dictionary, and anyone who reads it agrees. Alignment was not needed
 to settle it. Someone had to go look it up.
 
-That is a knowledge gap, not a boundary. It undercuts the talk in two places. Section 2 closes on
-"who decides where the boundary goes?", and the honest answer for the analytics case is that nobody
-decides. Section 6 holds the judge to human agreement, and if two annotators disagree about refunds
-one of them is simply wrong, so the agreement number measures schema literacy rather than a
+That is a knowledge gap, not a boundary, and it undercuts the talk in two places. Section 2 closes
+on "who decides where the boundary goes?", and for the analytics case the honest answer is that
+nobody decides. Section 6 holds the judge to human agreement, and if two annotators disagree about
+refunds one of them is simply wrong, so the agreement number measures schema literacy rather than a
 contested boundary.
 
-The inbox brief has the property the talk needs. Its hard rules are not facts about the world; they
-are consequences of how the output gets consumed. Its open questions are genuine product decisions
-where two careful people land differently and both can defend it.
+The podcast has the property the talk needs. Its hard rules are consequences of how the output is
+consumed, not facts about the world. Its open questions are product decisions where two careful
+people land differently and both can defend it.
 
-## The task
+## The pipeline
 
-An agent reads the morning's email and produces a five-minute audio brief. The listener plays it
-while commuting or making coffee. They are not at a laptop, and they will act on it later.
+A weekly job reads the AI newsletters that accumulated in an inbox, condenses them, rewrites the
+result as spoken text, sends that to a text-to-speech service, and delivers the audio over Telegram.
+The listener plays it on a walk. Nobody reads anything.
 
-## The agent
+In the captured run it ingested ten newsletters totalling 310,647 characters, produced a 2,600
+character digest, and turned that into a 535 word script, about three and a half minutes of audio.
+That compression ratio is the whole problem in one number: 99.8 percent of the input does not
+survive, and every rubric question is a question about what should have been in the surviving 0.2
+percent.
 
-It has tools, so the trajectory material in the talk still applies:
+## The production prompt is the argument
 
-- search and list the inbox over a time window
-- expand a thread to its full message history
-- look up the calendar, to know whether the meeting an email argues about has already happened
-- look up a contact, to resolve who someone is
-- write the script to a file, which is the state change worth asserting
+Show [the Podcastify prompt](examples/podcast-run-2026-09-04/podcastify-prompt.md) on a slide as it
+runs, and let the room read it. It says to convert dates into spoken form, replace bullet points
+with transitions, emit one continuous text with no paragraph breaks, and include no markdown, no
+speaker names, no timestamps, and no stage directions like `[pause]`.
 
-It decides what to fetch, how deep to expand a thread, and what to leave out. The decisions are the
-interesting part, and they happen before a single word of the script is written.
+Every one of those rules exists because the output is spoken. None of them is a fact about email.
+And nothing in the pipeline checks any of them. That is the honest picture of how most LLM features
+ship, it is on screen in the speaker's own production code, and it sets up both the cheap-grader
+section and the judge.
 
-## The downstream requirements write the rubric
+The delivered script shows the rules being followed. It says "G P T six Astra", "Claude Fable five
+point one", "twenty-five cents per million tokens", and "Friday, September fourth, twenty
+twenty-six". A reader would find that text bizarre. A listener needs every bit of it.
 
-This is the beat the analytics example could not give. Ask the room what audio does to the output
-and they will derive the rules with you:
+## What the medium decides, and what it does not
 
-- **One pass, no scroll-back.** The ask goes first. A brief that builds to the point has already
-  lost the listener, because they cannot go back.
-- **Eyes and hands busy.** No URLs, no order numbers, no ticket identifiers, no code. A string of
-  characters is unusable in audio and the listener cannot write it down.
-- **Linear medium.** No nesting, no "as shown above", no six-item list. Structure that a reader
-  skims, a listener has to hold in memory.
-- **Fixed budget.** Five minutes is roughly 750 words. Coverage and depth are in direct conflict,
-  and the rubric has to say which wins.
-- **Action happens later.** Anything needing a reply must be recoverable from memory: who, what,
-  and by when, in a form the listener can act on an hour later.
+The medium settles a set of questions outright, and these are the rules a rubric can state plainly:
 
-Every one of those is a hard requirement derived from the medium, not a preference. They are the
-part a rubric can state plainly. What follows is the part it cannot.
+- **One pass, no scroll-back.** The consequential item goes first. A script that builds to its point
+  has lost the listener, who cannot go back.
+- **Eyes and hands busy.** No URLs, no identifiers, no model version strings left unspoken. The
+  listener cannot write anything down.
+- **A linear form.** No nesting, no "as listed above", no long enumerations, because structure a
+  reader skims is structure a listener has to hold in memory.
+- **A fixed budget.** Three and a half minutes against 310,000 characters of input. Coverage and
+  depth are in direct conflict and something has to say which one wins.
 
-## The grey zones
+What the medium does not settle is everything interesting.
 
-These are the questions where two competent people disagree and the organisation has to choose.
-They are the reason the alignment session exists.
+## The grey zones, visible in the real script
 
-1. **Report or interpret.** An email reads "let's circle back once the numbers land." Does the brief
-   say that, or does it say the sender is stalling? Interpretation is more useful and less faithful.
-2. **Threads with no decision.** Four people argued about a vendor renewal and reached nothing. Is
-   an unresolved thread worth twenty seconds of a five-minute budget?
-3. **Mail the listener is only cc'd on.** Context they would want, or someone else's business?
-4. **Automated mail.** Newsletters, receipts, build notifications. One sentence, or silence?
-5. **Advice.** Does the brief say what happened, or what the listener should do about it?
-6. **Conflicting mail.** Two people state incompatible facts. Flag the conflict, or pick the one
-   that looks right?
+Each of these is a real property of the captured run, so the slide can quote the artifact rather
+than a hypothetical.
 
-None of these has a lookup answer. Each is a product decision that changes what the thing is for.
+**Coverage against budget.** The script carries almost the entire digest: four model launches,
+three action items, three projects to explore, and the hardware section. Nothing was cut. Is total
+coverage the goal for a three minute brief, or should the thing have picked two stories and dropped
+the rest? Both are defensible products and they need different rubrics.
+
+**Editorial colour.** The digest is neutral. The script calls it an "UNBELIEVABLE week", describes
+the cybersecurity threshold as "a major milestone for agent capability", calls safety interventions
+"frustrating", and reassures the listener with "do not worry". None of that came from the source.
+It is also exactly what the production prompt asked for, because the prompt demands an engaging
+conversational tone. So the pipeline is compliant with its spec and unfaithful to its input at the
+same time. Two rubrics in direct conflict, and the room has to pick.
+
+**Lost attribution.** The digest carries numbered citations, and the script drops them, correctly,
+because reading footnote markers aloud is absurd. But now no claim is attributable. Does
+faithfulness in audio require saying "according to AINews", at a cost of several seconds per claim,
+or is dropping attribution the right call for a personal brief?
+
+**The list the medium forbids.** Near the end the script says there are three standout projects, and
+then reads three in a row. The prompt banned bullet points and got prose that is still a list. A
+rubric that only bans the formatting misses this entirely.
+
+**A pass worth showing.** The dollar figure survives correctly as "twenty-five cents per million
+tokens". Show it next to the failures, because a rubric that only ever fires on problems teaches the
+room nothing about where the boundary is.
 
 ## Decomposing the judge
 
-"Is this a good brief?" is several questions wearing one coat, exactly as "is this correct?" was:
+"Is this a good episode?" is several questions wearing one coat:
 
-- **Content selection.** Did the right items make it in, and was anything material dropped?
-- **Faithfulness.** Is every claim supported by the mail it came from?
+- **Content selection.** Did the right items survive the cut, and was anything material dropped?
+- **Faithfulness.** Is every claim supported by the newsletters it came from?
 - **Listenability.** Does it obey the constraints the medium imposes?
-- **Actionability.** Can the listener act an hour later without opening a laptop?
+- **Actionability.** Can the listener act on it later without a laptop?
 
 Align one: content selection. It has the widest grey zone, it is where the product decisions live,
-and the other three are narrower once it is settled. Then decompose that one further, because
-selection is still several judgements: is this item newsworthy at all, is this thread ripe enough to
-mention, is a cc-only thread the listener's business, does automated mail count as an item, and does
-the ordering put the most consequential item first.
+and the others are narrower once it is settled. Then decompose that one further, because selection is
+still several judgements: is an item newsworthy at all, does an action item belong in a news brief,
+do three "worth exploring" links earn their forty seconds, and does the ordering put the most
+consequential story first.
 
-Listenability is worth naming as the cheap-grader section's example too. Half of it is deterministic:
-a regular expression finds URLs and identifiers, a word count checks the budget, and a parser finds
-nested structure. Never pay a model to check what code can check.
+Listenability is the cheap-grader example. Half of it is decidable by code: a regular expression
+finds URLs and unspoken version strings, a word count checks the budget, and a scan finds the
+markdown the prompt forbade. Never pay a model to check what code can check.
 
 ## The reference-free judge
 
-Same principle as the analytics judge, and easier to justify here. There is no correct brief. Nobody
-can write the reference, because writing it would require settling every question in the grey-zone
-list first. So the judge gets the source emails, the tool calls the agent made, and the produced
-script, and it has to decide whether the selection was defensible on the evidence it can see.
+Nobody can write the correct episode. Writing it would mean settling every question above first. So
+the judge gets the source newsletters, the intermediate digest, and the delivered script, and it
+decides whether the selection was defensible on that evidence.
 
-Prompt line to show on the slide:
+Prompt line for the slide:
 
-> You have no reference brief, and none exists. Decide from the source messages and the agent's
-> recorded tool calls whether the selection is defensible, and whether anything material to the
+> You have no reference episode, and none exists. Decide from the source messages and the
+> intermediate digest whether the selection is defensible, and whether anything material to the
 > listener was dropped.
 
-## The audience moment
-
-Two cases to put on screen for the room to vote on. Both are content-selection calls, both split a
-room, and neither is settled by looking something up.
-
-**Case one, the cc-only thread.** The listener is copied on a four-message argument about a vendor
-renewal. No decision was reached and no question is aimed at them. The brief includes one line: "the
-vendor renewal is still unresolved." Pass or fail?
-
-The case for pass: the listener wants to know a decision they care about is stuck, and one line is a
-cheap way to say so. The case for fail: nothing is being asked of them, no state changed, and twenty
-seconds of a five-minute budget went to an item they can do nothing about. Both readings are
-defensible. Which one is right depends on whether the product is a news service or a to-do list, and
-that is a decision somebody has to make on purpose.
-
-**Case two, the inferred noun.** An email says "can you look at this before Thursday?" with a file
-attached named `Q3-review-deck.pdf`. The brief says "Priya needs the deck reviewed by Thursday."
-Faithful, because the attachment name is evidence sitting right there? Or fabricated, because the
-sender never said the word and the agent guessed at what "this" meant? Move one detail and the room
-changes its mind, which is the point.
+In production there is never a reference. A judge that needs one is a test fixture, not an evaluator.
 
 ## The stable-and-wrong case
 
-Worth keeping, because it is the real lesson from the analytics run and it transfers cleanly.
+This is the real lesson from the analytics run and it transfers cleanly, so keep it.
 
-A judge can be perfectly consistent and perfectly wrong. Imagine it passes, every single time, briefs
-that read out a list of six items in a row. Every explanation says the same thing: all the material
-items were covered. And it is right about that, because coverage is what the rubric asked about.
-Nothing in the rubric says that six items in a row is unusable in audio, so the judge has no reason
-to object, and asking it eight times will never reveal the problem. Consistency measurement finds
-what a judge is unsure about. It structurally cannot find what a judge is confidently wrong about.
+A judge can be perfectly consistent and perfectly wrong. Suppose it passes, every single time, the
+three-projects-in-a-row passage, and every explanation says the same thing: all the material items
+were covered. It is right about that. Nothing in the rubric says three items in a row is unusable in
+audio, so it has no reason to object, and asking it eight more times will never reveal the problem.
+Consistency measurement finds what a judge is unsure about. It structurally cannot find what a judge
+is confidently wrong about.
 
-What finds it: reading what the judge says it believes. The explanations name the derivation the
-judge keeps blessing, someone who has actually listened to a brief in a car recognises it as wrong,
-and one correction covers every row that shares it. That is the discovery move, and it needs no
-reference answer, which matters because there is none to be had here.
+What finds it: reading what the judge says it believes. The explanations name the judgement it keeps
+blessing, someone who has actually listened to the episode on a walk recognises it as wrong, and one
+correction covers every row that shares it. No reference answer is involved, which matters, because
+here there is none to be had.
 
-## Grading the corpus
+## The corpus
 
-The corpus shape carries over unchanged: one listener, many situations. Vary the morning, not the
-person. A quiet inbox, a crisis, a day that is all newsletters, a thread that resolves itself between
-the first and last message, a sender who writes one line and a sender who writes nine paragraphs, a
-meeting that already happened by the time the brief plays.
+One listener, many weeks. Vary the situation, not the person. A week with one enormous story, a week
+with nothing, a week where two newsletters contradict each other, a week where the same launch is
+covered five times, a week where an item is already stale by the time the audio plays.
 
-And keep the failures. A corpus of mornings the agent handled well teaches nothing.
+And keep the failures. A corpus of weeks the pipeline handled well teaches nothing.
