@@ -1,33 +1,89 @@
-import base64, random, pathlib
+# ruff: noqa: E501
 
-F = pathlib.Path('/Users/baukebrenninkmeijer/.claude/skills/orq-chart-style/fonts')
-def b64(name): return base64.b64encode((F/name).read_bytes()).decode()
+import base64
+import math
+import pathlib
+import random
+
+FONT_DIR = pathlib.Path("/Users/baukebrenninkmeijer/.claude/skills/orq-chart-style/fonts")
+
+
+def b64(name: str) -> str:
+    return base64.b64encode((FONT_DIR / name).read_bytes()).decode()
+
+
 fonts = {
-  'RG': b64('ESKlarheitKurrent-Rg.woff2'),
-  'MD': b64('ESKlarheitKurrent-Md.woff2'),
-  'SB': b64('ESKlarheitKurrent-Smbd.woff2'),
-  'MONO': b64('ESKlarheitKurrentMono-Md.ttf'),
+    "RG": b64("ESKlarheitKurrent-Rg.woff2"),
+    "MD": b64("ESKlarheitKurrent-Md.woff2"),
+    "SB": b64("ESKlarheitKurrent-Smbd.woff2"),
+    "MONO": b64("ESKlarheitKurrentMono-Md.ttf"),
 }
 
-# ---- grey zone dots: two clusters along a diagonal, overlapping in the middle
-rng = random.Random(7)
-dots = []
-for _ in range(60):
-    x = rng.uniform(80, 1120); y = rng.uniform(80, 620)
-    score = (x/1200) - (y/700) + rng.gauss(0, 0.13)
-    dots.append((x, y, 'a' if score > 0 else 'b'))
-gz_dots = '\n'.join(f'<circle class="d {c}" cx="{x:.0f}" cy="{y:.0f}" r="9"/>' for x,y,c in dots)
 
-# ---- slide 15 dots: 50 in a 10x5 grid; 3 fails; 10 seeded rings (placeholder mapping)
-fails = {3, 17, 41}
-seeded = {3, 8, 12, 17, 21, 26, 30, 35, 41, 47}
-s15 = []
-for i in range(50):
-    cx = 110 + (i % 10) * 116; cy = 90 + (i // 10) * 116
-    cls = 'fail' if i in fails else 'pass'
-    if i in seeded: s15.append(f'<circle class="ring" cx="{cx}" cy="{cy}" r="44"/>')
-    s15.append(f'<circle class="{cls}" cx="{cx}" cy="{cy}" r="28"/>')
-s15_dots = '\n'.join(s15)
+# Preserved grey-zone visual: overlapping classes and several defensible boundaries.
+rng = random.Random(7)
+grey_dots: list[tuple[float, float, str]] = []
+for _ in range(60):
+    x = rng.uniform(80, 1120)
+    y = rng.uniform(80, 620)
+    score = (x / 1200) - (y / 700) + rng.gauss(0, 0.13)
+    grey_dots.append((x, y, "a" if score > 0 else "b"))
+
+grey_dot_svg = "\n".join(
+    f'<circle class="d {kind}" cx="{x:.0f}" cy="{y:.0f}" r="9"/>'
+    for x, y, kind in grey_dots
+)
+
+
+def wiggle(amplitude: float, frequency: float, phase: float, drift: float) -> str:
+    def y_value(x: float) -> float:
+        t = x / 1200
+        taper = 0.35 + 0.65 * math.sin(math.pi * t)
+        return 0.50 * x + 55 + drift + amplitude * taper * math.sin(frequency * x + phase)
+
+    points = [(x, y_value(x)) for x in range(20, 1200, 55)]
+    path = f"M {points[0][0]:.0f} {points[0][1]:.0f}"
+    for index in range(len(points) - 1):
+        p0 = points[index - 1] if index else points[0]
+        p1 = points[index]
+        p2 = points[index + 1]
+        p3 = points[index + 2] if index + 2 < len(points) else p2
+        c1 = (
+            p1[0] + (p2[0] - p0[0]) / 6,
+            p1[1] + (p2[1] - p0[1]) / 6,
+        )
+        c2 = (
+            p2[0] - (p3[0] - p1[0]) / 6,
+            p2[1] - (p3[1] - p1[1]) / 6,
+        )
+        path += (
+            f" C {c1[0]:.0f} {c1[1]:.0f}, {c2[0]:.0f} {c2[1]:.0f},"
+            f" {p2[0]:.0f} {p2[1]:.0f}"
+        )
+    return path
+
+
+grey_paths = (
+    wiggle(70, 0.0105, 0.4, -28),
+    wiggle(62, 0.0082, 2.4, 22),
+    wiggle(58, 0.0150, 4.2, 0),
+)
+
+
+# Illustrative queue only. Real positions replace these after the jury run.
+disagreement_cases = {3, 12, 17, 26, 35, 41}
+wobble_cases = {8, 17, 21, 30, 41, 47}
+case_marks: list[str] = []
+for index in range(50):
+    cx = 110 + (index % 10) * 116
+    cy = 90 + (index // 10) * 116
+    if index in disagreement_cases:
+        case_marks.append(f'<circle class="ring disagree" cx="{cx}" cy="{cy}" r="43"/>')
+    if index in wobble_cases:
+        case_marks.append(f'<circle class="ring wobble" cx="{cx}" cy="{cy}" r="35"/>')
+    case_marks.append(f'<circle class="case" cx="{cx}" cy="{cy}" r="27"/>')
+case_dot_svg = "\n".join(case_marks)
+
 
 html = r'''<!doctype html>
 <html lang="en">
@@ -40,100 +96,125 @@ html = r'''<!doctype html>
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__MD__) format("woff2");font-weight:500;font-display:swap}
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__SB__) format("woff2");font-weight:600;font-display:swap}
   @font-face{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,__MONO__) format("truetype");font-weight:500;font-display:swap}
-
-  /* Design tokens — Orq palette on sand */
   :root{
-    --bg:#f9f8f6; --bg-2:#ffffff;
-    --ink:#25232e; --ink-2:#55535c; --ink-3:#8c8a91;
-    --orange:#ff8f34; --orange-dark:#df5325;
-    --teal:#299D8F; --teal-deep:#025558; --cyan:#28FFE2;
+    --bg:#f9f8f6;--paper:#fff;--ink:#25232e;--ink2:#55535c;--muted:#8c8a91;
+    --orange:#ff9747;--orange-dark:#df5325;--teal:#4da296;--teal-deep:#025558;
     --sans:"Kurrent",-apple-system,"Inter",system-ui,sans-serif;
     --mono:"Kurrent Mono",ui-monospace,"SF Mono",Menlo,monospace;
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
-
-  /* Locked 16:9 stage, scaled to viewport */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
   #stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;transform:translate(-50%,-50%) scale(1)}
-  .slide{position:absolute;inset:0;padding:36px 40px;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease}
+  .slide{position:absolute;inset:0;padding:42px 48px;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
   .slide.active{opacity:1;pointer-events:auto}
-
-  /* Type — template sizes ×2 */
-  .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:40px}
-  h1{font-weight:600;font-size:128px;line-height:1.02;letter-spacing:-.025em;margin-bottom:36px}
-  h2{font-weight:600;font-size:84px;line-height:1.06;letter-spacing:-.02em;margin-bottom:56px;max-width:1700px}
-  .sub{font-size:36px;line-height:1.45;color:var(--ink-2);max-width:1300px}
-  .body{font-size:36px;line-height:1.45;color:var(--ink-2)}
+  .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
+  h1{font-size:128px;line-height:1.01;letter-spacing:-.03em;font-weight:600;margin-bottom:36px}
+  h2{font-size:82px;line-height:1.06;letter-spacing:-.025em;font-weight:600;margin-bottom:48px;max-width:1760px}
+  h3{font-size:42px;line-height:1.15;font-weight:500;color:var(--ink);margin-bottom:20px}
+  .sub{font-size:36px;line-height:1.42;color:var(--ink2);max-width:1450px}
+  .body{font-size:34px;line-height:1.42;color:var(--ink2)}
   .body b{color:var(--ink);font-weight:500}
   .hl{color:var(--orange-dark)}
   .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
-  .byline{margin-top:90px;font-family:var(--mono);font-size:24px;color:var(--ink-3);display:flex;gap:56px}
-
-  /* Statement slide */
-  .statement h2{font-size:104px;max-width:1800px;margin-bottom:0}
-  .statement .eyebrow{margin-bottom:56px}
-
-  /* Two column */
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-  .cols.wide{grid-template-columns:1.3fr 1fr}
-
-  /* Lists */
-  ul.plain{list-style:none;display:flex;flex-direction:column;gap:28px;font-size:36px;line-height:1.35;color:var(--ink-2)}
-  ul.plain li{display:grid;grid-template-columns:26px 1fr;column-gap:26px}
-  ul.plain li::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--orange);margin-top:20px}
-
-  /* Stat strip */
-  .stats{display:grid;grid-auto-flow:column;gap:40px;margin-top:20px}
-  .stat{border-top:2px solid var(--teal-deep);padding-top:28px}
-  .stat .n{font-size:var(--n,132px);font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--ink)}
-  .stat .n.hl{color:var(--orange-dark)}
-  .stat .l{margin-top:18px;font-size:28px;color:var(--ink-2);line-height:1.35}
-
-  /* Quote */
-  blockquote{border-left:6px solid var(--orange);padding:12px 0 12px 44px;font-size:40px;line-height:1.4;color:var(--ink);max-width:1600px}
-  blockquote .src{display:block;margin-top:22px;font-family:var(--mono);font-size:22px;color:var(--ink-3);letter-spacing:.08em}
-
-  /* Checklist */
-  .checks{display:flex;flex-direction:column;gap:30px}
-  .check{display:grid;grid-template-columns:64px 1fr;column-gap:32px;align-items:center;font-size:40px}
-  .check i{width:64px;height:64px;border-radius:50%;border:3px solid var(--teal);display:grid;place-items:center;font-style:normal;color:var(--teal);font-size:34px}
-
-  /* Placeholders */
-  .ph{border:2px dashed var(--ink-3);border-radius:12px;padding:40px;color:var(--ink-3);font-family:var(--mono);font-size:24px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.5}
-
-  /* Build steps */
-  [data-step]{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
-  [data-step].on{opacity:1;transform:none}
-
-  /* SVG shared */
+  .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
+  .cols.wide{grid-template-columns:1.25fr 1fr}
+  .cols.grey-layout{grid-template-columns:1.55fr .9fr;gap:54px}
+  .statement h2{font-size:104px;margin:0;max-width:1800px}
+  ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
+  ul.plain li{position:relative;padding-left:42px}
+  ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
+  .stats{display:grid;grid-auto-flow:column;gap:44px;margin-top:26px}
+  .stat{border-top:3px solid var(--teal-deep);padding-top:25px}
+  .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
+  .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
+  .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+  .answer{border-top:6px solid var(--teal);padding:30px 34px;background:var(--paper);min-height:330px}
+  .answer.b{border-color:var(--orange)}
+  .answer .tag{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted);margin-bottom:22px}
+  .answer p{font-size:32px;line-height:1.4;color:var(--ink2)}
+  .answer strong{color:var(--ink);font-weight:500}
+  .source{position:absolute;left:48px;bottom:26px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.04em}
+  .checks{display:flex;flex-direction:column;gap:26px}
+  .check{display:grid;grid-template-columns:58px 1fr;gap:26px;align-items:center;font-size:35px;color:var(--ink2)}
+  .check i{width:58px;height:58px;border:3px solid var(--teal);border-radius:50%;display:grid;place-items:center;font-style:normal;color:var(--teal);font-size:31px}
+  .pillrow{display:flex;gap:24px;align-items:stretch}
+  .mode{flex:1;border-top:5px solid var(--teal);background:var(--paper);padding:34px;min-height:340px}
+  .mode:nth-child(2){border-color:var(--orange)}
+  .mode:nth-child(3){border-color:var(--ink)}
+  .mode h3{font-size:48px}
+  .mode p{font-size:30px;line-height:1.4;color:var(--ink2)}
   svg text{font-family:var(--sans)}
-  .lbl{fill:var(--ink-2);font-size:28px}
-  .lbl.small{font-size:22px;fill:var(--ink-3);font-family:var(--mono);letter-spacing:.08em}
+  .lbl{fill:var(--ink2);font-size:28px}
+  .lbl.dark{fill:var(--ink)}
+  .lbl.small{font-size:21px;fill:var(--muted);font-family:var(--mono);letter-spacing:.08em}
   .stroke-t{stroke:var(--teal);fill:none;stroke-width:5}
   .stroke-o{stroke:var(--orange);fill:none;stroke-width:6}
-  .stroke-d{stroke:var(--ink-3);fill:none;stroke-width:3}
-
-  /* Grey zone */
-  .gz .d.a{fill:var(--ink)} .gz .d.b{fill:var(--teal)}
-  .gz .band{opacity:.55;transition:opacity .8s ease,transform 1.2s cubic-bezier(.4,0,.2,1);transform-origin:center;transform-box:fill-box}
-  .gz .p{stroke:var(--orange);fill:none;stroke-width:6;stroke-linecap:round;opacity:0;transition:opacity .6s ease,d 1.2s ease}
-  .gz .crisp{stroke:var(--orange);fill:none;stroke-width:7;stroke-linecap:round;opacity:0;transition:opacity .9s ease .3s}
-  .gz[data-gz="1"] .p1{opacity:1}
-  .gz[data-gz="2"] .p1,.gz[data-gz="2"] .p2,.gz[data-gz="2"] .p3{opacity:1}
-  .gz[data-gz="3"] .p{opacity:0}
-  .gz[data-gz="3"] .band{opacity:0;transform:scaleY(.08)}
-  .gz[data-gz="3"] .crisp{opacity:1}
-
-  /* Dots (47/3/10) */
-  .dots .pass{fill:var(--teal)} .dots .fail{fill:var(--orange)}
-  .dots .ring{fill:none;stroke:var(--orange);stroke-width:4;stroke-dasharray:8 8}
-
-  /* Rubric quadrants */
-  .quad rect{fill:none;stroke:var(--teal);stroke-width:4;rx:18}
-  .quad rect.on{stroke:var(--orange);stroke-width:6}
-  .quad text{fill:var(--ink);font-size:34px;font-weight:500}
-  .quad text.dim{fill:var(--ink-3);font-weight:400}
+  .stroke-d{stroke:var(--muted);fill:none;stroke-width:3}
+  .gz .d.a{fill:var(--ink)}.gz .d.b{fill:var(--teal)}
+  .gz .band{opacity:0;transform:scaleY(.15);transform-origin:center;animation:none}
+  .gz .d{opacity:0;animation:none}
+  .gz .p{stroke:var(--orange);fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:1800;stroke-dashoffset:1800;animation:none}
+  .slide.active .gz .band{animation:bandIn .8s ease .15s forwards}
+  .slide.active .gz .d{animation:dotIn .35s ease .55s forwards}
+  .slide.active .gz .p1{animation:drawLine 1.15s ease 1s forwards}
+  .slide.active .gz .p2{animation:drawLine 1.15s ease 1.3s forwards}
+  .slide.active .gz .p3{animation:drawLine 1.15s ease 1.6s forwards}
+  @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
+  @keyframes dotIn{to{opacity:1}}
+  @keyframes drawLine{to{stroke-dashoffset:0}}
+  .dots .case{fill:var(--teal)}
+  .dots .ring{fill:none;stroke:var(--orange);stroke-width:4}
+  .dots .ring.disagree{stroke-dasharray:9 9}
+  .dots .ring.wobble{stroke:var(--ink);stroke-width:3;stroke-dasharray:3 9}
+  .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
+  .legend span{display:flex;align-items:center;gap:12px}
+  .swatch{width:28px;height:28px;border-radius:50%;border:3px dashed var(--orange)}
+  .swatch.w{border-color:var(--ink);border-style:dotted}
+  .verdicts{display:grid;grid-template-columns:285px 285px;align-items:center;gap:26px 34px;margin-top:70px}
+  .verdict{width:285px;height:205px;border:5px solid var(--teal);border-radius:24px;display:grid;place-items:center;background:var(--paper);font-size:54px;font-weight:600;color:var(--teal-deep)}
+  .verdict.fail{border-color:var(--orange);color:var(--orange-dark)}
+  .verdict-note{grid-column:1/-1;font-family:var(--mono);font-size:20px;line-height:1.4;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;text-align:center}
+  .replay{display:grid;grid-template-columns:1.2fr 90px 1fr;align-items:center;gap:20px}
+  .process-card{min-height:180px;border:4px solid var(--teal);border-radius:22px;background:var(--paper);padding:34px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+  .process-card.orange{border-color:var(--orange)}
+  .process-card.dark{border-color:var(--ink)}
+  .process-card h3{margin:0;font-size:38px}
+  .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+  .fork{font-size:62px;color:var(--teal);text-align:center}
+  .stack{display:grid;gap:28px}
+  .life{display:grid;grid-template-columns:1fr 260px 1fr;align-items:center;gap:34px}
+  .life-stage{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative}
+  .life-stage::before{content:"";position:absolute;left:12%;right:12%;top:48px;border-top:4px solid var(--teal);z-index:0}
+  .life-stage.guard::before{border-color:var(--orange)}
+  .life-step{position:relative;z-index:1;text-align:center;font-size:25px;color:var(--ink2)}
+  .life-step i{display:block;width:36px;height:36px;margin:30px auto 20px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 14px var(--bg)}
+  .guard .life-step i{background:var(--orange)}
+  .life-core{grid-column:1/-1;margin:34px auto 0;border:3px solid var(--teal);border-radius:18px;padding:20px 46px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--teal-deep)}
+  .guard .life-core{border-color:var(--orange);color:var(--orange-dark)}
+  .bridge{text-align:center;font-family:var(--mono);font-size:19px;line-height:1.5;color:var(--muted)}
+  .bridge .arrow{display:block;font-family:var(--sans);font-size:72px;line-height:.8;color:var(--teal)}
+  .route{display:grid;grid-template-columns:300px 80px 340px 80px 1fr;align-items:center;gap:14px}
+  .routes{display:grid;gap:16px}
+  .route-card{border:3px solid var(--teal);border-radius:16px;background:var(--paper);padding:19px 28px;font-size:27px}
+  .route-card:nth-child(2){border-color:var(--ink)}.route-card:nth-child(3){border-color:var(--orange)}.route-card:nth-child(4){border-color:var(--muted)}
+  .flow-arrow{font-size:64px;color:var(--orange);text-align:center}
+  .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
+  .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
+  .factory .flow-arrow{font-size:48px;color:var(--teal)}
+  .feedback{margin-top:34px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--muted)}
+  .sphere-brand{display:flex;align-items:center;gap:26px;margin-bottom:50px}
+  .sphere-mark{width:78px;height:78px;border-radius:50%;border:5px solid var(--teal-deep);position:relative;flex:none}
+  .sphere-mark::before,.sphere-mark::after{content:"";position:absolute;border:4px solid var(--orange);border-radius:50%}
+  .sphere-mark::before{inset:14px -17px;transform:rotate(-18deg)}
+  .sphere-mark::after{inset:-9px 21px;transform:rotate(28deg)}
+  .sphere-word{font-size:62px;font-weight:600;letter-spacing:-.035em}
+  .steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:34px;margin:72px 0 58px}
+  .step4{border-top:4px solid var(--teal);padding-top:30px;font-size:31px;line-height:1.25;color:var(--ink2);position:relative}
+  .step4:not(:last-child)::after{content:"→";position:absolute;right:-31px;top:16px;color:var(--teal);font-size:42px}
+  .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
 <body>
@@ -143,348 +224,318 @@ html = r'''<!doctype html>
 <section class="slide active">
   <div class="eyebrow">PyData Amsterdam 2026</div>
   <h1>Evaluating Agents<br>at Scale</h1>
-  <p class="sub">From 50 examples to a production flywheel — and why the eval is a system you have to validate before it can validate anything.</p>
+  <p class="sub">From human judgment to an evaluator that can support continuous improvement.</p>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span><span>September 2026</span></div>
 </section>
 
-<!-- 2 · Origin -->
+<!-- 2 · Evaluation gap -->
+<section class="slide">
+  <div class="eyebrow">The evaluation gap</div>
+  <h2>Two correct answers.<br>One useful decision.</h2>
+  <div class="compare">
+    <div class="answer">
+      <div class="tag">ANSWER A · ANALYTICALLY VALID</div>
+      <div class="ph" style="height:210px">Placeholder · Sphere response with result and SQL</div>
+    </div>
+    <div class="answer b">
+      <div class="tag">ANSWER B · DECISION SUPPORT</div>
+      <div class="ph" style="height:210px">Placeholder · Same result, framed for the CFO decision</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · Sphere -->
 <section class="slide">
   <div class="cols wide">
     <div>
-      <div class="eyebrow">Where this started</div>
-      <h2>We came for optimization.<br>We got stuck on the signal.</h2>
-      <p class="body">Feed judge critiques back into the agent's prompt and let it improve itself. It works — <b>if you can trust the judge</b>. An unaligned judge optimizes the agent toward its own mistakes.</p>
-    </div>
-    <svg viewBox="0 0 700 700" width="700" height="700" aria-label="Optimization loop with broken signal">
-      <circle cx="350" cy="350" r="250" class="stroke-t" stroke-dasharray="1200" />
-      <circle cx="350" cy="100" r="46" fill="var(--bg)" class="stroke-t"/>
-      <text x="350" y="112" text-anchor="middle" class="lbl" fill="var(--ink)">agent</text>
-      <circle cx="350" cy="600" r="46" fill="var(--bg)" class="stroke-t"/>
-      <text x="350" y="612" text-anchor="middle" class="lbl">judge</text>
-      <path d="M 560 250 L 610 300 M 610 250 L 560 300" class="stroke-o"/>
-      <text x="585" y="360" text-anchor="middle" class="lbl small">signal</text>
-      <text x="120" y="360" text-anchor="middle" class="lbl small">prompt update</text>
-    </svg>
-  </div>
-</section>
-
-<!-- 3 · Statement -->
-<section class="slide statement">
-  <div class="eyebrow">The ordering constraint</div>
-  <h2>You cannot use evals to improve an agent<br>before the eval is <span class="hl">aligned</span>.</h2>
-</section>
-
-<!-- 4 · Lineage -->
-<section class="slide">
-  <div class="eyebrow">We have been here before</div>
-  <h2>Hard metrics gave way to judgement. Judgement had to be measured.</h2>
-  <svg viewBox="0 0 1840 420" width="1840" height="420" aria-label="Timeline of evaluation metrics">
-    <line x1="60" y1="120" x2="1780" y2="120" class="stroke-d"/>
-    <g>
-      <circle cx="200" cy="120" r="18" fill="var(--teal)"/>
-      <text x="200" y="200" text-anchor="middle" class="lbl">countable target</text>
-      <text x="200" y="245" text-anchor="middle" class="lbl small">accuracy · P/R/F1</text>
-    </g>
-    <g>
-      <circle cx="680" cy="120" r="18" fill="var(--teal)"/>
-      <text x="680" y="200" text-anchor="middle" class="lbl">human relevance</text>
-      <text x="680" y="245" text-anchor="middle" class="lbl small">assessors disagree</text>
-    </g>
-    <g>
-      <circle cx="1160" cy="120" r="18" fill="var(--teal)"/>
-      <text x="1160" y="200" text-anchor="middle" class="lbl">n-gram overlap</text>
-      <text x="1160" y="245" text-anchor="middle" class="lbl small">stops correlating</text>
-    </g>
-    <g>
-      <circle cx="1640" cy="120" r="22" fill="var(--orange)"/>
-      <text x="1640" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
-      <text x="1640" y="245" text-anchor="middle" class="lbl small">agreement is the metric</text>
-    </g>
-    <text x="60" y="380" class="lbl">The task got more open-ended → the metric got softer → <tspan fill="var(--orange)">agreement between judges</tspan> became what had to be measured.</text>
-  </svg>
-</section>
-
-<!-- 5 · Agents break it + double loop -->
-<section class="slide">
-  <div class="cols">
-    <div>
-      <div class="eyebrow">Agents break it again</div>
-      <h2>Two lifecycles,<br>not one.</h2>
-      <ul class="plain">
-        <li>Non-deterministic. Trajectories branch.</li>
-        <li>State lives elsewhere.</li>
-        <li><b>The eval loop must mature first.</b></li>
-      </ul>
-    </div>
-    <svg viewBox="0 0 900 620" width="900" height="620" aria-label="Application loop and evaluation loop">
-      <circle cx="200" cy="260" r="160" class="stroke-t"/>
-      <circle cx="660" cy="260" r="160" class="stroke-o"/>
-      <text x="200" y="272" text-anchor="middle" class="lbl" fill="var(--ink)">application</text>
-      <text x="200" y="470" text-anchor="middle" class="lbl small">build · ship · observe</text>
-      <text x="660" y="272" text-anchor="middle" class="lbl" fill="var(--ink)">evaluation</text>
-      <text x="640" y="470" text-anchor="middle" class="lbl small">criteria · annotate · align</text>
-      <path d="M 500 260 L 380 260" class="stroke-d"/>
-      <rect x="392" y="222" width="76" height="76" rx="12" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="3"/>
-      <text x="430" y="270" text-anchor="middle" class="lbl small" fill="var(--ink)">gate</text>
-      <text x="430" y="580" text-anchor="middle" class="lbl small">same object · prompt · dataset · versions · reviewer</text>
-    </svg>
-  </div>
-</section>
-
-<!-- 6 · Grey zone (build) -->
-<section class="slide" id="greyzone">
-  <div class="cols wide">
-    <svg class="gz" data-gz="0" viewBox="0 0 1200 700" width="1150" height="670" aria-label="Grey zone: from a blurry band to a crisp boundary">
-      <defs>
-        <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stop-color="#6f6e69" stop-opacity="0"/>
-          <stop offset=".5" stop-color="#6f6e69" stop-opacity=".45"/>
-          <stop offset="1" stop-color="#6f6e69" stop-opacity="0"/>
-        </linearGradient>
-        <filter id="blur"><feGaussianBlur stdDeviation="28"/></filter>
-        <radialGradient id="fade" cx=".5" cy=".5" r=".55"><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
-        <mask id="fadeMask"><rect x="0" y="0" width="1200" height="700" fill="url(#fade)"/></mask>
-      </defs>
-      <!-- band along the diagonal -->
-      <g mask="url(#fadeMask)"><g transform="rotate(-30 600 350)">
-        <rect class="band" x="-900" y="200" width="3000" height="300" fill="url(#bandGrad)" filter="url(#blur)"/>
-      </g></g>
-      __GZ_DOTS__
-      <path class="p p1" d="M 110 650 C 200 520, 300 700, 400 540 S 560 380, 660 420 S 820 300, 900 200 S 1040 120, 1080 60"/>
-      <path class="p p2" d="M 60 580 C 180 640, 260 440, 380 470 S 540 560, 640 360 S 800 420, 900 300 S 1060 220, 1140 120"/>
-      <path class="p p3" d="M 170 690 C 240 560, 340 600, 440 460 S 600 470, 700 340 S 860 380, 940 180 S 1000 60, 1020 20"/>
-      <path class="crisp" d="M 100 620 C 420 500, 680 380, 1100 60"/>
-    </svg>
-    <div>
-      <div class="eyebrow">Naming the problem</div>
-      <h2>The grey zone</h2>
-      <p class="body" data-step="0" style="opacity:1;transform:none">Every evaluation has one.</p>
-      <p class="body" data-step="1">One defensible boundary…</p>
-      <p class="body" data-step="2">…several. All plausible. All different.</p>
-      <p class="body" data-step="3"><b class="hl">Alignment is how it becomes one line.</b></p>
-    </div>
-  </div>
-</section>
-
-<!-- 7 · Statement -->
-<section class="slide statement">
-  <div class="eyebrow">The open question</div>
-  <h2>Who decides where<br>the boundary goes?</h2>
-</section>
-
-<!-- 8 · The agent -->
-<section class="slide">
-  <div class="eyebrow">Running example</div>
-  <h2>A small analytics agent over a business dataset.</h2>
-  <p class="body" style="margin-bottom:48px">Writes SQL, runs it against DuckDB, can save an insight. <span class="mono tl">"Month-over-month EMEA revenue growth in Q3?"</span></p>
-  <div class="stats">
-    <div class="stat"><div class="n hl">1</div><div class="l">Right query,<br>wrong aggregation.</div></div>
-    <div class="stat"><div class="n hl">2</div><div class="l">A number,<br>no query behind it.</div></div>
-    <div class="stat"><div class="n hl">3</div><div class="l">Right answer,<br>invalid path.</div></div>
-    <div class="stat"><div class="n hl">4</div><div class="l">Loses context<br>across turns.</div></div>
-  </div>
-</section>
-
-<!-- 9 · The corpus -->
-<section class="slide">
-  <div class="eyebrow">The corpus</div>
-  <h2>Fifty conversations. Ten of them deliberately broken.</h2>
-  <div class="stats">
-    <div class="stat"><div class="n">50</div><div class="l">cases, generated across<br>diversity dimensions, hand-reviewed</div></div>
-    <div class="stat"><div class="n">30<span class="tl">/</span>20</div><div class="l">dev / test split,<br>frozen before looking</div></div>
-    <div class="stat"><div class="n">8<span class="tl">·</span>22<span class="tl">·</span>20</div><div class="l">one, two, three-turn<br>conversations</div></div>
-    <div class="stat"><div class="n hl">10</div><div class="l">behavioural failures<br>kept, not regenerated</div></div>
-  </div>
-</section>
-
-<!-- 10 · Cheap graders -->
-<section class="slide">
-  <div class="cols">
-    <div>
-      <div class="eyebrow">Before any judge</div>
-      <h2>If code can grade it, never pay a model to.</h2>
-      <p class="body">Stdlib only. AST-checked. No credentials, no network. Runs on every commit.</p>
+      <div class="sphere-brand" aria-label="Sphere.com logo"><span class="sphere-mark"></span><span class="sphere-word">sphere.com</span></div>
+      <p class="sub">A B2B wholesaler of physical home appliances. The board wants to understand the quality of growth.</p>
     </div>
     <div class="checks">
-      <div class="check"><i>✓</i><span>Did the SQL parse?</span></div>
-      <div class="check"><i>✓</i><span>Did it execute?</span></div>
-      <div class="check"><i>✓</i><span>Was the insight actually written?</span></div>
+      <div class="check"><i>1</i><span>Discounts and realized revenue</span></div>
+      <div class="check"><i>2</i><span>Refunds and cancellations</span></div>
+      <div class="check"><i>3</i><span>Regional and category mix</span></div>
+      <div class="check"><i>4</i><span>Answers shaped for a business decision</span></div>
     </div>
   </div>
 </section>
 
-<!-- 11 · Rubrics -->
+<!-- 4 · Review pool -->
 <section class="slide">
-  <div class="cols wide">
-    <div>
-      <div class="eyebrow">Decomposition</div>
-      <h2>"Is this correct?" is several questions in one coat.</h2>
-      <p class="body" style="margin-bottom:36px">Cut the grey zone into smaller, sharper ones. Align <b>one</b>.</p>
-      <blockquote>Do not infer correctness from tool execution. You intentionally cannot see tool calls here.<span class="src">answer_correctness · prompt · evidence-blind by design</span></blockquote>
-    </div>
-    <svg class="quad" viewBox="0 0 700 700" width="700" height="700" aria-label="Four rubrics">
-      <rect class="on" x="20" y="20" width="320" height="320"/>
-      <text x="180" y="170" text-anchor="middle">answer</text><text x="180" y="215" text-anchor="middle">correctness</text>
-      <rect x="360" y="20" width="320" height="320"/>
-      <text x="520" y="170" text-anchor="middle" class="dim">query</text><text x="520" y="215" text-anchor="middle" class="dim">semantics</text>
-      <rect x="20" y="360" width="320" height="320"/>
-      <text x="180" y="510" text-anchor="middle" class="dim">evidence</text><text x="180" y="555" text-anchor="middle" class="dim">faithfulness</text>
-      <rect x="360" y="360" width="320" height="320"/>
-      <text x="520" y="510" text-anchor="middle" class="dim">multi-turn</text><text x="520" y="555" text-anchor="middle" class="dim">consistency</text>
-    </svg>
-  </div>
-</section>
-
-<!-- 12 · Protocol -->
-<section class="slide">
-  <div class="cols">
-    <div>
-      <div class="eyebrow">The protocol</div>
-      <h2>Treat the judge like an annotator you hired.</h2>
-      <ul class="plain">
-        <li>Binary pass/fail <b>plus a written critique</b>. The critique is the asset.</li>
-        <li>Dev/test split — applied to the evaluation itself.</li>
-        <li>Iterate on <b>disagreement patterns</b>, never single rows.</li>
-      </ul>
-    </div>
-    <svg viewBox="0 0 800 300" width="800" height="300" aria-label="Dev/test split on the corpus">
-      <rect x="20" y="90" width="456" height="120" rx="14" fill="var(--teal-deep)"/>
-      <rect x="490" y="90" width="290" height="120" rx="14" fill="none" stroke="var(--teal)" stroke-width="4"/>
-      <text x="248" y="162" text-anchor="middle" class="lbl" fill="var(--ink)">30 dev</text>
-      <text x="635" y="162" text-anchor="middle" class="lbl">20 test</text>
-      <text x="20" y="260" class="lbl small">frozen · before any result was seen</text>
-    </svg>
-  </div>
-</section>
-
-<!-- 13 · Thresholds -->
-<section class="slide">
-  <div class="eyebrow">When is the judge evidence?</div>
-  <h2>Below these, it isn't.</h2>
+  <div class="eyebrow">Start with humans</div>
+  <h2>A fifty-case review pool</h2>
   <div class="stats">
-    <div class="stat"><div class="n">κ ≥ 0.70</div><div class="l">Cohen's kappa<br>agreement beyond chance</div></div>
-    <div class="stat"><div class="n">BA ≥ 0.80</div><div class="l">balanced accuracy<br>both classes count</div></div>
-    <div class="stat"><div class="n hl">FP ≤ 0.10</div><div class="l">false-pass rate<br><b style="color:var(--ink)">the asymmetric error — a false pass ships</b></div></div>
+    <div class="stat"><div class="n">50</div><div class="l">distinct business situations</div></div>
+    <div class="stat"><div class="n">30</div><div class="l">development cases</div></div>
+    <div class="stat"><div class="n">20</div><div class="l">held-out test cases</div></div>
+    <div class="stat"><div class="n hl">0</div><div class="l">human labels so far</div></div>
   </div>
+  <p class="body" style="margin-top:60px">Stakeholder, decision, delivery setting and communication need are visible to the agent.</p>
 </section>
 
-<!-- 14 · Audience places the boundary (placeholder) -->
+<!-- 5 · Binary -->
 <section class="slide">
   <div class="cols wide">
     <div>
-      <div class="eyebrow">Your turn</div>
-      <h2>Pass or fail?</h2>
-      <p class="body"><b>Oracle:</b> EMEA net revenue 10,369,167.91</p>
-      <p class="body" style="margin-top:24px"><b>Response:</b> reports 9,801,114.03 as net revenue, and mentions 10,369,167.91 — labelled as gross.</p>
-      <blockquote data-step="1" style="margin-top:40px">Reports 9,801,114.03 by subtracting refunds again from the stored net_revenue… incorrectly labels 10,369,167.91 as pre-refund/gross.<span class="src">judge · fail</span></blockquote>
+      <div class="eyebrow">Binary verdict · written critique</div>
+      <h2>Pass or fail</h2>
+      <div class="verdicts"><div class="verdict">PASS</div><div class="verdict fail">FAIL</div><div class="verdict-note">The critique carries the nuance</div></div>
     </div>
-    <div class="ph">placeholder<br>3–4 real grey-zone rows<br>to be selected from the joined CSV<br>verdict reveals on keypress</div>
+    <ul class="plain">
+      <li>Clear enough to act on</li>
+      <li>No false precision from a 1–5 scale</li>
+      <li>Lower cognitive load and faster review</li>
+      <li>Agreement and false passes become measurable</li>
+      <li><b class="hl">No maybe bucket means a harder alignment problem</b></li>
+    </ul>
   </div>
 </section>
 
-<!-- 15 · 47 / 3 / 10 -->
+<!-- 6 · Grey zone -->
 <section class="slide">
-  <div class="cols wide">
-    <svg class="dots" viewBox="0 0 1240 620" width="1100" height="550" aria-label="Fifty rows: 47 pass, 3 fail, 10 seeded failures">
-      __S15_DOTS__
+  <div class="cols grey-layout">
+    <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
+      <defs>
+        <linearGradient id="band" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+          <stop offset=".5" stop-color="#b9b8b6" stop-opacity=".65"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="band" d="M 0 -90 L 1200 490 L 1200 810 L 0 220 Z" fill="url(#band)"/>
+      __GREY_DOTS__
+      <path class="p p1" d="__GREY_P1__"/>
+      <path class="p p2" d="__GREY_P2__"/>
+      <path class="p p3" d="__GREY_P3__"/>
     </svg>
     <div>
-      <div class="eyebrow">One pinned run · answer_correctness@1.0.0</div>
-      <div class="stats" style="grid-auto-flow:row;gap:20px;--n:96px">
-        <div class="stat"><div class="n">47</div><div class="l">pass</div></div>
-        <div class="stat"><div class="n hl">3</div><div class="l">fail</div></div>
-        <div class="stat"><div class="n" style="color:var(--ink-2)">10</div><div class="l">seeded failures in the corpus</div></div>
-      </div>
-      <p class="body" data-step="1" style="margin-top:40px">Zero human labels so far. <b>Which number is lying?</b></p>
-      <p class="mono" style="margin-top:28px;font-size:20px;color:var(--ink-3);letter-spacing:.06em">PLACEHOLDER · ring positions are illustrative until seeded rows are mapped</p>
+      <h2>The grey zone</h2>
+      <p class="sub">Every evaluation has one.<br>One defensible boundary becomes several.<br>All plausible. All different.</p>
     </div>
   </div>
 </section>
 
-<!-- 16 · Trajectory and state -->
+<!-- 7 · Criterion -->
+<section class="slide statement">
+  <div class="eyebrow">One criterion for this talk</div>
+  <h2>Does the response turn analysis into clear input for the stakeholder’s <span class="hl">decision</span>?</h2>
+</section>
+
+<!-- 8 · Historical method -->
 <section class="slide">
-  <div class="cols">
+  <h2>The historical method</h2>
+  <p class="sub">Random sampling, manual review.</p>
+  <div class="steps4" aria-label="Manual evaluation sequence"><div class="step4">random sample</div><div class="step4">human label +<br>written critique</div><div class="step4">split dev / test</div><div class="step4">identify gaps<br>with judge</div></div>
+  <p class="body">Clean method. Expensive expert attention.</p>
+</section>
+
+<!-- 9 · Lazy queue -->
+<section class="slide">
+  <div class="cols wide">
     <div>
-      <div class="eyebrow">Agent-only dimensions</div>
-      <h2>Trajectory and state.</h2>
+      <div class="eyebrow">A faster review queue</div>
+      <h2>We are lazy</h2>
+      <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
+    </div>
+    <div class="checks">
+      <div class="check"><i>1</i><span>Repeat each judge to find self-wobble</span></div>
+      <div class="check"><i>2</i><span>Compare models to find disagreement</span></div>
+      <div class="check"><i>3</i><span>Review those cases first</span></div>
+      <div class="check"><i>4</i><span>Sample unanimous cases as a control</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · Disagreement dots -->
+<section class="slide">
+  <div class="cols wide">
+    <div>
+      <svg class="dots" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Fifty cases with disagreement and self-wobble rings">
+        __CASE_DOTS__
+      </svg>
+      <div class="legend"><span><i class="swatch"></i>models disagree</span><span><i class="swatch w"></i>one model wobbles</span></div>
+    </div>
+    <div>
+      <div class="eyebrow">Three judges · one rubric</div>
+      <h2>Disagreement sets the review order</h2>
       <ul class="plain">
-        <li>Replay the <b>recorded</b> response. Never re-invoke the agent to judge it.</li>
-        <li>State: assert the file exists. Don't ask a model whether it does.</li>
-        <li>pass@k for capability. pass^k for reliability.</li>
+        <li>Each dot is one Sphere.com case</li>
+        <li>Each judge votes three times</li>
+        <li><b class="hl">The rings move cases to the front of the human queue</b></li>
       </ul>
+      <p class="mono" style="margin-top:38px;font-size:20px;color:var(--muted)">PLACEHOLDER · RING POSITIONS ARE ILLUSTRATIVE UNTIL THE JURY RUN LANDS</p>
     </div>
-    <svg viewBox="0 0 800 400" width="800" height="400" aria-label="Replay without inference">
-      <rect x="20" y="60" width="300" height="110" rx="14" fill="var(--bg-2)" stroke="var(--teal)" stroke-width="4"/>
-      <text x="170" y="126" text-anchor="middle" class="lbl" fill="var(--ink)">recorded run</text>
-      <path d="M 330 115 L 460 115" class="stroke-o"/>
-      <path d="M 440 95 L 465 115 L 440 135" class="stroke-o"/>
-      <rect x="480" y="60" width="300" height="110" rx="14" fill="var(--bg-2)" stroke="var(--orange)" stroke-width="4"/>
-      <text x="630" y="126" text-anchor="middle" class="lbl" fill="var(--ink)">judge</text>
-      <text x="400" y="290" text-anchor="middle" class="lbl small">inference = False · reproducible by construction</text>
-    </svg>
   </div>
 </section>
 
-<!-- 17 · Close -->
+<!-- 11 · Alignment -->
+<section class="slide">
+  <div class="eyebrow">Treat the judge like a model</div>
+  <h2>Develop on 30.<br>Measure on 20.</h2>
+  <div class="stats">
+    <div class="stat"><div class="n">30</div><div class="l">read critiques<br>revise the rubric</div></div>
+    <div class="stat"><div class="n">20</div><div class="l">held out<br>until measurement</div></div>
+    <div class="stat"><div class="n hl">FP</div><div class="l">false passes<br>receive special attention</div></div>
+  </div>
+  <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
+</section>
+
+<!-- 12 · Walkthrough placeholder -->
+<section class="slide">
+  <div class="eyebrow">Short walkthrough</div>
+  <h2>One case through the full loop</h2>
+  <div class="ph" style="height:520px">Placeholder · stakeholder question · recorded response · nine votes · human critique · evaluator revision</div>
+</section>
+
+<!-- 13 · Agent evaluation -->
+<section class="slide">
+  <div class="eyebrow">What changes with agents</div>
+  <h2>The answer is only the endpoint</h2>
+  <div class="stats">
+    <div class="stat"><div class="n" style="font-size:66px">trajectory</div><div class="l">the path from request to response</div></div>
+    <div class="stat"><div class="n" style="font-size:66px">tools</div><div class="l">selection, arguments and use of results</div></div>
+    <div class="stat"><div class="n" style="font-size:66px">context</div><div class="l">definitions and constraints across turns</div></div>
+    <div class="stat"><div class="n" style="font-size:66px">state</div><div class="l">writes and other external effects</div></div>
+  </div>
+</section>
+
+<!-- 14 · Replay -->
+<section class="slide">
+  <div class="cols wide">
+    <div>
+      <div class="eyebrow">Reproducible agent evaluation</div>
+      <h2>Replay the trace</h2>
+      <p class="sub">Keep the target behavior fixed while the evaluator changes.</p>
+    </div>
+    <div class="replay" aria-label="Recorded trace replayed to human and jury">
+      <div class="process-card"><h3>recorded trace</h3><p>messages · tools · output</p></div>
+      <div class="fork">⇉</div>
+      <div class="stack"><div class="process-card orange"><h3>human</h3></div><div class="process-card orange"><h3>jury</h3></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 · Operating modes -->
+<section class="slide">
+  <div class="eyebrow">Scaling evaluation</div>
+  <h2>Offline, online, continuous</h2>
+  <div class="pillrow">
+    <div class="mode"><h3>Offline</h3><p>Curated cases for development, alignment and comparisons.</p></div>
+    <div class="mode"><h3>Online</h3><p>Sampled production traces reveal new failures and drift.</p></div>
+    <div class="mode"><h3>Continuous</h3><p>Checks run on changes and repeat over time.</p></div>
+  </div>
+  <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
+</section>
+
+<!-- 16 · Lifecycle -->
+<section class="slide">
+  <div class="eyebrow">CI and the promotion gate</div>
+  <h2>Build the eval once.<br>Then it guards every commit.</h2>
+  <div class="life" aria-label="Evaluation build lifecycle followed by regression lifecycle">
+    <div class="life-stage"><div class="life-step"><i></i>label by hand</div><div class="life-step"><i></i>measure agreement</div><div class="life-step"><i></i>revise the rubric</div><div class="life-core">STAGE ONE · BUILD · HUMANS IN THE LOOP</div></div>
+    <div class="bridge">human alignment holds on test cases<span class="arrow">→</span>the judge becomes evidence</div>
+    <div class="life-stage guard"><div class="life-step"><i></i>commit</div><div class="life-step"><i></i>compare with baseline</div><div class="life-step"><i></i>run review set</div><div class="life-core">STAGE TWO · GUARD · AUTOMATED REGRESSION</div></div>
+  </div>
+  <div class="feedback">↶ WHAT ESCAPES THE GATE BECOMES A NEW REVIEW CASE</div>
+</section>
+
+<!-- 17 · Finding to knowledge -->
+<section class="slide">
+  <div class="eyebrow">Findings and agent knowledge</div>
+  <h2>A finding becomes useful<br>after structural analysis</h2>
+  <div class="route" aria-label="Evaluation finding routed into skills, system prompts, evaluators or code">
+    <div class="process-card"><h3>failed case</h3><p>finding + critique</p></div><div class="flow-arrow">→</div>
+    <div class="process-card orange"><h3>structural cause</h3><p>human review</p></div><div class="flow-arrow">→</div>
+    <div class="routes"><div class="route-card">skill · domain knowledge and criteria</div><div class="route-card">system prompt · global invariants</div><div class="route-card">evaluator · quality boundary</div><div class="route-card">code or tool · executable behavior</div></div>
+  </div>
+  <p class="body"><b>Most company knowledge belongs in a scoped skill.</b> A broken evaluator belongs in the evaluation lifecycle.</p>
+</section>
+
+<!-- 18 · Software factory -->
+<section class="slide">
+  <div class="eyebrow">Evals in the software factory</div>
+  <h2>Automate the preparation.<br>Keep the decision human.</h2>
+  <div class="factory" aria-label="Agents prepare an analyzed and validated pull request for human review">
+    <div class="process-card"><h3>evaluation</h3><p>finding</p></div><div class="flow-arrow">→</div>
+    <div class="process-card"><h3>analysis agent</h3><p>structural cause</p></div><div class="flow-arrow">→</div>
+    <div class="process-card orange"><h3>improvement agent</h3><p>opens PR</p></div><div class="flow-arrow">→</div>
+    <div class="process-card"><h3>validation agent</h3><p>regression evidence</p></div><div class="flow-arrow">→</div>
+    <div class="process-card dark"><h3>human</h3><p>review + merge</p></div>
+  </div>
+  <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
+</section>
+
+<!-- 19 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
       <div class="eyebrow">What to keep</div>
-      <h2>The grey zone does not go away.<br><span class="hl">Locate it on purpose.</span></h2>
-      <p class="body">Start small. Validate small components. Then increase scope.</p>
+      <h2>Trust the slice<br>tested against humans</h2>
+      <p class="body">Stop when disagreement, drift or false passes show that the system has left it.</p>
       <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span></div>
     </div>
-    <svg class="gz" data-gz="3" viewBox="0 0 1200 700" width="760" height="443" aria-label="Crisp boundary">
-      __GZ_DOTS__
-      <path class="crisp" d="M 100 620 C 420 500, 680 380, 1100 60"/>
+    <svg class="gz" viewBox="0 0 1200 700" width="760" height="443" aria-label="One boundary through the grey zone">
+      __GREY_DOTS__
+      <path class="p" d="__GREY_P3__"/>
     </svg>
   </div>
 </section>
 
 </div>
-
 <script>
 (() => {
   const stage = document.getElementById('stage');
   const slides = [...document.querySelectorAll('.slide')];
-  let i = 0, step = 0;
-
+  let current = 0;
   const fit = () => {
-    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
-    stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+    const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(-50%,-50%) scale(${scale})`;
   };
-  addEventListener('resize', fit); fit();
-
-  const maxStep = el => Math.max(0, ...[...el.querySelectorAll('[data-step]')].map(e => +e.dataset.step));
   const render = () => {
-    slides.forEach((s, k) => s.classList.toggle('active', k === i));
-    const s = slides[i];
-    s.querySelectorAll('[data-step]').forEach(e => e.classList.toggle('on', +e.dataset.step <= step));
-    const gz = s.querySelector('.gz[data-gz]');
-    if (gz && s.id === 'greyzone') gz.dataset.gz = step;
-    location.hash = step ? `s${i + 1}.${step}` : `s${i + 1}`;
+    slides.forEach((slide, index) => slide.classList.toggle('active', index === current));
+    slides[current].querySelectorAll('.counter').forEach(node => node.remove());
+    const counter = document.createElement('div');
+    counter.className = 'counter';
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    slides[current].appendChild(counter);
+    location.hash = `s${current + 1}`;
   };
-  const next = () => { if (step < maxStep(slides[i])) step++; else if (i < slides.length - 1) { i++; step = 0; } render(); };
-  const prev = () => { if (step > 0) step--; else if (i > 0) { i--; step = maxStep(slides[i]); } render(); };
-
-  addEventListener('keydown', e => {
-    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); next(); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
-    else if (e.key === 'Home') { i = 0; step = 0; render(); }
-    else if (e.key === 'End') { i = slides.length - 1; step = 0; render(); }
-    else if (e.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  const next = () => { if (current < slides.length - 1) current += 1; render(); };
+  const previous = () => { if (current > 0) current -= 1; render(); };
+  addEventListener('resize', fit);
+  addEventListener('keydown', event => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(event.key)) { event.preventDefault(); next(); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); previous(); }
+    if (event.key === 'Home') { current = 0; render(); }
+    if (event.key === 'End') { current = slides.length - 1; render(); }
+    if (event.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
   });
-  addEventListener('click', e => { if (e.clientX > innerWidth / 2) next(); else prev(); });
-
-  const m = location.hash.match(/^#s(\d+)(?:\.(\d+))?$/);
-  if (m) { i = Math.min(slides.length - 1, Math.max(0, +m[1] - 1)); step = Math.min(maxStep(slides[i]), +(m[2] || 0)); }
+  addEventListener('click', event => {
+    if (!document.fullscreenElement) return;
+    if (event.clientX > innerWidth / 2) next(); else previous();
+  });
+  const match = location.hash.match(/^#s(\d+)$/);
+  if (match) current = Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1));
+  fit();
   render();
 })();
 </script>
 </body>
 </html>
 '''
-for k, v in fonts.items(): html = html.replace(f'__{k}__', v)
-html = html.replace('__GZ_DOTS__', gz_dots).replace('__S15_DOTS__', s15_dots)
-out = pathlib.Path(__file__).with_name('pydata-2026.html'); out.write_text(html)
-print(out, f'{out.stat().st_size/1024:.0f} KB')
+
+html = (
+    html.replace("__RG__", fonts["RG"])
+    .replace("__MD__", fonts["MD"])
+    .replace("__SB__", fonts["SB"])
+    .replace("__MONO__", fonts["MONO"])
+    .replace("__GREY_DOTS__", grey_dot_svg)
+    .replace("__GREY_P1__", grey_paths[0])
+    .replace("__GREY_P2__", grey_paths[1])
+    .replace("__GREY_P3__", grey_paths[2])
+    .replace("__CASE_DOTS__", case_dot_svg)
+)
+
+output = pathlib.Path(__file__).with_name("pydata-2026.html")
+output.write_text(html)
+print(f"wrote {output}")
