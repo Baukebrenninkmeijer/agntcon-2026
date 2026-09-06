@@ -444,17 +444,18 @@ git check-ignore -v .env
 git status --short
 ```
 
-After WS3a is integrated, the intended operator flow is:
+After WS3a is integrated, first run the read-only plan. Integration does not authorize hosted mutation; continue to apply only after a separate, explicit user authorization:
 
 ```bash
 make sync-orq
 # Review the semantic plan and authenticated project name.
+# Stop unless the user separately authorizes this hosted apply.
 make sync-orq-apply
 make sync-orq
 # Expected: no semantic changes.
 ```
 
-Do not run the apply command from this documentation task. Live simulation/alignment commands remain governed by the detailed [hosted-agent operations plan](2026-09-03-orq-agent-simulation.md) and should be used only after their prerequisite milestones are accepted.
+Do not run the apply command from this documentation task or infer apply authority from integration. Live simulation/alignment commands remain governed by the detailed [hosted-agent operations plan](2026-09-03-orq-agent-simulation.md) and should be used only after their prerequisite milestones and separate authorization gates are accepted.
 
 ## Decision Log
 
@@ -524,7 +525,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 | 2026-09-05 | WS3b | Added a reproducible simulation-case generator CLI with explicit `standard` / `edge-v2` variant selection, safe variant-specific defaults, and caller-selected output paths while preserving the argument-free v1 behavior; both new slices failed before implementation, then six focused tests, `83 passed, 1 deselected` offline, and Ruff passed | Historical generator evidence; keep v1/edge-v2 artifacts separate and frozen, and follow only the v4 authorization path for future generation |
 | 2026-09-05 | WS3b | After explicit user approval, ran all 50 cases with `max_turns=3`, 10-way datapoint concurrency, dotenv override, evaluatorq `save=True`, raw local JSONL export, and one Orq Experiment. Coverage is exactly 50/50 unique IDs; 169/169 tool calls have paired results; 47 rows pass strict normalization; two reached max turns and one judge-terminated goal failure remains preserved | Historical v1 evidence; the correctness selection handoff is superseded. Preserve failures and do not rerun |
 | 2026-09-05 (1, earliest) | WS5 | Designed a ten-row, answer-correctness-only replay/alignment increment. Audits confirmed 50 definitions but zero retained raw observations; evaluatorq 1.33 replayed recorded output with zero target calls; two fixture-backed grey-zone passes produced identical artifacts, while a direct repo run exposed an uncaught missing-queue error | Superseded by the v4 decision-support design; retain as historical planning evidence and do not resume |
-| 2026-09-05 (2) | Operations | Added shared agent guidance distinguishing OAuth trace-read access from evaluatorq/SDK run-key access and requiring active project keys to be preserved in the primary checkout's ignored `.env` before worktree removal | Mint or restore a `pydata2026` project key in the primary `.env`; never infer run readiness from successful OAuth trace reads |
+| 2026-09-05 (2) | Operations | Added shared agent guidance distinguishing OAuth trace-read access from evaluatorq/SDK run-key access and requiring active project keys to be preserved in the primary checkout's ignored `.env` before worktree removal | Historical credential handoff completed: the primary ignored `.env` holds an active all-project key. Reverify SDK-key and OAuth access independently before any separately authorized live operation; never infer run readiness from OAuth alone |
 | 2026-09-05 (3) | Delivery | Published the fully integrated `main` history to `origin/main` on explicit request, verified the remote ref, and confirmed the first published Offline CI run passed lint, 78 offline tests, Orq YAML validation, and package build | Keep Orq resource mutation separately gated |
 | 2026-09-05 (3) | Integration | Audited every registered worktree against `main`, preserved the sole uncommitted talk-outline change, recorded the already-integrated plan and superseded Mermaid visual branches as merged without overwriting newer content, and closed all secondary worktrees; only the clean primary `main` worktree remains | Retain source branches until ordinary branch cleanup is explicitly requested; start future work from primary `main` |
 | 2026-09-05 (2) | Planning | Removed the superseded process-local simulation cache and mandatory simulation-trace import steps from the detailed operations plan; stored `SimulationResult` normalization is now the single simulation-to-evaluatorq path | Do not rebuild a cache/ledger or require trace IDs for self-contained simulation rows |
