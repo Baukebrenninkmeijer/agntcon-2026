@@ -637,6 +637,19 @@ approval, it calls `run_trace_evaluation(..., inference=False)` through the exis
 writes case ID, split, transcript fingerprint, decision context, recorded output, aggregate value,
 explanation, pass value, and the complete jury record.
 
+Before evaluator construction, resolve all paths and reject an output that exists or aliases either
+input through spelling, symlink, or same-file identity. Existing outputs are never overwritten. The
+writer uses a unique temporary file in the output directory, flushes and fsyncs it, atomically
+replaces the absent destination, fsyncs the directory, and removes its temporary file on failure.
+Only valid `sphere-stakeholder--v4-*` replay rows with decision context, split, SHA-256 transcript
+fingerprint, and recorded output may proceed. Join returned results by `(case_id,
+transcript_fingerprint)` and verify the returned row and job output against the source rather than
+trusting result order. Validate the unchanged raw mapping through evaluatorq 1.35.0's `JuryResult`
+tree, require the exact ordered `DEFAULT_JUDGES`, three detailed repetitions per vote, no mechanical
+or top-level evaluation error, and at least two decisive judges for a conclusive result. Genuine
+all-model disagreement, tie, or inconclusive aggregation remains valid when all judge calls completed mechanically. Route
+the native Experiment to `pydata2026`; this configuration does not authorize an upload.
+
 - [x] **Step 7: Verify the runner offline with fakes only**
 
 Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_run_decision_support_jury.py tests/test_evaluation_ops.py -v`

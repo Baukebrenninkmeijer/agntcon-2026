@@ -58,14 +58,20 @@ def _row(**overrides: Any) -> TraceBackedEvaluationRow:
 async def test_llm_jury_returns_detailed_all_assignment_record(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    verdicts = {
-        "openai/model-a": "pass",
-        "anthropic/model-b": "pass",
-        "google/model-c": "fail",
+    repetition_values = {
+        "openai/model-a": ["pass", "fail", "pass"],
+        "anthropic/model-b": ["pass", "pass", "pass"],
+        "google/model-c": ["fail", "pass", "fail"],
     }
+    counters = {model: 0 for model in repetition_values}
 
     async def fake_run_single_judge(*, model: str, **_kwargs: Any) -> Prediction:
-        return Prediction(value=verdicts[model], explanation=f"{model} explanation")
+        repetition = counters[model]
+        counters[model] += 1
+        return Prediction(
+            value=repetition_values[model][repetition],
+            explanation=f"{model} repetition {repetition}",
+        )
 
     monkeypatch.setattr(
         import_module("evaluatorq.llm_jury"),
@@ -94,6 +100,7 @@ async def test_llm_jury_returns_detailed_all_assignment_record(
     assert jury["judges_configured"] == 3
     assert jury["judges_succeeded"] == 3
     assert jury["raw_agreement"] == pytest.approx(2 / 3)
+    assert counters == {model: 3 for model in repetition_values}
     assert [vote["model"] for vote in jury["votes"]] == [
         "openai/model-a",
         "anthropic/model-b",
@@ -101,14 +108,15 @@ async def test_llm_jury_returns_detailed_all_assignment_record(
     ]
     assert all(len(vote["repetitions"]) == 3 for vote in jury["votes"])
     assert all("explanation" in vote for vote in jury["votes"])
-    assert all(
-        repetition == {
-            "value": vote["value"],
-            "explanation": f"{vote['model']} explanation",
-        }
-        for vote in jury["votes"]
-        for repetition in vote["repetitions"]
-    )
+    assert {
+        vote["model"]: vote["repetitions"] for vote in jury["votes"]
+    } == {
+        model: [
+            {"value": value, "explanation": f"{model} repetition {repetition}"}
+            for repetition, value in enumerate(values)
+        ]
+        for model, values in repetition_values.items()
+    }
 
 
 def test_trace_row_round_trips_to_evaluatorq_datapoint() -> None:
