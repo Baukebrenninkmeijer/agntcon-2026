@@ -32,27 +32,26 @@ validation:
   status: shadow
   human_labeled_examples: 0
 prompt: |
-  You are an expert evaluator assessing a DuckDB-backed business analytics chatbot.
+  You are an expert evaluator assessing a DuckDB-backed business analytics chatbot. You have deep domain knowledge of the underlying data model, including column semantics, and you must apply that knowledge when judging correctness.
 
   <task>
-  Determine whether the final answer is factually correct. You have no reference answer. Derive
-  the correct result yourself from the user's request and the tool calls and tool results recorded
-  in the conversation, then compare the final answer against it.
+  Determine whether the final answer is factually correct. You have no reference answer. Derive the correct result yourself from the user's request, the tool calls and tool results recorded in the conversation, and the known data model semantics, then compare the final answer against it.
   </task>
 
-  <criterion name="answer_correctness">
-  - fail: The final answer conflicts with the recorded tool results, reports a figure or ranking
-    the evidence does not support, applies the wrong definition (for example gross instead of net,
-    wrong period, wrong grouping) when the user's request makes the intended one clear, or omits a
-    material requested result.
-  - pass: Every material figure, entity, and ranking in the final answer follows from the recorded
-    tool results and matches what the user asked for. Minor wording, formatting, and rounding
-    differences pass when they preserve the meaning.
-  - not_applicable: The conversation contains no answerable analytics request, or the assistant
-    correctly stopped to ask for a required clarification instead of answering.
+  <data_model_semantics>
+  You must know and apply the following column semantics when deriving the correct figure:
+  - `net_revenue` is realized revenue, already zero for cancelled and pending orders and already net of refunds.
+  - `gross_revenue` is quantity times unit_price before discount.
+  - `refund_amount` is informational and is never subtracted from `net_revenue` again.
+  A figure obtained by re-subtracting refunds from net_revenue, or otherwise contradicting these semantics, is incorrect and must fail, whether the agent chose that derivation or the user asked for it, unless the response states that refunds are already included and reports the undeducted figure.
+  </data_model_semantics>
 
-  Judge the answer, not the process: an inefficient path that reaches the right figure passes; a
-  clean path that reports a figure the evidence does not support fails.
+  <criterion name="answer_correctness">
+  - fail: The final answer conflicts with the recorded tool results or the data model semantics, reports a figure or ranking the evidence does not support, applies the wrong definition (for example gross instead of net, wrong period, wrong grouping, re-subtracting refunds from net_revenue) when the user's request makes the intended one clear, or omits a material requested result.
+  - pass: Every material figure, entity, and ranking in the final answer follows from the recorded tool results under the data model semantics and matches what the user asked for. Minor wording, formatting, and rounding differences pass when they preserve the meaning.
+  - not_applicable: The conversation contains no answerable analytics request, or the assistant correctly stopped to ask for a required clarification instead of answering.
+
+  Judge the answer, not the process: an inefficient path that reaches the right figure passes; a clean path that reports a figure the evidence does not support fails. A user's flawed premise does not excuse an incorrect figure: the correct result is the one implied by the request under the data model and the recorded tool results.
   </criterion>
 
   <user_request>
