@@ -487,17 +487,17 @@ async def test_atomic_writer_uses_unique_temp_fsync_and_preserves_old_temp_name(
 
 
 @pytest.mark.asyncio
-async def test_atomic_writer_cleans_unique_temp_when_replace_fails(
+async def test_atomic_writer_cleans_unique_temp_when_publication_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     runner = _load_script()
 
-    def fail_replace(_source: object, _destination: object) -> None:
-        raise OSError("replace failed")
+    def fail_link(_source: object, _destination: object) -> None:
+        raise OSError("link failed")
 
-    monkeypatch.setattr(runner.os, "replace", fail_replace)
-    with pytest.raises(OSError, match="replace failed"):
+    monkeypatch.setattr(runner.os, "link", fail_link)
+    with pytest.raises(OSError, match="link failed"):
         await runner.run(
             _args(tmp_path, approve_calls=True),
             replay_loader=lambda **_kwargs: _corpus(row_count=1),
@@ -510,6 +510,37 @@ async def test_atomic_writer_cleans_unique_temp_when_replace_fails(
         )
 
     assert not (tmp_path / "jury.jsonl").exists()
+    assert not list(tmp_path.glob(".jury.jsonl.*.tmp"))
+
+
+@pytest.mark.asyncio
+async def test_atomic_writer_never_overwrites_output_created_during_publication(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runner = _load_script()
+    real_link = os.link
+
+    def race_link(source: object, destination: object) -> None:
+        Path(destination).write_text("concurrent writer\n", encoding="utf-8")
+        real_link(source, destination)
+
+    monkeypatch.setattr(runner.os, "link", race_link)
+    with pytest.raises(runner.JuryReplayError, match="output already exists"):
+        await runner.run(
+            _args(tmp_path, approve_calls=True),
+            replay_loader=lambda **_kwargs: _corpus(row_count=1),
+            evaluator_builder=lambda *_args, **_kwargs: {
+                "name": "decision_support_quality",
+                "scorer": object(),
+            },
+            evaluation_runner=lambda *_args, **_kwargs: _async_result(
+                _results(row_count=1)
+            ),
+            printer=lambda _message: None,
+        )
+
+    assert (tmp_path / "jury.jsonl").read_text(encoding="utf-8") == "concurrent writer\n"
     assert not list(tmp_path.glob(".jury.jsonl.*.tmp"))
 
 
@@ -554,6 +585,78 @@ def test_jury_validation_returns_the_complete_object_unchanged() -> None:
     assert runner.validate_jury_record({"jury": jury}) is jury
 
 
+@pytest.mark.parametrize(
+    ("level", "field"),
+    [
+        *(("panel", field) for field in (
+            "judges_configured",
+            "judges_succeeded",
+            "judges_failed",
+            "replacements_used",
+            "tie",
+            "inconclusive",
+            "votes",
+            "stats",
+            "raw_agreement",
+        )),
+        *(("vote", field) for field in (
+            "model",
+            "replacement",
+            "success",
+            "abstained",
+            "value",
+            "explanation",
+            "error",
+            "repetitions",
+            "repetitions_failed",
+        )),
+        ("repetition", "value"),
+        ("repetition", "explanation"),
+    ],
+)
+def test_jury_validation_requires_every_released_raw_field(
+    level: str,
+    field: str,
+) -> None:
+    runner = _load_script()
+    jury = _jury()
+    target = jury
+    if level == "vote":
+        target = jury["votes"][0]
+    elif level == "repetition":
+        target = jury["votes"][0]["repetitions"][0]
+    del target[field]
+
+    with pytest.raises(runner.JuryReplayError, match=rf"{level}.*{field}"):
+        runner.validate_jury_record({"jury": jury})
+
+
+@pytest.mark.parametrize(
+    ("level", "field", "value"),
+    [
+        ("panel", "judges_configured", "3"),
+        ("vote", "replacement", 0),
+        ("repetition", "explanation", b"coercible explanation"),
+    ],
+)
+def test_jury_validation_rejects_coercible_wrong_raw_types(
+    level: str,
+    field: str,
+    value: object,
+) -> None:
+    runner = _load_script()
+    jury = _jury()
+    target = jury
+    if level == "vote":
+        target = jury["votes"][0]
+    elif level == "repetition":
+        target = jury["votes"][0]["repetitions"][0]
+    target[field] = value
+
+    with pytest.raises(runner.JuryReplayError, match="invalid evaluatorq jury record"):
+        runner.validate_jury_record({"jury": jury})
+
+
 def test_jury_validation_requires_exact_ordered_models_and_repetition_objects() -> None:
     runner = _load_script()
     wrong_model = _jury()
@@ -563,7 +666,7 @@ def test_jury_validation_requires_exact_ordered_models_and_repetition_objects() 
 
     missing_explanation = _jury()
     del missing_explanation["votes"][0]["repetitions"][0]["explanation"]
-    with pytest.raises(runner.JuryReplayError, match="value and explanation"):
+    with pytest.raises(runner.JuryReplayError, match="repetition.*explanation"):
         runner.validate_jury_record({"jury": missing_explanation})
 
 

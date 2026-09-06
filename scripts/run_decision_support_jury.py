@@ -35,6 +35,33 @@ EVALUATOR_NAME = AtomicJudge.DECISION_SUPPORT_QUALITY.value
 EXPERIMENT_PATH = "pydata2026"
 V4_CASE_PREFIX = "sphere-stakeholder--v4-"
 _FINGERPRINT_PATTERN = re.compile(r"[0-9a-f]{64}")
+_JURY_RESULT_FIELDS = frozenset(
+    {
+        "judges_configured",
+        "judges_succeeded",
+        "judges_failed",
+        "replacements_used",
+        "tie",
+        "inconclusive",
+        "votes",
+        "stats",
+        "raw_agreement",
+    }
+)
+_JURY_VOTE_FIELDS = frozenset(
+    {
+        "model",
+        "replacement",
+        "success",
+        "abstained",
+        "value",
+        "explanation",
+        "error",
+        "repetitions",
+        "repetitions_failed",
+    }
+)
+_JURY_REPETITION_FIELDS = frozenset({"value", "explanation"})
 
 
 class JuryReplayError(RuntimeError):
@@ -132,6 +159,25 @@ def _validate_v4_samples(corpus: Any) -> list[Any]:
     return samples
 
 
+def _require_raw_fields(
+    value: object,
+    *,
+    fields: frozenset[str],
+    context: str,
+) -> Mapping[str, Any]:
+    if not isinstance(value, Mapping):
+        raise JuryReplayError(
+            f"invalid evaluatorq jury record: {context} must be a mapping"
+        )
+    missing = sorted(fields.difference(value))
+    if missing:
+        raise JuryReplayError(
+            f"invalid evaluatorq jury record: {context} is missing required raw fields: "
+            f"{', '.join(missing)}"
+        )
+    return value
+
+
 def validate_jury_record(raw_output: object) -> dict[str, Any]:
     if not isinstance(raw_output, dict) or not isinstance(
         raw_output.get(JURY_RAW_OUTPUT_KEY), dict
@@ -140,31 +186,35 @@ def validate_jury_record(raw_output: object) -> dict[str, Any]:
     if EVAL_ERROR_RAW_OUTPUT_KEY in raw_output:
         raise JuryReplayError("decision-support score contains raw_output.evaluation_error")
     jury = raw_output[JURY_RAW_OUTPUT_KEY]
+
+    _require_raw_fields(jury, fields=_JURY_RESULT_FIELDS, context="jury panel")
+    raw_votes = jury["votes"]
+    if not isinstance(raw_votes, list) or len(raw_votes) != EXPECTED_JUDGES:
+        raise JuryReplayError("decision-support jury must retain exactly three votes")
+    for vote_index, raw_vote in enumerate(raw_votes):
+        vote = _require_raw_fields(
+            raw_vote,
+            fields=_JURY_VOTE_FIELDS,
+            context=f"jury vote {vote_index}",
+        )
+        repetitions = vote["repetitions"]
+        if not isinstance(repetitions, list) or len(repetitions) != EXPECTED_REPETITIONS:
+            raise JuryReplayError("each decision-support vote must retain three repetitions")
+        for repetition_index, repetition in enumerate(repetitions):
+            _require_raw_fields(
+                repetition,
+                fields=_JURY_REPETITION_FIELDS,
+                context=f"jury repetition {vote_index}:{repetition_index}",
+            )
     try:
-        typed_jury = JuryResult.model_validate(jury)
+        typed_jury = JuryResult.model_validate(jury, strict=True)
     except ValidationError as error:
         raise JuryReplayError(f"invalid evaluatorq jury record: {error}") from error
 
-    raw_votes = jury.get("votes")
-    if not isinstance(raw_votes, list) or len(raw_votes) != EXPECTED_JUDGES:
-        raise JuryReplayError("decision-support jury must retain exactly three votes")
     if typed_jury.judges_configured != EXPECTED_JUDGES:
         raise JuryReplayError("decision-support jury must configure exactly three judges")
     if [vote.model for vote in typed_jury.votes] != list(DEFAULT_JUDGES):
         raise JuryReplayError("decision-support jury must retain the ordered configured models")
-    for raw_vote in raw_votes:
-        repetitions = raw_vote.get("repetitions") if isinstance(raw_vote, Mapping) else None
-        if not isinstance(repetitions, list) or len(repetitions) != EXPECTED_REPETITIONS:
-            raise JuryReplayError("each decision-support vote must retain three repetitions")
-        if any(
-            not isinstance(repetition, Mapping)
-            or "value" not in repetition
-            or "explanation" not in repetition
-            for repetition in repetitions
-        ):
-            raise JuryReplayError(
-                "each decision-support repetition must retain value and explanation"
-            )
     if (
         typed_jury.judges_failed
         or typed_jury.replacements_used
@@ -281,9 +331,13 @@ def _write_results(
             stream.write("\n".join(records) + "\n")
             stream.flush()
             os.fsync(stream.fileno())
-        if output_path.exists() or output_path.is_symlink():
-            raise JuryReplayError(f"output already exists; refusing to overwrite: {output_path}")
-        os.replace(temporary_path, output_path)
+        try:
+            os.link(temporary_path, output_path)
+        except FileExistsError as error:
+            raise JuryReplayError(
+                f"output already exists; refusing to overwrite: {output_path}"
+            ) from error
+        temporary_path.unlink()
         temporary_path = None
         directory_descriptor = os.open(output_path.parent, os.O_RDONLY)
         try:
