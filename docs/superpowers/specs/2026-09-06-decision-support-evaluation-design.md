@@ -31,6 +31,36 @@ response, reference label, or hidden company knowledge for this rubric.
 - CI regression checks and multi-agent prompt improvement appear only as future steps in the talk.
   They are not implemented by this work.
 
+## Company Setting
+
+The fictional company is **Sphere.com**, an Amsterdam-based, 500-person B2B wholesaler that sells
+home appliances online to independent retailers, regional chains, and national retailers across the
+four existing regions and fourteen countries in the dataset.
+
+Sphere.com's catalog has four physical-appliance categories and eight products, mapped onto the
+existing price bands:
+
+- Small appliances: espresso machine and air purifier;
+- Cleaning: robot vacuum and dishwasher;
+- Laundry: washing machine and tumble dryer;
+- Major appliances: refrigerator and heat pump.
+
+The company grew quickly through 2024 and 2025. Ahead of annual planning, the board is questioning
+the quality of that growth: whether discounts, refunds, cancellations, regional variation, and
+product mix make headline revenue look healthier than the underlying business.
+
+Recurring stakeholders are the CFO preparing the board narrative, the commercial director
+allocating sales attention, category managers reviewing assortment, finance controllers
+investigating refunds and margins, regional leads explaining performance, and revenue analysts
+preparing supporting analysis. These roles provide context, but they are not crossed mechanically
+with every scenario.
+
+The dataset's category, product, and customer-segment values change to match this setting. Customer
+segments become independent retailers, regional chains, and national retailers. The numerical
+order facts, geography, dates, prices, quantities, discounts, costs, statuses, and refunds remain
+deterministic. Corpus SQL, expected values, tests, documentation, and prompts that mention the old
+technology catalog or segment labels must migrate together.
+
 ## Corpus v4
 
 ### Source and identity
@@ -59,7 +89,7 @@ retains a distinct analytical situation and a concrete decision.
 
 Representative transformations:
 
-1. `net-by-region-2025`: a regional leader preparing a performance review needs the weakest or most
+1. `net-by-region-2025`: a regional lead preparing a performance review needs the weakest or most
    consequential region foregrounded, followed by the comparison.
 2. `refund-share-apac`: a finance controller preparing a reconciliation note needs the denominator
    and interpretation-sensitive definitions made explicit.
