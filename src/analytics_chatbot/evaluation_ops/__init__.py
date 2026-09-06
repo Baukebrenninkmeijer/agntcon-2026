@@ -301,9 +301,12 @@ async def run_trace_evaluation(
     llm_parallelism: int = 6,
     print_results: bool = True,
     experiment_url_out: list[str] | None = None,
+    inference: bool = False,
 ) -> list[DataPointResult]:
     """Score imported rows through evaluatorq's native experiment lifecycle."""
 
+    if inference:
+        raise ValueError("trace replay inference must remain False")
     if not rows:
         raise ValueError("at least one trace-backed row is required")
     if evaluators is not None and not evaluators:
@@ -315,7 +318,7 @@ async def run_trace_evaluation(
         "data": [row.to_datapoint() for row in rows],
         "evaluators": selected_evaluators,
         "path": experiment_path,
-        "inference": False,
+        "inference": inference,
         "datapoint_parallelism": datapoint_parallelism,
         "llm_parallelism": llm_parallelism,
         "print_results": print_results,

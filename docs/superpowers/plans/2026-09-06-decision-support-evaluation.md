@@ -4,9 +4,9 @@
 
 **Goal:** Recast the analytics-agent example as Sphere.com's decision-support analyst, generate a context-enriched fifty-case v4 corpus, and replace the active reference-oriented LLM judges with one subjective evaluatorq jury: `decision_support_quality`.
 
-**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into one local `llm_jury` evaluator. Repository YAML mirrors that subjective contract without applying remote changes; a dedicated offline replay script persists the complete jury record once the next evaluatorq release exposes it for `assignment="all"`.
+**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into one local `llm_jury` evaluator. Repository YAML mirrors that subjective contract without applying remote changes; a dedicated offline replay script on evaluatorq 1.35.0 persists the complete jury record exposed for `assignment="all"`.
 
-**Tech Stack:** Python 3.11+, Polars, DuckDB, Pydantic, evaluatorq, Orq resource YAML, pytest, Ruff, Markdown.
+**Tech Stack:** Python 3.11+, Polars, DuckDB, Pydantic, evaluatorq 1.35.0, Orq resource YAML, pytest, Ruff, Markdown.
 
 ## Global Constraints
 
@@ -20,7 +20,7 @@
 - Do not implement, configure, or run the three alternative subjective rubrics in this stage.
 - Use three distinct judges, `assignment="all"`, `aggregator="majority"`, `min_successful_judges=2`, structured categorical output, and three repetitions for the alignment run.
 - Do not run the 450-call jury job, generate live v4 responses, apply hosted resources, alter CI, or automate prompt promotion.
-- Stop at Task 5's dependency gate until the user supplies the exact released evaluatorq version that returns complete jury data for `assignment="all"`.
+- Keep evaluatorq pinned exactly to the user-confirmed 1.35.0 release whose public `assignment="all"` scorer returns complete jury data. The package gate is satisfied; v4 observation generation, the two-row jury smoke, and the 450-call full jury remain separately approved live operations.
 - Update `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md` in the same implementation commit that changes operational reality.
 
 ---
@@ -39,7 +39,7 @@
 - `orq/resources/evaluators/jury/decision-support-quality.yaml`: the single subjective hosted definition; old four LLM YAML files are replaced, while two Python files remain historical and unchanged.
 - `src/analytics_chatbot/orq_resources.py`: generic subjective-evaluator evidence guards.
 - `scripts/run_decision_support_jury.py`: local no-inference jury replay, call-count gate, and detailed JSONL persistence.
-- `pyproject.toml`, `uv.lock`: exact evaluatorq release supplied by the user at Task 5.
+- `pyproject.toml`, `uv.lock`: evaluatorq pinned exactly to the user-confirmed 1.35.0 release.
 - `story-outline.md`, `outline.md`: analytics-only talk story aligned with the submitted abstract.
 - `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md`: living delivery state, evidence, blockers, and handoff.
 
@@ -555,11 +555,11 @@ git commit -m "feat: define Sphere subjective evaluator resources"
 - Consumes: the exact evaluatorq release supplied by the user, v4 case JSONL, a v4 observed-results JSONL, `load_simulation_replay`, and `build_atomic_evaluator(AtomicJudge.DECISION_SUPPORT_QUALITY, repetitions=3)`.
 - Produces: one joined local JSONL record per corpus row with `raw_output.jury` preserved byte-for-byte from evaluatorq's typed result.
 
-- [ ] **Step 1: Stop at the release gate**
+- [x] **Step 1: Stop at the release gate**
 
-Ask the user for the exact published evaluatorq version containing the `assignment="all"` result-flow change. Do not loosen the pin, install an unreleased checkout, or infer the version. Resume this task only after the version is supplied.
+Gate satisfied on 2026-09-06: the user explicitly confirmed evaluatorq 1.35.0, published on PyPI at 2026-09-06 14:24 UTC, for the `assignment="all"` result-flow change. The pin remains exact; no unreleased checkout is used.
 
-- [ ] **Step 2: Write the failing detailed-result contract test before upgrading**
+- [x] **Step 2: Write the failing detailed-result contract test before upgrading**
 
 Monkeypatch `evaluatorq.llm_jury._run_single_judge` to return controlled `Prediction` values across
 three models and three repetitions. Invoke the public `llm_jury` scorer with `assignment="all"` and
@@ -581,7 +581,7 @@ Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_evaluation_ops.
 
 Expected on 1.33.0: FAIL because `result.raw_output` is `None`.
 
-- [ ] **Step 3: Pin the exact supplied release and lock it**
+- [x] **Step 3: Pin the exact supplied release and lock it**
 
 Replace `evaluatorq==1.33.0` with the exact version supplied at Step 1, then run:
 
@@ -593,20 +593,20 @@ UV_CACHE_DIR=/tmp/pydata-uv-cache uv sync
 Expected: the lock contains exactly the supplied evaluatorq version and no unrelated direct
 dependency changes.
 
-- [ ] **Step 4: Verify the public jury contract passes**
+- [x] **Step 4: Verify the public jury contract passes**
 
 Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_evaluation_ops.py::test_llm_jury_returns_detailed_all_assignment_record -v`
 
 Expected: PASS with three model votes and nine raw repetition verdict slots present.
 
-- [ ] **Step 5: Write failing offline-runner tests**
+- [x] **Step 5: Write failing offline-runner tests**
 
 Test parser validation, the exact call count (`rows * judges * repetitions`), refusal without
 `--approve-calls`, selection of only `decision_support_quality`, no-inference replay, and complete
 serialization of `score.raw_output["jury"]`. The script must reject a score whose jury record is
 missing or whose vote/repetition counts differ from 3/3.
 
-- [ ] **Step 6: Implement the guarded offline runner**
+- [x] **Step 6: Implement the guarded offline runner**
 
 Expose:
 
@@ -637,13 +637,13 @@ approval, it calls `run_trace_evaluation(..., inference=False)` through the exis
 writes case ID, split, transcript fingerprint, decision context, recorded output, aggregate value,
 explanation, pass value, and the complete jury record.
 
-- [ ] **Step 7: Verify the runner offline with fakes only**
+- [x] **Step 7: Verify the runner offline with fakes only**
 
 Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_run_decision_support_jury.py tests/test_evaluation_ops.py -v`
 
 Expected: all tests PASS; no API key or network call is required.
 
-- [ ] **Step 8: Commit the dependency and detailed-result runner, then update the living plan**
+- [x] **Step 8: Commit the dependency and detailed-result runner, then update the living plan**
 
 Record the exact evaluatorq version and contract evidence. Keep the full live run `NOT STARTED` and
 name its 450-call approval gate.

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+from importlib import import_module
 from typing import Any
 
 import pytest
-from evaluatorq import EvaluationResult
+from evaluatorq import DataPoint, EvaluationResult, llm_jury
+from evaluatorq.common.jury import Prediction
 
 from analytics_chatbot.evaluation_ops import (
     AtomicJudge,
@@ -50,6 +52,63 @@ def _row(**overrides: Any) -> TraceBackedEvaluationRow:
     }
     data.update(overrides)
     return TraceBackedEvaluationRow.model_validate(data)
+
+
+@pytest.mark.asyncio
+async def test_llm_jury_returns_detailed_all_assignment_record(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    verdicts = {
+        "openai/model-a": "pass",
+        "anthropic/model-b": "pass",
+        "google/model-c": "fail",
+    }
+
+    async def fake_run_single_judge(*, model: str, **_kwargs: Any) -> Prediction:
+        return Prediction(value=verdicts[model], explanation=f"{model} explanation")
+
+    monkeypatch.setattr(
+        import_module("evaluatorq.llm_jury"),
+        "_run_single_judge",
+        fake_run_single_judge,
+    )
+    evaluator = llm_jury(
+        name="decision_support_quality",
+        criteria="Does this response support the stated decision?",
+        judges=["openai/model-a", "anthropic/model-b", "google/model-c"],
+        repetitions=3,
+        assignment="all",
+        min_successful_judges=2,
+        labels=["pass", "fail", "not_applicable"],
+        passing_labels=["pass"],
+        aggregator="majority",
+        client=object(),
+    )
+
+    result = await evaluator["scorer"](
+        {"data": DataPoint(inputs={"question": "Q"}), "output": "A"}
+    )
+
+    assert result.raw_output is not None
+    jury = result.raw_output["jury"]
+    assert jury["judges_configured"] == 3
+    assert jury["judges_succeeded"] == 3
+    assert jury["raw_agreement"] == pytest.approx(2 / 3)
+    assert [vote["model"] for vote in jury["votes"]] == [
+        "openai/model-a",
+        "anthropic/model-b",
+        "google/model-c",
+    ]
+    assert all(len(vote["repetitions"]) == 3 for vote in jury["votes"])
+    assert all("explanation" in vote for vote in jury["votes"])
+    assert all(
+        repetition == {
+            "value": vote["value"],
+            "explanation": f"{vote['model']} explanation",
+        }
+        for vote in jury["votes"]
+        for repetition in vote["repetitions"]
+    )
 
 
 def test_trace_row_round_trips_to_evaluatorq_datapoint() -> None:
@@ -264,6 +323,7 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
         native_runner=native_runner,
         print_results=False,
         experiment_url_out=experiment_urls,
+        inference=False,
     )
 
     assert result == []
@@ -274,6 +334,12 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
     assert scored["output"] == recorded
     assert scored["output"].encode() == recorded.encode()
     assert observed["evaluators"][0]["name"] == "stub"
+
+
+@pytest.mark.asyncio
+async def test_run_trace_evaluation_rejects_target_inference() -> None:
+    with pytest.raises(ValueError, match="inference must remain False"):
+        await run_trace_evaluation([_row()], inference=True)
 
 
 @pytest.mark.asyncio

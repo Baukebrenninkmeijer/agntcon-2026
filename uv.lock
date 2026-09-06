@@ -37,7 +37,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "duckdb", specifier = ">=1.4" },
-    { name = "evaluatorq", specifier = "==1.33.0" },
+    { name = "evaluatorq", specifier = "==1.35.0" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "openai", specifier = ">=2.8" },
     { name = "orq-ai-sdk", specifier = ">=4.14.7" },
@@ -293,7 +293,7 @@ wheels = [
 
 [[package]]
 name = "evaluatorq"
-version = "1.33.0"
+version = "1.35.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -304,9 +304,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/a3/4742d3e4f3f2fd10879c99203309799fcd4c26f947d9a4453150daeb85a5/evaluatorq-1.33.0.tar.gz", hash = "sha256:52442ef2b919c9a2830c8e05f98ed1d98c2962833c63e1c5789f2d5225c3817d", size = 13476839, upload-time = "2026-09-01T09:58:35.678Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a8/a3/ba6eb632cdcc22dc331a32e1b1857d020502ca683c84f1752924295e1e00/evaluatorq-1.35.0.tar.gz", hash = "sha256:38eb17648d1d7639d84ca8e596c8194c9e739d213539afbcd57cafcab97f1272", size = 13506142, upload-time = "2026-09-06T14:24:22.114Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c0/5a/47ce612333d7f9fbfbc997b455b38ebd8f38f85fbda1b93f7c88eb9eaea1/evaluatorq-1.33.0-py3-none-any.whl", hash = "sha256:1a351ae7636615d08bf9ab66fec12446203416c1032ccc5e454a548dba2117c7", size = 2531039, upload-time = "2026-09-01T09:58:33.705Z" },
+    { url = "https://files.pythonhosted.org/packages/24/dd/64e0821a7b000b4f35c6c32b64b48f4809c2a8cd4db4c449be0af1fe738b/evaluatorq-1.35.0-py3-none-any.whl", hash = "sha256:b74ca104db881c996305e7dc87bdbd8f58b664cb75626d4dc8ae40a1fb93ec55", size = 2542910, upload-time = "2026-09-06T14:24:20.241Z" },
 ]
 
 [[package]]
