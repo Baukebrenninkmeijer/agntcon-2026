@@ -35,8 +35,8 @@ class Settings(BaseSettings):
     max_tool_steps: int = Field(default=8, ge=1, le=32)
     max_query_rows: int = Field(default=200, ge=1, le=10_000)
     query_timeout_seconds: float = Field(default=10.0, gt=0, le=300)
-    dataset_version: str = "revenue-v1"
-    agent_version: str = "v1"
+    dataset_version: str = "sphere-orders-v1"
+    agent_version: str = "sphere-baseline-v1"
 
 
 class TraceContext(BaseModel):

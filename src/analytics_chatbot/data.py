@@ -25,13 +25,20 @@ REGIONS: dict[str, tuple[str, ...]] = {
 }
 
 PRODUCTS: dict[str, tuple[tuple[str, int], ...]] = {
-    "Software": (("Analytics Pro", 49_900), ("Automation Suite", 79_900)),
-    "Hardware": (("Edge Appliance", 149_900), ("Sensor Kit", 39_900)),
-    "Services": (("Implementation", 249_900), ("Training", 89_900)),
-    "Data": (("Market Feed", 29_900), ("Risk Dataset", 59_900)),
+    "Small Appliances": (("Espresso Machine", 29_900), ("Air Purifier", 39_900)),
+    "Cleaning": (("Robot Vacuum", 49_900), ("Dishwasher", 69_900)),
+    "Laundry": (("Washing Machine", 84_900), ("Tumble Dryer", 74_900)),
+    "Major Appliances": (("Refrigerator", 149_900), ("Heat Pump", 249_900)),
 }
 
-SEGMENTS = ("SMB", "Mid-Market", "Enterprise")
+SEGMENTS = ("Independent Retailers", "Regional Chains", "National Retailers")
+
+CATEGORY_COST_BASIS_POINTS = {
+    "Small Appliances": 5_000,
+    "Cleaning": 5_800,
+    "Laundry": 6_200,
+    "Major Appliances": 6_800,
+}
 
 
 class DatasetManifest(BaseModel):
@@ -99,7 +106,7 @@ def generate_orders(
         category = rng.choice(categories)
         product, base_price_cents = rng.choice(PRODUCTS[category])
         segment = rng.choice(SEGMENTS)
-        quantity = rng.randint(1, 12 if segment == "Enterprise" else 6)
+        quantity = rng.randint(1, 12 if segment == "National Retailers" else 6)
         unit_price_cents = base_price_cents * rng.randint(8_500, 11_500) // 10_000
         status = _status(rng)
         values = {
@@ -117,12 +124,7 @@ def generate_orders(
             "discount_basis_points": rng.choice((0, 0, 0, 500, 1_000, 1_500, 2_000)),
             "order_status": status,
             "refund_basis_points": rng.randint(2_500, 10_000) if status == "refunded" else 0,
-            "cost_basis_points": {
-                "Software": 2_000,
-                "Hardware": 6_500,
-                "Services": 4_500,
-                "Data": 2_500,
-            }[category],
+            "cost_basis_points": CATEGORY_COST_BASIS_POINTS[category],
         }
         for name, value in values.items():
             columns[name].append(value)
@@ -217,7 +219,7 @@ def seed_database(
         raise RuntimeError("failed to calculate dataset bounds")
 
     manifest = DatasetManifest(
-        schema_version="revenue-v1",
+        schema_version="sphere-orders-v1",
         seed=seed,
         row_count=count,
         min_order_date=bounds[0],

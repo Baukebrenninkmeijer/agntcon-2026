@@ -5,6 +5,13 @@ def test_settings_use_current_gateway_endpoint() -> None:
     assert Settings().gateway_base_url == "https://api.orq.ai/v3/router"
 
 
+def test_settings_default_to_sphere_versions() -> None:
+    settings = Settings()
+
+    assert settings.dataset_version == "sphere-orders-v1"
+    assert settings.agent_version == "sphere-baseline-v1"
+
+
 def test_trace_context_uses_bounded_tags_and_string_metadata() -> None:
     context = TraceContext(run_kind="eval", evaluation_split="test", case_id="case-7")
 
