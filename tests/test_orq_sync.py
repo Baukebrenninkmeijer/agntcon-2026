@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from analytics_chatbot.evaluation_ops import DEFAULT_JUDGES
 from analytics_chatbot.orq_resources import load_resource_bundle
 from analytics_chatbot.orq_sync import (
     OrqReconciler,
@@ -22,10 +23,8 @@ def empty_snapshot() -> RemoteSnapshot:
         project_id="${ORQ_PROJECT_ID}",
         models={
             "deepseek/deepseek-v4-flash": True,
-            "openai/gpt-5.6-luna": True,
-            "google-ai/gemini-3.5-flash-lite": True,
-            "tensorix/qwen/qwen3.8-flash-next": True,
             "wafer/DeepSeek-V4-Flash-0731-Fast": True,
+            **dict.fromkeys(DEFAULT_JUDGES, True),
         },
     )
 

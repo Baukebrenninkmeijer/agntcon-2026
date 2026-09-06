@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" width="1400" height="800" role="img" aria-labelledby="title description">
   <title id="title">Production evaluation flywheel for the PyData 2026 analytics agent</title>
-  <desc id="description">A six-stage flywheel. Multi-turn interactions enter an Orq analytics agent that executes guarded tools locally and records traces. Traces become evaluatorq DataPoints. Recorded responses are replayed without rerunning the agent, then deterministic checks and four evidence-scoped LLM judges score them. Human labels and disagreement analysis align the judges. Reviewed, versioned improvements return to the agent and evaluators. Integrated, in-progress, and gated work are visually distinguished.</desc>
+  <desc id="description">A six-stage flywheel. Multi-turn interactions enter an Orq analytics agent that executes guarded tools locally and records traces. Traces become evaluatorq DataPoints. Recorded responses are replayed without rerunning the agent, then deterministic checks and one pending decision-support-quality jury assess them. The v4 pool has 50 definitions, zero observations, and zero human labels. Human review and hosted apply remain separately gated. Reviewed, versioned improvements return to the agent and evaluator.</desc>
 
   <defs>
     <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
@@ -132,29 +132,29 @@
     <text x="24" y="139" class="body">or evaluator changes.</text>
   </g>
 
-  <g aria-label="Stage 5: human alignment" transform="translate(345 570)" filter="url(#shadow)">
+  <g aria-label="Stage 5: pending v4 human alignment" transform="translate(345 570)" filter="url(#shadow)">
     <rect width="261" height="180" rx="24" fill="#F5F6F8" stroke="#98A2B3" stroke-width="1.5" stroke-dasharray="6 6"/>
     <circle cx="34" cy="34" r="18" fill="#E8EBEF"/>
     <text x="34" y="34" class="number" fill="#4E5969">5</text>
     <circle cx="235" cy="29" r="5" fill="#FFFFFF" stroke="#8791A1" stroke-width="2"/>
     <text x="219" y="55" class="status" fill="#737D8C" text-anchor="end">GATED</text>
     <text x="24" y="90" class="card-title">Align with people</text>
-    <text x="24" y="119" class="body">Human labels establish gold.</text>
-    <text x="24" y="145" class="body">Disagreement reveals where</text>
-    <text x="24" y="169" class="body">judges still need work.</text>
+    <text x="24" y="119" class="body">v4: 50 definitions</text>
+    <text x="24" y="145" class="body">0 observations · 0 labels</text>
+    <text x="24" y="169" class="body">Human review still pending.</text>
   </g>
 
-  <g aria-label="Stage 4: deterministic checks and atomic judges" transform="translate(649 555)" filter="url(#shadow)">
+  <g aria-label="Stage 4: deterministic checks and one decision-support-quality jury" transform="translate(649 555)" filter="url(#shadow)">
     <rect width="305" height="195" rx="24" fill="#FFF5E5" stroke="#D08A2D" stroke-width="1.5"/>
     <circle cx="34" cy="34" r="18" fill="#F9DCAD"/>
     <text x="34" y="34" class="number" fill="#805018">4</text>
     <circle cx="279" cy="29" r="5" fill="#C27A22"/>
     <text x="263" y="55" class="status" fill="#A45F14" text-anchor="end">RESOURCES ACTIVE</text>
-    <text x="24" y="88" class="card-title">Score atomically</text>
+    <text x="24" y="88" class="card-title">Judge decision support</text>
     <rect x="24" y="106" width="257" height="30" rx="15" fill="#FFFFFF" fill-opacity=".8"/>
     <text x="39" y="126" font-size="14" font-weight="680" fill="#7B4A15">Deterministic invariants</text>
-    <text x="24" y="159" class="small">ANSWER · QUERY · EVIDENCE · CONTEXT</text>
-    <text x="24" y="181" class="body">Four isolated LLM judges</text>
+    <text x="24" y="159" class="small">DECISION_SUPPORT_QUALITY</text>
+    <text x="24" y="181" class="body">One pending 3-model jury</text>
   </g>
 
   <g aria-label="Stage 3: trace backed DataPoint replay" transform="translate(1034 526)" filter="url(#shadow)">

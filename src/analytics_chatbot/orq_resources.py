@@ -207,19 +207,30 @@ class LlmEvaluatorResource(EvaluatorBase):
                 )
 
             subjective_contract = f"{self.prompt}\n{self.input_mapping}".lower()
-            forbidden_evidence = {
-                "input.decision_context",
-                "input.expected_output",
-                "reference_sql",
-                "query_requirements",
+            mapped_variables = set(self.input_mapping)
+            reference_family_variables = {
+                variable
+                for variable in variables | mapped_variables
+                if {"expected", "hidden", "ideal", "oracle", "reference"}
+                & set(re.split(r"[._-]", variable.lower()))
             }
             claims_reference = re.sub(
                 r"\bno reference answer or ideal response\b", "", subjective_contract
             )
-            if any(token in subjective_contract for token in forbidden_evidence) or re.search(
-                r"\b(?:reference|ideal)\s+(?:answer|response)\b", claims_reference
+            if (
+                reference_family_variables
+                or "input.decision_context" in subjective_contract
+                or "reference_sql" in subjective_contract
+                or "query_requirements" in subjective_contract
+                or re.search(
+                    r"\b(?:reference|ideal)\s+(?:answer|response)\b", claims_reference
+                )
             ):
                 raise ValueError("decision support quality must remain reference-free")
+            if variables != required or mapped_variables != required:
+                raise ValueError(
+                    "decision support quality accepts only the full conversation and final response"
+                )
         return self
 
 

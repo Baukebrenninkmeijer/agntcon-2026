@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from analytics_chatbot.evaluation_ops import DEFAULT_JUDGES
 from analytics_chatbot.orq_resources import (
     EvaluatorValidation,
     LlmEvaluatorResource,
@@ -57,11 +58,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert llm_keys == {"analytics-decision-support-quality"}
     for evaluator in llm_resources:
         assert evaluator.mode == "jury"
-        assert evaluator.judges == [
-            "openai/gpt-5.6-luna",
-            "google-ai/gemini-3.5-flash-lite",
-            "tensorix/qwen/qwen3.8-flash-next",
-        ]
+        assert evaluator.judges == list(DEFAULT_JUDGES)
         assert evaluator.min_successful_judges == 2
         assert evaluator.repetitions == 3
         assert evaluator.validation.status == "pending_human_labels"
@@ -79,6 +76,8 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
         for reference_family in (
             "input.decision_context",
             "input.expected_output",
+            "input.expected_answer",
+            "input.oracle",
             "reference_sql",
             "query_requirements",
         ):
@@ -89,11 +88,9 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert decision_support["output_type"] == "categorical"
     assert decision_support["mode"] == "jury"
     assert decision_support["repetitions"] == 3
-    assert [judge["model"] for judge in decision_support["jury"]["judges"]] == [
-        "openai/gpt-5.6-luna",
-        "google-ai/gemini-3.5-flash-lite",
-        "tensorix/qwen/qwen3.8-flash-next",
-    ]
+    assert [judge["model"] for judge in decision_support["jury"]["judges"]] == list(
+        DEFAULT_JUDGES
+    )
     assert decision_support["jury"]["min_successful_judges"] == 2
     assert "{{input.all_messages}}" in decision_support["prompt"]
     assert "{{output.response}}" in decision_support["prompt"]
@@ -198,6 +195,10 @@ def test_decision_support_prompt_requires_subjective_trace_evidence() -> None:
     [
         "{{input.decision_context}}",
         "{{input.expected_output}}",
+        "{{input.expected_answer}}",
+        "{{input.oracle}}",
+        "{{input.reference_answer}}",
+        "{{input.hidden_answer}}",
         "reference_sql",
         "query_requirements",
         "A reference answer exists.",
@@ -225,4 +226,21 @@ def test_decision_support_prompt_rejects_reference_evidence(
     }
 
     with pytest.raises(ValueError, match="must remain reference-free"):
+        LlmEvaluatorResource.model_validate(invalid)
+
+
+def test_decision_support_prompt_rejects_any_additional_evidence_mapping() -> None:
+    bundle = load_resource_bundle(RESOURCE_ROOT)
+    evaluator = next(
+        evaluator
+        for evaluator in bundle.evaluators
+        if evaluator.key == "analytics-decision-support-quality"
+    )
+    source = evaluator.model_dump()
+    invalid = source | {
+        "input_mapping": evaluator.input_mapping | {"input.user_query": "last user request"},
+        "prompt": f"{evaluator.prompt}\n{{{{input.user_query}}}}",
+    }
+
+    with pytest.raises(ValueError, match="only the full conversation and final response"):
         LlmEvaluatorResource.model_validate(invalid)
