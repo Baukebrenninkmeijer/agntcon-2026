@@ -164,8 +164,10 @@ git commit -m "feat: model Sphere appliance orders"
 Add tests with these assertions:
 
 ```python
-def test_v4_enriches_all_fifty_distinct_v3_situations() -> None:
-    records = build_v4_cases(ROOT / "data" / "analytics.duckdb")
+def test_v4_enriches_all_fifty_distinct_v3_situations(tmp_path: Path) -> None:
+    database = tmp_path / "sphere.duckdb"
+    seed_database(database)
+    records = build_v4_cases(database)
     assert len(records) == 50
     assert len({record["id"] for record in records}) == 50
     assert {record["corpus_version"] for record in records} == {"simulation-v4"}
