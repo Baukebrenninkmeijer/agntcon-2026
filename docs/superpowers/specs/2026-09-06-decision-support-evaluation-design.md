@@ -116,9 +116,11 @@ Replace the four reference-oriented LLM evaluator definitions in the active eval
 four subjective, independently alignable evaluators. Existing run artifacts and evaluator versions
 remain historical evidence; no remote evaluator is mutated or deleted in this work.
 
-All four evaluators use `pass`, `fail`, and deterministically routed `not_applicable`. They receive
-the conversation, explicit decision context, tool evidence, and final response. They receive no
-oracle, reference SQL, expected output, or ideal answer.
+All four evaluators use `pass`, `fail`, and deterministically routed `not_applicable`. Local
+evaluatorq replay receives the structured decision context plus the conversation, tool evidence,
+and final response. Hosted definitions read the same agent-visible context from the full ordered
+conversation because the current hosted payload has no custom decision-context trace variable.
+Neither path receives an oracle, reference SQL, expected output, or ideal answer.
 
 ### 1. Decision-support quality — primary
 
@@ -184,10 +186,11 @@ Before a full run, execute a two-row smoke test. The full fifty-row run is a sep
 operation of 450 judge calls: 50 rows x 3 judges x 3 repetitions.
 
 The updated evaluatorq dependency must return the complete jury record for `assignment="all"` under
-`EvaluationResult.raw_output["jury"]`. The required record includes:
+`EvaluationResult.raw_output["jury"]`. `EvaluationResult.value` remains the aggregate verdict. The
+required jury record includes:
 
 - configured, successful, and failed judge counts;
-- aggregate verdict and raw agreement;
+- raw agreement;
 - one vote per judge with model identity, aggregate verdict, representative explanation, raw
   repetition verdicts, abstention state, error, and failed-repetition count.
 
