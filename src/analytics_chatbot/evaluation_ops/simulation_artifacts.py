@@ -13,6 +13,7 @@ from evaluatorq import DataPoint
 
 from analytics_chatbot.evaluation_ops import (
     ConversationMessage,
+    DecisionContextEvidence,
     OracleEvidence,
     ToolEvent,
     TraceBackedEvaluationRow,
@@ -273,6 +274,13 @@ def _oracle(case: Mapping[str, Any]) -> OracleEvidence | None:
     )
 
 
+def _decision_context(case: Mapping[str, Any]) -> DecisionContextEvidence | None:
+    raw = case.get("decision_context")
+    if raw is None:
+        return None
+    return DecisionContextEvidence.model_validate(raw)
+
+
 def _metadata(result: Mapping[str, Any]) -> dict[str, str | int | float | bool | None]:
     raw = _as_mapping(result.get("metadata")) or {}
     usage = _as_mapping(result.get("token_usage")) or {}
@@ -359,6 +367,7 @@ def normalize_simulation_results(
                 source=None,
                 conversation=conversation,
                 assistant_response=assistant_response,
+                decision_context=_decision_context(case),
                 oracle=_oracle(case),
                 tool_events=events,
                 metadata={

@@ -22,6 +22,12 @@ def _case(**overrides: object) -> dict[str, object]:
             "expected": {"columns": ["region", "value"], "rows": [["EMEA", "42.00"]]},
         },
         "state_expectation": None,
+        "decision_context": {
+            "stakeholder": "CFO preparing the board narrative",
+            "decision": "decide which region needs review",
+            "delivery_setting": "one-paragraph board-prep note",
+            "communication_need": "lead with the decision-relevant comparison",
+        },
     }
     case.update(overrides)
     return case
@@ -60,6 +66,12 @@ def _result(**overrides: object) -> dict[str, object]:
             "datapoint_id": "analyst--regional-revenue",
             "persona": "analyst",
             "scenario": "regional-revenue",
+            "decision_context": {
+                "stakeholder": "wrong runtime metadata",
+                "decision": "wrong runtime metadata",
+                "delivery_setting": "wrong runtime metadata",
+                "communication_need": "wrong runtime metadata",
+            },
         },
     }
     result.update(overrides)
@@ -88,6 +100,16 @@ def test_normalizes_raw_result_for_evaluatorq_replay() -> None:
         "rows": [["EMEA", "42.00"]],
     }
     assert row.to_datapoint().expected_output == row.oracle.expected_answer
+    assert row.decision_context is not None
+    assert row.decision_context.model_dump(mode="json") == _case()["decision_context"]
+
+
+def test_historic_case_without_decision_context_remains_replayable() -> None:
+    batch = normalize_simulation_results([_result()], [_case(decision_context=None)])
+
+    assert batch.rejected == []
+    assert len(batch.rows) == 1
+    assert batch.rows[0].decision_context is None
 
 
 def test_drops_only_exact_duplicates_and_keeps_distinct_attempts() -> None:

@@ -26,6 +26,12 @@ def _row(**overrides: Any) -> TraceBackedEvaluationRow:
             {"role": "assistant", "content": "It was EUR 42."},
         ],
         "assistant_response": "It was EUR 42.",
+        "decision_context": {
+            "stakeholder": "CFO preparing the board narrative",
+            "decision": "decide which region needs review",
+            "delivery_setting": "one-paragraph board-prep note",
+            "communication_need": "lead with the decision-relevant comparison",
+        },
         "oracle": {
             "expected_answer": "EUR 42",
             "reference_sql": "select 42 as net_revenue",
@@ -55,6 +61,13 @@ def test_trace_row_round_trips_to_evaluatorq_datapoint() -> None:
     assert restored == row
     assert point.inputs["messages"] == [message.model_dump() for message in row.conversation]
     assert point.expected_output == "EUR 42"
+    assert restored.decision_context is not None
+    assert restored.decision_context.model_dump(mode="json") == {
+        "stakeholder": "CFO preparing the board narrative",
+        "decision": "decide which region needs review",
+        "delivery_setting": "one-paragraph board-prep note",
+        "communication_need": "lead with the decision-relevant comparison",
+    }
 
 
 def test_self_contained_simulation_row_needs_no_trace_source() -> None:
@@ -65,31 +78,8 @@ def test_self_contained_simulation_row_needs_no_trace_source() -> None:
     assert restored.source is None
 
 
-@pytest.mark.parametrize(
-    ("judge", "overrides"),
-    [
-        (AtomicJudge.ANSWER_CORRECTNESS, {"oracle": None}),
-        (AtomicJudge.QUERY_SEMANTICS, {"tool_events": []}),
-        (
-            AtomicJudge.EVIDENCE_FAITHFULNESS,
-            {"tool_events": [], "retrievals": []},
-        ),
-        (
-            AtomicJudge.MULTI_TURN_CONSISTENCY,
-            {
-                "conversation": [
-                    {"role": "user", "content": "What was revenue?"},
-                    {"role": "assistant", "content": "EUR 42."},
-                ],
-                "assistant_response": "EUR 42.",
-            },
-        ),
-    ],
-)
 @pytest.mark.asyncio
-async def test_inapplicable_rows_skip_the_judge(
-    judge: AtomicJudge, overrides: dict[str, Any]
-) -> None:
+async def test_historic_rows_without_decision_context_skip_the_judge() -> None:
     calls = 0
 
     def jury_factory(**_kwargs: Any) -> dict[str, Any]:
@@ -98,15 +88,18 @@ async def test_inapplicable_rows_skip_the_judge(
             calls += 1
             return EvaluationResult(value="pass", explanation="judged", pass_=True)
 
-        return {"name": judge.value, "scorer": scorer}
+        return {"name": AtomicJudge.DECISION_SUPPORT_QUALITY.value, "scorer": scorer}
 
-    evaluator = next(
-        item
-        for item in build_atomic_evaluators(jury_factory=jury_factory)
-        if item["name"] == judge.value
+    evaluator = build_atomic_evaluator(
+        AtomicJudge.DECISION_SUPPORT_QUALITY,
+        jury_factory=jury_factory,
     )
     result = await evaluator["scorer"](
-        {"data": _row(**overrides).to_datapoint(), "output": "It was EUR 42.", "row": 0}
+        {
+            "data": _row(decision_context=None).to_datapoint(),
+            "output": "It was EUR 42.",
+            "row": 0,
+        }
     )
 
     assert calls == 0
@@ -116,7 +109,7 @@ async def test_inapplicable_rows_skip_the_judge(
 
 
 @pytest.mark.asyncio
-async def test_each_judge_receives_only_its_evidence_projection() -> None:
+async def test_decision_support_judge_receives_exact_reference_free_evidence() -> None:
     captured: dict[str, Any] = {}
 
     def jury_factory(*, name: str, **kwargs: Any) -> dict[str, Any]:
@@ -128,62 +121,36 @@ async def test_each_judge_receives_only_its_evidence_projection() -> None:
 
         return {"name": name, "scorer": scorer}
 
-    evaluators = build_atomic_evaluators(jury_factory=jury_factory)
-    point = _row().to_datapoint()
-    for evaluator in evaluators:
-        await evaluator["scorer"]({"data": point, "output": "It was EUR 42.", "row": 7})
-
-    correctness = captured[AtomicJudge.ANSWER_CORRECTNESS.value]["params"]
-    faithfulness = captured[AtomicJudge.EVIDENCE_FAITHFULNESS.value]["params"]
-    semantics = captured[AtomicJudge.QUERY_SEMANTICS.value]["params"]
-
-    assert correctness["data"].expected_output == "EUR 42"
-    assert "query_requirements" not in correctness["data"].inputs["evidence"]
-    assert faithfulness["data"].expected_output is None
-    assert "expected_answer" not in faithfulness["data"].inputs["evidence"]
-    assert "reference_sql" not in faithfulness["data"].inputs["evidence"]
-    assert semantics["data"].inputs["evidence"]["query_requirements"] == [
-        "exclude cancelled orders",
-        "subtract refunds",
-    ]
-    assert correctness["row"] == faithfulness["row"] == 7
-
-
-@pytest.mark.asyncio
-async def test_answer_correctness_excludes_recorded_tool_contents() -> None:
-    captured: dict[str, Any] = {}
-
-    def jury_factory(**kwargs: Any) -> dict[str, Any]:
-        async def scorer(params: dict[str, Any]) -> EvaluationResult:
-            captured.update(params)
-            return EvaluationResult(value="pass", pass_=True)
-
-        return {"name": kwargs["name"], "scorer": scorer}
-
     evaluator = build_atomic_evaluator(
-        AtomicJudge.ANSWER_CORRECTNESS,
+        AtomicJudge.DECISION_SUPPORT_QUALITY,
         jury_factory=jury_factory,
-    )
-    row = _row(
-        conversation=[
-            {"role": "user", "content": "What was EMEA net revenue in Q1?"},
-            {"role": "assistant", "content": "I will calculate that."},
-            {"role": "tool", "content": '{"secret_tool_result": 42}'},
-            {"role": "assistant", "content": "It was EUR 42."},
-        ]
     )
     replayed_output = "  It was EUR 42.\nRecorded bytes stay intact.  "
 
-    await evaluator["scorer"]({"data": row.to_datapoint(), "output": replayed_output})
+    await evaluator["scorer"](
+        {"data": _row().to_datapoint(), "output": replayed_output, "row": 7}
+    )
 
-    evidence = captured["data"].inputs["evidence"]
-    assert [message["role"] for message in evidence["conversation"]] == [
-        "user",
-        "assistant",
-        "assistant",
-    ]
-    assert "secret_tool_result" not in json.dumps(evidence)
-    assert captured["output"].encode() == replayed_output.encode()
+    params = captured[AtomicJudge.DECISION_SUPPORT_QUALITY.value]["params"]
+    evidence = params["data"].inputs["evidence"]
+    row = _row()
+    assert evidence == {
+        "decision_context": row.decision_context.model_dump(mode="json"),
+        "conversation": [message.model_dump(mode="json") for message in row.conversation],
+        "tool_events": [event.model_dump(mode="json") for event in row.tool_events],
+        "final_response": row.assistant_response,
+    }
+    assert params["data"].expected_output is None
+    assert params["row"] == 7
+    assert params["output"].encode() == replayed_output.encode()
+    serialized = json.dumps(params["data"].model_dump(exclude_none=True))
+    for forbidden in (
+        "expected_output",
+        "expected_answer",
+        "reference_sql",
+        "query_requirements",
+    ):
+        assert forbidden not in serialized
 
 
 def test_jury_configuration_preserves_template_variables_and_verdict_space() -> None:
@@ -202,17 +169,53 @@ def test_jury_configuration_preserves_template_variables_and_verdict_space() -> 
         jury_factory=jury_factory,
     )
 
-    assert len(captured) == 4
+    assert [judge.value for judge in AtomicJudge] == ["decision_support_quality"]
+    assert len(captured) == 1
     for configuration in captured:
         prompt = configuration["prompt"]
         assert "{{input.all_messages}}" in prompt
         assert "{{output.response}}" in prompt
-        assert "{{input.expected_output}}" in prompt
+        assert "{{input.expected_output}}" not in prompt
+        assert (
+            "Does the response turn the analysis into a clear, appropriately scoped input to "
+            "the stakeholder's stated decision, using sound judgment about emphasis, "
+            "explanation, caveats, and next steps?"
+        ) in prompt
+        assert (
+            "You have no reference answer or ideal response. Do not recompute the analysis or "
+            "grade SQL."
+        ) in prompt
+        assert (
+            "Return not_applicable only when the required decision context is absent or the "
+            "criterion itself\ndoes not apply to the request."
+        ) in prompt
+        assert configuration["judges"] == [
+            "openai/model-a",
+            "anthropic/model-b",
+            "google/model-c",
+        ]
+        assert configuration["repetitions"] == 3
         assert configuration["labels"] == ["pass", "fail", "not_applicable"]
         assert configuration["passing_labels"] == ["pass"]
         assert configuration["assignment"] == "all"
         assert configuration["aggregator"] == "majority"
         assert configuration["min_successful_judges"] == 2
+
+
+def test_atomic_evaluator_accepts_repetition_override() -> None:
+    captured: dict[str, Any] = {}
+
+    def jury_factory(**kwargs: Any) -> dict[str, Any]:
+        captured.update(kwargs)
+        return {"name": kwargs["name"], "scorer": _unused_scorer}
+
+    build_atomic_evaluator(
+        AtomicJudge.DECISION_SUPPORT_QUALITY,
+        repetitions=5,
+        jury_factory=jury_factory,
+    )
+
+    assert captured["repetitions"] == 5
 
 
 @pytest.mark.asyncio
@@ -274,7 +277,7 @@ async def test_run_trace_evaluation_replays_recorded_output_without_inference(
 
 
 @pytest.mark.asyncio
-async def test_run_trace_evaluation_defaults_to_one_answer_correctness_evaluator() -> None:
+async def test_run_trace_evaluation_defaults_to_decision_support_quality() -> None:
     observed: dict[str, Any] = {}
 
     async def native_runner(name: str, **kwargs: Any) -> list[Any]:
@@ -288,7 +291,7 @@ async def test_run_trace_evaluation_defaults_to_one_answer_correctness_evaluator
     )
 
     assert [evaluator["name"] for evaluator in observed["evaluators"]] == [
-        AtomicJudge.ANSWER_CORRECTNESS.value
+        AtomicJudge.DECISION_SUPPORT_QUALITY.value
     ]
 
 

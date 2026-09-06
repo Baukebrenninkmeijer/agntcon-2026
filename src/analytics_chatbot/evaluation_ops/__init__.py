@@ -35,10 +35,7 @@ VERDICT_LABELS = ["pass", "fail", "not_applicable"]
 class AtomicJudge(StrEnum):
     """The independently alignable atomic rubrics."""
 
-    ANSWER_CORRECTNESS = "answer_correctness"
-    QUERY_SEMANTICS = "query_semantics"
-    EVIDENCE_FAITHFULNESS = "evidence_faithfulness"
-    MULTI_TURN_CONSISTENCY = "multi_turn_consistency"
+    DECISION_SUPPORT_QUALITY = "decision_support_quality"
 
 
 class ConversationMessage(BaseModel):
@@ -61,6 +58,15 @@ class OracleEvidence(BaseModel):
     expected_answer: str | int | float | bool | dict[str, Any] | None = None
     reference_sql: str | None = None
     query_requirements: list[str] = Field(default_factory=list)
+
+
+class DecisionContextEvidence(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    stakeholder: str = Field(min_length=1)
+    decision: str = Field(min_length=1)
+    delivery_setting: str = Field(min_length=1)
+    communication_need: str = Field(min_length=1)
 
 
 class ToolEvent(BaseModel):
@@ -88,6 +94,7 @@ class TraceBackedEvaluationRow(BaseModel):
     source: TraceSource | None = None
     conversation: list[ConversationMessage] = Field(min_length=2)
     assistant_response: str = Field(min_length=1)
+    decision_context: DecisionContextEvidence | None = None
     oracle: OracleEvidence | None = None
     tool_events: list[ToolEvent] = Field(default_factory=list)
     retrievals: list[Any] = Field(default_factory=list)
@@ -136,115 +143,43 @@ def _conversation(row: TraceBackedEvaluationRow) -> list[dict[str, str]]:
     return [message.model_dump(mode="json") for message in row.conversation]
 
 
-def _answer_correctness_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
+def _subjective_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
+    assert row.decision_context is not None
     return {
-        "conversation": [
-            message.model_dump(mode="json")
-            for message in row.conversation
-            if message.role != "tool"
-        ]
-    }
-
-
-def _query_semantics_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
-    assert row.oracle is not None
-    return {
+        "decision_context": row.decision_context.model_dump(mode="json"),
         "conversation": _conversation(row),
-        "query_calls": [
-            event.model_dump(mode="json")
-            for event in row.tool_events
-            if event.name == "query_sql"
-        ],
-        "reference_sql": row.oracle.reference_sql,
-        "query_requirements": row.oracle.query_requirements,
-    }
-
-
-def _faithfulness_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
-    return {
-        "conversation": _conversation(row),
-        "tool_results": [
-            {
-                "name": event.name,
-                "result": event.result,
-                "error": event.error,
-            }
-            for event in row.tool_events
-        ],
-        "retrievals": row.retrievals,
-    }
-
-
-def _multi_turn_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
-    return {
-        "conversation": _conversation(row),
-        "state_before": row.state_before,
-        "state_after": row.state_after,
         "tool_events": [event.model_dump(mode="json") for event in row.tool_events],
+        "final_response": row.assistant_response,
     }
-
-
-def _has_query_reference(row: TraceBackedEvaluationRow) -> bool:
-    return row.oracle is not None and bool(
-        row.oracle.reference_sql or row.oracle.query_requirements
-    )
-
-
-def _has_query_call(row: TraceBackedEvaluationRow) -> bool:
-    return any(event.name == "query_sql" for event in row.tool_events)
-
-
-def _has_grounding_evidence(row: TraceBackedEvaluationRow) -> bool:
-    return bool(row.retrievals) or any(event.result is not None for event in row.tool_events)
-
-
-def _is_multi_turn(row: TraceBackedEvaluationRow) -> bool:
-    return sum(message.role == "user" for message in row.conversation) >= 2
 
 
 _SPECS = (
     _JudgeSpec(
-        judge=AtomicJudge.ANSWER_CORRECTNESS,
+        judge=AtomicJudge.DECISION_SUPPORT_QUALITY,
         criterion=(
-            "Decide whether the final answer is factually correct relative to the expected "
-            "answer. Ignore whether the answer is supported by the recorded evidence; that is "
-            "graded separately."
+            "Does the response turn the analysis into a clear, appropriately scoped input to "
+            "the stakeholder's stated decision, using sound judgment about emphasis, "
+            "explanation, caveats, and next steps?\n\n"
+            "A response passes when it:\n\n"
+            "- foregrounds the result or comparison that matters to the stated decision;\n"
+            "- distinguishes observed evidence from interpretation;\n"
+            "- includes assumptions or caveats that could materially change the decision;\n"
+            "- gives enough explanation for the stated stakeholder and setting without "
+            "obscuring the answer;\n"
+            "- recommends an action only when explicitly asked, and keeps that recommendation "
+            "within the evidence.\n\n"
+            "A response fails when it materially impairs the decision by dumping results without "
+            "a takeaway, burying the relevant result in SQL or secondary detail, adding generic "
+            "business advice, claiming a cause or implication the evidence does not support, "
+            "omitting decision-changing uncertainty, or making an unsolicited prescriptive "
+            "recommendation.\n\n"
+            "The evaluator does not independently recompute the answer or grade SQL semantics. "
+            "A factual issue matters only when it is visible in the supplied conversation and "
+            "makes the decision support misleading."
         ),
-        applies=lambda row: row.oracle is not None and row.oracle.expected_answer is not None,
-        project=_answer_correctness_evidence,
-        not_applicable_reason="No expected answer/oracle is available.",
-    ),
-    _JudgeSpec(
-        judge=AtomicJudge.QUERY_SEMANTICS,
-        criterion=(
-            "Decide whether the executed analytics query implements the user's requested "
-            "metric, filters, joins, aggregation, time boundary, and gross/net/refund/cancellation "
-            "semantics. Grade the query, not the prose answer."
-        ),
-        applies=lambda row: _has_query_call(row) and _has_query_reference(row),
-        project=_query_semantics_evidence,
-        not_applicable_reason="No executed query or semantic query reference is available.",
-    ),
-    _JudgeSpec(
-        judge=AtomicJudge.EVIDENCE_FAITHFULNESS,
-        criterion=(
-            "Decide whether every factual claim in the final answer is entailed by the recorded "
-            "tool results or retrievals. Do not use the expected answer to decide this rubric: a "
-            "faithful answer can still be incorrect when its evidence is wrong."
-        ),
-        applies=_has_grounding_evidence,
-        project=_faithfulness_evidence,
-        not_applicable_reason="No tool result or retrieval evidence is available.",
-    ),
-    _JudgeSpec(
-        judge=AtomicJudge.MULTI_TURN_CONSISTENCY,
-        criterion=(
-            "Decide whether the assistant consistently retains and applies constraints, resolved "
-            "references, corrections, and authorized state across the multi-turn conversation."
-        ),
-        applies=_is_multi_turn,
-        project=_multi_turn_evidence,
-        not_applicable_reason="The conversation contains fewer than two user turns.",
+        applies=lambda row: row.decision_context is not None,
+        project=_subjective_evidence,
+        not_applicable_reason="The required decision context is absent.",
     ),
 )
 
@@ -258,20 +193,16 @@ _PROMPT = """# Criterion
 # Assistant response
 {{{{output.response}}}}
 
-# Reference answer (empty when this rubric intentionally does not use one)
-{{{{input.expected_output}}}}
-
-Return `pass` or `fail`. `not_applicable` is reserved for the deterministic router.
+You have no reference answer or ideal response. Do not recompute the analysis or grade SQL.
+Judge only the named criterion from the stated stakeholder, decision, delivery setting,
+conversation, visible execution evidence, and final response. Return pass or fail.
+Return not_applicable only when the required decision context is absent or the criterion itself
+does not apply to the request.
 """
 
 
 def _project_datapoint(row: TraceBackedEvaluationRow, spec: _JudgeSpec) -> DataPoint:
     evidence = spec.project(row)
-    expected = (
-        row.oracle.expected_answer
-        if spec.judge is AtomicJudge.ANSWER_CORRECTNESS and row.oracle is not None
-        else None
-    )
     return DataPoint(
         inputs={
             "evidence": evidence,
@@ -282,7 +213,6 @@ def _project_datapoint(row: TraceBackedEvaluationRow, spec: _JudgeSpec) -> DataP
                 }
             ],
         },
-        expected_output=expected,
     )
 
 
@@ -290,6 +220,7 @@ def build_atomic_evaluator(
     judge: AtomicJudge,
     *,
     judges: Sequence[str] = DEFAULT_JUDGES,
+    repetitions: int = 3,
     jury_factory: Callable[..., Evaluator] = llm_jury,
 ) -> Evaluator:
     """Build one routed evaluatorq jury for an independently selectable rubric."""
@@ -300,7 +231,7 @@ def build_atomic_evaluator(
         name=spec.judge.value,
         prompt=_PROMPT.format(criterion=spec.criterion),
         judges=list(judges),
-        repetitions=1,
+        repetitions=repetitions,
         assignment="all",
         min_successful_judges=2,
         verdict_kind="categorical",
@@ -333,12 +264,18 @@ def build_atomic_evaluator(
 def build_atomic_evaluators(
     *,
     judges: Sequence[str] = DEFAULT_JUDGES,
+    repetitions: int = 3,
     jury_factory: Callable[..., Evaluator] = llm_jury,
 ) -> list[Evaluator]:
-    """Build four routed evaluatorq juries with a stable categorical verdict space."""
+    """Build the routed decision-support jury with a stable verdict space."""
 
     return [
-        build_atomic_evaluator(spec.judge, judges=judges, jury_factory=jury_factory)
+        build_atomic_evaluator(
+            spec.judge,
+            judges=judges,
+            repetitions=repetitions,
+            jury_factory=jury_factory,
+        )
         for spec in _SPECS
     ]
 
@@ -372,7 +309,7 @@ async def run_trace_evaluation(
     if evaluators is not None and not evaluators:
         raise ValueError("at least one evaluator is required when evaluators are provided")
     selected_evaluators = evaluators or [
-        build_atomic_evaluator(AtomicJudge.ANSWER_CORRECTNESS)
+        build_atomic_evaluator(AtomicJudge.DECISION_SUPPORT_QUALITY)
     ]
     runner_arguments: dict[str, Any] = {
         "data": [row.to_datapoint() for row in rows],
@@ -394,6 +331,7 @@ async def run_trace_evaluation(
 __all__ = [
     "AtomicJudge",
     "DEFAULT_JUDGES",
+    "DecisionContextEvidence",
     "SCHEMA_VERSION",
     "TraceBackedEvaluationRow",
     "TraceImportError",

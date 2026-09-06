@@ -4,7 +4,7 @@
 
 **Goal:** Maintain one accurate handoff view from the verified analytics chatbot through trace import, hosted-resource synchronization, evaluatorq simulation, judge alignment, and CI.
 
-**Architecture:** The chatbot executes guarded analytics tools locally while Orq provides hosted agent configuration and trace storage. evaluatorq is the only evaluation runner: imported traces become evaluatorq `DataPoint`s, recorded outputs are replayed without target inference, and four atomic judges receive independently scoped evidence.
+**Architecture:** The chatbot executes guarded analytics tools locally while Orq provides hosted agent configuration and trace storage. evaluatorq is the only evaluation runner: imported traces become evaluatorq `DataPoint`s, recorded outputs are replayed without target inference, and the active `decision_support_quality` jury receives only agent-visible decision context, conversation, tool evidence, and final response.
 
 **Tech stack:** Python 3.11+, DuckDB, Polars, Pydantic, Orq SDK and Responses API, evaluatorq 1.33.0, pytest, Ruff, YAML, and Make.
 
@@ -13,10 +13,10 @@
 - Target the existing Orq project named `pydata2026`; do not create a replacement project.
 - The chatbot's DuckDB queries and insight persistence execute locally. Hosted function resources are declarations, not remote tool execution.
 - Repository YAML is the source of truth for hosted resources. Transformation and synchronization must be idempotent and safe by default.
-- The same YAML/Orq SDK reconciliation path owns the hosted agent, tools, two deterministic evaluators, and four LLM-as-a-judge evaluators. Keep one YAML file per evaluator and do not manage evaluator resources through an ad hoc side path.
+- The same YAML/Orq SDK reconciliation path owns the hosted agent, tools, historical deterministic evaluators, and the active subjective evaluator. Keep one YAML file per evaluator and do not manage evaluator resources through an ad hoc side path.
 - evaluatorq owns evaluation execution, concurrency, tracing, result presentation, and Experiment upload. Do not add a bespoke evaluator execution loop.
 - Trace replay must not rerun the source agent or infer a replacement answer.
-- Keep the four judges independently routed and aligned: answer correctness, query semantics, evidence faithfulness, and multi-turn consistency.
+- Keep `decision_support_quality` as the only active subjective judge. Do not expose an oracle, reference SQL, expected output, ideal answer, or alternative rubric to it.
 - Never commit credentials, temporary trace exports, private trace content, or runtime-resolved opaque identifiers, except for user-requested immutable Experiment deep-links needed to reach runs that the project sidebar cannot expose.
 - A temporary trace-access key may exist only in a verified Git-ignored local environment file and must be rotated after the trace-validation work.
 - Completed, verified task branches are integrated into local `main`. Do not push to a remote unless separately requested.
@@ -44,8 +44,8 @@
 | Area | Status | What is true now | Next gate |
 |---|---|---|---|
 | Analytics chatbot core | `VERIFIED` | Deterministic data, guarded SQL, insight state, agent loop, CLI, local run audit, and Orq tracing are implemented on local `main` | Preserve behavior while introducing hosted configuration |
-| Decision-support evaluation implementation | `ACTIVE` | Tasks 1 and 2 are implemented in the isolated `feature/decision-support-evaluation` worktree. The source generator now models Sphere.com's appliance business, and the tracked `simulation-v4` review pool contains 50 distinct context-enriched situations with 47 executable Sphere oracles, a preserved 30/20 v3 split, and structured stakeholder/decision/delivery/communication fields. Task 2's quality-review corrections make both original v4 tests independent of ignored data and align all decision contexts with their analytical direction. The full non-live suite passes 115/115 and Ruff is clean. Tracked v1/v2/v3 corpora and run artifacts were not regenerated | Complete independent review of the Task 2 follow-up, then add the local `decision_support_quality` contract without running v4 observations or a live jury |
-| evaluatorq-native judge framework | `VERIFIED` | Stable trace-backed row contract, rubric routing, evidence projection, evaluatorq experiment entry point, and focused tests are on local `main` | Importer must emit the same row contract |
+| Decision-support evaluation implementation | `ACTIVE` | Tasks 1-3 are implemented in the isolated `feature/decision-support-evaluation` worktree. The tracked `simulation-v4` review pool contains 50 context-enriched Sphere situations with the preserved v3 30/20 split. The replay row now preserves case-authored decision context, and the active local evaluator is one reference-free `decision_support_quality` jury with three judges, `assignment="all"`, majority aggregation, minimum two successful judges, and three repetitions by default. Historic rows without context route to `not_applicable` without a jury call. Task 3 passed 16 focused tests and the full non-live suite (113 passed, one deselected); Ruff and diff checks are clean. No live call, hosted apply, dependency change, or historical corpus/run mutation occurred | Implement Task 4's matching repository YAML contract without applying it, then stop at the Task 5 evaluatorq dependency gate |
+| evaluatorq-native judge framework | `ACTIVE` | The stable trace-backed foundation is on local `main`; Task 3's isolated replacement adds decision-context replay, one reference-free subjective jury, and historic-row routing with focused and full offline evidence | Review and integrate Task 3, then keep the importer on the same extended row contract |
 | Orq trace importer | `ACTIVE` | Multi-format trace and exact run-audit normalization are integrated on local `main`; the importer still emits a generic evaluatorq `DataPoint` rather than the accepted `trace-eval-v1` row | Adapt the importer to the stable row contract, add the Orq scorer factory, and validate against genuine multi-step agent traces |
 | Hosted resources and simulation | `VERIFIED` | The hosted agent is live in `<workspace>/pydata2026`. The baseline, harder edge-v2, and single-persona v3 runs each produced 50 unique raw outputs. v3 (one `business-analyst` persona, 50 distinct situations) was run twice: the first run had gateway PII masking enabled and is archived as `*.pii-masked.*`; the accepted rerun reached two or more turns in 28/50 rows, achieved 49 goals, and retained one behavioral failure | Preserve the frozen raw artifacts; do not rerun again. v3 is the alignment corpus from here on |
 | Offline CI | `VERIFIED` | The credential-free GitHub Actions workflow is integrated and published on `main`; its first remote run passed lint, offline tests, hosted-resource YAML validation, and package build | Re-run the same gate after dependency or hosted-resource changes |
@@ -61,7 +61,7 @@ The latest integrated-tree verification is `108 passed, 1 deselected`, Ruff clea
 - Make hosted agent, tool, and evaluator configuration reproducible from reviewed YAML and synchronize it to the existing Orq project without duplicates.
 - Generate and freeze exactly 50 evaluatorq simulation cases with stable IDs, executable DuckDB oracles, required failure-mode coverage, and a fixed 30-dev/20-test split.
 - Import genuine Orq agent traces into a durable evidence contract without guessing missing content or rerunning the agent.
-- Align four atomic judges independently against human labels and retain the raw evidence each rubric needs.
+- Align the single subjective `decision_support_quality` judge against human labels using reference-free, agent-visible evidence.
 - Keep offline CI independent from live credentials and make live canaries/baselines explicit, budgeted operations.
 - Make every handoff answerable from Git: current status, evidence, dependency, owner/task name, risk, and next action.
 
@@ -110,7 +110,7 @@ The existing chatbot run JSONL audit under the configured runs directory remains
 | Start alignment with one development-only rubric | Ten rows are the skill's minimum signal floor, not a credible held-out split, and answer correctness has executable oracles | Recover 10 existing oracle-bearing dev observations; run only answer correctness; preserve the frozen 30/20 split for the later full evaluation |
 | Make answer correctness reference-free | With no human labels yet, an oracle-in-prompt judge cannot be graded against that oracle (circular); withholding it turns `expected_output` into usable ground truth for the alignment skill's correctness block | The judge reads `user_query`, the full ordered conversation including tool calls/results (`all_messages`), and the final response; `input.expected_output` is forbidden by the resource validator |
 | Run the correctness judge as a single model, not a jury | Hosted jury repetitions are unobservable and the alignment skill re-runs one model; a single judge keeps hosted and re-run behaviour comparable | `mode: single`, `model: wafer/DeepSeek-V4-Flash-0731-Fast`; the jury declaration stays in YAML for a one-word switch back |
-| Route four atomic judges independently | Correctness, query validity, evidence support, and conversational consistency fail differently | Each rubric has separate applicability, evidence projection, prompt, labels, and alignment metrics |
+| Route one active subjective judge over reference-free evidence | The talk's human-judgment boundary is whether analysis supports the stated decision, not whether a judge can reconstruct an oracle | `decision_support_quality` is the only active enum/spec; it receives decision context, conversation, tool events, and final response, while historic rows without context route to `not_applicable` |
 | Keep human labels distinct | Machine judgments are not annotations and should not contaminate gold data | Humans label canonical observations; evaluator outputs live in evaluatorq experiments |
 | Separate offline CI from live operations | PR validation must be deterministic, safe for forks, and credential-free | Live canaries and baselines are protected explicit jobs, not default CI |
 | Integrate locally before any remote push | The repository currently uses local `main` as the accepted integration point | Merge only verified work; remote publication needs a separate request |
@@ -141,12 +141,12 @@ When active branches are integrated, prefer focused modules over expanding `eval
 | ID | Owner / task name | Status | Deliverable | Depends on | Can run with |
 |---|---|---|---|---|---|
 | WS0 | `analytics-chatbot-core` | `VERIFIED` | Deterministic local chatbot, safety boundaries, CLI, traces, run audit | None | All later work |
-| WS1 | `evaluator-native-trace-judging` | `VERIFIED` | Versioned trace evidence row and four routed evaluatorq judges | WS0 | WS2, WS3, WS4 |
+| WS1 | `evaluator-native-trace-judging` | `ACTIVE` | Versioned trace evidence row plus the isolated reference-free `decision_support_quality` jury implementation; integration review remains | WS0 | WS2, WS3, WS4 |
 | WS2 | `trace-import-adapter` | `ACTIVE` | Thin Orq trace-to-evaluatorq adapter plus Orq evaluator scorer factory and no-inference replay validation | WS1 contract; trace access | WS3, WS4 |
-| WS3a | `hosted-agent-yaml-sync` | `ACTIVE` | Agent/tool YAML plus one YAML file for each of two deterministic and four LLM-as-a-judge evaluators, shared YAML-to-Orq SDK transform, idempotent Make target, and remote reconciliation evidence | WS0; WS1 evaluator contract; compatible SDK; project access | WS2, WS4 |
+| WS3a | `hosted-agent-yaml-sync` | `ACTIVE` | Agent/tool YAML plus the planned single subjective evaluator definition, shared YAML-to-Orq SDK transform, idempotent Make target, and remote reconciliation evidence; repository YAML replacement is Task 4 and no apply is authorized | WS0; WS1 evaluator contract; compatible SDK; project access | WS2, WS4 |
 | WS3b | `row-aware-simulation-corpus` | `ACTIVE` | Local-tool bridge, historical v1/v2/v3 definitions and observations, and the 50-row context-enriched Sphere v4 review-pool definitions | WS3a hosted/local protocol; WS0 data/oracles | WS2 after row contract agreement |
 | WS4 | `offline-ci` | `VERIFIED` | Credential-free Ruff, pytest, package-build, and optional resource-validation workflow | Integrated dependency set | WS2, WS3 |
-| WS5 | `human-labels-and-alignment` | `ACTIVE` | Dev-split answer-correctness development pilot (minimum 10 of 22 eligible rows), paired evaluator-version report, and repeated grey-zone workflow | Canonical observed rows; hosted `analytics-answer-correctness@1.0.7` (applied, `shadow`, reference-free single judge); human labels; cost approval | Offline adapter/error work can run with WS2/WS3b |
+| WS5 | `human-labels-and-alignment` | `ACTIVE` | Historical answer-correctness results plus the planned v4 `decision_support_quality` annotation-prioritization and alignment workflow | Canonical v4 observations; evaluatorq release with detailed repeated jury output; human labels; cost approval | Offline adapter/error work can run with WS2/WS3b |
 | WS6 | `stability-and-operations` | `NOT STARTED` | Budgeted 50×3 baseline, protected canary, post-hoc sampling, reviewed prompt loop | WS5 qualification | Offline maintenance |
 
 ## Status Checklists
@@ -160,7 +160,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 - [x] Opt-in live gateway smoke coverage exists; the default suite remains network-free.
 - [x] evaluatorq 1.33.0 is pinned.
 - [x] The evaluator-native trace-backed row contract is integrated on local `main`.
-- [x] The four atomic judges have deterministic applicability and isolated evidence projections.
+- [x] In the isolated decision-support branch, the active builder exposes only `decision_support_quality`; its exact evidence projection is reference-free, and missing decision context routes to `not_applicable` without a jury call.
 - [x] The bespoke post-hoc evaluation service/loop/ledger architecture is marked superseded in the current design.
 - [x] Offline CI is integrated on local `main` with pinned actions, no credentials, explicit live-marker exclusion, lint, tests, package build, and an optional hosted-resource YAML validation hook.
 - [x] Root agent guidance requires maintaining this living plan in the same task and commit whenever delivery reality changes; `AGENTS.md` resolves to the canonical `CLAUDE.md`.
@@ -174,7 +174,7 @@ When active branches are integrated, prefer focused modules over expanding `eval
 
 ### Active
 
-- [ ] Decision-support Task 2 follow-up review: confirm both original v4 tests seed temporary Sphere databases, the clean-tree v4 slice passes without `data/analytics.duckdb`, the four review-identified context directions and `a one-sentence board brief` are corrected, and only v4 was regenerated. Historical tracked corpora and run artifacts remain unchanged.
+- [x] Decision-support Task 3: preserve case-authored decision context in replay rows and replace the active four-judge contract with one reference-free `decision_support_quality` jury. TDD RED failed 11 tests against the old contract; GREEN passed 16 focused tests, then 113 non-live tests with one deselection. Ruff and diff checks passed. No live call, hosted apply, package upgrade, or historical corpus/run mutation occurred.
 - [ ] WS2: Adapt the integrated generic evaluatorq replay `DataPoint` output to the accepted `TraceBackedEvaluationRow` / `trace-eval-v1` contract without losing normalized evidence.
 - [ ] WS2: Validate on genuine multi-step agent traces from unscoped or populated research projects; response-only traces are insufficient.
 - [x] WS2: Recorded final assistant output replays byte-for-byte with `inference=False`, no jobs, and no target-agent call.
@@ -220,9 +220,9 @@ Dependency gates elsewhere are not blockers until an acceptance check fails. If 
 ### Not started
 
 - [ ] Produce one canonical observed conversation for every frozen case.
-- [ ] Human-label the four rubrics with explanations; use independent test reviewers and adjudication as specified.
-- [ ] Align each judge on dev only and evaluate the frozen test split once after prompt selection.
-- [ ] Promote alignment status only if every rubric meets all locked quality thresholds.
+- [ ] Human-label `decision_support_quality` with explanations; use independent test reviewers and adjudication as specified.
+- [ ] Align the subjective judge on dev only and evaluate the frozen test split once after prompt selection.
+- [ ] Promote alignment status only if the rubric meets all locked quality thresholds.
 - [ ] Run the protected five-case live canary.
 - [ ] Run and analyze the budgeted 50-case × 3-run stability baseline.
 - [ ] Add post-hoc operational sampling and a reviewed, manual prompt-improvement loop.
@@ -249,7 +249,7 @@ Acceptance criteria:
 
 - `TraceBackedEvaluationRow` round-trips through evaluatorq `DataPoint` without losing conversation, tool, retrieval, state, source, or oracle evidence.
 - The recorded assistant response equals the final assistant message.
-- Each atomic judge sees only its permitted evidence; inapplicable rows return `not_applicable` without an LLM call.
+- The active subjective judge sees only decision context, conversation, tool events, and final response; rows without decision context return `not_applicable` without an LLM call.
 - A single evaluatorq experiment invocation owns scorer execution and reporting.
 
 Required evidence:
@@ -281,8 +281,8 @@ Required evidence:
 
 Acceptance criteria:
 
-- YAML defines the analytics agent, both local function declarations, two deterministic evaluators, and four LLM-as-a-judge evaluators with no credential or hard-coded remote identifier; every evaluator has its own file.
-- The four judge resources preserve the WS1 rubric split—answer correctness, query semantics, evidence faithfulness, and multi-turn consistency—without broadening any judge's evidence projection.
+- YAML defines the analytics agent, both local function declarations, historical deterministic evaluator files, and one active `decision_support_quality` jury with no credential or hard-coded remote identifier.
+- The subjective resource matches the local reference-free criterion, labels, three-judge panel, assignment, aggregation, minimum-success, and repetitions contract without exposing reference-family variables.
 - The transformation layer validates YAML shape, block-scalar prompts, cross-resource references, model capability, evaluator kind/configuration, and local-only fields before constructing current Orq SDK entities.
 - Deterministic evaluator source is linted and fixture-tested under the restricted execution contract; LLM judge prompts, label space, jury/model configuration, and evidence bindings are validated offline.
 - Selection uses stable human-readable keys; runtime-resolved IDs are not committed.
@@ -294,7 +294,7 @@ Acceptance criteria:
 Required evidence:
 
 - Offline tests for YAML parsing, one-file-per-evaluator discovery, deterministic-source restrictions, judge configuration/evidence bindings, transformation, pagination, duplicate detection, create/update/no-op planning, project mismatch, sanitized errors, and mocked SDK calls.
-- A reviewed dry-run summary and a post-apply human-readable inventory by stable resource name and resource kind only, including all six evaluators.
+- A reviewed dry-run summary and, only after separately authorized apply, a human-readable inventory by stable resource name and resource kind for the active subjective evaluator and retained historical deterministic definitions.
 - A second dry-run showing no semantic changes.
 - A scrubbed hosted/local contract fixture proving call IDs are correlated without exposing live IDs.
 - Passing full non-live suite and Ruff on the rebased integration candidate.
@@ -461,8 +461,8 @@ Do not run the apply command from this documentation task. Live simulation/align
 | 2026-09-03 | Move model instructions and function declarations into a hosted Orq agent while retaining local execution | Active; hosted/local protocol must be proven before migration |
 | 2026-09-03 | Use evaluatorq natively for post-hoc replay and experiments | Accepted; supersedes the bespoke evaluator service, custom loop, CLI executor, and evaluation ledger |
 | 2026-09-03 | Add only a thin Orq trace-to-evaluatorq adapter | Active; must support real multi-step agent traces and refuse inference/guessing |
-| 2026-09-03 | Judge four atomic concerns independently with rubric-specific raw evidence | Accepted and integrated at the contract/framework level; alignment remains outstanding |
-| 2026-09-03 | Manage hosted agent, tools, and evaluator resources via YAML transformed through the Orq SDK with repeatable Make targets | Active; each of two deterministic and four LLM judge evaluators gets one YAML file, and runtime IDs remain untracked |
+| 2026-09-06 | Replace the active four-judge runtime contract with one subjective `decision_support_quality` jury | Accepted in the isolated Task 3 implementation; historic artifacts remain unchanged, hosted YAML replacement is Task 4, and alignment remains outstanding |
+| 2026-09-03 | Manage hosted agent, tools, and evaluator resources via YAML transformed through the Orq SDK with repeatable Make targets | Active; Task 4 will retain the two historical deterministic definitions and replace the four old LLM definitions with one subjective jury definition; runtime IDs remain untracked and no hosted apply is authorized |
 | 2026-09-03 | Target the existing `pydata2026` project rather than creating another project | Accepted; live state must be freshly reconciled |
 | 2026-09-03 | Build offline CI as an independent workstream | Accepted, integrated, and published; live checks remain protected/manual |
 | 2026-09-03 | Keep one hand-authored SVG as the architecture visual source of truth | Accepted; the README embeds the same slide-ready asset, with semantic text and status encoded accessibly |
@@ -491,6 +491,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 | Date | Workstream | Change and evidence | Handoff |
 |---|---|---|---|
+| 2026-09-06 (28, latest) | Decision-support / Task 3 | Added `DecisionContextEvidence` to the trace-backed row and preserved it from the case definition during simulation-result normalization. Replaced the active correctness/semantics/faithfulness/consistency enum and specs with the approved verbatim `decision_support_quality` criterion and exact reference-free evidence projection. The local jury uses three judges, `assignment="all"`, categorical pass/fail/not_applicable, majority aggregation, minimum two successful judges, structured output, and three repetitions by default; historic rows without context skip the jury and return `not_applicable`. TDD RED failed 11 tests against the old contract; GREEN passed 16 focused tests and 113 non-live tests with one deselection. Ruff and `git diff --check` passed. No live calls, hosted apply, dependency upgrade, or corpus/run mutation occurred | Implement Task 4's matching repository evaluator definition without hosted apply, then stop at Task 5 until the exact evaluatorq release with detailed jury output is supplied |
 | 2026-09-06 (27, latest) | Decision-support / Task 2 review | Corrected Task 2 after quality review: the structure and CLI tests now independently seed temporary Sphere databases instead of reading ignored `data/analytics.duckdb`; a new semantic regression fixes the four reversed or mismatched analytical directions (`top3-countries-then-segment`, `no-save-then-top`, `category-region-drill`, `product-drill`) and requires `a one-sentence board brief`. The Task 2 specification matrix was updated to match. TDD evidence: the new regression failed on the old contexts before implementation, then the focused suite passed 11/11. An index-exported clean tree containing no ignored database passed all three v4 node IDs. Only v4 was regenerated; its new SHA-256 is `b21de6d7909c5223e1f6bdab8609c6cc1f3fa93ba4208ea1c22dd6379fa99909`. Full non-live evidence is 115 passed with one deselection; Ruff and diff checks pass. Historic v1/v2/v3 and the ignored canonical Sphere database/manifest hashes were unchanged | Review this follow-up commit, then implement Task 3. Keep all live simulation, hosted apply, and jury operations separately gated |
 | 2026-09-06 (26, latest) | Decision-support / Task 2 | Added the isolated `simulation-v4` definition builder and CLI variant without live calls or hosted mutation. All fifty v3 analytical situations now have hand-authored Sphere stakeholder, decision, delivery-setting, and communication context; question, goal, SQL, criterion, and coverage text use the appliance/retailer taxonomy; 47 oracles were recalculated against `sphere-orders-v1`; and the exact v3 30/20 assignment is preserved. TDD evidence: the new structure and CLI tests first failed on the absent module/variant, then the ignored database was deterministically reseeded and all ten focused tests passed. Full evidence: 114 non-live tests passed with one deselection, Ruff and diff checks passed, v4 has 50 unique IDs / 24 staged cases and SHA-256 `f4d075e12bf1e4546105a68fa26300de584e26bd919d1637ee20ef373b7d96c4`; historic v1/v2/v3 hashes remained unchanged | Independently review Task 2, then implement Task 3's local decision-context replay and single subjective jury contract. Keep v4 a review pool; do not run simulation, apply hosted resources, or claim human labels |
 | 2026-09-06 (25, latest) | Decision-support / Task 1 | Implemented the Sphere.com source data model in isolated branch `feature/decision-support-evaluation`: exact eight-product appliance catalog, three retailer segments, category cost basis points, national-retailer quantity branch, `sphere-orders-v1` manifest/runtime/trace default, and `sphere-baseline-v1` agent/runtime/trace default. TDD evidence: the taxonomy/version tests first failed against the old software taxonomy and `revenue-v1` defaults; review then exposed that bare `TraceContext` instances still used the old attribution, and a focused regression test failed before the correction. All 11 focused data/config tests now pass; deterministic-hash and financial-invariant checks stayed green. No tracked v1/v2/v3 corpus or run artifact was regenerated, and no live call or remote mutation occurred | Task 1 independently reviewed and approved; implement Task 2's context-enriched v4 definitions without seeding or running live v4 observations |
@@ -539,7 +540,7 @@ Keep entries newest first and compact. Include evidence, not activity narration.
 
 ## Next Actions
 
-1. Review Task 2's isolated Sphere v4 follow-up commit, then execute Tasks 3-4 in `2026-09-06-decision-support-evaluation.md`: the single subjective local `decision_support_quality` jury and its matching repository resource.
+1. Review Task 3's isolated subjective-runtime commit, then execute Task 4 in `2026-09-06-decision-support-evaluation.md`: the matching repository `decision_support_quality` resource, without hosted apply.
 2. Stop at Task 5 until the user supplies the exact published evaluatorq version whose `llm_jury(assignment="all")` returns the complete jury record.
 3. Review the 19-slide analytics-only deck and replace its two explicit walkthrough placeholders only after the corresponding Sphere response and full jury evidence exist.
 4. Keep v4 live simulation, the 450-call jury, human annotation, hosted-resource apply, CI gating, and multi-agent prompt optimization behind separate explicit gates.
