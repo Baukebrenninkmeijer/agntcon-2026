@@ -105,10 +105,14 @@
   .life-bridge{text-align:center;font-size:29px;color:var(--ink2)}
   .life-bridge span{display:block;font-size:72px;line-height:.9;color:var(--teal)}
   .life-return{width:72%;margin:14px auto 0;padding-top:20px;border-top:3px dashed var(--muted);text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.06em;color:var(--muted)}
-  .route{display:grid;grid-template-columns:300px 80px 340px 80px 1fr;align-items:center;gap:14px}
-  .routes{display:grid;gap:16px}
-  .route-card{border:3px solid var(--teal);border-radius:16px;background:var(--paper);padding:19px 28px;font-size:27px}
-  .route-card:nth-child(2){border-color:var(--ink)}.route-card:nth-child(3){border-color:var(--orange)}.route-card:nth-child(4){border-color:var(--muted)}
+  .learning-flow{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:58px;margin-top:24px}
+  .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
+  .learning-stage:nth-child(2){border-color:var(--orange)}
+  .learning-stage:not(:last-child)::after{content:"→";position:absolute;right:-47px;top:8px;color:var(--teal);font-size:44px}
+  .learning-label{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:22px}
+  .learning-stage p{font-size:31px;line-height:1.38;color:var(--ink2)}
+  .learning-stage strong{display:block;font-size:37px;line-height:1.24;font-weight:500;color:var(--ink);margin-bottom:18px}
+  .learning-rerun{margin-top:52px;font-size:29px;color:var(--orange-dark);text-align:right}
   .flow-arrow{font-size:64px;color:var(--orange);text-align:center}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
@@ -469,14 +473,13 @@
 
 <!-- 17 · Finding to knowledge -->
 <section class="slide">
-  <div class="eyebrow">Findings and agent knowledge</div>
-  <h2>A finding becomes useful<br>after structural analysis</h2>
-  <div class="route" aria-label="Evaluation finding routed into skills, system prompts, evaluators or code">
-    <div class="process-card"><h3>failed case</h3><p>finding + critique</p></div><div class="flow-arrow">→</div>
-    <div class="process-card orange"><h3>structural cause</h3><p>human review</p></div><div class="flow-arrow">→</div>
-    <div class="routes"><div class="route-card">skill · domain knowledge and criteria</div><div class="route-card">system prompt · global invariants</div><div class="route-card">evaluator · quality boundary</div><div class="route-card">code or tool · executable behavior</div></div>
+  <h2>What the agent learns<br>from a failed eval</h2>
+  <div class="learning-flow" aria-label="A failed evaluation becomes a Sphere skill update">
+    <div class="learning-stage"><div class="learning-label">Evaluator finding</div><strong>The analysis reports declining revenue.</strong><p>It never explains what the CFO should decide.</p></div>
+    <div class="learning-stage"><div class="learning-label">Diagnosis</div><strong>Sphere’s decision criteria are missing.</strong><p>This is an agent knowledge gap, not a data or SQL error.</p></div>
+    <div class="learning-stage"><div class="learning-label">Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, and lead with the business implication.</p></div>
   </div>
-  <p class="body"><b>Most company knowledge belongs in a scoped skill.</b> A broken evaluator belongs in the evaluation lifecycle.</p>
+  <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
 <!-- 18 · Software factory -->
