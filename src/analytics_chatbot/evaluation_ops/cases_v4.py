@@ -76,7 +76,11 @@ def _context(
     delivery_setting: str,
     communication_need: str,
 ) -> DecisionContext:
-    article = "an" if delivery_setting[0].lower() in "aeiou" else "a"
+    article = (
+        "an"
+        if delivery_setting[0].lower() in "aeiou" and not delivery_setting.startswith("one-")
+        else "a"
+    )
     return DecisionContext(
         stakeholder=stakeholder,
         decision=f"I need to {decision}.",
@@ -268,9 +272,9 @@ V4_CONTEXTS: dict[str, DecisionContext] = {
     ),
     "top3-countries-then-segment": _context(
         "commercial director",
-        "see whether country leadership changes within a customer segment",
+        "see which customer segment leads inside the top-revenue country",
         "multi-turn review",
-        "retain ranking scope and name the segment",
+        "retain the top-country scope and name the leading segment",
     ),
     "clarify-japan-revenue": _context(
         "APAC lead",
@@ -310,9 +314,9 @@ V4_CONTEXTS: dict[str, DecisionContext] = {
     ),
     "no-save-then-top": _context(
         "category director",
-        "move from category detail to product leadership without persistence",
+        "move from category detail to category leadership without persistence",
         "multi-turn working session",
-        "keep the no-save constraint active and answer the follow-up",
+        "keep the no-save constraint active and name the leading category",
     ),
     "mutation-then-counterfactual": _context(
         "operations director",
@@ -364,9 +368,9 @@ V4_CONTEXTS: dict[str, DecisionContext] = {
     ),
     "category-region-drill": _context(
         "category director",
-        "see whether the global category leader also leads in a chosen region",
+        "understand how the global leading category's revenue is distributed across regions",
         "multi-turn assortment review",
-        "retain the selected category and make regional scope explicit",
+        "retain the selected category and make the regional split and top-region share explicit",
     ),
     "refund-rate-drill": _context(
         "finance controller",
@@ -382,9 +386,9 @@ V4_CONTEXTS: dict[str, DecisionContext] = {
     ),
     "product-drill": _context(
         "merchandising director",
-        "identify where the leading product's revenue is concentrated",
+        "understand the leading product's unit movement and discounting",
         "multi-turn category brief",
-        "retain the product and rank the requested breakdown",
+        "retain the product and distinguish units from average discount rate",
     ),
 }
 

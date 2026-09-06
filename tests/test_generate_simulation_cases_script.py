@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from analytics_chatbot.data import seed_database
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -74,8 +76,10 @@ def test_edge_v2_variant_defaults_to_separate_output_path(tmp_path: Path) -> Non
 
 
 def test_v4_variant_defaults_to_separate_output_path(tmp_path: Path) -> None:
+    database = tmp_path / "sphere.duckdb"
+    seed_database(database)
     environment = os.environ.copy()
-    environment["ANALYTICS_CHATBOT_DATABASE_PATH"] = str(ROOT / "data/analytics.duckdb")
+    environment["ANALYTICS_CHATBOT_DATABASE_PATH"] = str(database)
 
     subprocess.run(
         [

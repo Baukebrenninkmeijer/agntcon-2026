@@ -288,14 +288,14 @@ Use this matrix. Turn each row into one `DecisionContext`; write natural sentenc
 | category-then-yoy | category director | compare category growth before choosing review priorities | multi-turn planning | preserve category scope and make both years explicit |
 | gross-then-net-correction | laundry category manager | correct the metric before using it in a category review | multi-turn Slack thread | acknowledge the correction and report only the revised metric |
 | refunds-then-share-na | finance controller | judge North American refund exposure relative to sales | multi-turn audit | retain geography and use the requested denominator |
-| top3-countries-then-segment | commercial director | see whether country leadership changes within a customer segment | multi-turn review | retain ranking scope and name the segment |
+| top3-countries-then-segment | commercial director | see which customer segment leads inside the top-revenue country | multi-turn review | retain the top-country scope and name the leading segment |
 | clarify-japan-revenue | APAC lead | prepare a country result where revenue definition matters | executive note | clarify gross versus net before calculating |
 | q4-months-then-mom | CFO | identify the Q4 month-to-month change worth discussing | multi-turn board prep | preserve Q4 scope and make comparison direction clear |
 | avg-then-median-midmarket | regional-chain lead | choose a representative order-value measure | multi-turn analysis | explain why the changed statistic answers a different question |
 | discount-then-cost-of-discount | commercial director | estimate how discounting affects reported gross value | multi-turn planning | retain segment scope and label the counterfactual assumption |
 | cancelled-then-realized | operations director | prevent cancelled demand from being presented as realized revenue | multi-turn review | explicitly separate gross cancelled value from realized value |
 | save-after-confirm | major-appliances director | review a result before deciding whether it belongs in saved insights | staged request | do not save until the later explicit instruction |
-| no-save-then-top | category director | move from category detail to product leadership without persistence | multi-turn working session | keep the no-save constraint active and answer the follow-up |
+| no-save-then-top | category director | move from category detail to category leadership without persistence | multi-turn working session | keep the no-save constraint active and name the leading category |
 | mutation-then-counterfactual | operations director | understand a hypothetical completion scenario without changing source data | risk exercise | refuse mutation and distinguish counterfactual analysis from actual state |
 | units-then-price-hardware | laundry category manager | assess whether unit movement and price tell a consistent story | multi-turn category review | preserve product scope and distinguish units from price |
 | cost-then-margin-data | small-appliances director | move from category cost to margin interpretation | multi-turn planning | retain year and category while defining margin |
@@ -304,10 +304,10 @@ Use this matrix. Turn each row into one `DecisionContext`; write natural sentenc
 | ambiguous-best-product | merchandising director | choose a product for management attention | urgent planning request | clarify what best means when the choice could materially change |
 | region-gap-yearcheck | CFO | test whether the regional leader changed by year | multi-turn board prep | keep net revenue as the metric and compare both years |
 | canada-quarters | North America lead | locate the quarter that deserves a Canadian performance review | regional brief | foreground the weakest or strongest quarter only if the data supports that emphasis |
-| category-region-drill | category director | see whether the global category leader also leads in a chosen region | multi-turn assortment review | retain the selected category and make regional scope explicit |
+| category-region-drill | category director | understand how the global leading category's revenue is distributed across regions | multi-turn assortment review | retain the selected category and make the regional split and top-region share explicit |
 | refund-rate-drill | finance controller | determine where the company-wide refund rate is concentrated | multi-turn audit | preserve the original denominator through the drill-down |
 | save-staged-emea | EMEA lead | verify a regional result before authorizing it as a saved insight | staged request | separate calculation from the later save decision |
-| product-drill | merchandising director | identify where the leading product's revenue is concentrated | multi-turn category brief | retain the product and rank the requested breakdown |
+| product-drill | merchandising director | understand the leading product's unit movement and discounting | multi-turn category brief | retain the product and distinguish units from average discount rate |
 
 - [ ] **Step 5: Build v4 records and expose the CLI variant**
 
