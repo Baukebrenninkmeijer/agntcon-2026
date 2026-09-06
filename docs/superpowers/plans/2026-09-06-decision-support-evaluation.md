@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Recast the analytics-agent example as Sphere.com's decision-support analyst, generate a context-enriched fifty-case v4 corpus, and replace the active reference-oriented LLM judges with four subjective evaluatorq juries led by `decision_support_quality`.
+**Goal:** Recast the analytics-agent example as Sphere.com's decision-support analyst, generate a context-enriched fifty-case v4 corpus, and replace the active reference-oriented LLM judges with one subjective evaluatorq jury: `decision_support_quality`.
 
-**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into four local `llm_jury` evaluators. Repository YAML mirrors those subjective contracts without applying remote changes; a dedicated offline replay script persists the complete jury record once the next evaluatorq release exposes it for `assignment="all"`.
+**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into one local `llm_jury` evaluator. Repository YAML mirrors that subjective contract without applying remote changes; a dedicated offline replay script persists the complete jury record once the next evaluatorq release exposes it for `assignment="all"`.
 
 **Tech Stack:** Python 3.11+, Polars, DuckDB, Pydantic, evaluatorq, Orq resource YAML, pytest, Ruff, Markdown.
 
@@ -16,7 +16,8 @@
 - Keep data fabrication, read-only SQL, evidence, and save-authorization safeguards intact.
 - Keep the baseline free of decision-support coaching; it only answers, reports results, and includes SQL.
 - The agent recommends action only when the user explicitly requests a recommendation.
-- The four subjective judges receive no oracle, reference SQL, expected output, or ideal answer.
+- The `decision_support_quality` jury receives no oracle, reference SQL, expected output, or ideal answer.
+- Do not implement, configure, or run the three alternative subjective rubrics in this stage.
 - Use three distinct judges, `assignment="all"`, `aggregator="majority"`, `min_successful_judges=2`, structured categorical output, and three repetitions for the alignment run.
 - Do not run the 450-call jury job, generate live v4 responses, apply hosted resources, alter CI, or automate prompt promotion.
 - Stop at Task 5's dependency gate until the user supplies the exact released evaluatorq version that returns complete jury data for `assignment="all"`.
@@ -33,9 +34,9 @@
 - `src/analytics_chatbot/evaluation_ops/cases_v4.py`: v3-to-v4 taxonomy migration, fifty decision contexts, v4 builder, preserved split assignment.
 - `scripts/generate_simulation_cases.py`: `v4` variant and default v4 output path.
 - `orq/resources/datasets/simulation-cases-v4.jsonl`: generated, reviewable v4 definitions; not observed responses.
-- `src/analytics_chatbot/evaluation_ops/__init__.py`: decision-context replay contract and four subjective jury specifications.
+- `src/analytics_chatbot/evaluation_ops/__init__.py`: decision-context replay contract and the `decision_support_quality` jury specification.
 - `src/analytics_chatbot/evaluation_ops/simulation_artifacts.py`: preserve case decision context in normalized replay rows.
-- `orq/resources/evaluators/jury/*.yaml`: four subjective hosted definitions; old four LLM YAML files are replaced, while two Python files remain historical and unchanged.
+- `orq/resources/evaluators/jury/decision-support-quality.yaml`: the single subjective hosted definition; old four LLM YAML files are replaced, while two Python files remain historical and unchanged.
 - `src/analytics_chatbot/orq_resources.py`: generic subjective-evaluator evidence guards.
 - `scripts/run_decision_support_jury.py`: local no-inference jury replay, call-count gate, and detailed JSONL persistence.
 - `pyproject.toml`, `uv.lock`: exact evaluatorq release supplied by the user at Task 5.
@@ -339,7 +340,7 @@ git commit -m "feat: add Sphere decision-context corpus"
 
 ---
 
-### Task 3: Replace the Active Atomic Judges with Subjective Rubrics
+### Task 3: Replace the Active Atomic Judges with Decision-Support Quality
 
 **Files:**
 - Modify: `src/analytics_chatbot/evaluation_ops/__init__.py`
@@ -348,7 +349,7 @@ git commit -m "feat: add Sphere decision-context corpus"
 - Modify: `tests/test_simulation_artifacts.py`
 
 **Interfaces:**
-- Produces: `DecisionContextEvidence`, the four new `AtomicJudge` values, reference-free evidence projection, and `build_atomic_evaluator(..., repetitions: int = 3)`.
+- Produces: `DecisionContextEvidence`, the single `AtomicJudge.DECISION_SUPPORT_QUALITY` value, reference-free evidence projection, and `build_atomic_evaluator(..., repetitions: int = 3)`.
 - Consumes: v4 case `decision_context`, recorded conversation/tool events, and final assistant response.
 
 - [ ] **Step 1: Write failing replay-contract tests**
@@ -373,9 +374,6 @@ Require these enum values and default order:
 ```python
 assert [judge.value for judge in AtomicJudge] == [
     "decision_support_quality",
-    "assumption_handling",
-    "audience_calibrated_detail",
-    "insightfulness_without_overreach",
 ]
 ```
 
@@ -403,7 +401,7 @@ class DecisionContextEvidence(BaseModel):
 
 Add `decision_context: DecisionContextEvidence | None = None` to `TraceBackedEvaluationRow`. In `normalize_simulation_results`, validate `case["decision_context"]` when present and pass it into the row. Historic traces without the field remain valid and route to `not_applicable`.
 
-- [ ] **Step 5: Implement the four subjective specifications**
+- [ ] **Step 5: Implement the decision-support specification**
 
 Replace `AtomicJudge` and `_SPECS`. All specifications apply only when `row.decision_context is not None` and project this exact evidence shape:
 
@@ -418,7 +416,7 @@ def _subjective_evidence(row: TraceBackedEvaluationRow) -> dict[str, Any]:
     }
 ```
 
-Use the four criteria verbatim from the approved design spec. The common prompt must explicitly state:
+Use the `decision_support_quality` criterion verbatim from the approved design spec. The common prompt must explicitly state:
 
 ```text
 You have no reference answer or ideal response. Do not recompute the analysis or grade SQL.
@@ -445,7 +443,7 @@ git commit -m "feat: add subjective decision-support juries"
 
 ---
 
-### Task 4: Mirror the Rubrics in Repository Resources and Simplify the Baseline
+### Task 4: Mirror the Rubric in Repository Resources and Simplify the Baseline
 
 **Files:**
 - Modify: `src/analytics_chatbot/prompts.py`
@@ -455,15 +453,12 @@ git commit -m "feat: add subjective decision-support juries"
 - Delete: `orq/resources/evaluators/jury/evidence-faithfulness.yaml`
 - Delete: `orq/resources/evaluators/jury/multi-turn-consistency.yaml`
 - Create: `orq/resources/evaluators/jury/decision-support-quality.yaml`
-- Create: `orq/resources/evaluators/jury/assumption-handling.yaml`
-- Create: `orq/resources/evaluators/jury/audience-calibrated-detail.yaml`
-- Create: `orq/resources/evaluators/jury/insightfulness-without-overreach.yaml`
 - Modify: `src/analytics_chatbot/orq_resources.py`
 - Modify: `tests/test_orq_resources.py`
 - Modify: `tests/test_agent.py`
 
 **Interfaces:**
-- Produces: one rudimentary baseline prompt shared semantically by local and hosted execution; four shadow hosted evaluator payloads matching Task 3.
+- Produces: one rudimentary baseline prompt shared semantically by local and hosted execution; one shadow hosted evaluator payload matching Task 3.
 - Consumes: the existing YAML loader, three approved model slugs, and categorical output resource schema.
 
 - [ ] **Step 1: Write failing baseline and resource tests**
@@ -475,9 +470,6 @@ Require the LLM evaluator keys:
 ```python
 assert llm_keys == {
     "analytics-decision-support-quality",
-    "analytics-assumption-handling",
-    "analytics-audience-calibrated-detail",
-    "analytics-insightfulness-without-overreach",
 }
 ```
 
@@ -504,9 +496,9 @@ Describe the agent as Sphere.com's analytics chatbot over wholesale home-applian
 add instructions for stakeholder adaptation, decision emphasis, business interpretation, or
 proactive next steps.
 
-- [ ] **Step 4: Replace the four LLM YAML definitions**
+- [ ] **Step 4: Replace the four old LLM YAML definitions with one decision-support definition**
 
-Each file uses the approved three-model panel, `mode: jury`, `min_successful_judges: 2`,
+The file uses the approved three-model panel, `mode: jury`, `min_successful_judges: 2`,
 `repetitions: 3`, categorical labels `pass` / `fail` / `not_applicable`, and mappings for:
 
 ```yaml
@@ -515,15 +507,15 @@ output.response: final assistant response
 ```
 
 The stakeholder, decision, setting, and communication need are read from the agent-visible user
-message inside `input.all_messages`; do not invent a custom hosted trace variable. Copy each
-criterion exactly from Task 3. Mark all four `pending_human_labels` with zero labels. Do not touch
+message inside `input.all_messages`; do not invent a custom hosted trace variable. Copy the
+criterion exactly from Task 3. Mark it `pending_human_labels` with zero labels. Do not touch
 `orq/resources/evaluators/python/*.yaml`; they remain historical, are not featured, and receive no
 further development.
 
 - [ ] **Step 5: Replace key-specific reference guards with a subjective evidence guard**
 
-In `LlmEvaluatorResource.validate_prompt_contract`, for keys beginning with the four new stable
-keys, require `input.all_messages` and `output.response`; forbid `input.decision_context`,
+In `LlmEvaluatorResource.validate_prompt_contract`, for the new stable key, require
+`input.all_messages` and `output.response`; forbid `input.decision_context`,
 `input.expected_output`, `reference_sql`, `query_requirements`, and any prompt phrase claiming a
 reference or ideal answer exists.
 
@@ -537,7 +529,7 @@ UV_CACHE_DIR=/tmp/pydata-uv-cache uv run python scripts/sync_orq_resources.py --
 ```
 
 Expected: focused tests PASS; dry-run loads one agent, two tools, two unchanged Python evaluators,
-and four pending subjective LLM evaluators; no remote apply occurs.
+and one pending subjective LLM evaluator; no remote apply occurs.
 
 - [ ] **Step 7: Commit prompts/resources and update the living plan**
 
@@ -712,7 +704,7 @@ uses the recorded analytics trace and the local jury artifact only after those a
 
 - [ ] **Step 3: Update README commands and status language**
 
-Document Sphere data seeding, `--variant v4`, the four shadow evaluator names, and the guarded jury
+Document Sphere data seeding, `--variant v4`, the single shadow evaluator name, and the guarded jury
 runner. State plainly that v4 observed responses and human alignment evidence do not exist until run
 artifacts are accepted.
 

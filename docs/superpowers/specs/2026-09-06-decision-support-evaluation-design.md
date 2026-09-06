@@ -112,11 +112,11 @@ two execution paths do not teach different communication behavior.
 
 ## Subjective Evaluators
 
-Replace the four reference-oriented LLM evaluator definitions in the active evaluatorq builder with
-four subjective, independently alignable evaluators. Existing run artifacts and evaluator versions
+Replace the reference-oriented LLM evaluator definitions in the active evaluatorq builder with one
+subjective evaluator: `decision_support_quality`. Existing run artifacts and evaluator versions
 remain historical evidence; no remote evaluator is mutated or deleted in this work.
 
-All four evaluators use `pass`, `fail`, and deterministically routed `not_applicable`. Local
+The evaluator uses `pass`, `fail`, and deterministically routed `not_applicable`. Local
 evaluatorq replay receives the structured decision context plus the conversation, tool evidence,
 and final response. Hosted definitions read the same agent-visible context from the full ordered
 conversation because the current hosted payload has no custom decision-context trace variable.
@@ -147,32 +147,37 @@ The evaluator does not independently recompute the answer or grade SQL semantics
 matters only when it is visible in the supplied conversation and makes the decision support
 misleading.
 
-### 2. Assumption handling — secondary
+### Later alternatives, out of scope for this stage
+
+The following remain useful candidates for later independent evaluators, but are not implemented,
+configured, or run in this stage.
+
+#### Assumption handling
 
 Judge whether the agent used sound judgment about asking for clarification, proceeding with an
 explicit bounded assumption, or refusing to guess. Pass when its choice is proportionate to how
 much the ambiguity could change the decision; fail when it silently chooses a material definition,
 asks an unnecessary blocking question, or proceeds with false certainty.
 
-### 3. Audience-calibrated detail — secondary
+#### Audience-calibrated detail
 
 Judge whether terminology, explanation depth, tone, and technical detail fit the stated stakeholder
 and delivery setting. Pass and fail are based on usability, not a word-count threshold. This rubric
 does not grade which business result was emphasized; that belongs to decision-support quality.
 
-### 4. Insightfulness without overreach — secondary
+#### Insightfulness without overreach
 
 Judge whether the response surfaces a useful implication or next investigative step supported by
 the observed results. Fail generic filler, invented causal explanations, or recommendations that
 require unavailable evidence. Mark `not_applicable` when neither the request nor its decision
 context calls for interpretation beyond reporting the result.
 
-Only `decision_support_quality` enters the first alignment cycle. The other three are defined and
-testable but remain shadow evaluators until separately aligned.
+Only `decision_support_quality` enters the first alignment cycle. The other three are brainstorming
+options only and require a separate decision before they become code or hosted resources.
 
 ## Evaluatorq Jury Contract
 
-Build each subjective evaluator with evaluatorq's `llm_jury` using:
+Build `decision_support_quality` with evaluatorq's `llm_jury` using:
 
 - three distinct judge models;
 - `assignment="all"`;
@@ -245,9 +250,9 @@ Implementation is accepted only when fresh checks show:
 - v1, edge-v2, v3, and their run artifacts are unchanged;
 - the baseline prompts preserve safety/evidence behavior while containing no decision-support
   coaching;
-- the active evaluator builder exposes exactly the four subjective rubric names and never projects
-  oracle or reference fields into them;
-- hosted evaluator YAML validation succeeds for the same four rubric contracts without applying
+- the active evaluator builder exposes only `decision_support_quality` and never projects oracle or
+  reference fields into it;
+- hosted evaluator YAML validation succeeds for the same single rubric contract without applying
   remote changes;
 - a fake-client jury test proves detailed per-model and per-repetition data returns for
   `assignment="all"`;
