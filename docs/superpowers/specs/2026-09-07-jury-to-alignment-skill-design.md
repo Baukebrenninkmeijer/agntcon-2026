@@ -1,120 +1,163 @@
-# Jury-to-Alignment Companion Skill Design
+# Jury-to-Alignment Annotation Skill Design
 
 ## Decision
 
-Add a repository-local skill at `.agents/skills/orq-jury-to-alignment/`. It is a
-small, offline adapter between the detailed evaluatorq
-`decision-support-jury-v1` artifact and the existing
-`orq-evaluator-alignment` skill. It does not call a model, rerun the jury,
-create human labels, or replace the existing alignment workflow.
+Build a jury-native annotation accelerator with two bounded components:
 
-This change serves the abstract's **Align an LLM-as-a-judge** section and the
-manual outline's agreement-versus-accuracy beat. It adds no talk section or
-runtime promise: the companion makes the approved jury evidence usable for the
-human-first alignment walkthrough.
+1. a repository-local skill at `.agents/skills/orq-jury-to-alignment/` in this
+   project, backed by a project script that converts completed evaluatorq jury
+   evidence into a human-review queue; and
+2. a backward-compatible jury view in the existing `orq-evaluator-alignment`
+   skill in `orq-ai/assistant-plugins`.
 
-## Preconditions and boundaries
+The handoff stops after human annotation. The existing alignment skill's prompt
+rewrite, evaluator creation, and retest stages are single-judge workflows and
+must not be presented as a valid 3-by-3 jury retest. A later jury-native prompt
+comparison can consume the human labels, but it is not part of this increment.
 
-The adapter requires three complete, immutable inputs:
+This serves the abstract's **Align an LLM-as-a-judge** section and the manual
+outline's agreement-versus-accuracy beat. It adds no talk section: disagreement
+and wobble accelerate the human-first walkthrough already promised.
 
-1. the 50-case v4 definition JSONL;
-2. one accepted observed conversation for every case; and
-3. one complete `decision-support-jury-v1` row per observation, containing the
-   ordered three-model panel and three detailed repetitions per model.
+## Inputs and identity
 
-The adapter joins evidence only by `(case_id, transcript_fingerprint)`. It fails
-before writing output when identities, split assignments, recorded outputs,
-panel membership, repetition counts, or released jury fields are incomplete or
-inconsistent. Definitions are not observations, and aggregate jury verdicts are
-not human labels.
+The producer takes:
 
-The first real run remains gated: v4 observations do not yet exist, and neither
-the two-row jury smoke nor the 450-call jury has run. This design authorizes only
-the credential-free adapter implementation and tests.
+1. the canonical 50-case v4 definition JSONL;
+2. one accepted evaluatorq simulation observation for every definition; and
+3. one `decision-support-jury-v1` record for every observation.
 
-## Derived signals
+It reuses `load_simulation_replay` and the existing typed jury validation rather
+than implementing another replay normalizer. It enforces the exact canonical
+case-ID set, exactly one observation and jury row per case, the frozen 30-dev /
+20-test split, matching recorded output, and matching
+`(case_id, transcript_fingerprint)` identities.
 
-For each observation, the adapter derives two different kinds of ambiguity:
+Each development item receives a stable `annotation_id` equal to the SHA-256 of
+`case_id + "\0" + transcript_fingerprint`. Human annotations are keyed by this
+ID. A positional `source_index` may be included for display and legacy tooling,
+but it is never the annotation identity.
 
-- **within-judge wobble**: instability across a single model's three repetition
-  verdicts, calculated independently for each judge with the existing
-  categorical-instability definition;
-- **between-judge disagreement**: disagreement among the three judges' aggregate
-  verdicts, preserving each judge's model, verdict, explanation, and all three
-  repetition records.
+## Reviewer-safe evidence
 
-These signals prioritize annotation; they do not decide correctness. The
-adapter must not pool all nine repetitions into one pseudo-judge, because doing
-so erases the distinction between a judge disagreeing with itself and judges
-disagreeing with one another.
+Only these agent-visible fields may enter a review item:
 
-## Output and handoff
+- case ID and transcript fingerprint;
+- decision context;
+- ordered conversation and tool events;
+- recorded final response; and
+- the complete jury result: panel state, every vote, and every retained
+  repetition value and explanation.
 
-The adapter writes a new no-clobber run directory containing:
+The producer uses an allowlist. Oracle SQL, expected output, reference, ideal
+answer, hidden answer, success criterion, and equivalent reference-family data
+must not enter `queue.json` or `annotations.json`.
 
-- `jury_analysis.json`, the lossless joined evidence plus per-judge wobble and
-  panel-disagreement summaries;
-- `queue.json`, using the existing alignment skill's downstream queue contract
-  but preserving the jury-specific priority order and evidence pointers;
-- `stability.json`, `metrics.json`, and `cross_model.json`, transparent
-  compatibility projections for inspection rather than inputs to another run;
-- `evaluator.json`, the categorical verdict space and evaluator context required
-  by the existing queue renderer; and
-- `traces.jsonl`, the full reviewer-visible decision context, conversation, tool
-  evidence, and final response indexed by `source_index`.
+The development run directory contains no test verdict, explanation,
+conversation, decision context, or output. `test_manifest.json` contains only
+the 20 test case IDs, transcript fingerprints, annotation IDs, and split name so
+the frozen set can be identified later without exposing its outcomes.
 
-The compatibility files are projections, not the source of truth. The companion
-writes `queue.json` directly because the existing builder orders all
-self-instability before model disagreement and cannot express the approved jury
-priority without losing meaning. Every queue item retains a pointer to its
-corresponding `jury_analysis.json` record so the reviewer can inspect all nine
-judgments and explanations. The companion hands the run directory to
-`orq-evaluator-alignment` at its grey-zone/annotation stage; that skill continues
-to own annotation, aggregation, prompt revision, and retesting.
+## Signal semantics
 
-No test row enters prompt development. The adapter produces the prioritization
-queue from the 30 development rows and writes only the identities and evidence
-fingerprints of the 20 test rows to a sealed inventory for later frozen
-evaluation. It does not project, reveal, or aggregate test verdicts during
-alignment.
+The queue distinguishes evaluator ambiguity from evaluator failure.
 
-## Prioritization
+- **Within-judge wobble:** normalized categorical entropy across the non-null
+  repetition verdicts of one successful judge, using the existing three-label
+  `pass` / `fail` / `not_applicable` verdict space. At least two non-null
+  repetitions are required; otherwise that judge is unmeasurable.
+- **Panel disagreement:** at least two successful, non-abstaining aggregate
+  judge verdicts exist and are not all equal.
+- **Abstention:** any successful vote has `abstained=true` or a null aggregate
+  verdict. This is high-signal ambiguity.
+- **Tie:** the released jury has `tie=true`. This is high-signal ambiguity.
+- **Inconclusive:** the released jury has `inconclusive=true`. This is retained
+  with the tie/abstention tier when it is not caused by a mechanical failure.
+- **Mechanical error:** a failed judge, failed repetition, replacement, provider
+  error, malformed record, or fewer than two successful judges. It is written to
+  `jury_errors.json` and excluded from the annotation ranking.
 
-Development rows are ordered deterministically:
+The current guarded jury runner rejects mechanical errors before publication,
+so `jury_errors.json` will normally be empty. Keeping the category separate
+prevents a future transport failure from masquerading as useful ambiguity.
 
-1. both panel disagreement and within-judge wobble;
-2. panel disagreement only;
-3. within-judge wobble only; and
-4. a seeded, bounded sample of unanimous and internally stable controls.
+## Deterministic priority
 
-Within a tier, higher maximum per-judge instability sorts first, followed by
-lower panel agreement and stable source identity. Mechanical failures are
-rejected rather than ranked. Queue reasons use explicit names instead of
-calling every signal a "flip."
+Development rows are ordered in these tiers:
 
-## Safety and error handling
+1. tie, abstention, or genuine inconclusive outcome;
+2. panel disagreement and within-judge wobble;
+3. panel disagreement only;
+4. within-judge wobble only; and
+5. unanimous, internally stable controls.
+
+Within tiers 1–4, sort by the number of present high-signal flags descending,
+then maximum measurable per-judge instability descending, then normalized panel
+agreement ascending (`null` sorts before numeric values), then `annotation_id`.
+Tier 5 is a deterministic sample of at most five rows selected with seed 42 from
+the annotation-ID-sorted eligible pool. A row selected in tiers 1–4 cannot also
+be a control.
+
+## Output contract
+
+The producer publishes one new run directory atomically by writing every file
+to a sibling staging directory, fsyncing files and the staging directory,
+writing `manifest.json` last with `status: "ready"`, and renaming the staging
+directory to a destination that must not already exist. A failed or competing
+publication leaves no destination that looks ready.
+
+`queue.json` has `meta.mode: "jury"`, the categorical verdict space, algorithm
+version, seed, counts, and input fingerprints. Every item carries:
+
+- `annotation_id`, `case_id`, `transcript_fingerprint`, rank, and control flag;
+- explicit priority reasons and derived signal values;
+- the reviewer-safe decision evidence; and
+- the full released jury object inline.
+
+The run directory also contains `test_manifest.json`, `jury_errors.json`, and
+the ready `manifest.json`. It does not fabricate single-judge `stability.json`,
+`metrics.json`, `cross_model.json`, `evaluator.json`, or `traces.jsonl` files.
+
+## Annotation-view compatibility
+
+The assistant-plugins change is backward-compatible:
+
+- legacy queue items continue to render and save by `source_index`;
+- jury items require a unique `annotation_id` and save by that ID;
+- the main decision evidence renders before any jury output;
+- jury evidence is collapsed by default to reduce anchoring;
+- expanding it shows panel state, each model's aggregate verdict and
+  explanation, and all retained repetition verdicts and explanations; and
+- tie, abstention, inconclusive, disagreement, wobble, and control badges are
+  visually distinct from mechanical errors.
+
+The server validates unique annotation identities before serving and copies
+`case_id` plus `transcript_fingerprint` into each saved annotation record. It
+never serves a separate evidence file or dereferences an arbitrary path supplied
+by `queue.json`.
+
+## Scope and safety
 
 - No network, evaluator, target-agent, hosted-resource, or credential access.
-- No overwrite of an existing output directory or artifact.
-- Atomic writes; partial output is removed or clearly marked invalid.
-- Exact supported input schema: `decision-support-jury-v1` only.
-- Deterministic output for identical inputs and seed.
-- Full evidence remains local and Git-ignored unless the user separately chooses
-  a sanitized artifact for version control.
+- No model calls and no rerun of the completed jury.
+- No prompt rewrite, evaluator creation, promotion, or retest.
+- No test evidence in the development annotation directory.
+- Runtime artifacts remain Git-ignored unless separately sanitized and approved.
+- The assistant-plugins work happens in an isolated worktree based on current
+  `origin/main`, and the verified build is installed locally for Codex testing.
 
 ## Acceptance evidence
 
-Implementation is accepted only when focused tests prove:
+The project producer is accepted only when focused tests prove exact corpus
+coverage, strict identity joins, oracle exclusion, signal classification,
+mechanical-error separation, deterministic ranking/control sampling, test
+sealing, lossless inline 3-by-3 evidence, and atomic no-clobber publication.
 
-- strict 50-row identity joins and preserved 30/20 split;
-- rejection of missing, duplicate, mismatched, or mechanically failed records;
-- correct independent wobble calculation for each of three judges;
-- correct separation of panel disagreement from within-judge wobble;
-- lossless retention of all three votes and all nine repetition records;
-- deterministic prioritization and stable-control sampling;
-- `queue.json` accepted by the existing grey-zone and annotation consumers;
-- test rows excluded from the development review queue; and
-- a no-network test fails if an evaluator or target call is attempted.
+The assistant-plugins consumer is accepted only when its existing legacy tests
+remain green and new tests prove jury identity validation, jury annotation
+round-tripping, reviewer-safe evidence ordering, complete panel/repetition
+rendering, collapsed-by-default jury details, and visible high-signal badges.
 
-The first execution over real evidence can happen only after accepted v4
-observations and the separately approved jury runs produce the required inputs.
+The first real execution remains blocked on accepted v4 observations and the
+separately approved jury operations. The adapter and view can be implemented and
+verified entirely with synthetic fixtures before those artifacts exist.
