@@ -248,7 +248,7 @@
       </div>
       <div class="date-range">
         7 September 2026 &nbsp;&middot;&nbsp;
-        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ 3689759</span>
+        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ e605429</span>
       </div>
     </header>
 
@@ -259,10 +259,10 @@
           <div class="stat-label">Offline tests</div>
           <div class="stat-delta up">passed · 1 live deselected</div>
         </div>
-        <div class="stat-card warn">
-          <div class="stat-num">0<span style="font-size:22px;color:var(--gray-500)">/50</span></div>
-          <div class="stat-label">v4 observations</div>
-          <div class="stat-delta flat">no target calls yet</div>
+        <div class="stat-card ready">
+          <div class="stat-num">1<span style="font-size:22px;color:var(--gray-500)">/1</span></div>
+          <div class="stat-label">Observation pilot</div>
+          <div class="stat-delta up">accepted · clean replay</div>
         </div>
         <div class="stat-card warn">
           <div class="stat-num">0<span style="font-size:22px;color:var(--gray-500)">/450</span></div>
@@ -285,7 +285,8 @@
         <li><strong>Execution stays deliberately small.</strong> One Experiment will produce the canonical 50 observations; one Experiment will run the 50-row jury. There is no batching or resumable manifest.</li>
         <li><strong>Every Experiment routes through <code>pydata2026</code>.</strong> Both runners are hardened: the observation runner refuses unsafe output paths, while the jury runner supports a strict two-development-row smoke and retains complete mechanical-error evidence.</li>
         <li><strong>The offline gate is green.</strong> All 212 non-live tests passed, one live test was deselected, Ruff is clean, and the sdist/wheel build succeeded.</li>
-        <li><strong>Nothing paid has run.</strong> The one-case observation pilot is now the sole next gate.</li>
+        <li><strong>The one-case pilot passed.</strong> <code>sphere-stakeholder--v4-total-gross-2025</code> completed in one turn; both <code>goal_achieved</code> and <code>criteria_met</code> passed.</li>
+        <li><strong>The replay is structurally clean.</strong> The loader accepted one row with zero rejected rows, duplicates, or warnings. The canonical unbatched 50-row observation Experiment is now the sole next gate.</li>
       </ul>
     </section>
 
@@ -327,6 +328,11 @@
             <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
           </tr>
           <tr>
+            <td>Observation pilot</td>
+            <td>One development row uploaded to <code>pydata2026</code>: Experiment <code>01M1Y4N8GKEPFANMY4951GWKD4</code>, run <code>01M1Y4N8GKPPAEYRP7HWG1SVZT</code>. One turn; goal and criteria passed; replay accepted 1/1 cleanly.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Accepted</span></td>
+          </tr>
+          <tr>
             <td>Annotation boundary</td>
             <td>Ties, clean abstentions, and inconclusive outcomes rank first; disagreement and wobble stay separate; mechanical errors stay outside the queue.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Ready offline</span></td>
@@ -342,7 +348,7 @@
       <div class="chart-panel">
         <svg viewBox="0 0 900 190" role="img" aria-label="Seven-stage execution path from runner hardening to human annotation">
           <line x1="72" y1="75" x2="828" y2="75" stroke="#D1CFC5" stroke-width="3"/>
-          <line x1="72" y1="75" x2="198" y2="75" stroke="#788C5D" stroke-width="3"/>
+          <line x1="72" y1="75" x2="324" y2="75" stroke="#788C5D" stroke-width="3"/>
 
           <g transform="translate(72 75)">
             <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">1</text>
@@ -353,11 +359,11 @@
             <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Fresh agent</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">no-op</text>
           </g>
           <g transform="translate(324 75)">
-            <circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">3</text>
+            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">3</text>
             <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">One-case</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">pilot</text>
           </g>
           <g transform="translate(450 75)">
-            <circle r="17" fill="#F0EEE6" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">4</text>
+            <circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">4</text>
             <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">50</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">observations</text>
           </g>
           <g transform="translate(576 75)">
@@ -373,7 +379,7 @@
             <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Human</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">annotation</text>
           </g>
 
-          <text x="324" y="18" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT GATE</text>
+          <text x="450" y="18" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT GATE</text>
           <text x="513" y="177" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#87867F">ONE OBSERVATION EXPERIMENT · ONE JURY EXPERIMENT · PROJECT: PYDATA2026</text>
         </svg>
         <div class="chart-caption">The jury uses three models and three repetitions. The 18-call smoke proves the complete 3×3 payload before the 450-call run.</div>
@@ -386,11 +392,11 @@
       <div class="carryover">
         <div class="carry-item">
           <span class="carry-tag">Next</span>
-          <div class="carry-body">Run one explicit development observation pilot in <code>pydata2026</code> and accept it only if it produces one structurally usable Sphere replay row.</div>
+          <div class="carry-body">Run the canonical unbatched 50-row Sphere observation Experiment in <code>pydata2026</code>; require exactly 50 accepted identities, zero rejected or duplicate rows, and the frozen 30/20 split.</div>
         </div>
         <div class="carry-item">
           <span class="carry-tag">After</span>
-          <div class="carry-body">If the pilot passes, run the canonical 50-case observation Experiment, then the two-row jury smoke and 450-call jury in sequence.</div>
+          <div class="carry-body">After the 50-row observation gate passes, run the two-development-row jury smoke and the 450-call jury in sequence.</div>
         </div>
         <div class="carry-item">
           <span class="carry-tag">Annotate</span>
@@ -401,7 +407,7 @@
 
     <footer>
       Sources: abstract.md · outline-manual.md · evaluation delivery plan · single-run execution design and plan<br>
-      Current status only — no v4 observation, jury, or annotation artifact existed when generated.
+      Current status: one accepted v4 pilot observation; no canonical 50-row observation, jury, or annotation artifact yet.
     </footer>
   </div>
 </body>
