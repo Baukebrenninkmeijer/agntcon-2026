@@ -1,0 +1,125 @@
+{
+  "items": [
+    {
+      "annotation_id": "1ea6a017c58a3d96ce118e645849cdbc3d138d2ac3e165c1e0b2719fefc91e98",
+      "case_id": "sphere-stakeholder--v4-avg-order-net-enterprise",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "f1c36f9f57940daee7e90df455fb986f94c3319ed54853a4336d88601536bec9"
+    },
+    {
+      "annotation_id": "034f1b93439e90fd3902d796c29dc26e68fe0f494e6ef06652aad2ee5fa7cd98",
+      "case_id": "sphere-stakeholder--v4-avg-then-median-midmarket",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "0afc5096f17c3ea7e9b5ee7819436e63a7a032811609e6e01cb4df5ca0519729"
+    },
+    {
+      "annotation_id": "7bf8476a3d36abc9b5ec44d56040fa8e41063208289bffba64f4eb09201290b3",
+      "case_id": "sphere-stakeholder--v4-canada-quarters",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "a3b3957b8ce6daf877b2235ff706c2359bb1b0634746c7cb416d37e16c906131"
+    },
+    {
+      "annotation_id": "236eaf5b7c85b20b61087de3b278b858f94a7c7dcdc073868a14f60fa3bfbb09",
+      "case_id": "sphere-stakeholder--v4-cancelled-count-2025",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "98bf85508bce4dd71ec26faab360dbfc4d7159aeca7e2864339b9c72bc692b4d"
+    },
+    {
+      "annotation_id": "04f86f58f7ab938b4c562574118747945d32c9b93e0743197ea694280c835c25",
+      "case_id": "sphere-stakeholder--v4-category-then-yoy",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "301e036a69b2d71cec574fc798c8507b278274774bc05b568f25d263a1e7d386"
+    },
+    {
+      "annotation_id": "38a98c9799e914a7d3f45d7342046f845f524d2b81bada0a17622dfda7ea264e",
+      "case_id": "sphere-stakeholder--v4-cost-ratio-data",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "c1212d8c13c550c958814b204282b0897ac466b8d68e2ddf403ba9215ed36ec6"
+    },
+    {
+      "annotation_id": "01b5039462949b5f2ba98f5260bd8cb5c8aa1ef2732cffe31cb69dfaccd32a90",
+      "case_id": "sphere-stakeholder--v4-future-period",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "ca5345b692aa11915814f37e1c258b0ef74b776eb8c825435f01a383151ce7ab"
+    },
+    {
+      "annotation_id": "a0fabe7f5d867c9e07d131fd7f3f7d534305e9757e26a2eb07713ca26fa22b79",
+      "case_id": "sphere-stakeholder--v4-net-by-category-2024",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "b718d656cbe7ccc9ee2a3cbaa78edd47c8c2d5fcc3928b4a84f972f646e68536"
+    },
+    {
+      "annotation_id": "68e67537475b69d5739e42024dae57ca8d96c3e629763e2db8bc53109b232ac0",
+      "case_id": "sphere-stakeholder--v4-net-by-region-2025",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "e02bebcfa7403bd15ad32ed4d5d67885e68c77d9ec92537842be67706f84cb15"
+    },
+    {
+      "annotation_id": "c2c2198f870ceb0ae430d4419b57ac262ee26e62e80fd204ff06808f058f7cbf",
+      "case_id": "sphere-stakeholder--v4-no-save-category-2025",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "08e85b5978f11cad9fe515291487c86fcb97ddf640ce59a54ecd154562ad95b4"
+    },
+    {
+      "annotation_id": "deeb1edcc27439cbdd8a9d58c5bd8c54ceab90157970f13daf93c2e0ea477581",
+      "case_id": "sphere-stakeholder--v4-pending-exposure",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "4f0f36cea4816c96d5ab50de6fc0700d22fd0df43031153337115ff51772616d"
+    },
+    {
+      "annotation_id": "fc09d721c5dfdf8fcc40205745e5843fb665afcc35c13082be833024adef4fa4",
+      "case_id": "sphere-stakeholder--v4-q4-months-then-mom",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "4a64eee422c25a3d4db40120ac232a4dd5c8ab4dc68e5d700852bdbf158c592b"
+    },
+    {
+      "annotation_id": "ec961c100d20d1487557897d2410a3c957bb0f05a1401e7f152ea7599eaf7647",
+      "case_id": "sphere-stakeholder--v4-refund-rate-drill",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "8567529f896981417b2124adc2cbea4b9b2b0d8ffc464ac12c98a86a752b0599"
+    },
+    {
+      "annotation_id": "95cc643e5987110948e59620717b2959e30223772e8b41e26eaa5168250eecc0",
+      "case_id": "sphere-stakeholder--v4-refund-share-apac",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "1baf0ffbfffa704e0d4c352db63dfc66f27dd74606a8497c926119868c2516af"
+    },
+    {
+      "annotation_id": "17d687a4327b97ba485e87fa03124b5516bcc33e27402df7baabc6bcc6bda937",
+      "case_id": "sphere-stakeholder--v4-refunded-status-net",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "dc7b8ea8577fc07c3d9b059230d6320f9ceeca5444e600e3775ba10ef2c10bc0"
+    },
+    {
+      "annotation_id": "8d8c3d0c7008ad7011d491161a14b56e5afc964ab190992a4a3365bcf6f3529c",
+      "case_id": "sphere-stakeholder--v4-region-gap-yearcheck",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "a8864be44865acb93556c7419f0ff1045747858f514d9abd85f92addfd235297"
+    },
+    {
+      "annotation_id": "664a1513d2954dc460b096d7c3f84f5ce2b434a2d9c01f094acabf42234334f2",
+      "case_id": "sphere-stakeholder--v4-singapore-then-apac-share",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "20480b937040e9705049e5ea9ec99309b1a6a5888de976877b683ba911dadce4"
+    },
+    {
+      "annotation_id": "714af271e8a153bf0ee5ef6603b069d5a988f96b12731bbb662fca1f11aa27f4",
+      "case_id": "sphere-stakeholder--v4-total-net-2024",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "b639695894efae45a4554218fe8290717f93f93d84ef5a9d67e7c714e0e1667d"
+    },
+    {
+      "annotation_id": "b2bba2bc81c9b3e00a64bd87aac9d2e184b2634efb29ad070ac0de6f6d982291",
+      "case_id": "sphere-stakeholder--v4-units-then-price-hardware",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "ccec706de112c0c17a569ad881bb7c45714d02c83f09849a88d8835747b4d4c7"
+    },
+    {
+      "annotation_id": "cc5746af12e2b44f949fde21a00244d963ae4e0326c605e8e919142b48f986da",
+      "case_id": "sphere-stakeholder--v4-unknown-region",
+      "evaluation_split": "test",
+      "transcript_fingerprint": "c27389bd45e9d62f80a102110691077b445560081e74d3013c885bd716612112"
+    }
+  ],
+  "schema_version": "jury-annotation-v1"
+}

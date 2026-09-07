@@ -338,7 +338,7 @@
         <li><strong>Two warnings remain visible but non-filtering.</strong> <code>save-after-confirm</code> and <code>save-staged-emea</code> omitted an expected <code>save_insight</code>; replay still accepted 50 with zero rejections or duplicates.</li>
         <li><strong>The jury smoke passed cleanly.</strong> Both named development cases aggregate to pass with raw agreement 1.0; all 18 repetitions are represented across the exact three judges, with zero failures, replacements, ties, or inconclusive outcomes.</li>
         <li><strong>The full jury is complete.</strong> All 50 identity-bound rows and 450 calls were saved with zero mechanical-error rows. Within the 30-row dev split, four rows show panel disagreement and six show within-judge wobble; there are no ties, inconclusive outcomes, or abstentions. All 20 test rows remain sealed, and no test verdicts are reported here.</li>
-        <li><strong>The annotation bundle is ready.</strong> <code>runs/v4-jury-annotations-20260907</code> contains a validated ready manifest, 14 dev queue items—nine prioritized plus five controls—zero excluded errors, and 20 sealed test identities. All three manifest file hashes verify.</li>
+        <li><strong>Both jury versions are tracked.</strong> <code>orq/resources/datasets/decision-support-v4</code> contains the shared 50 observations plus explicit <code>jury-baseline</code> and <code>jury-human-rules-v1</code> directories. Each version includes its exact prompt, 50 complete 3×3 jury records, annotation analysis, and run provenance.</li>
         <li><strong>Three boundary rules are recorded.</strong> Visible analytical claims must be valid and correct; missing decision thresholds should lead to honest continued conversation rather than invented certainty; and scope or caveats already stated in the conversation need not be repeated unless later contradicted or abandoned. No datapoint labels have been inferred from these rules.</li>
         <li><strong>The aligned prompt is live in shadow mode.</strong> An evaluator-only apply created <code>analytics-decision-support-quality</code> in <code>pydata2026</code>; its immediate second reconciliation verified the resource present. No jury inference ran.</li>
         <li><strong>The annotation server is live.</strong> Open <code>http://localhost:8765</code> directly to review the 14 items. Auto-persist is enabled; zero labels are currently saved. The server stops on Done or <code>Ctrl-C</code>. Automated Chrome tab opening was blocked by another extension UI.</li>
@@ -409,12 +409,12 @@
           </tr>
           <tr>
             <td>Full jury</td>
-            <td>Experiment <code>01M1Y60F67NA0G94AVBPGF8VA8</code>, new run <code>01M1Y6EC7GSETQ1PBG1KBFXF8Z</code>: exactly 50 saved rows / 450 calls, 50 structurally valid unique identities, zero mechanical-error rows. Dev only: 30 rows, four panel-disagreement rows, six within-judge-wobble rows, zero ties/inconclusive/abstention rows. Twenty test rows remain sealed. JSONL SHA-256 <code>64713ea77b951ad880e11c3f30fbd0322933bb3676339e8b909fb0f113765d24</code>.</td>
+            <td>Baseline run <code>01M1Y6EC7GSETQ1PBG1KBFXF8Z</code> and human-rules run <code>01M1YJTH2WSZ7N54AJQG87HHBY</code> each contain exactly 50 rows / 450 calls with zero mechanical errors. Dev aggregate verdicts stayed 30 pass; panel disagreement moved 4→8 and within-judge wobble 6→8. Test verdicts remain sealed from analysis.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Complete</span></td>
           </tr>
           <tr>
             <td>Annotation bundle</td>
-            <td><code>runs/v4-jury-annotations-20260907</code>: ready manifest validated; 14 dev queue items = nine prioritized + five controls; zero errors excluded; 20 test identities expose identity-only fields; all three manifest file hashes verified.</td>
+            <td><code>jury-baseline/annotation</code> contains 14 items (nine prioritized + five controls); <code>jury-human-rules-v1/annotation</code> contains 19 (14 prioritized + five controls). Both have zero mechanical errors, identity-only sealed-test manifests, and verified file hashes.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Ready</span></td>
           </tr>
           <tr>
@@ -445,6 +445,7 @@
         </div>
       </div>
       <p class="diff-unchanged">UNCHANGED · pass / fail / not_applicable · full conversation evidence · no oracle or reference answer · three judges × three repetitions</p>
+      <p class="diff-unchanged">DIAGNOSTIC RERUN · 0 development aggregate flips · disagreement 4→8 · wobble 6→8 · human labels still 0</p>
     </section>
 
     <section>
@@ -492,7 +493,7 @@
 
     <footer>
       Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
-      Current status: three development-set boundary rules are encoded locally and synced to the shadow evaluator in pydata2026; no new jury run; annotation server active on localhost:8765 with 14 items available and zero saved.
+      Current status: baseline and human-rules-v1 jury versions are tracked with exact prompt snapshots; revised run complete; annotation server still serves the original 14-item baseline queue with zero saved labels.
     </footer>
   </div>
 </body>
