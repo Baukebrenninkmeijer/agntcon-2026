@@ -1,161 +1,137 @@
 # Running example for the talk: the newsletter podcast
 
-This file holds the worked example the talk uses on stage. It replaces the analytics agent as the
-running example in the slides.
+This file holds the worked example the talk uses on stage.
 
-The pipeline is real and it runs weekly in production, in n8n on the home server. The run captured
-here is execution 9267 from 4 September 2026. Its artifacts are in
-[`examples/podcast-run-2026-09-04/`](examples/podcast-run-2026-09-04/): the source messages, the
-intermediate digest, the delivered script, and the production prompt that produces it.
+The pipeline is real and it runs weekly in production on my home server. The run captured
+here is execution 9308 from 6 September 2026. Its artifacts are in
+[`examples/podcast-run-2026-09-06/`](examples/podcast-run-2026-09-06/): the source messages, the
+intermediate digest, the narration draft, the delivered dialogue script, and both prompts that
+produce it.
 
 **What is real and what is not.** The pipeline, the run, and every artifact on the slides are real.
-The judge, the rubrics, and the alignment session for this task are not: they are written to teach.
-The structural findings the talk reports come from a real alignment run on a different agent,
-recorded in [the session log](alignment-session-log.md). Keep that line clean on stage. Show the
-real artifacts, describe the protocol, and never read an invented number as a measurement.
+The judge and the alignment session for this task are illustrative unless a slide says otherwise;
+the multi-judge agreement run is real and is described where it appears. The structural findings the
+talk reports about consistency and blind spots come from a real alignment run on a different agent,
+recorded in [the session log](alignment-session-log.md). Keep that line clean on stage.
 
-## Why this example and not the analytics agent
+## A boundary, or a gap?
 
-The analytics agent produced a real grey zone, and it turned out to be the wrong kind. The question
-it raised was whether refunds are already subtracted inside the revenue column. That has one right
-answer, written down in a data dictionary, and anyone who reads it agrees. Alignment was not needed
-to settle it. Someone had to go look it up.
+Not every disagreement needs an alignment session, and the captured run carries one of each.
 
-That is a knowledge gap, not a boundary, and it undercuts the talk in two places. Section 2 closes
-on "who decides where the boundary goes?", and for the analytics case the honest answer is that
-nobody decides. Section 6 holds the judge to human agreement, and if two annotators disagree about
-refunds one of them is simply wrong, so the agreement number measures schema literacy rather than a
-contested boundary.
+Alex opens on "seventy-two point six percent on OSWorld two point zero". Two reviewers can disagree
+about whether that is right, and the disagreement dies the moment either of them opens the digest,
+where the figure is written down. That is a knowledge gap. Someone has to go and read.
 
-The podcast has the property the talk needs. Its hard rules are consequences of how the output is
-consumed, not facts about the world. Its open questions are product decisions where two careful
-people land differently and both can defend it.
+Nadia says an agent "spends five hundred dollars attempting to click a missing button". There is
+nothing to open. The number is in no source, the debate format asked for concrete jabs, and whether
+audio may carry an invented figure to make a point is a product decision two careful people land on
+differently. That is a boundary. Someone has to go and decide.
+
+Only the second kind is what alignment is for. Sorting them first is the cheapest step in the whole
+process.
 
 ## The pipeline
 
 A weekly job reads the AI newsletters that accumulated in an inbox, condenses them, rewrites the
-result as spoken text, sends that to a text-to-speech service, and delivers the audio over Telegram.
-The listener plays it on a walk. Nobody reads anything.
+result as spoken text, turns that into a two-host episode, and delivers the audio over Telegram. The
+listener plays it on a walk. Nobody reads anything.
 
-In the captured run it ingested ten newsletters totalling 310,647 characters, produced a 2,600
-character digest, and turned that into a 535 word script, about three and a half minutes of audio.
-That compression ratio is the whole problem in one number: 99.8 percent of the input does not
-survive, and every rubric question is a question about what should have been in the surviving 0.2
-percent.
+In the captured run it ingested ten newsletters totalling 310,647 characters, produced a 2,522
+character digest carrying eight topics, and delivered a 2,514 character two-host script in which
+four of those topics survive.
 
-## The production prompt is the argument
+**Two prompts write the episode, and the first one's output is never heard.** The first prompt
+produces a single-voice narration draft. That draft is thrown away as soon as it is written: a
+second prompt treats it as source material and rewrites it as a conversation between two hosts. The
+artifact that gets evaluated is the output of a prompt nobody thinks of as the writer.
 
-Show [the Podcastify prompt](examples/podcast-run-2026-09-04/podcastify-prompt.md) on a slide as it
-runs, and let the room read it. It says to convert dates into spoken form, replace bullet points
-with transitions, emit one continuous text with no paragraph breaks, and include no markdown, no
-speaker names, no timestamps, and no stage directions like `[pause]`.
+## The show is different every week, on purpose
 
-Every one of those rules exists because the output is spoken. None of them is a fact about email.
-And nothing in the pipeline checks any of them. That is the honest picture of how most LLM features
-ship, it is on screen in the speaker's own production code, and it sets up both the cheap-grader
-section and the judge.
+The pipeline picks the format, the two personas, their voices, the opener, the sign-off, the
+target length and the sampling temperature from a seeded configuration engine. The seed is derived
+from the content and the current date, so a retry on the same day is reproducible and a new day
+rolls the variety forward.
 
-The delivered script shows the rules being followed. It says "G P T six Astra", "Claude Fable five
-point one", "twenty-five cents per million tokens", and "Friday, September fourth, twenty
-twenty-six". A reader would find that text bizarre. A listener needs every bit of it.
+The captured run drew `debate`, Alex and Nadia, four minutes, temperature 0.9. The run seven minutes
+earlier drew `critique` at five minutes. **The target output is deliberately unstable**, which makes
+"is this the correct episode?" a question with no fixed answer, and forces every rubric to be about
+defensibility rather than about matching.
 
 ## What the medium decides, and what it does not
 
-The medium settles a set of questions outright, and these are the rules a rubric can state plainly:
-
-- **One pass, no scroll-back.** The consequential item goes first. A script that builds to its point
-  has lost the listener, who cannot go back.
-- **Eyes and hands busy.** No URLs, no identifiers, no model version strings left unspoken. The
-  listener cannot write anything down.
-- **A linear form.** No nesting, no "as listed above", no long enumerations, because structure a
-  reader skims is structure a listener has to hold in memory.
-- **A fixed budget.** Three and a half minutes against 310,000 characters of input. Coverage and
-  depth are in direct conflict and something has to say which one wins.
+The medium settles a set of questions outright: one pass with no scroll-back, so the consequential
+item goes first; no URLs or unspoken version strings, because the listener cannot write anything
+down; a linear form, because structure a reader skims is structure a listener has to hold; and a
+fixed budget, four minutes against 310,000 characters of input.
 
 What the medium does not settle is everything interesting.
 
 ## The grey zones, visible in the real script
 
-Each of these is a real property of the captured run, so the slide can quote the artifact rather
-than a hypothetical.
+**Coverage collapse.** The digest carries eight topics across four sections. The delivered script
+covers four of them and drops the rest entirely: Meta's Muse Spark, the Z.ai model identification,
+World Labs Atlas, the NYC schools ban, and every item under "worth exploring". Nobody decided that.
+The debate format did, and the format was chosen by a seeded random number.
 
-**Coverage against budget.** The script carries almost the entire digest: four model launches,
-three action items, three projects to explore, and the hardware section. Nothing was cut. Is total
-coverage the goal for a three minute brief, or should the thing have picked two stories and dropped
-the rest? Both are defensible products and they need different rubrics.
+**The cleared cliché.** The script says "a complete paradigm shift" about a benchmark score. The
+production slop filter would have caught that vocabulary, except `paradigm` sits on a hand-written
+exclusion list with the justification "legitimate in a senior-engineering podcast". The boundary is
+a comment in source control, and nobody has revisited it.
 
-**Editorial colour.** The digest is neutral. The script calls it an "UNBELIEVABLE week", describes
-the cybersecurity threshold as "a major milestone for agent capability", calls safety interventions
-"frustrating", and reassures the listener with "do not worry". None of that came from the source.
-It is also exactly what the production prompt asked for, because the prompt demands an engaging
-conversational tone. So the pipeline is compliant with its spec and unfaithful to its input at the
-same time. Two rubrics in direct conflict, and the room has to pick.
+**Invented specifics.** "Spends five hundred dollars attempting to click a missing button" and "step
+forty-two of a three-day job" appear nowhere in the digest or the sources. They are rhetorical
+illustration, and the debate format explicitly asks for concrete jabs. The defensible rule: an
+invented figure must be marked as hypothetical, because audio has no citation channel and the
+listener cannot tell reporting from illustration.
 
-**Lost attribution.** The digest carries numbered citations, and the script drops them, correctly,
-because reading footnote markers aloud is absurd. But now no claim is attributable. Does
-faithfulness in audio require saying "according to AINews", at a cost of several seconds per claim,
-or is dropping attribution the right call for a personal brief?
+**Contradicting prompts.** The first prompt says to add a greeting at the beginning and a
+sign-off at the end. The second prompt's structural rules ban template sign-offs outright. The
+delivered script opens mid-sentence on an ellipsis and ends on a host saying what she is watching
+next. Two prompts in one pipeline, in direct conflict, and the second one won.
 
-**The list the medium forbids.** Near the end the script says there are three standout projects, and
-then reads three in a row. The prompt banned bullet points and got prose that is still a list. A
-rubric that only bans the formatting misses this entirely.
+**A pass worth showing.** "Seventy-five percent discount on cache reads" and "net execution costs
+jumped twenty percent" both survive correctly from the digest. Show a pass next to the failures.
 
-**A pass worth showing.** The dollar figure survives correctly as "twenty-five cents per million
-tokens". Show it next to the failures, because a rubric that only ever fires on problems teaches the
-room nothing about where the boundary is.
+## The filter that already exists
+
+`slop_filter.validate` is a real deterministic grader in production. It checks a script against
+about 150 banned words and 40 banned phrases, two structural regexes, four sign-off tells, a minimum
+length, the presence of both speakers, and a "too clean" rule that fires when a format demanding
+interruptions produces no ellipses or dashes. It is wired into a refine loop: on failure the issues
+are fed back as revision notes and the script is regenerated, up to two retries, shipping the
+cleanest draft either way and logging a Sentry warning if issues remain. It fired on the captured
+run — `Refine pass 0: 2 issues; regenerating`.
+
+Two things about it drive the talk. The banned lists are injected into the generation prompt **and**
+used as the grader, so the check is not independent of the instruction. And the lexicon was vendored
+once from a skill file and has no re-cut schedule, so it encodes one moment in a moving target: it
+covers the 2023-24 vocabulary, has no rule for the em dash, and knows nothing about the 2026
+"claudish" tells. A judge aligned in 2024 is misaligned in 2026 without anyone touching it.
 
 ## Decomposing the judge
 
-"Is this a good episode?" is several questions wearing one coat:
-
-- **Content selection.** Did the right items survive the cut, and was anything material dropped?
-- **Faithfulness.** Is every claim supported by the newsletters it came from?
-- **Listenability.** Does it obey the constraints the medium imposes?
-- **Actionability.** Can the listener act on it later without a laptop?
-
-Align one: content selection. It has the widest grey zone, it is where the product decisions live,
-and the others are narrower once it is settled. Then decompose that one further, because selection is
-still several judgements: is an item newsworthy at all, does an action item belong in a news brief,
-do three "worth exploring" links earn their forty seconds, and does the ordering put the most
-consequential story first.
-
-Listenability is the cheap-grader example. Half of it is decidable by code: a regular expression
-finds URLs and unspoken version strings, a word count checks the budget, and a scan finds the
-markdown the prompt forbade. Never pay a model to check what code can check.
+"Is this a good episode?" is several questions wearing one coat: content selection, faithfulness,
+listenability, and actionability. The talk aligns one of them and says why. Listenability is the
+cheap-grader half — a regular expression finds URLs and unspoken version strings, a word count
+checks the budget — and is exactly where the deterministic filter already lives.
 
 ## The reference-free judge
 
-Nobody can write the correct episode. Writing it would mean settling every question above first. So
-the judge gets the source newsletters, the intermediate digest, and the delivered script, and it
-decides whether the selection was defensible on that evidence.
-
-Prompt line for the slide:
-
-> You have no reference episode, and none exists. Decide from the source messages and the
-> intermediate digest whether the selection is defensible, and whether anything material to the
-> listener was dropped.
-
-In production there is never a reference. A judge that needs one is a test fixture, not an evaluator.
+Nobody can write the correct episode; writing it would mean settling every question above first, and
+the show format changes weekly anyway. So the judge gets the source newsletters, the digest and the
+delivered script, and decides whether the result is defensible on that evidence. In production there
+is never a reference. A judge that needs one is a test fixture, not an evaluator.
 
 ## The stable-and-wrong case
 
-This is the real lesson from the analytics run and it transfers cleanly, so keep it.
-
-A judge can be perfectly consistent and perfectly wrong. Suppose it passes, every single time, the
-three-projects-in-a-row passage, and every explanation says the same thing: all the material items
-were covered. It is right about that. Nothing in the rubric says three items in a row is unusable in
-audio, so it has no reason to object, and asking it eight more times will never reveal the problem.
-Consistency measurement finds what a judge is unsure about. It structurally cannot find what a judge
-is confidently wrong about.
-
-What finds it: reading what the judge says it believes. The explanations name the judgement it keeps
-blessing, someone who has actually listened to the episode on a walk recognises it as wrong, and one
-correction covers every row that shares it. No reference answer is involved, which matters, because
-here there is none to be had.
+A judge can be perfectly consistent and perfectly wrong. Consistency measurement finds what a judge
+is unsure about; it structurally cannot find what a judge is confidently wrong about. What finds it
+is reading what the judge says it believes, recognising the belief as wrong, and correcting every
+row that shares it. No reference answer is involved, which matters, because here there is none.
 
 ## The corpus
 
-One listener, many weeks. Vary the situation, not the person. A week with one enormous story, a week
+One listener, many weeks. Vary the situation, not the person: a week with one enormous story, a week
 with nothing, a week where two newsletters contradict each other, a week where the same launch is
 covered five times, a week where an item is already stale by the time the audio plays.
 
