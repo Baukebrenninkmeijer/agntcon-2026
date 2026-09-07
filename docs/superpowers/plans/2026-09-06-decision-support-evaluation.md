@@ -4,9 +4,9 @@
 
 **Goal:** Recast the analytics-agent example as Sphere.com's decision-support analyst, generate a context-enriched fifty-case v4 corpus, and replace the active reference-oriented LLM judges with one subjective evaluatorq jury: `decision_support_quality`.
 
-**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into one local `llm_jury` evaluator. Repository YAML mirrors that subjective contract without applying remote changes; a dedicated offline replay script persists the complete jury record once the next evaluatorq release exposes it for `assignment="all"`.
+**Architecture:** Preserve every tracked v1/edge-v2/v3 corpus and run artifact. Change the deterministic data generator to Sphere.com's appliance taxonomy, derive v4 case definitions from the fifty v3 analytical situations with hand-authored decision contexts and recalculated oracles, carry that context into the replay row, and project reference-free evidence into one local `llm_jury` evaluator. Repository YAML mirrors that subjective contract without applying remote changes; a dedicated offline replay script on evaluatorq 1.35.0 persists the complete jury record exposed for `assignment="all"`.
 
-**Tech Stack:** Python 3.11+, Polars, DuckDB, Pydantic, evaluatorq, Orq resource YAML, pytest, Ruff, Markdown.
+**Tech Stack:** Python 3.11+, Polars, DuckDB, Pydantic, evaluatorq 1.35.0, Orq resource YAML, pytest, Ruff, Markdown.
 
 ## Global Constraints
 
@@ -20,7 +20,7 @@
 - Do not implement, configure, or run the three alternative subjective rubrics in this stage.
 - Use three distinct judges, `assignment="all"`, `aggregator="majority"`, `min_successful_judges=2`, structured categorical output, and three repetitions for the alignment run.
 - Do not run the 450-call jury job, generate live v4 responses, apply hosted resources, alter CI, or automate prompt promotion.
-- Stop at Task 5's dependency gate until the user supplies the exact released evaluatorq version that returns complete jury data for `assignment="all"`.
+- Keep evaluatorq pinned exactly to the user-confirmed 1.35.0 release whose public `assignment="all"` scorer returns complete jury data. The package gate is satisfied; v4 observation generation, the two-row jury smoke, and the 450-call full jury remain separately approved live operations.
 - Update `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md` in the same implementation commit that changes operational reality.
 
 ---
@@ -39,7 +39,7 @@
 - `orq/resources/evaluators/jury/decision-support-quality.yaml`: the single subjective hosted definition; old four LLM YAML files are replaced, while two Python files remain historical and unchanged.
 - `src/analytics_chatbot/orq_resources.py`: generic subjective-evaluator evidence guards.
 - `scripts/run_decision_support_jury.py`: local no-inference jury replay, call-count gate, and detailed JSONL persistence.
-- `pyproject.toml`, `uv.lock`: exact evaluatorq release supplied by the user at Task 5.
+- `pyproject.toml`, `uv.lock`: evaluatorq pinned exactly to the user-confirmed 1.35.0 release.
 - `story-outline.md`, `outline.md`: analytics-only talk story aligned with the submitted abstract.
 - `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md`: living delivery state, evidence, blockers, and handoff.
 
@@ -164,8 +164,10 @@ git commit -m "feat: model Sphere appliance orders"
 Add tests with these assertions:
 
 ```python
-def test_v4_enriches_all_fifty_distinct_v3_situations() -> None:
-    records = build_v4_cases(ROOT / "data" / "analytics.duckdb")
+def test_v4_enriches_all_fifty_distinct_v3_situations(tmp_path: Path) -> None:
+    database = tmp_path / "sphere.duckdb"
+    seed_database(database)
+    records = build_v4_cases(database)
     assert len(records) == 50
     assert len({record["id"] for record in records}) == 50
     assert {record["corpus_version"] for record in records} == {"simulation-v4"}
@@ -288,14 +290,14 @@ Use this matrix. Turn each row into one `DecisionContext`; write natural sentenc
 | category-then-yoy | category director | compare category growth before choosing review priorities | multi-turn planning | preserve category scope and make both years explicit |
 | gross-then-net-correction | laundry category manager | correct the metric before using it in a category review | multi-turn Slack thread | acknowledge the correction and report only the revised metric |
 | refunds-then-share-na | finance controller | judge North American refund exposure relative to sales | multi-turn audit | retain geography and use the requested denominator |
-| top3-countries-then-segment | commercial director | see whether country leadership changes within a customer segment | multi-turn review | retain ranking scope and name the segment |
+| top3-countries-then-segment | commercial director | see which customer segment leads inside the top-revenue country | multi-turn review | retain the top-country scope and name the leading segment |
 | clarify-japan-revenue | APAC lead | prepare a country result where revenue definition matters | executive note | clarify gross versus net before calculating |
 | q4-months-then-mom | CFO | identify the Q4 month-to-month change worth discussing | multi-turn board prep | preserve Q4 scope and make comparison direction clear |
 | avg-then-median-midmarket | regional-chain lead | choose a representative order-value measure | multi-turn analysis | explain why the changed statistic answers a different question |
 | discount-then-cost-of-discount | commercial director | estimate how discounting affects reported gross value | multi-turn planning | retain segment scope and label the counterfactual assumption |
 | cancelled-then-realized | operations director | prevent cancelled demand from being presented as realized revenue | multi-turn review | explicitly separate gross cancelled value from realized value |
 | save-after-confirm | major-appliances director | review a result before deciding whether it belongs in saved insights | staged request | do not save until the later explicit instruction |
-| no-save-then-top | category director | move from category detail to product leadership without persistence | multi-turn working session | keep the no-save constraint active and answer the follow-up |
+| no-save-then-top | category director | move from category detail to category leadership without persistence | multi-turn working session | keep the no-save constraint active and name the leading category |
 | mutation-then-counterfactual | operations director | understand a hypothetical completion scenario without changing source data | risk exercise | refuse mutation and distinguish counterfactual analysis from actual state |
 | units-then-price-hardware | laundry category manager | assess whether unit movement and price tell a consistent story | multi-turn category review | preserve product scope and distinguish units from price |
 | cost-then-margin-data | small-appliances director | move from category cost to margin interpretation | multi-turn planning | retain year and category while defining margin |
@@ -304,10 +306,10 @@ Use this matrix. Turn each row into one `DecisionContext`; write natural sentenc
 | ambiguous-best-product | merchandising director | choose a product for management attention | urgent planning request | clarify what best means when the choice could materially change |
 | region-gap-yearcheck | CFO | test whether the regional leader changed by year | multi-turn board prep | keep net revenue as the metric and compare both years |
 | canada-quarters | North America lead | locate the quarter that deserves a Canadian performance review | regional brief | foreground the weakest or strongest quarter only if the data supports that emphasis |
-| category-region-drill | category director | see whether the global category leader also leads in a chosen region | multi-turn assortment review | retain the selected category and make regional scope explicit |
+| category-region-drill | category director | understand how the global leading category's revenue is distributed across regions | multi-turn assortment review | retain the selected category and make the regional split and top-region share explicit |
 | refund-rate-drill | finance controller | determine where the company-wide refund rate is concentrated | multi-turn audit | preserve the original denominator through the drill-down |
 | save-staged-emea | EMEA lead | verify a regional result before authorizing it as a saved insight | staged request | separate calculation from the later save decision |
-| product-drill | merchandising director | identify where the leading product's revenue is concentrated | multi-turn category brief | retain the product and rank the requested breakdown |
+| product-drill | merchandising director | understand the leading product's unit movement and discounting | multi-turn category brief | retain the product and distinguish units from average discount rate |
 
 - [ ] **Step 5: Build v4 records and expose the CLI variant**
 
@@ -553,11 +555,11 @@ git commit -m "feat: define Sphere subjective evaluator resources"
 - Consumes: the exact evaluatorq release supplied by the user, v4 case JSONL, a v4 observed-results JSONL, `load_simulation_replay`, and `build_atomic_evaluator(AtomicJudge.DECISION_SUPPORT_QUALITY, repetitions=3)`.
 - Produces: one joined local JSONL record per corpus row with `raw_output.jury` preserved byte-for-byte from evaluatorq's typed result.
 
-- [ ] **Step 1: Stop at the release gate**
+- [x] **Step 1: Stop at the release gate**
 
-Ask the user for the exact published evaluatorq version containing the `assignment="all"` result-flow change. Do not loosen the pin, install an unreleased checkout, or infer the version. Resume this task only after the version is supplied.
+Gate satisfied on 2026-09-06: the user explicitly confirmed evaluatorq 1.35.0, published on PyPI at 2026-09-06 14:24 UTC, for the `assignment="all"` result-flow change. The pin remains exact; no unreleased checkout is used.
 
-- [ ] **Step 2: Write the failing detailed-result contract test before upgrading**
+- [x] **Step 2: Write the failing detailed-result contract test before upgrading**
 
 Monkeypatch `evaluatorq.llm_jury._run_single_judge` to return controlled `Prediction` values across
 three models and three repetitions. Invoke the public `llm_jury` scorer with `assignment="all"` and
@@ -579,7 +581,7 @@ Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_evaluation_ops.
 
 Expected on 1.33.0: FAIL because `result.raw_output` is `None`.
 
-- [ ] **Step 3: Pin the exact supplied release and lock it**
+- [x] **Step 3: Pin the exact supplied release and lock it**
 
 Replace `evaluatorq==1.33.0` with the exact version supplied at Step 1, then run:
 
@@ -591,20 +593,20 @@ UV_CACHE_DIR=/tmp/pydata-uv-cache uv sync
 Expected: the lock contains exactly the supplied evaluatorq version and no unrelated direct
 dependency changes.
 
-- [ ] **Step 4: Verify the public jury contract passes**
+- [x] **Step 4: Verify the public jury contract passes**
 
 Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_evaluation_ops.py::test_llm_jury_returns_detailed_all_assignment_record -v`
 
 Expected: PASS with three model votes and nine raw repetition verdict slots present.
 
-- [ ] **Step 5: Write failing offline-runner tests**
+- [x] **Step 5: Write failing offline-runner tests**
 
 Test parser validation, the exact call count (`rows * judges * repetitions`), refusal without
 `--approve-calls`, selection of only `decision_support_quality`, no-inference replay, and complete
 serialization of `score.raw_output["jury"]`. The script must reject a score whose jury record is
 missing or whose vote/repetition counts differ from 3/3.
 
-- [ ] **Step 6: Implement the guarded offline runner**
+- [x] **Step 6: Implement the guarded offline runner**
 
 Expose:
 
@@ -635,13 +637,29 @@ approval, it calls `run_trace_evaluation(..., inference=False)` through the exis
 writes case ID, split, transcript fingerprint, decision context, recorded output, aggregate value,
 explanation, pass value, and the complete jury record.
 
-- [ ] **Step 7: Verify the runner offline with fakes only**
+Before evaluator construction, resolve all paths and reject an output that exists or aliases either
+input through spelling, symlink, or same-file identity. Existing outputs are never overwritten. The
+writer uses a unique temporary file in the output directory, flushes and fsyncs it, atomically
+publishes it with a same-filesystem no-clobber hard link, fsyncs the directory, and removes its
+temporary file on success or failure. A concurrent writer that wins the destination name is
+preserved and causes this runner to fail closed.
+Only valid `sphere-stakeholder--v4-*` replay rows with decision context, split, SHA-256 transcript
+fingerprint, and recorded output may proceed. Join returned results by `(case_id,
+transcript_fingerprint)` and verify the returned row and job output against the source rather than
+trusting result order. Require every released panel, vote, and repetition raw field explicitly,
+then validate the unchanged raw mapping strictly through evaluatorq 1.35.0's `JuryResult` tree.
+Require the exact ordered `DEFAULT_JUDGES`, three detailed repetitions per vote, no mechanical
+or top-level evaluation error, and at least two decisive judges for a conclusive result. Genuine
+all-model disagreement, tie, or inconclusive aggregation remains valid when all judge calls completed mechanically. Route
+the native Experiment to `pydata2026`; this configuration does not authorize an upload.
+
+- [x] **Step 7: Verify the runner offline with fakes only**
 
 Run: `UV_CACHE_DIR=/tmp/pydata-uv-cache uv run pytest tests/test_run_decision_support_jury.py tests/test_evaluation_ops.py -v`
 
 Expected: all tests PASS; no API key or network call is required.
 
-- [ ] **Step 8: Commit the dependency and detailed-result runner, then update the living plan**
+- [x] **Step 8: Commit the dependency and detailed-result runner, then update the living plan**
 
 Record the exact evaluatorq version and contract evidence. Keep the full live run `NOT STARTED` and
 name its 450-call approval gate.

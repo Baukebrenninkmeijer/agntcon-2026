@@ -5,6 +5,18 @@ import polars as pl
 
 from analytics_chatbot.data import generate_orders, seed_database
 
+EXPECTED_PRODUCTS = {
+    "Small Appliances": {"Espresso Machine", "Air Purifier"},
+    "Cleaning": {"Robot Vacuum", "Dishwasher"},
+    "Laundry": {"Washing Machine", "Tumble Dryer"},
+    "Major Appliances": {"Refrigerator", "Heat Pump"},
+}
+EXPECTED_SEGMENTS = {
+    "Independent Retailers",
+    "Regional Chains",
+    "National Retailers",
+}
+
 
 def test_generate_orders_is_lazy() -> None:
     orders = generate_orders(count=100)
@@ -36,6 +48,30 @@ def test_seeded_orders_cover_business_dimensions(tmp_path: Path) -> None:
         ).fetchone()
 
     assert result == (4, 4, 3, 4)
+
+
+def test_seeded_orders_use_sphere_catalog(tmp_path: Path) -> None:
+    path = tmp_path / "sphere.duckdb"
+    manifest = seed_database(path)
+
+    with duckdb.connect(str(path), read_only=True) as connection:
+        products = connection.execute(
+            "SELECT product_category, product FROM orders GROUP BY ALL"
+        ).fetchall()
+        segments = {
+            row[0]
+            for row in connection.execute(
+                "SELECT DISTINCT customer_segment FROM orders"
+            ).fetchall()
+        }
+
+    by_category: dict[str, set[str]] = {}
+    for category, product in products:
+        by_category.setdefault(category, set()).add(product)
+
+    assert by_category == EXPECTED_PRODUCTS
+    assert segments == EXPECTED_SEGMENTS
+    assert manifest.schema_version == "sphere-orders-v1"
 
 
 def test_revenue_semantics_are_consistent(tmp_path: Path) -> None:

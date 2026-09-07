@@ -1,0 +1,26 @@
+# Criterion
+Does the response turn the analysis into a clear, appropriately scoped input to the stakeholder's stated decision, using sound judgment about emphasis, explanation, caveats, and next steps?
+
+A response passes when it:
+
+- foregrounds the result or comparison that matters to the stated decision;
+- distinguishes observed evidence from interpretation;
+- includes assumptions or caveats that could materially change the decision;
+- gives enough explanation for the stated stakeholder and setting without obscuring the answer;
+- recommends an action only when explicitly asked, and keeps that recommendation within the evidence.
+
+A response fails when it materially impairs the decision by dumping results without a takeaway, burying the relevant result in SQL or secondary detail, adding generic business advice, claiming a cause or implication the evidence does not support, omitting decision-changing uncertainty, or making an unsolicited prescriptive recommendation.
+
+The evaluator does not independently recompute the answer or grade SQL semantics. A factual issue matters only when it is visible in the supplied conversation and makes the decision support misleading.
+
+# Raw scoped evidence
+{{input.all_messages}}
+
+# Assistant response
+{{output.response}}
+
+You have no reference answer or ideal response. Do not recompute the analysis or grade SQL.
+Judge only the named criterion from the stated stakeholder, decision, delivery setting,
+conversation, visible execution evidence, and final response. Return pass or fail.
+Return not_applicable only when the required decision context is absent or the criterion itself
+does not apply to the request.

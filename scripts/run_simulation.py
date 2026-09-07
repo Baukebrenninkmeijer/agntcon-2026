@@ -26,6 +26,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--evaluation-name",
         default="pydata2026-analytics-chatbot-simulation",
     )
+    parser.add_argument(
+        "--experiment-path",
+        default="pydata2026",
+        help="Orq project/folder path for every uploaded Experiment",
+    )
     parser.add_argument("--report", type=Path)
     parser.add_argument("--output", type=Path, default=Path("runs/evaluatorq-simulation.jsonl"))
     return parser
@@ -41,10 +46,58 @@ def _load(path: Path) -> list[Any]:
     ]
 
 
+def _resolve_output_paths(output: Path, report: Path | None) -> tuple[Path, Path | None]:
+    requested = [("output", Path(output).expanduser())]
+    if report is not None:
+        requested.append(("report", Path(report).expanduser()))
+    resolved: list[tuple[str, Path]] = []
+    for label, path in requested:
+        if path.exists() or path.is_symlink():
+            raise FileExistsError(f"{label} already exists; refusing to overwrite: {path}")
+        parent = path.parent.resolve(strict=True)
+        if not parent.is_dir():
+            raise NotADirectoryError(f"{label} parent is not a directory: {parent}")
+        resolved.append((label, parent / path.name))
+    if len(resolved) == 2 and resolved[0][1] == resolved[1][1]:
+        raise ValueError("output and report paths must be different")
+    return resolved[0][1], resolved[1][1] if len(resolved) == 2 else None
+
+
+def _simulation_options(
+    args: argparse.Namespace,
+    *,
+    target: Any,
+    datapoints: list[Any],
+) -> dict[str, Any]:
+    from evaluatorq.contracts import LLMCallConfig
+
+    return {
+        "evaluation_name": args.evaluation_name,
+        "target": target,
+        "datapoints": datapoints,
+        "max_turns": args.max_turns,
+        "llm_config": LLMCallConfig(
+            model="openai/gpt-5.6-luna",
+            api="responses",
+            retry_count=1,
+        ),
+        "evaluator_names": ["goal_achieved", "criteria_met"],
+        "datapoint_parallelism": 10,
+        "llm_parallelism": 10,
+        "max_target_retries": 2,
+        "per_simulation_timeout_s": 180,
+        "upload_results": True,
+        "orq_results_path": args.experiment_path,
+        "save": True,
+        "report": args.report,
+        "executive_summary": False,
+        "recommendations": False,
+    }
+
+
 def main() -> None:
     load_dotenv(override=True)
 
-    from evaluatorq.contracts import LLMCallConfig
     from evaluatorq.simulation import simulate
     from evaluatorq.simulation.utils.dataset_export import export_results_to_jsonl
 
@@ -52,6 +105,7 @@ def main() -> None:
     from analytics_chatbot.evaluation_ops.target import AnalyticsChatbotTarget
 
     args = build_parser().parse_args()
+    args.output, args.report = _resolve_output_paths(args.output, args.report)
     datapoints = _load(args.cases)
     if args.case_id:
         datapoints = [point for point in datapoints if point.id == args.case_id]
@@ -62,35 +116,19 @@ def main() -> None:
     if not datapoints:
         raise ValueError("at least one simulation case is required")
 
+    print(
+        f"Selected {len(datapoints)} row(s); Experiment path={args.experiment_path}; "
+        "simulator=openai/gpt-5.6-luna; target=agent/analytics-chatbot"
+    )
+
     settings = Settings(model=Settings().hosted_agent_model)
     target = AnalyticsChatbotTarget(
         settings,
         {point.first_message: point.id for point in datapoints},
     )
     results = asyncio.run(
-        simulate(
-            evaluation_name=args.evaluation_name,
-            target=target,
-            datapoints=datapoints,
-            max_turns=args.max_turns,
-            llm_config=LLMCallConfig(
-                model="openai/gpt-5.6-luna",
-                api="responses",
-                retry_count=1,
-            ),
-            evaluator_names=["goal_achieved", "criteria_met"],
-            datapoint_parallelism=10,
-            llm_parallelism=10,
-            max_target_retries=2,
-            per_simulation_timeout_s=180,
-            upload_results=True,
-            save=True,
-            report=args.report,
-            executive_summary=False,
-            recommendations=False,
-        )
+        simulate(**_simulation_options(args, target=target, datapoints=datapoints))
     )
-    args.output.parent.mkdir(parents=True, exist_ok=True)
     export_results_to_jsonl(results, str(args.output))
     for point, result in zip(datapoints, results, strict=True):
         print(

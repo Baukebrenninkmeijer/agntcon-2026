@@ -1,0 +1,9 @@
+{
+  "files": {
+    "jury_errors.json": "bb8ca6cc4d81a6dbca46a0473ff7f320a1c34f1b74a6cf370d51b5c2d66fd580",
+    "queue.json": "b71439aa4072f48852fa9a78dd17924653a3bcece87f4cbd411b36c922350ab1",
+    "test_manifest.json": "183871647dd773163e2e3e223e543e5ff6b8457f5536bcf4a1b066a9ea9fe336"
+  },
+  "schema_version": "jury-annotation-v1",
+  "status": "ready"
+}

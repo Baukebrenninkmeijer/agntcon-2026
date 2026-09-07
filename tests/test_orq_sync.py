@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from analytics_chatbot.evaluation_ops import DEFAULT_JUDGES
 from analytics_chatbot.orq_resources import load_resource_bundle
 from analytics_chatbot.orq_sync import (
     OrqReconciler,
@@ -22,10 +23,8 @@ def empty_snapshot() -> RemoteSnapshot:
         project_id="${ORQ_PROJECT_ID}",
         models={
             "deepseek/deepseek-v4-flash": True,
-            "openai/gpt-5.6-luna": True,
-            "google-ai/gemini-3.5-flash-lite": True,
-            "tensorix/qwen/qwen3.8-flash-next": True,
             "wafer/DeepSeek-V4-Flash-0731-Fast": True,
+            **dict.fromkeys(DEFAULT_JUDGES, True),
         },
     )
 
@@ -41,10 +40,7 @@ def test_sync_plan_orders_tools_agent_and_mixed_evaluators() -> None:
         ("create", "agent", "analytics-chatbot"),
         ("create", "evaluator", "analytics-state-change-policy"),
         ("create", "evaluator", "analytics-tool-execution-integrity"),
-        ("create", "evaluator", "analytics-answer-correctness"),
-        ("create", "evaluator", "analytics-evidence-faithfulness"),
-        ("create", "evaluator", "analytics-multi-turn-consistency"),
-        ("create", "evaluator", "analytics-query-semantics"),
+        ("create", "evaluator", "analytics-decision-support-quality"),
     ]
 
 
@@ -145,7 +141,7 @@ def test_remote_evaluator_shapes_normalize_to_repository_semantics() -> None:
     expected = next(
         body
         for body in bundle.evaluator_payloads()
-        if body["key"] == "analytics-answer-correctness"
+        if body["key"] == "analytics-decision-support-quality"
     )
     noisy = {
         **expected,

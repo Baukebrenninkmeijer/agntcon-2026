@@ -199,20 +199,38 @@ class LlmEvaluatorResource(EvaluatorBase):
         secret_tokens = {"ORQ_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"}
         if any(token in self.prompt or token in str(self.input_mapping) for token in secret_tokens):
             raise ValueError("evaluator resources cannot contain credential variables")
-        if self.key == "analytics-answer-correctness":
-            # Reference-free: the oracle stays out of the judge so it can serve as ground
-            # truth during alignment. Execution evidence arrives via the conversation only.
-            forbidden = {"input.expected_output", "output.tools_called", "input.retrievals"}
-            if forbidden & variables or "input.all_messages" not in variables:
+        if self.key == "analytics-decision-support-quality":
+            required = {"input.all_messages", "output.response"}
+            if not required.issubset(variables):
                 raise ValueError(
-                    "answer correctness must be reference-free and read the full conversation"
+                    "decision support quality requires the full conversation and final response"
                 )
-        if self.key == "analytics-evidence-faithfulness":
-            forbidden = {"input.expected_output", "reference_sql", "query_requirements"}
-            if forbidden & variables:
-                raise ValueError("evidence faithfulness cannot receive oracle evidence")
-            if "output.tools_called" not in variables:
-                raise ValueError("evidence faithfulness requires tool evidence")
+
+            subjective_contract = f"{self.prompt}\n{self.input_mapping}".lower()
+            mapped_variables = set(self.input_mapping)
+            reference_family_variables = {
+                variable
+                for variable in variables | mapped_variables
+                if {"expected", "hidden", "ideal", "oracle", "reference"}
+                & set(re.split(r"[._-]", variable.lower()))
+            }
+            claims_reference = re.sub(
+                r"\bno reference answer or ideal response\b", "", subjective_contract
+            )
+            if (
+                reference_family_variables
+                or "input.decision_context" in subjective_contract
+                or "reference_sql" in subjective_contract
+                or "query_requirements" in subjective_contract
+                or re.search(
+                    r"\b(?:reference|ideal)\s+(?:answer|response)\b", claims_reference
+                )
+            ):
+                raise ValueError("decision support quality must remain reference-free")
+            if variables != required or mapped_variables != required:
+                raise ValueError(
+                    "decision support quality accepts only the full conversation and final response"
+                )
         return self
 
 

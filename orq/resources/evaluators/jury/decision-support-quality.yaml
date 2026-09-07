@@ -1,0 +1,61 @@
+kind: evaluator
+type: llm_eval
+key: analytics-decision-support-quality
+display_name: Analytics decision-support quality
+description: >-
+  Judges whether the final analytics response is clear, appropriately scoped input to the
+  stakeholder's stated decision using only the agent-visible conversation and execution evidence.
+path: evaluators/jury
+mode: jury
+judges:
+  - openai/gpt-5.6-luna
+  - groq/qwen/qwen3.8-27b
+  - google-ai/gemini-3.5-flash-lite
+min_successful_judges: 2
+repetitions: 3
+output:
+  type: categorical
+  labels:
+    - {value: pass, description: "The response provides clear, appropriately scoped decision support."}
+    - {value: fail, description: "The response materially impairs the stated decision."}
+    - {value: not_applicable, description: "The required decision context is absent or the criterion does not apply."}
+  passing: [pass]
+input_mapping:
+  input.all_messages: full ordered conversation including tool calls and results
+  output.response: final assistant response
+validation:
+  status: shadow
+  human_labeled_examples: 0
+prompt: |
+  # Criterion
+  Does the response turn the analysis into a clear, appropriately scoped input to the stakeholder's stated decision, using sound judgment about emphasis, explanation, caveats, and next steps?
+
+  A response passes when it:
+
+  - foregrounds the result or comparison that matters to the stated decision;
+  - distinguishes observed evidence from interpretation;
+  - includes assumptions or caveats that could materially change the decision;
+  - gives enough explanation for the stated stakeholder and setting without obscuring the answer;
+  - recommends an action only when explicitly asked, and keeps that recommendation within the evidence.
+
+  A response fails when it materially impairs the decision by dumping results without a takeaway, burying the relevant result in SQL or secondary detail, adding generic business advice, claiming a cause or implication the evidence does not support, omitting decision-changing uncertainty, or making an unsolicited prescriptive recommendation.
+
+  Human-aligned boundary rules:
+
+  1. Evidence validity. Analytical claims that can be checked against the supplied conversation or tool evidence must be valid, correct, and consistent with the visible evidence. Fail a material contradiction or unsupported data-definition claim even when the headline result is useful. Do not reconstruct hidden ground truth.
+  2. Conversational completion. When the available evidence cannot settle the stakeholder's broader decision, the response may state what remains unknown and continue the conversation by asking for the missing benchmark or context. Do not require it to invent a materiality threshold or escalation rule, and do not fail it merely because the broader decision remains open.
+  3. Conversation-level context. Evaluate the full conversation, not the latest response in isolation. A definition, scope, assumption, or caveat established earlier remains active and need not be repeated in every later response unless the response contradicts or silently abandons it.
+
+  The evaluator does not independently recompute the answer or grade SQL semantics. A factual issue matters only when it is visible in the supplied conversation and makes the decision support misleading.
+
+  # Raw scoped evidence
+  {{input.all_messages}}
+
+  # Assistant response
+  {{output.response}}
+
+  You have no reference answer or ideal response. Do not recompute the analysis or grade SQL.
+  Judge only the named criterion from the stated stakeholder, decision, delivery setting,
+  conversation, visible execution evidence, and final response. Return pass or fail.
+  Return not_applicable only when the required decision context is absent or the criterion itself
+  does not apply to the request.

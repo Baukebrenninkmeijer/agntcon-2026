@@ -221,6 +221,34 @@ boundaries, record the user's rules, rewrite the evaluator, and retest it. Agree
 reported only for the number of independently labelled rows available at that time. Cohen's kappa
 requires overlapping independent human labels; jury agreement is not a substitute.
 
+### First development-set boundary discussion
+
+The first development-only jury review surfaced nine cases: four with disagreement between models,
+six with a model changing its verdict across repetitions, and one case exhibiting both. The cases
+clustered into three policy questions. These questions and the human answers are primary alignment
+evidence: they state the boundary the evaluator must learn rather than treating machine votes as
+labels.
+
+1. **How should otherwise useful answers be judged when they contain an unsupported or internally
+   inconsistent data claim?** The analysis must always be valid and correct. A response fails when
+   a claim conflicts with the visible evidence or presents an unsupported data definition as fact,
+   even when its headline result and presentation are useful. The evaluator need not independently
+   recompute hidden ground truth, but it must act on contradictions visible in the conversation,
+   tool results, or response.
+2. **Must one response fully resolve the stakeholder's decision when a benchmark or threshold is
+   missing?** No. Continuing the conversation with the human is more important than pretending to
+   know everything. The response may provide the supported result, state what remains unknown, and
+   ask for the benchmark or context needed for the next step. It should not fail merely because it
+   declines to invent a materiality threshold or escalation rule.
+3. **Must every follow-up response restate all earlier context?** No. Conversation-level retention
+   is sufficient: a definition, scope, or caveat may appear anywhere in the chain as long as the
+   later response does not contradict or silently abandon it. The evaluator should not assume that
+   any given answer is the final turn, because the conversation may continue.
+
+No datapoint labels are derived by documenting these answers. The next human step is to apply the
+rules to the surfaced development rows, review those derived verdicts, and then label or correct
+them explicitly.
+
 ## Talk Structure Consequences
 
 The story becomes:

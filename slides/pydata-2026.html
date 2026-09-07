@@ -83,21 +83,22 @@
   @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
   @keyframes dotIn{to{opacity:1}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
-  .frozen{position:relative;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
+  .frozen{position:relative;margin-top:64px;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
   .frozen .tag{position:absolute;top:-18px;left:34px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:22px;letter-spacing:.14em;color:var(--teal-deep)}
   .frozen .bar{display:flex;height:52px;gap:3px}
   .frozen .bar .seg{display:block;border-radius:4px}
   .frozen .bar .user{background:var(--ink)}
   .frozen .bar .assistant{background:var(--teal)}
+  .frozen .bar .call{background:var(--orange)}
   .frozen .bar .result{background:var(--muted);opacity:.55}
   .frozen .note{display:flex;justify-content:space-between;font-family:var(--mono);font-size:21px;color:var(--muted);margin-top:18px}
   .replay-verdicts{display:flex;flex-direction:column;gap:22px;margin-top:44px}
-  .replay-row{display:grid;grid-template-columns:420px 1fr 190px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
-  .replay-row .rv-name{font-family:var(--mono);font-size:26px;color:var(--ink)}
+  .replay-row{display:grid;grid-template-columns:470px 1fr 200px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
+  .replay-row .rv-name{font-family:var(--mono);font-size:24px;color:var(--ink)}
   .replay-row .rv-why{font-size:29px;line-height:1.35;color:var(--ink2)}
   .replay-row .rv-mark{text-align:center;font-size:28px;font-weight:600;letter-spacing:.08em;padding:14px 0;border-radius:10px}
-  .replay-row .rv-mark.pass{background:rgba(77,162,150,.18);color:var(--teal-deep)}
-  .replay-row .rv-mark.fail{background:rgba(223,83,37,.16);color:var(--orange-dark)}
+  .replay-row .rv-mark.unanimous{background:rgba(77,162,150,.18);color:var(--teal-deep)}
+  .replay-row .rv-mark.split{background:rgba(223,83,37,.16);color:var(--orange-dark)}
   .replay-foot{font-family:var(--mono);font-size:21px;letter-spacing:.12em;color:var(--muted);margin-top:38px}
   .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
   .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
@@ -357,7 +358,7 @@
     </svg>
     <div>
       <h2>The grey zone</h2>
-      <p class="sub">Every evaluation has one.<br>One defensible boundary becomes several.<br>All plausible. All different.</p>
+      <p class="sub">Every evaluation has one.<br>All plausible. All different.</p>
     </div>
   </div>
 </section>
@@ -365,7 +366,7 @@
 <!-- 7 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
-  <h2>Does the response turn analysis into clear input for the stakeholder’s <span class="hl">decision</span>?</h2>
+  <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
 <!-- 8 · Historical method -->
@@ -570,12 +571,12 @@
   <h2>Replay the trace</h2>
   <p class="sub">The trace is fixed. The judge is the thing that changed.</p>
   <div class="frozen">
-    <span class="tag">FROZEN · AMBIGUOUS-BEST-PRODUCT</span>
-    <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results"><i class="seg user" style="width:0.59%"></i><i class="seg assistant" style="width:12.53%"></i><i class="seg user" style="width:1.94%"></i><i class="seg result" style="width:21.61%"></i><i class="seg result" style="width:8.42%"></i><i class="seg result" style="width:13.77%"></i><i class="seg result" style="width:13.69%"></i><i class="seg result" style="width:7.54%"></i><i class="seg assistant" style="width:19.90%"></i></div>
-    <div class="note"><span>answered $12,845,483.90</span><span>replayed, never re-run</span></div>
+    <span class="tag">FROZEN · V4-YOY-NET-GROWTH</span>
+    <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results"><i class="seg user" style="width:3.98%"></i><i class="seg call" style="width:2.84%"></i><i class="seg result" style="width:14.78%"></i><i class="seg call" style="width:5.16%"></i><i class="seg result" style="width:7.58%"></i><i class="seg call" style="width:5.42%"></i><i class="seg result" style="width:6.10%"></i><i class="seg call" style="width:11.17%"></i><i class="seg result" style="width:12.26%"></i><i class="seg call" style="width:3.70%"></i><i class="seg result" style="width:3.76%"></i><i class="seg assistant" style="width:23.26%"></i></div>
+    <div class="note"><span>answered &minus;3.16% &middot; &minus;$1.32M</span><span>replayed, never re-run</span></div>
   </div>
-  <div class="replay-verdicts"><div class="verdict-row"><span class="vn">answer_correctness 1.0.7</span><span class="vw">Excludes cancelled and pending orders and deducts refunds inside calendar year 2025 — matches what the user asked for.</span><span class="vv pass">PASS</span></div><div class="verdict-row"><span class="vn">answer_correctness 1.0.8</span><span class="vw">net_revenue is already net of refunds, so deducting refund_amount again double-counts them — the figure is wrong.</span><span class="vv fail">FAIL</span></div></div>
-  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO EVALUATOR VERSIONS</p>
+  <div class="replay-verdicts"><div class="replay-row"><span class="rv-name">decision_support_quality v1</span><span class="rv-why">Leads with direction and magnitude, flags that both years are full and comparable — all three judges accept it, three times each.</span><span class="rv-mark unanimous">9 / 9 PASS</span></div><div class="replay-row"><span class="rv-name">decision_support_quality v2</span><span class="rv-why">Rules rewritten from human notes: the same answer now reads as an unsupported claim that <code>net_revenue</code> is already net of refunds — four of nine reads reject it.</span><span class="rv-mark split">5 / 9 PASS</span></div></div>
+  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO RUBRIC VERSIONS</p>
 </section>
 
 <!-- 15 · Operating modes -->

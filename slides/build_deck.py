@@ -151,9 +151,9 @@ replay_bar = "".join(
     for kind, size in replay["segments"]
 )
 replay_rows = "".join(
-    f'<div class="verdict-row"><span class="vn">{verdict["version"]}</span>'
-    f'<span class="vw">{verdict["line"]}</span>'
-    f'<span class="vv {verdict["value"]}">{verdict["value"].upper()}</span></div>'
+    f'<div class="replay-row"><span class="rv-name">{verdict["version"]}</span>'
+    f'<span class="rv-why">{verdict["line"]}</span>'
+    f'<span class="rv-mark {verdict["value"]}">{verdict["mark"]}</span></div>'
     for verdict in replay["verdicts"]
 )
 
@@ -245,21 +245,22 @@ html = r'''<!doctype html>
   @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
   @keyframes dotIn{to{opacity:1}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
-  .frozen{position:relative;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
+  .frozen{position:relative;margin-top:64px;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
   .frozen .tag{position:absolute;top:-18px;left:34px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:22px;letter-spacing:.14em;color:var(--teal-deep)}
   .frozen .bar{display:flex;height:52px;gap:3px}
   .frozen .bar .seg{display:block;border-radius:4px}
   .frozen .bar .user{background:var(--ink)}
   .frozen .bar .assistant{background:var(--teal)}
+  .frozen .bar .call{background:var(--orange)}
   .frozen .bar .result{background:var(--muted);opacity:.55}
   .frozen .note{display:flex;justify-content:space-between;font-family:var(--mono);font-size:21px;color:var(--muted);margin-top:18px}
   .replay-verdicts{display:flex;flex-direction:column;gap:22px;margin-top:44px}
-  .replay-row{display:grid;grid-template-columns:420px 1fr 190px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
-  .replay-row .rv-name{font-family:var(--mono);font-size:26px;color:var(--ink)}
+  .replay-row{display:grid;grid-template-columns:470px 1fr 200px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
+  .replay-row .rv-name{font-family:var(--mono);font-size:24px;color:var(--ink)}
   .replay-row .rv-why{font-size:29px;line-height:1.35;color:var(--ink2)}
   .replay-row .rv-mark{text-align:center;font-size:28px;font-weight:600;letter-spacing:.08em;padding:14px 0;border-radius:10px}
-  .replay-row .rv-mark.pass{background:rgba(77,162,150,.18);color:var(--teal-deep)}
-  .replay-row .rv-mark.fail{background:rgba(223,83,37,.16);color:var(--orange-dark)}
+  .replay-row .rv-mark.unanimous{background:rgba(77,162,150,.18);color:var(--teal-deep)}
+  .replay-row .rv-mark.split{background:rgba(223,83,37,.16);color:var(--orange-dark)}
   .replay-foot{font-family:var(--mono);font-size:21px;letter-spacing:.12em;color:var(--muted);margin-top:38px}
   .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
   .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
@@ -460,7 +461,7 @@ html = r'''<!doctype html>
     </svg>
     <div>
       <h2>The grey zone</h2>
-      <p class="sub">Every evaluation has one.<br>One defensible boundary becomes several.<br>All plausible. All different.</p>
+      <p class="sub">Every evaluation has one.<br>All plausible. All different.</p>
     </div>
   </div>
 </section>
@@ -468,7 +469,7 @@ html = r'''<!doctype html>
 <!-- 7 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
-  <h2>Does the response turn analysis into clear input for the stakeholder’s <span class="hl">decision</span>?</h2>
+  <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
 <!-- 8 · Historical method -->
@@ -575,12 +576,12 @@ html = r'''<!doctype html>
   <h2>Replay the trace</h2>
   <p class="sub">The trace is fixed. The judge is the thing that changed.</p>
   <div class="frozen">
-    <span class="tag">FROZEN · AMBIGUOUS-BEST-PRODUCT</span>
+    <span class="tag">FROZEN · V4-YOY-NET-GROWTH</span>
     <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results">__REPLAY_BAR__</div>
-    <div class="note"><span>answered $12,845,483.90</span><span>replayed, never re-run</span></div>
+    <div class="note"><span>answered &minus;3.16% &middot; &minus;$1.32M</span><span>replayed, never re-run</span></div>
   </div>
   <div class="replay-verdicts">__REPLAY_ROWS__</div>
-  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO EVALUATOR VERSIONS</p>
+  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO RUBRIC VERSIONS</p>
 </section>
 
 <!-- 15 · Operating modes -->

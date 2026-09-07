@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PyData 2026 — Evaluation Execution Status</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --slate: #141413;
+    --clay: #D97757;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --gray-100: #F0EEE6;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --white: #FFFFFF;
+
+    --serif: ui-serif, Georgia, serif;
+    --sans: system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+    --radius-panel: 12px;
+    --radius-row: 8px;
+    --border: 1.5px solid var(--gray-300);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 56px 24px 120px;
+    background: var(--ivory);
+    color: var(--slate);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  header { margin-bottom: 40px; }
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 38px;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .auto-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 5px 11px;
+    white-space: nowrap;
+  }
+  .date-range { color: var(--gray-500); font-size: 14px; }
+  .date-range .repo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gray-700);
+  }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 52px; }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .section-note { margin: -2px 0 18px; color: var(--gray-500); font-size: 13px; }
+  hr.rule {
+    border: none;
+    border-top: 1px solid var(--gray-300);
+    margin: 0 0 22px;
+  }
+
+  /* ---------- Summary band ---------- */
+  .summary-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 720px) {
+    .summary-band { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    padding: 20px 22px 18px;
+  }
+  .stat-card.warn { border-left: 4px solid var(--clay); padding-left: 19px; }
+  .stat-card.ready { border-left: 4px solid var(--olive); padding-left: 19px; }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+  .stat-num.word { font-size: 30px; padding-top: 7px; }
+  .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-500);
+  }
+  .stat-delta { font-family: var(--mono); font-size: 11px; margin-top: 6px; }
+  .stat-delta.up { color: var(--olive); }
+  .stat-delta.flat { color: var(--gray-500); }
+
+  /* ---------- Highlights ---------- */
+  .highlights { list-style: none; margin: 0; padding: 0; }
+  .highlights li {
+    position: relative;
+    padding: 0 0 14px 26px;
+    font-size: 15px;
+    color: var(--gray-700);
+  }
+  .highlights li::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--clay);
+  }
+  .highlights li strong { color: var(--slate); font-weight: 600; }
+
+  /* ---------- Evidence table ---------- */
+  table.shipped {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+  }
+  table.shipped thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-300);
+  }
+  table.shipped tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  table.shipped tbody tr:last-child td { border-bottom: none; }
+  table.shipped tbody tr:hover { background: var(--ivory); }
+  code { font-family: var(--mono); font-size: 12px; }
+  table.shipped code { overflow-wrap: anywhere; }
+  .risk {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--gray-500);
+    white-space: nowrap;
+  }
+  .risk-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .risk-dot.low { background: var(--olive); }
+  .risk-dot.med { background: var(--clay); }
+
+  /* ---------- Prompt diff ---------- */
+  .prompt-diff {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 14px;
+  }
+  @media (max-width: 720px) {
+    .prompt-diff { grid-template-columns: 1fr; }
+  }
+  .diff-panel {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    padding: 20px 22px;
+  }
+  .diff-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+  }
+  .diff-panel p { margin: 0; color: var(--gray-700); }
+  .diff-lines { list-style: none; margin: 0; padding: 0; }
+  .diff-lines li {
+    padding: 9px 0 9px 22px;
+    position: relative;
+    color: var(--gray-700);
+  }
+  .diff-lines li + li { border-top: 1px solid var(--gray-100); }
+  .diff-lines li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    color: var(--olive);
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+  .diff-unchanged {
+    margin: 14px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-500);
+  }
+
+  /* ---------- Execution path ---------- */
+  .chart-panel {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    padding: 24px 28px 18px;
+    overflow-x: auto;
+  }
+  .chart-panel svg { display: block; width: 100%; min-width: 760px; height: auto; }
+  .chart-caption { font-size: 12px; color: var(--gray-500); margin-top: 12px; }
+
+  /* ---------- On deck ---------- */
+  .carryover {
+    background: var(--oat);
+    border-radius: var(--radius-panel);
+    padding: 20px 22px;
+  }
+  .carry-item { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; }
+  .carry-item + .carry-item { border-top: 1px solid rgba(20, 20, 19, 0.08); }
+  .carry-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-700);
+    background: var(--ivory);
+    border-radius: 4px;
+    padding: 3px 7px;
+    flex: 0 0 84px;
+    text-align: center;
+  }
+  .carry-body { font-size: 14px; color: var(--gray-700); }
+  .carry-body .who { color: var(--gray-500); font-size: 12px; }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-300);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="header-top">
+        <h1>Evaluation execution status</h1>
+        <span class="auto-pill">human labeling active</span>
+      </div>
+      <div class="date-range">
+        7 September 2026 &nbsp;&middot;&nbsp;
+        <span class="repo">pydata-2026 / feature/decision-support-evaluation · alignment review</span>
+      </div>
+    </header>
+
+    <section aria-label="Status summary">
+      <div class="summary-band">
+        <div class="stat-card ready">
+          <div class="stat-num">50<span style="font-size:22px;color:var(--gray-500)">/50</span></div>
+          <div class="stat-label">Canonical observations</div>
+          <div class="stat-delta up">accepted · 30 dev / 20 test</div>
+        </div>
+        <div class="stat-card ready">
+          <div class="stat-num">450<span style="font-size:22px;color:var(--gray-500)">/450</span></div>
+          <div class="stat-label">Full jury calls</div>
+          <div class="stat-delta up">50 valid · 0 mechanical</div>
+        </div>
+        <div class="stat-card ready">
+          <div class="stat-num">14</div>
+          <div class="stat-label">Dev queue items</div>
+          <div class="stat-delta up">9 priority · 5 controls</div>
+        </div>
+        <div class="stat-card ready">
+          <div class="stat-num word">Live</div>
+          <div class="stat-label">Port 8765</div>
+          <div class="stat-delta up">0 / 14 labels saved</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What changed</h2>
+      <hr class="rule">
+      <ul class="highlights">
+        <li><strong>The hosted Sphere agent is ready.</strong> The fresh agent-only reconciliation returned exactly one <code>noop</code> for <code>analytics-chatbot</code> in <code>pydata2026</code>.</li>
+        <li><strong>Execution stays deliberately small.</strong> One Experiment will produce the canonical 50 observations; one Experiment will run the 50-row jury. There is no batching or resumable manifest.</li>
+        <li><strong>Every Experiment routes through <code>pydata2026</code>.</strong> Both runners are hardened: the observation runner refuses unsafe output paths, while the jury runner supports a strict two-development-row smoke and retains complete mechanical-error evidence.</li>
+        <li><strong>The offline gate is green.</strong> All 212 non-live tests passed, one live test was deselected, Ruff is clean, and the sdist/wheel build succeeded.</li>
+        <li><strong>The one-case pilot passed.</strong> <code>sphere-stakeholder--v4-total-gross-2025</code> completed in one turn; both <code>goal_achieved</code> and <code>criteria_met</code> passed.</li>
+        <li><strong>The first canonical attempt reached all 50 rows.</strong> It uploaded 49 goal-achieved results and one boundary failure to <code>pydata2026</code>, but evaluatorq then raised before the local canonical output could be exported.</li>
+        <li><strong>The retry is accepted.</strong> Experiment <code>01M1Y5J7A6HSNXPZ7P6RTZDS7H</code> exported all 50 results: 50 unique identities, 30 dev / 20 test, 47 goals true and three false, with all rows terminated by the judge.</li>
+        <li><strong>Two warnings remain visible but non-filtering.</strong> <code>save-after-confirm</code> and <code>save-staged-emea</code> omitted an expected <code>save_insight</code>; replay still accepted 50 with zero rejections or duplicates.</li>
+        <li><strong>The jury smoke passed cleanly.</strong> Both named development cases aggregate to pass with raw agreement 1.0; all 18 repetitions are represented across the exact three judges, with zero failures, replacements, ties, or inconclusive outcomes.</li>
+        <li><strong>The full jury is complete.</strong> All 50 identity-bound rows and 450 calls were saved with zero mechanical-error rows. Within the 30-row dev split, four rows show panel disagreement and six show within-judge wobble; there are no ties, inconclusive outcomes, or abstentions. All 20 test rows remain sealed, and no test verdicts are reported here.</li>
+        <li><strong>Both jury versions are tracked.</strong> <code>orq/resources/datasets/decision-support-v4</code> contains the shared 50 observations plus explicit <code>jury-baseline</code> and <code>jury-human-rules-v1</code> directories. Each version includes its exact prompt, 50 complete 3×3 jury records, annotation analysis, and run provenance.</li>
+        <li><strong>Three boundary rules are recorded.</strong> Visible analytical claims must be valid and correct; missing decision thresholds should lead to honest continued conversation rather than invented certainty; and scope or caveats already stated in the conversation need not be repeated unless later contradicted or abandoned. No datapoint labels have been inferred from these rules.</li>
+        <li><strong>The aligned prompt is live in shadow mode.</strong> An evaluator-only apply created <code>analytics-decision-support-quality</code> in <code>pydata2026</code>; its immediate second reconciliation verified the resource present. No jury inference ran.</li>
+        <li><strong>The annotation server is live.</strong> Open <code>http://localhost:8765</code> directly to review the 14 items. Auto-persist is enabled; zero labels are currently saved. The server stops on Done or <code>Ctrl-C</code>. Automated Chrome tab opening was blocked by another extension UI.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Readiness evidence</h2>
+      <hr class="rule">
+      <table class="shipped">
+        <thead>
+          <tr>
+            <th style="width: 190px;">Boundary</th>
+            <th>Current evidence</th>
+            <th style="width: 118px;">State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Talk contract</td>
+            <td>Supports the abstract’s short judge walkthrough: start from 50 examples, expose jury disagreement, then hand ambiguous cases to a human.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Aligned</span></td>
+          </tr>
+          <tr>
+            <td>Hosted target</td>
+            <td><code>analytics-chatbot</code> remains reconciled. The evaluator-only apply created <code>analytics-decision-support-quality</code> in shadow mode, and the immediate second snapshot verified it present. No tool changed and no jury inference ran.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
+          </tr>
+          <tr>
+            <td>Observation runner</td>
+            <td>Explicit project routing, selected-row reporting, parent-path validation, and no-clobber checks are implemented.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Hardened</span></td>
+          </tr>
+          <tr>
+            <td>Jury runner</td>
+            <td>Strict development-only case selection and preservation of structurally complete mechanical-error records are implemented and covered offline.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Hardened</span></td>
+          </tr>
+          <tr>
+            <td>Offline gate</td>
+            <td>212 passed, one live test deselected; Ruff clean; <code>uv build</code> produced both distribution artifacts successfully.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
+          </tr>
+          <tr>
+            <td>Observation pilot</td>
+            <td>One development row uploaded to <code>pydata2026</code>: Experiment <code>01M1Y4N8GKEPFANMY4951GWKD4</code>, run <code>01M1Y4N8GKPPAEYRP7HWG1SVZT</code>. One turn; goal and criteria passed; replay accepted 1/1 cleanly.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Accepted</span></td>
+          </tr>
+          <tr>
+            <td>Canonical attempt</td>
+            <td>Experiment <code>01M1Y50DDXDM5E8VVENRH0Y9CG</code>, run <code>01M1Y50DDXAQD8N0DDHRN8WV3T</code>: 50 rows uploaded, 49/50 goals achieved. <code>sphere-stakeholder--v4-mutation-then-counterfactual</code> hit the old eight-step tool boundary; evaluatorq raised and no local canonical output was exported.</td>
+            <td><span class="risk"><span class="risk-dot med"></span>Retry</span></td>
+          </tr>
+          <tr>
+            <td>Remediation</td>
+            <td>The default <code>max_tool_steps</code> is now 30. Focused configuration and agent tests pass 16/16.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
+          </tr>
+          <tr>
+            <td>Canonical retry</td>
+            <td>Experiment <code>01M1Y5J7A6HSNXPZ7P6RTZDS7H</code>, run <code>01M1Y5J7A60ADM68NFY3DEJ770</code>: 50 accepted, zero rejected/duplicates, 50 unique identities, 30 dev / 20 test, 47 goals true / three false, two retained warnings. JSONL SHA-256 <code>b890fd35d7ba34ae2ec9b787b443b6b020f7f8115229658e23f7a8e1119703db</code>.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Accepted</span></td>
+          </tr>
+          <tr>
+            <td>Jury smoke</td>
+            <td>Experiment <code>01M1Y60F67NA0G94AVBPGF8VA8</code>, run <code>01M1Y60F66ZRC6XQSQAB1STA48</code>: <code>sphere-stakeholder--v4-total-gross-2025</code> and <code>sphere-stakeholder--v4-mutation-then-counterfactual</code>; exact three judges × three repetitions, 18 repetitions represented, both aggregate pass with raw agreement 1.0, and zero judge/repetition failures, replacements, ties, or inconclusive outcomes. JSONL SHA-256 <code>ba7f0837ebb37dc2ebc5f3836d62c5e9c333ede392716523b65d072578ddfb95</code>.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Passed</span></td>
+          </tr>
+          <tr>
+            <td>Full jury</td>
+            <td>Baseline run <code>01M1Y6EC7GSETQ1PBG1KBFXF8Z</code> and human-rules run <code>01M1YJTH2WSZ7N54AJQG87HHBY</code> each contain exactly 50 rows / 450 calls with zero mechanical errors. Dev aggregate verdicts stayed 30 pass; panel disagreement moved 4→8 and within-judge wobble 6→8. Test verdicts remain sealed from analysis.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Complete</span></td>
+          </tr>
+          <tr>
+            <td>Annotation bundle</td>
+            <td><code>jury-baseline/annotation</code> contains 14 items (nine prioritized + five controls); <code>jury-human-rules-v1/annotation</code> contains 19 (14 prioritized + five controls). Both have zero mechanical errors, identity-only sealed-test manifests, and verified file hashes.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Ready</span></td>
+          </tr>
+          <tr>
+            <td>Annotation boundary</td>
+            <td>Nine surfaced development cases reduced to three human policy questions. All three rules are documented, encoded in the local and hosted shadow evaluator prompts, and shown in the prompt diff below; no derived verdict or manual label exists yet.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Prompt synced</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Evaluator prompt alignment</h2>
+      <p class="section-note">The grey-zone discussion changed three judge instructions. The verdict space and evidence boundary stay fixed.</p>
+      <hr class="rule">
+      <div class="prompt-diff">
+        <div class="diff-panel">
+          <div class="diff-label">Before</div>
+          <p>Judge whether the response supports the stakeholder's decision through emphasis, explanation, caveats, and next steps. Count visible factual issues when they make the decision support misleading.</p>
+        </div>
+        <div class="diff-panel">
+          <div class="diff-label">Added after human review</div>
+          <ul class="diff-lines">
+            <li>Visible analytical claims must be valid, correct, and consistent with the available evidence.</li>
+            <li>Missing benchmarks should keep the conversation open, not force an invented threshold or false certainty.</li>
+            <li>Earlier scope, assumptions, and caveats remain active unless a later response contradicts or abandons them.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="diff-unchanged">UNCHANGED · pass / fail / not_applicable · full conversation evidence · no oracle or reference answer · three judges × three repetitions</p>
+      <p class="diff-unchanged">DIAGNOSTIC RERUN · 0 development aggregate flips · disagreement 4→8 · wobble 6→8 · human labels still 0</p>
+    </section>
+
+    <section>
+      <h2>Execution path</h2>
+      <p class="section-note">A single guarded sequence. A failed gate stops the next stage; there is no automatic whole-run retry.</p>
+      <hr class="rule">
+      <div class="chart-panel">
+        <svg viewBox="0 0 1100 310" role="img" aria-label="Eleven-stage execution path from runner hardening through repeated-jury wobble investigation">
+          <path d="M70 70 H1030 V215 H70" fill="none" stroke="#D1CFC5" stroke-width="3"/>
+          <line x1="70" y1="70" x2="1030" y2="70" stroke="#788C5D" stroke-width="3"/>
+          <line x1="1030" y1="70" x2="1030" y2="215" stroke="#788C5D" stroke-width="3"/>
+          <line x1="1030" y1="215" x2="838" y2="215" stroke="#788C5D" stroke-width="3"/>
+
+          <g transform="translate(70 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">1</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Offline</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">gate</text></g>
+          <g transform="translate(262 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">2</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Agent</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">pilot</text></g>
+          <g transform="translate(454 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">3</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">50</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">observations</text></g>
+          <g transform="translate(646 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">4</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Jury</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">smoke</text></g>
+          <g transform="translate(838 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">5</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Repeated</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">jury</text></g>
+          <g transform="translate(1030 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">6</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Build dev</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">review queue</text></g>
+
+          <g transform="translate(1030 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">7</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Grey-zone</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">analysis</text></g>
+          <g transform="translate(838 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">8</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Record</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">human rules</text></g>
+          <g transform="translate(646 215)"><circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">9</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Apply rules +</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">label dev</text></g>
+          <g transform="translate(454 215)"><circle r="17" fill="#F5F3ED" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">10</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Align + rerun</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">repeated jury</text></g>
+          <g transform="translate(262 215)"><circle r="17" fill="#F5F3ED" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">11</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Inspect residual</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">wobbliness</text></g>
+
+          <path d="M262 240 C262 280 1030 280 1030 240" fill="none" stroke="#D97757" stroke-width="2" stroke-dasharray="6 7"/>
+          <text x="646" y="298" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#D97757">NEW SIGNAL RETURNS TO GREY-ZONE ANALYSIS</text>
+          <text x="646" y="178" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT HUMAN GATE</text>
+        </svg>
+        <div class="chart-caption">The first repeated jury ordered the development review. After human rules and labels align the evaluator, the same repeated jury runs again; any remaining verdict changes return to boundary analysis. Test verdicts stay sealed until the evaluator is ready for measurement.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>On deck</h2>
+      <hr class="rule">
+      <div class="carryover">
+        <div class="carry-item">
+          <span class="carry-tag">Next</span>
+          <div class="carry-body">Apply the three recorded human rules to the nine surfaced development cases, read the derived verdicts back for confirmation, then label or correct them in <code>http://localhost:8765</code>. After alignment, rerun the three-repetition jury and return any residual wobbliness to human review. Evaluator creation and CI promotion remain separately gated.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
+      Current status: baseline and human-rules-v1 jury versions are tracked with exact prompt snapshots; revised run complete; annotation server still serves the original 14-item baseline queue with zero saved labels.
+    </footer>
+  </div>
+</body>
+</html>

@@ -7,15 +7,16 @@ evaluation loop. Improvements remain human-reviewed and versioned; there is no s
 
 ## The production evaluation flywheel
 
-![Production evaluation flywheel: interactions with the analytics agent create traces; recorded responses are replayed as evaluatorq DataPoints, scored by deterministic checks and four atomic judges, aligned to human labels, and used for reviewed improvements.](docs/assets/evaluation-flywheel.svg)
+![Production evaluation flywheel: interactions with the Sphere.com analytics agent create traces; recorded responses are replayed as evaluatorq DataPoints and assessed by deterministic checks plus one pending decision-support-quality jury before human alignment and reviewed improvements.](docs/assets/evaluation-flywheel.svg)
 
 Production interactions call guarded local tools, emit Orq traces, and write exact local run audits.
 A read-only adapter imports hydrated supported traces—or a successfully finalized audit when the
 public trace omits replay evidence—into an evaluatorq `DataPoint` without guessing. Its current
 generic replay input is being adapted to the versioned row that preserves retrievals, errors, and
-state. evaluatorq replays the recorded answer without calling the target agent, then routes only the
-evidence each deterministic check or atomic judge needs. Human labels and disagreement analysis
-calibrate those judges before reviewed changes return to the agent or evaluators.
+state. evaluatorq replays the recorded answer without calling the target agent. The current
+subjective path routes only the full agent-visible conversation and final response to one repeated
+three-model `decision_support_quality` jury. Human labels and disagreement analysis must calibrate
+that jury before reviewed changes return to the agent or evaluator.
 
 The visual also marks delivery state without conflating it with architecture: the local runtime,
 trace capture, DataPoint contract, and evaluator framework are integrated; trace import, hosted
@@ -51,11 +52,42 @@ the locked project key and ID, follows list pagination, refuses duplicate resour
 creates a project. Repeating the apply command is safe: a successful second pass reports only
 no-op resources.
 
-The four LLM judge definitions are intentionally blocked from remote apply until their YAML
-validation records show at least 100 human-labeled examples. The two Python evaluators are
-stdlib-only, AST-checked, and unit-executed locally. To reconcile only an already-reviewed subset,
-pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync script; the Makefile target
-always covers the complete bundle.
+The repository contains one pending `analytics-decision-support-quality` LLM jury and two
+historical Python evaluator definitions. The jury is reference-free, uses the approved three-model
+panel with three repetitions, and accepts only the full ordered conversation plus final response.
+Its `pending_human_labels` status blocks remote apply; it has zero human labels, and no hosted apply
+is authorized by the repository change. An authenticated read-only snapshot and dry-run semantic
+plan remain allowed; applying hosted changes requires separate, explicit operator authorization.
+The Python evaluators are stdlib-only, AST-checked, and unit-executed locally. To reconcile only an
+already-reviewed subset, pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync
+script; the Makefile target always covers the complete bundle.
+
+## Current v4 review pool
+
+The current Sphere.com v4 corpus contains 50 decision-context-enriched definitions with the frozen
+30-development/20-test assignment. It has zero observations, zero jury results, and zero human
+labels. Do not describe these definitions as reviewed examples or run them without the separate
+simulation, evaluatorq-release, and paid-call approvals recorded in the living delivery plan.
+
+After accepted observations and a separately approved jury run exist, the repository-local
+`orq-jury-to-alignment` skill prepares human annotation without another model call. Its offline
+producer ranks ties and clean abstentions first, keeps panel disagreement distinct from
+within-judge wobble, excludes mechanical failures, adds five stable controls, and writes no test
+outcomes into the development review directory:
+
+```bash
+uv run scripts/prepare_jury_annotations.py \
+  --cases orq/resources/datasets/simulation-cases-v4.jsonl \
+  --results runs/<accepted-v4-observations>.jsonl \
+  --jury runs/<decision-support-jury-v1>.jsonl \
+  --output-dir runs/<new-jury-annotation-run>
+```
+
+The installed `orq-evaluator-alignment` annotation view can open the resulting `queue.json` and
+save provenance-bound human labels. Its single-judge rewrite and retest stages are not valid jury
+comparisons and are intentionally outside this handoff.
+
+## Historical v1-v3 execution evidence
 
 Generate the deterministic 50-case evaluatorq input corpus and run a bounded simulation with:
 
@@ -68,7 +100,9 @@ uv run python scripts/run_simulation.py \
   --output runs/evaluatorq-simulation-50-20260905.jsonl
 ```
 
-The harder multi-turn corpus is generated separately:
+These commands and the following replay results document the superseded v1-v3 correctness-first
+work; they are not the current v4 execution path. The historical harder multi-turn corpus is
+generated separately:
 
 ```bash
 uv run python scripts/generate_simulation_cases.py --variant edge-v2
@@ -90,7 +124,7 @@ warnings. Preserve and replay all 50 v2 rows; warnings are informational and do
 not filter the corpus. Simulation outputs and exact local run artifacts remain
 under ignored runtime directories.
 
-Replay the frozen edge-v2 observations through an explicit hosted evaluator
+Historically, the frozen edge-v2 observations were replayed through an explicit hosted evaluator
 version with:
 
 ```bash

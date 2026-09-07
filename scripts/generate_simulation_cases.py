@@ -5,14 +5,17 @@ from pathlib import Path
 from analytics_chatbot.config import Settings
 from analytics_chatbot.evaluation_ops.cases import build_cases, build_edge_cases, write_cases
 from analytics_chatbot.evaluation_ops.cases_v3 import build_v3_cases
+from analytics_chatbot.evaluation_ops.cases_v4 import build_v4_cases
 
 DEFAULT_OUTPUT = Path("orq/resources/datasets/simulation-cases.jsonl")
 EDGE_V2_OUTPUT = Path("orq/resources/datasets/simulation-cases-v2.jsonl")
 V3_OUTPUT = Path("orq/resources/datasets/simulation-cases-v3.jsonl")
+V4_OUTPUT = Path("orq/resources/datasets/simulation-cases-v4.jsonl")
 BUILDERS = {
     "standard": (build_cases, DEFAULT_OUTPUT),
     "edge-v2": (build_edge_cases, EDGE_V2_OUTPUT),
     "v3": (build_v3_cases, V3_OUTPUT),
+    "v4": (build_v4_cases, V4_OUTPUT),
 }
 
 
