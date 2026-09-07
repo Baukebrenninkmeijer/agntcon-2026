@@ -245,11 +245,11 @@
     <header>
       <div class="header-top">
         <h1>Evaluation execution status</h1>
-        <span class="auto-pill">annotation gate</span>
+        <span class="auto-pill">human labeling gate</span>
       </div>
       <div class="date-range">
         7 September 2026 &nbsp;&middot;&nbsp;
-        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ f996c82</span>
+        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ 659a1b6</span>
       </div>
     </header>
 
@@ -265,15 +265,15 @@
           <div class="stat-label">Full jury calls</div>
           <div class="stat-delta up">50 valid · 0 mechanical</div>
         </div>
-        <div class="stat-card warn">
-          <div class="stat-num word">4 · 6</div>
-          <div class="stat-label">Dev signals</div>
-          <div class="stat-delta flat">disagreement · wobble</div>
+        <div class="stat-card ready">
+          <div class="stat-num">14</div>
+          <div class="stat-label">Dev queue items</div>
+          <div class="stat-delta up">9 priority · 5 controls</div>
         </div>
         <div class="stat-card ready">
           <div class="stat-num word">Free</div>
           <div class="stat-label">Port 8765</div>
-          <div class="stat-delta up">old listener killed</div>
+          <div class="stat-delta up">ready for annotation UI</div>
         </div>
       </div>
     </section>
@@ -292,6 +292,7 @@
         <li><strong>Two warnings remain visible but non-filtering.</strong> <code>save-after-confirm</code> and <code>save-staged-emea</code> omitted an expected <code>save_insight</code>; replay still accepted 50 with zero rejections or duplicates.</li>
         <li><strong>The jury smoke passed cleanly.</strong> Both named development cases aggregate to pass with raw agreement 1.0; all 18 repetitions are represented across the exact three judges, with zero failures, replacements, ties, or inconclusive outcomes.</li>
         <li><strong>The full jury is complete.</strong> All 50 identity-bound rows and 450 calls were saved with zero mechanical-error rows. Within the 30-row dev split, four rows show panel disagreement and six show within-judge wobble; there are no ties, inconclusive outcomes, or abstentions. All 20 test rows remain sealed, and no test verdicts are reported here.</li>
+        <li><strong>The annotation bundle is ready.</strong> <code>runs/v4-jury-annotations-20260907</code> contains a validated ready manifest, 14 dev queue items—nine prioritized plus five controls—zero excluded errors, and 20 sealed test identities. All three manifest file hashes verify.</li>
       </ul>
     </section>
 
@@ -363,6 +364,11 @@
             <td><span class="risk"><span class="risk-dot low"></span>Complete</span></td>
           </tr>
           <tr>
+            <td>Annotation bundle</td>
+            <td><code>runs/v4-jury-annotations-20260907</code>: ready manifest validated; 14 dev queue items = nine prioritized + five controls; zero errors excluded; 20 test identities expose identity-only fields; all three manifest file hashes verified.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Ready</span></td>
+          </tr>
+          <tr>
             <td>Annotation boundary</td>
             <td>Ties, clean abstentions, and inconclusive outcomes rank first; disagreement and wobble stay separate; mechanical errors stay outside the queue.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Ready offline</span></td>
@@ -406,7 +412,7 @@
           </g>
           <g transform="translate(828 75)">
             <circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">7</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Bundle +</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">annotation</text>
+            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Serve +</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">label</text>
           </g>
 
           <text x="828" y="18" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT GATE</text>
@@ -422,22 +428,14 @@
       <div class="carryover">
         <div class="carry-item">
           <span class="carry-tag">Next</span>
-          <div class="carry-body">Produce and validate the offline annotation bundle: dev-only priority queue, sealed identities-only test manifest, ready manifest, and explicit zero mechanical-error count.</div>
-        </div>
-        <div class="carry-item">
-          <span class="carry-tag">After</span>
-          <div class="carry-body">Reconfirm port <code>8765</code> is free, then launch the installed jury-aware annotation view on <code>127.0.0.1:8765</code>.</div>
-        </div>
-        <div class="carry-item">
-          <span class="carry-tag">Annotate</span>
-          <div class="carry-body">Review, label, or defer the surfaced development rows. Stop after human annotation; evaluator rewriting and CI promotion remain later stages.</div>
+          <div class="carry-body">Start the installed jury-aware annotation UI on <code>127.0.0.1:8765</code>, then stop for the user to review, label, or defer the surfaced development rows. Evaluator rewriting and CI promotion remain later stages.</div>
         </div>
       </div>
     </section>
 
     <footer>
       Sources: abstract.md · outline-manual.md · evaluation delivery plan · single-run execution design and plan<br>
-      Current status: canonical observations, smoke, and full jury complete; test verdicts sealed; annotation bundle not yet produced.
+      Current status: canonical observations, full jury, and annotation bundle complete; test identities sealed; awaiting human labeling on port 8765.
     </footer>
   </div>
 </body>
