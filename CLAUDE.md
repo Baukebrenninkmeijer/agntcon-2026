@@ -8,6 +8,23 @@ When reality changes, update the plan in the same task and commit as the change.
 
 Mark work `VERIFIED` or complete only after running the relevant checks, reviewing their fresh output, and recording the evidence required by the plan's status taxonomy. Code or configuration presence by itself is not completion evidence. Keep unfinished, unintegrated, or unvalidated work `ACTIVE`, `BLOCKED`, or `NOT STARTED` as appropriate.
 
+## Check Every Change Against the Talk's Contract
+
+[`abstract.md`](abstract.md) is the promise made to the conference and the audience;
+[`outline-manual.md`](outline-manual.md) is the structure the talk is being built to.
+Together they are the contract. Before making any change to slides, narrative, running
+example, evaluation scope, or supporting material, read both and state which part of the
+contract the change serves.
+
+Reject changes that do not map to something in those two files, even when the change is
+individually good. A slide that is interesting but off-outline is drift, and drift is
+what makes the talk run long and lose its through-line.
+
+When a change genuinely belongs in the talk but the contract does not cover it, update
+`abstract.md` or `outline-manual.md` first, in the same task, and say what was added or
+dropped to make room. The 30-minute budget in the outline is fixed; new material has to
+displace old material, not accumulate on top of it.
+
 ## Keep Live Credentials in the Primary Checkout
 
 Treat the primary repository checkout's Git-ignored `.env` as the canonical
