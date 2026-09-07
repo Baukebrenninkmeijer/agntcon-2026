@@ -70,9 +70,10 @@ grey_paths = (
 )
 
 
-# Illustrative queue only. Real positions replace these after the jury run.
-disagreement_cases = {3, 12, 17, 26, 35, 41}
-wobble_cases = {8, 17, 21, 30, 41, 47}
+# Development-set signals from runs/v4-jury-annotations-20260907. Values are
+# source_index positions in the fixed fifty-case review pool.
+disagreement_cases = {13, 16, 26, 36}
+wobble_cases = {8, 12, 13, 18, 34, 44}
 case_marks: list[str] = []
 for index in range(50):
     cx = 110 + (index % 10) * 116
@@ -214,6 +215,11 @@ html = r'''<!doctype html>
   .steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:34px;margin:72px 0 58px}
   .step4{border-top:4px solid var(--teal);padding-top:30px;font-size:31px;line-height:1.25;color:var(--ink2);position:relative}
   .step4:not(:last-child)::after{content:"→";position:absolute;right:-31px;top:16px;color:var(--teal);font-size:42px}
+  .dictionary{max-width:1540px;margin-left:90px}
+  .dictionary-word{font-size:150px;line-height:.95;letter-spacing:-.045em;font-weight:600}
+  .dictionary-meta{display:flex;align-items:baseline;gap:28px;margin-top:24px;font-family:var(--mono);font-size:28px;color:var(--muted)}
+  .dictionary-definition{margin-top:68px;padding-top:34px;border-top:5px solid var(--orange);font-size:49px;line-height:1.3;color:var(--ink2);max-width:1420px}
+  .dictionary-note{margin-top:44px;font-size:29px;color:var(--teal-deep)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -348,6 +354,16 @@ html = r'''<!doctype html>
 
 <!-- 10 · Disagreement dots -->
 <section class="slide">
+  <div class="dictionary">
+    <div class="dictionary-word">wobbly</div>
+    <div class="dictionary-meta"><span>/ˈwɒb.li/</span><span>adjective</span></div>
+    <div class="dictionary-definition">Of an LLM judge: returning different verdicts when asked to grade the same case with the same rubric.</div>
+    <div class="dictionary-note">Here, one pass/fail change across three repetitions flags the case for review.</div>
+  </div>
+</section>
+
+<!-- 11 · Disagreement dots -->
+<section class="slide">
   <div class="cols wide">
     <div>
       <svg class="dots" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Fifty cases with disagreement and self-wobble rings">
@@ -363,7 +379,7 @@ html = r'''<!doctype html>
         <li>Each judge votes three times</li>
         <li><b class="hl">The rings move cases to the front of the human queue</b></li>
       </ul>
-      <p class="mono" style="margin-top:38px;font-size:20px;color:var(--muted)">PLACEHOLDER · RING POSITIONS ARE ILLUSTRATIVE UNTIL THE JURY RUN LANDS</p>
+      <p class="mono" style="margin-top:38px;font-size:20px;color:var(--muted)">50-CASE POOL · DEV SIGNALS ONLY · 4 MODEL DISAGREEMENTS · 6 SELF-WOBBLES · 1 OVERLAP</p>
     </div>
   </div>
 </section>

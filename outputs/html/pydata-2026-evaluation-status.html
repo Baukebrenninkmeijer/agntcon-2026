@@ -249,7 +249,7 @@
       </div>
       <div class="date-range">
         7 September 2026 &nbsp;&middot;&nbsp;
-        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ a8de843</span>
+        <span class="repo">pydata-2026 / feature/decision-support-evaluation · alignment review</span>
       </div>
     </header>
 
@@ -293,6 +293,7 @@
         <li><strong>The jury smoke passed cleanly.</strong> Both named development cases aggregate to pass with raw agreement 1.0; all 18 repetitions are represented across the exact three judges, with zero failures, replacements, ties, or inconclusive outcomes.</li>
         <li><strong>The full jury is complete.</strong> All 50 identity-bound rows and 450 calls were saved with zero mechanical-error rows. Within the 30-row dev split, four rows show panel disagreement and six show within-judge wobble; there are no ties, inconclusive outcomes, or abstentions. All 20 test rows remain sealed, and no test verdicts are reported here.</li>
         <li><strong>The annotation bundle is ready.</strong> <code>runs/v4-jury-annotations-20260907</code> contains a validated ready manifest, 14 dev queue items—nine prioritized plus five controls—zero excluded errors, and 20 sealed test identities. All three manifest file hashes verify.</li>
+        <li><strong>Three boundary rules are recorded.</strong> Visible analytical claims must be valid and correct; missing decision thresholds should lead to honest continued conversation rather than invented certainty; and scope or caveats already stated in the conversation need not be repeated unless later contradicted or abandoned. No datapoint labels have been inferred from these rules.</li>
         <li><strong>The annotation server is live.</strong> Open <code>http://localhost:8765</code> directly to review the 14 items. Auto-persist is enabled; zero labels are currently saved. The server stops on Done or <code>Ctrl-C</code>. Automated Chrome tab opening was blocked by another extension UI.</li>
       </ul>
     </section>
@@ -371,8 +372,8 @@
           </tr>
           <tr>
             <td>Annotation boundary</td>
-            <td>Ties, clean abstentions, and inconclusive outcomes rank first; disagreement and wobble stay separate; mechanical errors stay outside the queue.</td>
-            <td><span class="risk"><span class="risk-dot low"></span>Ready offline</span></td>
+            <td>Nine surfaced development cases reduced to three human policy questions. All three rules are documented; no derived verdict or manual label exists yet.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Rules recorded</span></td>
           </tr>
         </tbody>
       </table>
@@ -383,43 +384,30 @@
       <p class="section-note">A single guarded sequence. A failed gate stops the next stage; there is no automatic whole-run retry.</p>
       <hr class="rule">
       <div class="chart-panel">
-        <svg viewBox="0 0 900 190" role="img" aria-label="Seven-stage execution path from runner hardening to human annotation">
-          <line x1="72" y1="75" x2="828" y2="75" stroke="#D1CFC5" stroke-width="3"/>
-          <line x1="72" y1="75" x2="702" y2="75" stroke="#788C5D" stroke-width="3"/>
+        <svg viewBox="0 0 1100 310" role="img" aria-label="Eleven-stage execution path from runner hardening through repeated-jury wobble investigation">
+          <path d="M70 70 H1030 V215 H70" fill="none" stroke="#D1CFC5" stroke-width="3"/>
+          <line x1="70" y1="70" x2="1030" y2="70" stroke="#788C5D" stroke-width="3"/>
+          <line x1="1030" y1="70" x2="1030" y2="215" stroke="#788C5D" stroke-width="3"/>
+          <line x1="1030" y1="215" x2="838" y2="215" stroke="#788C5D" stroke-width="3"/>
 
-          <g transform="translate(72 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">1</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Runners +</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">offline gate</text>
-          </g>
-          <g transform="translate(198 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">2</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Fresh agent</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">no-op</text>
-          </g>
-          <g transform="translate(324 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">3</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">One-case</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">pilot</text>
-          </g>
-          <g transform="translate(450 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">4</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">50</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">observations</text>
-          </g>
-          <g transform="translate(576 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">5</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">2 rows</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">18-call smoke</text>
-          </g>
-          <g transform="translate(702 75)">
-            <circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#fff">6</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">50 rows</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">450-call jury</text>
-          </g>
-          <g transform="translate(828 75)">
-            <circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">7</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">Serve +</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">label</text>
-          </g>
+          <g transform="translate(70 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">1</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Offline</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">gate</text></g>
+          <g transform="translate(262 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">2</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Agent</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">pilot</text></g>
+          <g transform="translate(454 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">3</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">50</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">observations</text></g>
+          <g transform="translate(646 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">4</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Jury</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">smoke</text></g>
+          <g transform="translate(838 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">5</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Repeated</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">jury</text></g>
+          <g transform="translate(1030 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">6</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Build dev</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">review queue</text></g>
 
-          <text x="828" y="18" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT GATE</text>
-          <text x="513" y="177" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#87867F">ONE OBSERVATION EXPERIMENT · ONE JURY EXPERIMENT · PROJECT: PYDATA2026</text>
+          <g transform="translate(1030 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">7</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Grey-zone</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">analysis</text></g>
+          <g transform="translate(838 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">8</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Record</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">human rules</text></g>
+          <g transform="translate(646 215)"><circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">9</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Apply rules +</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">label dev</text></g>
+          <g transform="translate(454 215)"><circle r="17" fill="#F5F3ED" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">10</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Align + rerun</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">repeated jury</text></g>
+          <g transform="translate(262 215)"><circle r="17" fill="#F5F3ED" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">11</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Inspect residual</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">wobbliness</text></g>
+
+          <path d="M262 240 C262 280 1030 280 1030 240" fill="none" stroke="#D97757" stroke-width="2" stroke-dasharray="6 7"/>
+          <text x="646" y="298" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#D97757">NEW SIGNAL RETURNS TO GREY-ZONE ANALYSIS</text>
+          <text x="646" y="178" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT HUMAN GATE</text>
         </svg>
-        <div class="chart-caption">The full jury preserves three judges × three repetitions for every row. Human review now starts from development-set disagreement and wobble, while test verdicts stay sealed.</div>
+        <div class="chart-caption">The first repeated jury ordered the development review. After human rules and labels align the evaluator, the same repeated jury runs again; any remaining verdict changes return to boundary analysis. Test verdicts stay sealed until the evaluator is ready for measurement.</div>
       </div>
     </section>
 
@@ -429,14 +417,14 @@
       <div class="carryover">
         <div class="carry-item">
           <span class="carry-tag">Next</span>
-          <div class="carry-body">Open <code>http://localhost:8765</code> directly, then review, label, or defer the 14 surfaced development rows. Labels auto-persist; Done or <code>Ctrl-C</code> stops the server. Evaluator rewriting and CI promotion remain later stages.</div>
+          <div class="carry-body">Apply the three recorded human rules to the nine surfaced development cases, read the derived verdicts back for confirmation, then label or correct them in <code>http://localhost:8765</code>. After alignment, rerun the three-repetition jury and return any residual wobbliness to human review. Evaluator creation and CI promotion remain separately gated.</div>
         </div>
       </div>
     </section>
 
     <footer>
-      Sources: abstract.md · outline-manual.md · evaluation delivery plan · single-run execution design and plan<br>
-      Current status: annotation server active on localhost:8765; 14 items available, zero saved; awaiting human labeling.
+      Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
+      Current status: three development-set boundary rules recorded; annotation server active on localhost:8765; 14 items available, zero saved; awaiting derived-label confirmation and human labeling.
     </footer>
   </div>
 </body>

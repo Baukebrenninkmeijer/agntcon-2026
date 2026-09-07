@@ -86,9 +86,6 @@ judge does not know how humans place the boundary.
 `not_applicable` is reserved for cases where the criterion genuinely does not apply. It is not an
 escape hatch for uncertainty.
 
-Source note: see slides 7, 13, and 14 of the ECIR keynote material captured in
-`docs/reference/ecir-2026-keynote-slide-deck-plan.md`.
-
 The consistency and throughput benefits are also summarized in O’Reilly’s
 [What We Learned from a Year of Building with LLMs](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/).
 
@@ -134,6 +131,17 @@ wrong consensus. Continue until the reviewed set is broad enough to support alig
 
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
+
+### Slide: Wobbly
+
+Give the term a compact dictionary definition before showing the measured queue:
+
+> **wobbly**, adjective — of an LLM judge: returning different verdicts when asked to grade the
+> same case with the same rubric.
+
+For this walkthrough, one pass/fail change across a model's three repetitions is enough to flag the
+case for review. This definition takes the detailed explanation off the preceding queue slide; it
+does not add time to the seven-minute section.
 
 ### Slide: Align the evaluator like any other model
 
