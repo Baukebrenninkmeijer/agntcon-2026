@@ -77,9 +77,12 @@ The queue distinguishes evaluator ambiguity from evaluator failure.
   error, malformed record, or fewer than two successful judges. It is written to
   `jury_errors.json` and excluded from the annotation ranking.
 
-The current guarded jury runner rejects mechanical errors before publication,
-so `jury_errors.json` will normally be empty. Keeping the category separate
-prevents a future transport failure from masquerading as useful ambiguity.
+The guarded jury runner preserves every structurally complete released jury
+record, including records with mechanical judge or repetition failures. The
+producer moves those rows to `jury_errors.json`; they never enter annotation
+priority or masquerade as useful ambiguity. A top-level scorer error or absent
+released jury payload still fails closed because there is no auditable jury
+record to preserve.
 
 ## Deterministic priority
 
