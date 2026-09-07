@@ -269,6 +269,28 @@ def test_jury_configuration_preserves_template_variables_and_verdict_space() -> 
         assert configuration["min_successful_judges"] == 2
 
 
+def test_decision_support_prompt_includes_human_aligned_boundary_rules() -> None:
+    captured: dict[str, Any] = {}
+
+    def jury_factory(**kwargs: Any) -> dict[str, Any]:
+        captured.update(kwargs)
+        return {"name": kwargs["name"], "scorer": _unused_scorer}
+
+    build_atomic_evaluator(
+        AtomicJudge.DECISION_SUPPORT_QUALITY,
+        jury_factory=jury_factory,
+    )
+
+    prompt = captured["prompt"]
+    assert "Human-aligned boundary rules" in prompt
+    assert "must be valid, correct, and consistent with the visible evidence" in prompt
+    assert "even when the headline result is useful" in prompt
+    assert "continue the conversation by asking for the missing benchmark or context" in prompt
+    assert "Do not require it to invent a materiality threshold or escalation rule" in prompt
+    assert "Evaluate the full conversation, not the latest response in isolation" in prompt
+    assert "need not be repeated in every later response" in prompt
+
+
 def test_atomic_evaluator_accepts_repetition_override() -> None:
     captured: dict[str, Any] = {}
 

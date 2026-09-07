@@ -196,6 +196,52 @@
   .risk-dot.low { background: var(--olive); }
   .risk-dot.med { background: var(--clay); }
 
+  /* ---------- Prompt diff ---------- */
+  .prompt-diff {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 14px;
+  }
+  @media (max-width: 720px) {
+    .prompt-diff { grid-template-columns: 1fr; }
+  }
+  .diff-panel {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    padding: 20px 22px;
+  }
+  .diff-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+  }
+  .diff-panel p { margin: 0; color: var(--gray-700); }
+  .diff-lines { list-style: none; margin: 0; padding: 0; }
+  .diff-lines li {
+    padding: 9px 0 9px 22px;
+    position: relative;
+    color: var(--gray-700);
+  }
+  .diff-lines li + li { border-top: 1px solid var(--gray-100); }
+  .diff-lines li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    color: var(--olive);
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+  .diff-unchanged {
+    margin: 14px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray-500);
+  }
+
   /* ---------- Execution path ---------- */
   .chart-panel {
     background: var(--white);
@@ -294,6 +340,7 @@
         <li><strong>The full jury is complete.</strong> All 50 identity-bound rows and 450 calls were saved with zero mechanical-error rows. Within the 30-row dev split, four rows show panel disagreement and six show within-judge wobble; there are no ties, inconclusive outcomes, or abstentions. All 20 test rows remain sealed, and no test verdicts are reported here.</li>
         <li><strong>The annotation bundle is ready.</strong> <code>runs/v4-jury-annotations-20260907</code> contains a validated ready manifest, 14 dev queue items—nine prioritized plus five controls—zero excluded errors, and 20 sealed test identities. All three manifest file hashes verify.</li>
         <li><strong>Three boundary rules are recorded.</strong> Visible analytical claims must be valid and correct; missing decision thresholds should lead to honest continued conversation rather than invented certainty; and scope or caveats already stated in the conversation need not be repeated unless later contradicted or abandoned. No datapoint labels have been inferred from these rules.</li>
+        <li><strong>The aligned prompt is live in shadow mode.</strong> An evaluator-only apply created <code>analytics-decision-support-quality</code> in <code>pydata2026</code>; its immediate second reconciliation verified the resource present. No jury inference ran.</li>
         <li><strong>The annotation server is live.</strong> Open <code>http://localhost:8765</code> directly to review the 14 items. Auto-persist is enabled; zero labels are currently saved. The server stops on Done or <code>Ctrl-C</code>. Automated Chrome tab opening was blocked by another extension UI.</li>
       </ul>
     </section>
@@ -317,7 +364,7 @@
           </tr>
           <tr>
             <td>Hosted target</td>
-            <td>Fresh reconciliation returned exactly one <code>noop</code> for <code>analytics-chatbot</code> in <code>pydata2026</code>. No tool or evaluator resource was changed.</td>
+            <td><code>analytics-chatbot</code> remains reconciled. The evaluator-only apply created <code>analytics-decision-support-quality</code> in shadow mode, and the immediate second snapshot verified it present. No tool changed and no jury inference ran.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
           </tr>
           <tr>
@@ -372,11 +419,32 @@
           </tr>
           <tr>
             <td>Annotation boundary</td>
-            <td>Nine surfaced development cases reduced to three human policy questions. All three rules are documented; no derived verdict or manual label exists yet.</td>
-            <td><span class="risk"><span class="risk-dot low"></span>Rules recorded</span></td>
+            <td>Nine surfaced development cases reduced to three human policy questions. All three rules are documented, encoded in the local and hosted shadow evaluator prompts, and shown in the prompt diff below; no derived verdict or manual label exists yet.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Prompt synced</span></td>
           </tr>
         </tbody>
       </table>
+    </section>
+
+    <section>
+      <h2>Evaluator prompt alignment</h2>
+      <p class="section-note">The grey-zone discussion changed three judge instructions. The verdict space and evidence boundary stay fixed.</p>
+      <hr class="rule">
+      <div class="prompt-diff">
+        <div class="diff-panel">
+          <div class="diff-label">Before</div>
+          <p>Judge whether the response supports the stakeholder's decision through emphasis, explanation, caveats, and next steps. Count visible factual issues when they make the decision support misleading.</p>
+        </div>
+        <div class="diff-panel">
+          <div class="diff-label">Added after human review</div>
+          <ul class="diff-lines">
+            <li>Visible analytical claims must be valid, correct, and consistent with the available evidence.</li>
+            <li>Missing benchmarks should keep the conversation open, not force an invented threshold or false certainty.</li>
+            <li>Earlier scope, assumptions, and caveats remain active unless a later response contradicts or abandons them.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="diff-unchanged">UNCHANGED · pass / fail / not_applicable · full conversation evidence · no oracle or reference answer · three judges × three repetitions</p>
     </section>
 
     <section>
@@ -424,7 +492,7 @@
 
     <footer>
       Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
-      Current status: three development-set boundary rules recorded; annotation server active on localhost:8765; 14 items available, zero saved; awaiting derived-label confirmation and human labeling.
+      Current status: three development-set boundary rules are encoded locally and synced to the shadow evaluator in pydata2026; no new jury run; annotation server active on localhost:8765 with 14 items available and zero saved.
     </footer>
   </div>
 </body>

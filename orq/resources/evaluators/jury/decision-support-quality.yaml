@@ -24,7 +24,7 @@ input_mapping:
   input.all_messages: full ordered conversation including tool calls and results
   output.response: final assistant response
 validation:
-  status: pending_human_labels
+  status: shadow
   human_labeled_examples: 0
 prompt: |
   # Criterion
@@ -39,6 +39,12 @@ prompt: |
   - recommends an action only when explicitly asked, and keeps that recommendation within the evidence.
 
   A response fails when it materially impairs the decision by dumping results without a takeaway, burying the relevant result in SQL or secondary detail, adding generic business advice, claiming a cause or implication the evidence does not support, omitting decision-changing uncertainty, or making an unsolicited prescriptive recommendation.
+
+  Human-aligned boundary rules:
+
+  1. Evidence validity. Analytical claims that can be checked against the supplied conversation or tool evidence must be valid, correct, and consistent with the visible evidence. Fail a material contradiction or unsupported data-definition claim even when the headline result is useful. Do not reconstruct hidden ground truth.
+  2. Conversational completion. When the available evidence cannot settle the stakeholder's broader decision, the response may state what remains unknown and continue the conversation by asking for the missing benchmark or context. Do not require it to invent a materiality threshold or escalation rule, and do not fail it merely because the broader decision remains open.
+  3. Conversation-level context. Evaluate the full conversation, not the latest response in isolation. A definition, scope, assumption, or caveat established earlier remains active and need not be repeated in every later response unless the response contradicts or silently abandons it.
 
   The evaluator does not independently recompute the answer or grade SQL semantics. A factual issue matters only when it is visible in the supplied conversation and makes the decision support misleading.
 

@@ -61,7 +61,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
         assert evaluator.judges == list(DEFAULT_JUDGES)
         assert evaluator.min_successful_judges == 2
         assert evaluator.repetitions == 3
-        assert evaluator.validation.status == "pending_human_labels"
+        assert evaluator.validation.status == "shadow"
         assert evaluator.validation.human_labeled_examples == 0
         assert evaluator.input_mapping == {
             "input.all_messages": "full ordered conversation including tool calls and results",
@@ -94,6 +94,19 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert decision_support["jury"]["min_successful_judges"] == 2
     assert "{{input.all_messages}}" in decision_support["prompt"]
     assert "{{output.response}}" in decision_support["prompt"]
+    assert "Human-aligned boundary rules" in decision_support["prompt"]
+    assert (
+        "must be valid, correct, and consistent with the visible evidence"
+        in decision_support["prompt"]
+    )
+    assert (
+        "continue the conversation by asking for the missing benchmark or context"
+        in decision_support["prompt"]
+    )
+    assert (
+        "Evaluate the full conversation, not the latest response in isolation"
+        in decision_support["prompt"]
+    )
     assert "input_mapping" not in decision_support
     assert "validation" not in decision_support
 
