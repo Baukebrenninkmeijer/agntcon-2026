@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prepare Jury Annotation Queue"
+  short_description: "Prioritize human review from a completed evaluatorq jury"
+  default_prompt: "Prepare the completed decision-support jury for human annotation without running any model calls."

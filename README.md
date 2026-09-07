@@ -69,6 +69,24 @@ The current Sphere.com v4 corpus contains 50 decision-context-enriched definitio
 labels. Do not describe these definitions as reviewed examples or run them without the separate
 simulation, evaluatorq-release, and paid-call approvals recorded in the living delivery plan.
 
+After accepted observations and a separately approved jury run exist, the repository-local
+`orq-jury-to-alignment` skill prepares human annotation without another model call. Its offline
+producer ranks ties and clean abstentions first, keeps panel disagreement distinct from
+within-judge wobble, excludes mechanical failures, adds five stable controls, and writes no test
+outcomes into the development review directory:
+
+```bash
+uv run scripts/prepare_jury_annotations.py \
+  --cases orq/resources/datasets/simulation-cases-v4.jsonl \
+  --results runs/<accepted-v4-observations>.jsonl \
+  --jury runs/<decision-support-jury-v1>.jsonl \
+  --output-dir runs/<new-jury-annotation-run>
+```
+
+The installed `orq-evaluator-alignment` annotation view can open the resulting `queue.json` and
+save provenance-bound human labels. Its single-judge rewrite and retest stages are not valid jury
+comparisons and are intentionally outside this handoff.
+
 ## Historical v1-v3 execution evidence
 
 Generate the deterministic 50-case evaluatorq input corpus and run a bounded simulation with:
