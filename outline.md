@@ -132,6 +132,11 @@ signals before annotation:
 Prioritize those cases for human review, then add a sample of unanimous cases to catch confidently
 wrong consensus. Continue until the reviewed set is broad enough to support alignment claims.
 
+The slide carries this in three beats: fifty plain case dots, then the rings for the two signals,
+then the flagged cases rising into the review lane in priority order. Positions come from the
+canonical v4 jury run: six cases with jury disagreement, eight with self-wobble, twelve flagged in
+total.
+
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
 
@@ -146,19 +151,17 @@ behavior. A false pass matters most because it allows a bad answer to ship.
 A panel reduces dependence on one model’s preferences. Consensus still does not prove correctness;
 it only tells us the models agree.
 
-### Short walkthrough
+### Slide: One answer exposed another ambiguity
 
-Follow one recorded Sphere.com case through:
+Use the first human boundary answer as the walkthrough: visible analytical claims should always be
+valid and correct. Show how encoding that rule exposed a second interpretation gap. Some judges
+treated a claim as incorrect when the visible evidence did not prove it; others reserved failure
+for a visible contradiction.
 
-1. stakeholder question and decision context;
-2. recorded agent response and tool evidence;
-3. nine verdicts from three judges × three repetitions;
-4. disagreement or wobble signal;
-5. human pass/fail decision and critique;
-6. the evaluator rule that critique suggests.
-
-Use a recorded artifact if it exists. Otherwise present this as a static protocol walkthrough and
-do not describe it as a completed measurement.
+The development-only rerun made the boundary more visible: panel disagreement increased from four
+to eight cases, within-judge wobble increased from six to eight, and no aggregate verdict flipped.
+This does not show that the rule made the evaluator worse. It shows that the principle was clearer
+than the threshold for “unsupported,” giving humans a better next question to answer.
 
 ---
 

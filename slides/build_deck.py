@@ -1,6 +1,7 @@
 # ruff: noqa: E501
 
 import base64
+import json
 import math
 import pathlib
 import random
@@ -70,19 +71,93 @@ grey_paths = (
 )
 
 
-# Illustrative queue only. Real positions replace these after the jury run.
-disagreement_cases = {3, 12, 17, 26, 35, 41}
-wobble_cases = {8, 17, 21, 30, 41, 47}
+# Real signals from the canonical v4 jury run (runs/v4-jury-20260907.jsonl, 2026-09-07).
+# disagreement = panel raw agreement below 1.0; wobble = a judge changed its own vote across repetitions.
+case_signals = json.loads(
+    pathlib.Path(__file__).with_name("case-signals-v4.json").read_text(encoding="utf-8")
+)
+queue = sorted(
+    (case for case in case_signals if case["disagree"] or case["wobble"]),
+    key=lambda case: (not case["disagree"], not case["wobble"], case["raw_agreement"]),
+)
+queue_rank = {case["i"]: rank for rank, case in enumerate(queue)}
+
 case_marks: list[str] = []
-for index in range(50):
+for case in case_signals:
+    index = case["i"]
     cx = 110 + (index % 10) * 116
-    cy = 90 + (index // 10) * 116
-    if index in disagreement_cases:
-        case_marks.append(f'<circle class="ring disagree" cx="{cx}" cy="{cy}" r="43"/>')
-    if index in wobble_cases:
-        case_marks.append(f'<circle class="ring wobble" cx="{cx}" cy="{cy}" r="35"/>')
-    case_marks.append(f'<circle class="case" cx="{cx}" cy="{cy}" r="27"/>')
+    cy = 300 + (index // 10) * 100
+    classes = ["g"]
+    style = f"--x:{cx}px;--y:{cy}px"
+    if index in queue_rank:
+        classes.append("q")
+        style += f";--qx:{115 + queue_rank[index] * 90}px;--qy:122px"
+    if case["wobble"]:
+        classes.append("wob")
+    if case["disagree"]:
+        classes.append("dis")
+    rings = ""
+    if case["disagree"]:
+        rings += '<circle class="ring disagree" r="43"/>'
+    if case["wobble"]:
+        rings += '<circle class="ring wobble" r="35"/>'
+    case_marks.append(
+        f'<g class="{" ".join(classes)}" style="{style}">'
+        f'<g class="wb" style="animation-delay:{(index * 137 % 240) / 100:.2f}s">'
+        f'{rings}<circle class="case" r="27"/></g></g>'
+    )
+queue_size = len(queue)
 case_dot_svg = "\n".join(case_marks)
+
+# Real agent trajectories from the canonical v4 observation run
+# (runs/v4-observations-retry-20260907.jsonl, 2026-09-07). One bar per case; each segment is one
+# message, its width the size of that message, its colour the kind of turn.
+trajectories = json.loads(
+    pathlib.Path(__file__).with_name("trajectories-v4.json").read_text(encoding="utf-8")
+)
+trajectories = sorted(
+    trajectories, key=lambda run: sum(size for _, size in run["segments"])
+)
+_widest = max(sum(size for _, size in run["segments"]) for run in trajectories)
+_row_height = 8
+_row_gap = 4
+traj_rows: list[str] = []
+for row, run in enumerate(trajectories):
+    y = row * (_row_height + _row_gap)
+    x = 0.0
+    parts = [f'<g class="tr" style="animation-delay:{row * 0.022:.2f}s">']
+    last_index = len(run["segments"]) - 1
+    for position, (kind, size) in enumerate(run["segments"]):
+        width = size / _widest * 1824
+        final = " final" if position == last_index else ""
+        parts.append(
+            f'<rect class="seg {kind}{final}" x="{x:.1f}" y="{y}" width="{max(width - 1.5, 1.2):.1f}"'
+            f' height="{_row_height}" rx="2"/>'
+        )
+        x += width
+    parts.append("</g>")
+    traj_rows.append("".join(parts))
+traj_svg = "\n".join(traj_rows)
+traj_height = len(trajectories) * (_row_height + _row_gap) - _row_gap
+
+# One frozen trace judged by two evaluator versions
+# (runs/evaluatorq-correctness-v1.0.7-vs-v1.0.8-v3-joined-20260906.jsonl).
+replay = json.loads(
+    pathlib.Path(__file__).with_name("replay-trace.json").read_text(encoding="utf-8")
+)
+_replay_total = sum(size for _, size in replay["segments"])
+replay_bar = "".join(
+    f'<i class="seg {kind}" style="width:{size / _replay_total * 100:.2f}%"></i>'
+    for kind, size in replay["segments"]
+)
+replay_rows = "".join(
+    f'<div class="verdict-row"><span class="vn">{verdict["version"]}</span>'
+    f'<span class="vw">{verdict["line"]}</span>'
+    f'<span class="vv {verdict["value"]}">{verdict["value"].upper()}</span></div>'
+    for verdict in replay["verdicts"]
+)
+
+
 
 
 html = r'''<!doctype html>
@@ -136,6 +211,8 @@ html = r'''<!doctype html>
   .answer .tag{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted);margin-bottom:22px}
   .answer p{font-size:32px;line-height:1.4;color:var(--ink2)}
   .answer strong{color:var(--ink);font-weight:500}
+  .answer .quiet{font-size:27px;color:var(--muted);margin-top:18px}
+  .answer code{font-family:var(--mono);font-size:.88em;color:var(--teal-deep)}
   .source{position:absolute;left:48px;bottom:26px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.04em}
   .checks{display:flex;flex-direction:column;gap:26px}
   .check{display:grid;grid-template-columns:58px 1fr;gap:26px;align-items:center;font-size:35px;color:var(--ink2)}
@@ -159,16 +236,64 @@ html = r'''<!doctype html>
   .gz .p{stroke:var(--orange);fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:1800;stroke-dashoffset:1800;animation:none}
   .slide.active .gz .band{animation:bandIn .8s ease .15s forwards}
   .slide.active .gz .d{animation:dotIn .35s ease .55s forwards}
-  .slide.active .gz .p1{animation:drawLine 1.15s ease 1s forwards}
-  .slide.active .gz .p2{animation:drawLine 1.15s ease 1.3s forwards}
-  .slide.active .gz .p3{animation:drawLine 1.15s ease 1.6s forwards}
+  .slide.active .gz .p:not(.p1):not(.p2):not(.p3){animation:drawLine 1.15s ease 1s forwards}
+  .gz .p1,.gz .p2{transition:opacity .45s ease}
+  .slide.active[data-step="1"] .gz .p1,.slide.active[data-step="2"] .gz .p1{animation:drawLine 1.15s ease 0s forwards}
+  .slide.active[data-step="1"] .gz .p2,.slide.active[data-step="2"] .gz .p2{animation:drawLine 1.15s ease .3s forwards}
+  .slide.active[data-step="1"] .gz .p3,.slide.active[data-step="2"] .gz .p3{animation:drawLine 1.15s ease .6s forwards}
+  .slide.active[data-step="2"] .gz .p1,.slide.active[data-step="2"] .gz .p2{opacity:0}
   @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
   @keyframes dotIn{to{opacity:1}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
+  .frozen{position:relative;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
+  .frozen .tag{position:absolute;top:-18px;left:34px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:22px;letter-spacing:.14em;color:var(--teal-deep)}
+  .frozen .bar{display:flex;height:52px;gap:3px}
+  .frozen .bar .seg{display:block;border-radius:4px}
+  .frozen .bar .user{background:var(--ink)}
+  .frozen .bar .assistant{background:var(--teal)}
+  .frozen .bar .result{background:var(--muted);opacity:.55}
+  .frozen .note{display:flex;justify-content:space-between;font-family:var(--mono);font-size:21px;color:var(--muted);margin-top:18px}
+  .replay-verdicts{display:flex;flex-direction:column;gap:22px;margin-top:44px}
+  .replay-row{display:grid;grid-template-columns:420px 1fr 190px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
+  .replay-row .rv-name{font-family:var(--mono);font-size:26px;color:var(--ink)}
+  .replay-row .rv-why{font-size:29px;line-height:1.35;color:var(--ink2)}
+  .replay-row .rv-mark{text-align:center;font-size:28px;font-weight:600;letter-spacing:.08em;padding:14px 0;border-radius:10px}
+  .replay-row .rv-mark.pass{background:rgba(77,162,150,.18);color:var(--teal-deep)}
+  .replay-row .rv-mark.fail{background:rgba(223,83,37,.16);color:var(--orange-dark)}
+  .replay-foot{font-family:var(--mono);font-size:21px;letter-spacing:.12em;color:var(--muted);margin-top:38px}
+  .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
+  .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
+  .slide[data-step="1"] .traj .result:not(.final){opacity:.17}
+  .traj .user{fill:var(--ink)}
+  .traj .assistant{fill:var(--teal)}
+  .traj .call{fill:var(--orange)}
+  .traj .result{fill:var(--muted);opacity:.55}
+  .traj .tr{opacity:0;transform:translateX(-26px)}
+  .slide.active .traj .tr{animation:trIn .5s ease forwards}
+  @keyframes trIn{to{opacity:1;transform:translateX(0)}}
+  .traj-legend{display:flex;gap:40px;font-size:25px;color:var(--ink2);margin-top:30px}
+  .traj-legend span{display:flex;align-items:center;gap:13px}
+  .traj-legend i{width:26px;height:26px;border-radius:5px;display:block}
   .dots .case{fill:var(--teal)}
   .dots .ring{fill:none;stroke:var(--orange);stroke-width:4}
   .dots .ring.disagree{stroke-dasharray:9 9}
   .dots .ring.wobble{stroke:var(--ink);stroke-width:3;stroke-dasharray:3 9}
+  .dots .g{transform:translate(var(--x),var(--y));transition:transform .9s cubic-bezier(.2,.7,.25,1),opacity .5s ease}
+  .dots .ring{opacity:0;transition:opacity .5s ease}
+  .slide[data-step="1"] .dots .ring,.slide[data-step="2"] .dots .ring{opacity:1}
+  .slide[data-step="1"] .dots .wob .wb,.slide[data-step="1"] .dots .dis .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
+  .slide[data-step="2"] .dots .wob:not(.q) .wb,.slide[data-step="2"] .dots .dis:not(.q) .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
+  .slide[data-step="2"] .dots .q{transform:translate(var(--qx),var(--qy)) scale(.82)}
+  .slide[data-step="2"] .dots .g:not(.q){opacity:.22}
+  @keyframes wobble-hard{0%,100%{transform:translate(0,0)}12.5%{transform:translate(4px,-3px)}25%{transform:translate(5px,3px)}37.5%{transform:translate(1px,5px)}50%{transform:translate(-4px,4px)}62.5%{transform:translate(-5px,-1px)}75%{transform:translate(-3px,-5px)}87.5%{transform:translate(2px,-4px)}}
+  .dots .lane{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10;opacity:.55}
+  .dots .lane-label{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--muted)}
+  .dots .lane-count{font-family:var(--mono);font-size:30px;fill:var(--muted);text-anchor:end}
+  .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
+  .slide[data-step="2"] .dots .lane-count.done{opacity:1}
+  .slide[data-step="2"] .dots .lane-count.start{opacity:0}
+  .queue-line{opacity:0;transition:opacity .4s ease}
+  .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
   .legend span{display:flex;align-items:center;gap:12px}
   .swatch{width:28px;height:28px;border-radius:50%;border:3px dashed var(--orange)}
@@ -183,8 +308,6 @@ html = r'''<!doctype html>
   .process-card.dark{border-color:var(--ink)}
   .process-card h3{margin:0;font-size:38px}
   .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-  .fork{font-size:62px;color:var(--teal);text-align:center}
-  .stack{display:grid;gap:28px}
   .life-simple{display:grid;grid-template-columns:1fr 320px 1fr;align-items:center;gap:30px;margin-top:20px}
   .life-loop{height:350px;position:relative;display:grid;place-items:center}
   .life-loop svg{position:absolute;inset:0;width:100%;height:100%}
@@ -211,9 +334,33 @@ html = r'''<!doctype html>
   .sphere-mark::before{inset:14px -17px;transform:rotate(-18deg)}
   .sphere-mark::after{inset:-9px 21px;transform:rotate(28deg)}
   .sphere-word{font-size:62px;font-weight:600;letter-spacing:-.035em}
-  .steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:34px;margin:72px 0 58px}
-  .step4{border-top:4px solid var(--teal);padding-top:30px;font-size:31px;line-height:1.25;color:var(--ink2);position:relative}
-  .step4:not(:last-child)::after{content:"→";position:absolute;right:-31px;top:16px;color:var(--teal);font-size:42px}
+  .spine{list-style:none;margin:56px 0 0;padding:0 0 0 58px;border-left:5px solid var(--teal)}
+  .spine li{position:relative;padding:0 0 42px 0}
+  .spine li:last-child{padding-bottom:0}
+  .spine li::before{content:"";position:absolute;left:-72px;top:26px;width:24px;height:24px;border-radius:50%;background:var(--teal)}
+  .spine li.last::before{background:var(--orange)}
+  .spine .n{display:block;font-family:var(--mono);font-size:21px;letter-spacing:.16em;color:var(--muted);margin-bottom:8px}
+  .spine li.last .n{color:var(--orange-dark)}
+  .spine p{margin:0;font-size:38px;line-height:1.2;color:var(--ink);font-weight:500}
+  .cols.spine-layout{grid-template-columns:1.35fr .85fr;gap:80px}
+  .cost .big{font-size:76px;font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--orange-dark)}
+  .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
+  .ambiguity{display:grid;grid-template-columns:.88fr 1.12fr .92fr;gap:54px;align-items:start;margin-top:18px}
+  .ambiguity section{border-top:5px solid var(--teal);padding-top:27px;min-height:410px}
+  .ambiguity section:nth-child(2){border-color:var(--orange);padding-left:8px;padding-right:8px}
+  .ambiguity section:nth-child(3){border-color:var(--ink)}
+  .ambiguity-label{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:27px}
+  .ambiguity-question{font-size:39px;line-height:1.3;color:var(--ink2)}
+  .ambiguity-answer{font-size:92px;line-height:1;font-weight:600;color:var(--orange-dark);margin-top:42px}
+  .ambiguity-rule{font-size:37px;line-height:1.28;color:var(--teal-deep);font-weight:500}
+  .ambiguity-gap{font-size:31px;line-height:1.35;color:var(--ink2);margin-top:34px}
+  .ambiguity-gap b{color:var(--ink);font-weight:500}
+  .ambiguity-metrics{display:grid;gap:22px}
+  .ambiguity-metric{display:grid;grid-template-columns:145px 1fr;gap:22px;align-items:baseline}
+  .ambiguity-metric strong{font-size:57px;line-height:1;color:var(--orange-dark);font-weight:600;letter-spacing:-.03em}
+  .ambiguity-metric span{font-size:27px;line-height:1.22;color:var(--ink2)}
+  .ambiguity-takeaway{margin-top:42px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
+  .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -232,14 +379,17 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
   <h2>Two correct answers.<br>One useful decision.</h2>
+  <p class="sub">Same question, same data, same number. One agent run with the stakeholder’s decision in the prompt, one without.</p>
   <div class="compare">
     <div class="answer">
       <div class="tag">ANSWER A · ANALYTICALLY VALID</div>
-      <div class="ph" style="height:210px">Placeholder · Sphere response with result and SQL</div>
+      <p>Total gross revenue for 2025 is <strong>$51,226,989.17</strong>, based on 12,454 orders with an order date in calendar year 2025.</p>
+      <p class="quiet">Scope: all orders from 2025-01-01 through 2025-12-31, summed on <code>gross_revenue</code>. Supporting SQL below.</p>
     </div>
     <div class="answer b">
       <div class="tag">ANSWER B · DECISION SUPPORT</div>
-      <div class="ph" style="height:210px">Placeholder · Same result, framed for the CFO decision</div>
+      <p>Total gross revenue for 2025: <strong>$51,226,989.17</strong>. This is gross (booked) revenue. It is <strong>not</strong> realized revenue.</p>
+      <p class="quiet">For the booked-versus-realized comparison in your leadership update you would want <code>net_revenue</code>. Want me to pull it for the same period?</p>
     </div>
   </div>
 </section>
@@ -292,7 +442,7 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 6 · Grey zone -->
-<section class="slide">
+<section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
       <defs>
@@ -325,45 +475,42 @@ html = r'''<!doctype html>
 <section class="slide">
   <h2>The historical method</h2>
   <p class="sub">Random sampling, manual review.</p>
-  <div class="steps4" aria-label="Manual evaluation sequence"><div class="step4">random sample</div><div class="step4">human label +<br>written critique</div><div class="step4">split dev / test</div><div class="step4">identify gaps<br>with judge</div></div>
-  <p class="body">Clean method. Expensive expert attention.</p>
-</section>
-
-<!-- 9 · Lazy queue -->
-<section class="slide">
-  <div class="cols wide">
-    <div>
-      <div class="eyebrow">A faster review queue</div>
-      <h2>We are lazy</h2>
-      <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
-    </div>
-    <div class="checks">
-      <div class="check"><i>1</i><span>Repeat each judge to find self-wobble</span></div>
-      <div class="check"><i>2</i><span>Compare models to find disagreement</span></div>
-      <div class="check"><i>3</i><span>Review those cases first</span></div>
-      <div class="check"><i>4</i><span>Sample unanimous cases as a control</span></div>
+  <div class="cols spine-layout">
+    <ol class="spine" aria-label="Manual evaluation sequence">
+      <li><span class="n">01</span><p>random sample</p></li>
+      <li><span class="n">02</span><p>human label + written critique</p></li>
+      <li><span class="n">03</span><p>split dev / test</p></li>
+      <li class="last"><span class="n">04</span><p>identify gaps with judge</p></li>
+    </ol>
+    <div class="cost">
+      <div class="big">every<br>change</div>
+      <p class="cap">Clean method. Expensive expert attention, spent again each time.</p>
     </div>
   </div>
 </section>
 
-<!-- 10 · Disagreement dots -->
-<section class="slide">
+<!-- 9 · Lazy queue -->
+<section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
-      <svg class="dots" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Fifty cases with disagreement and self-wobble rings">
+      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and self-wobble lift twelve of them into the review queue">
+        <rect class="lane" x="62" y="64" width="1116" height="116" rx="14"/>
+        <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
+        <text class="lane-count start" x="1178" y="38">0 / 50</text>
+        <text class="lane-count done" x="1178" y="38">__QUEUE_SIZE__ / 50</text>
         __CASE_DOTS__
       </svg>
       <div class="legend"><span><i class="swatch"></i>models disagree</span><span><i class="swatch w"></i>one model wobbles</span></div>
     </div>
     <div>
       <div class="eyebrow">Three judges · one rubric</div>
-      <h2>Disagreement sets the review order</h2>
+      <h2>We are lazy</h2>
+      <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
       <ul class="plain">
-        <li>Each dot is one Sphere.com case</li>
-        <li>Each judge votes three times</li>
-        <li><b class="hl">The rings move cases to the front of the human queue</b></li>
+        <li>Each judge votes three times: disagreement between models, wobble within one</li>
+        <li><b class="hl">Those cases go to the front of the human queue</b></li>
       </ul>
-      <p class="mono" style="margin-top:38px;font-size:20px;color:var(--muted)">PLACEHOLDER · RING POSITIONS ARE ILLUSTRATIVE UNTIL THE JURY RUN LANDS</p>
+      <p class="body queue-line">__QUEUE_SIZE__ of 50 reviewed first. The unanimous rest are sampled as a control.</p>
     </div>
   </div>
 </section>
@@ -380,39 +527,60 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 12 · Walkthrough placeholder -->
+<!-- 12 · One human answer exposes another ambiguity -->
 <section class="slide">
-  <div class="eyebrow">Short walkthrough</div>
-  <h2>One case through the full loop</h2>
-  <div class="ph" style="height:520px">Placeholder · stakeholder question · recorded response · nine votes · human critique · evaluator revision</div>
+  <h2>One answer exposed another ambiguity</h2>
+  <div class="ambiguity">
+    <section>
+      <div class="ambiguity-label">Human question</div>
+      <p class="ambiguity-question">Should visible analytical claims always be valid and correct?</p>
+      <div class="ambiguity-answer">Yes.</div>
+    </section>
+    <section>
+      <div class="ambiguity-label">Evaluator rule</div>
+      <p class="ambiguity-rule">Claims visible in the evidence must be valid.</p>
+      <p class="ambiguity-gap">The judges then split on <b>unsupported</b>: factually wrong, or simply not proven by the visible evidence?</p>
+    </section>
+    <section>
+      <div class="ambiguity-label">Development signals</div>
+      <div class="ambiguity-metrics">
+        <div class="ambiguity-metric"><strong>4 to 8</strong><span>panel disagreements</span></div>
+        <div class="ambiguity-metric"><strong>6 to 8</strong><span>self-wobbles</span></div>
+        <div class="ambiguity-metric"><strong>0</strong><span>aggregate verdict flips</span></div>
+      </div>
+    </section>
+  </div>
+  <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
 <!-- 13 · Agent evaluation -->
-<section class="slide">
+<section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
-  <div class="stats">
-    <div class="stat"><div class="n" style="font-size:66px">trajectory</div><div class="l">the path from request to response</div></div>
-    <div class="stat"><div class="n" style="font-size:66px">tools</div><div class="l">selection, arguments and use of results</div></div>
-    <div class="stat"><div class="n" style="font-size:66px">context</div><div class="l">definitions and constraints across turns</div></div>
-    <div class="stat"><div class="n" style="font-size:66px">state</div><div class="l">writes and other external effects</div></div>
+  <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
+  <svg class="traj" viewBox="0 0 1824 __TRAJ_H__" width="1824" height="__TRAJ_H__" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
+    __TRAJ_ROWS__
+  </svg>
+  <div class="traj-legend">
+    <span><i style="background:#25232e"></i>user turn</span>
+    <span><i style="background:#4da296"></i>assistant</span>
+    <span><i style="background:#ff9747"></i>tool call</span>
+    <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
   </div>
 </section>
 
 <!-- 14 · Replay -->
 <section class="slide">
-  <div class="cols wide">
-    <div>
-      <div class="eyebrow">Reproducible agent evaluation</div>
-      <h2>Replay the trace</h2>
-      <p class="sub">Keep the target behavior fixed while the evaluator changes.</p>
-    </div>
-    <div class="replay" aria-label="Recorded trace replayed to human and jury">
-      <div class="process-card"><h3>recorded trace</h3><p>messages · tools · output</p></div>
-      <div class="fork">⇉</div>
-      <div class="stack"><div class="process-card orange"><h3>human</h3></div><div class="process-card orange"><h3>jury</h3></div></div>
-    </div>
+  <div class="eyebrow">Reproducible agent evaluation</div>
+  <h2>Replay the trace</h2>
+  <p class="sub">The trace is fixed. The judge is the thing that changed.</p>
+  <div class="frozen">
+    <span class="tag">FROZEN · AMBIGUOUS-BEST-PRODUCT</span>
+    <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results">__REPLAY_BAR__</div>
+    <div class="note"><span>answered $12,845,483.90</span><span>replayed, never re-run</span></div>
   </div>
+  <div class="replay-verdicts">__REPLAY_ROWS__</div>
+  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO EVALUATOR VERSIONS</p>
 </section>
 
 <!-- 15 · Operating modes -->
@@ -485,12 +653,15 @@ html = r'''<!doctype html>
   const stage = document.getElementById('stage');
   const slides = [...document.querySelectorAll('.slide')];
   let current = 0;
+  let step = 0;
+  const stepsOf = index => Number(slides[index].dataset.steps || 0);
   const fit = () => {
     const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
     stage.style.transform = `translate(-50%,-50%) scale(${scale})`;
   };
   const render = () => {
     slides.forEach((slide, index) => slide.classList.toggle('active', index === current));
+    slides[current].dataset.step = step;
     slides[current].querySelectorAll('.counter').forEach(node => node.remove());
     const counter = document.createElement('div');
     counter.className = 'counter';
@@ -498,14 +669,22 @@ html = r'''<!doctype html>
     slides[current].appendChild(counter);
     location.hash = `s${current + 1}`;
   };
-  const next = () => { if (current < slides.length - 1) current += 1; render(); };
-  const previous = () => { if (current > 0) current -= 1; render(); };
+  const next = () => {
+    if (step < stepsOf(current)) { step += 1; }
+    else if (current < slides.length - 1) { current += 1; step = 0; }
+    render();
+  };
+  const previous = () => {
+    if (step > 0) { step -= 1; }
+    else if (current > 0) { current -= 1; step = stepsOf(current); }
+    render();
+  };
   addEventListener('resize', fit);
   addEventListener('keydown', event => {
     if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(event.key)) { event.preventDefault(); next(); }
     if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); previous(); }
-    if (event.key === 'Home') { current = 0; render(); }
-    if (event.key === 'End') { current = slides.length - 1; render(); }
+    if (event.key === 'Home') { current = 0; step = 0; render(); }
+    if (event.key === 'End') { current = slides.length - 1; step = stepsOf(current); render(); }
     if (event.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
   });
   addEventListener('click', event => {
@@ -532,6 +711,11 @@ html = (
     .replace("__GREY_P2__", grey_paths[1])
     .replace("__GREY_P3__", grey_paths[2])
     .replace("__CASE_DOTS__", case_dot_svg)
+    .replace("__TRAJ_ROWS__", traj_svg)
+    .replace("__REPLAY_BAR__", replay_bar)
+    .replace("__REPLAY_ROWS__", replay_rows)
+    .replace("__TRAJ_H__", str(traj_height))
+    .replace("__QUEUE_SIZE__", str(queue_size))
 )
 
 output = pathlib.Path(__file__).with_name("pydata-2026.html")
