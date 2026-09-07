@@ -1,0 +1,10 @@
+{
+  "case_id": "sphere-stakeholder--v4-total-gross-2025-nocontext",
+  "derived_from": "sphere-stakeholder--v4-total-gross-2025",
+  "first_message": "Give me total gross revenue for 2025.",
+  "decision_context": null,
+  "recorded_output": "Total gross revenue for 2025 is **$51,226,989.17**, based on 12,454 orders with an order date in calendar year 2025.\n\nScope: all orders with `order_date` from 2025-01-01 through 2025-12-31, summed on the `gross_revenue` column.\n\nSupporting SQL:\n\n```sql\nSELECT SUM(gross_revenue) AS total_gross_revenue_2025, COUNT(*) AS order_count\nFROM orders\nWHERE order_date >= DATE '2025-01-01'\n  AND order_date < DATE '2026-01-01'\n```",
+  "goal_achieved": true,
+  "turn_count": 1,
+  "source": "runs/v4-nocontext-total-gross-20260907.jsonl (contrast rerun, 2026-09-07)"
+}

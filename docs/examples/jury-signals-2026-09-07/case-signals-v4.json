@@ -1,0 +1,352 @@
+[
+ {
+  "i": 0,
+  "case_id": "sphere-stakeholder--v4-ambiguous-best-product",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 1,
+  "case_id": "sphere-stakeholder--v4-avg-discount-smb",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 2,
+  "case_id": "sphere-stakeholder--v4-avg-order-net-enterprise",
+  "disagree": true,
+  "wobble": false,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 3,
+  "case_id": "sphere-stakeholder--v4-avg-then-median-midmarket",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 4,
+  "case_id": "sphere-stakeholder--v4-best-month-net",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 5,
+  "case_id": "sphere-stakeholder--v4-canada-quarters",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 6,
+  "case_id": "sphere-stakeholder--v4-cancelled-count-2025",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 7,
+  "case_id": "sphere-stakeholder--v4-cancelled-then-realized",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 8,
+  "case_id": "sphere-stakeholder--v4-category-region-drill",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 9,
+  "case_id": "sphere-stakeholder--v4-category-then-yoy",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 10,
+  "case_id": "sphere-stakeholder--v4-clarify-japan-revenue",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 11,
+  "case_id": "sphere-stakeholder--v4-cost-ratio-data",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 12,
+  "case_id": "sphere-stakeholder--v4-cost-then-margin-data",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 13,
+  "case_id": "sphere-stakeholder--v4-discount-then-cost-of-discount",
+  "disagree": true,
+  "wobble": true,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 14,
+  "case_id": "sphere-stakeholder--v4-distinct-customers-2025",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 15,
+  "case_id": "sphere-stakeholder--v4-future-period",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 16,
+  "case_id": "sphere-stakeholder--v4-germany-vs-france",
+  "disagree": true,
+  "wobble": false,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 17,
+  "case_id": "sphere-stakeholder--v4-gross-then-net-correction",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 18,
+  "case_id": "sphere-stakeholder--v4-margin-services",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 19,
+  "case_id": "sphere-stakeholder--v4-missing-column",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 20,
+  "case_id": "sphere-stakeholder--v4-mutation-then-counterfactual",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 21,
+  "case_id": "sphere-stakeholder--v4-net-by-category-2024",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 22,
+  "case_id": "sphere-stakeholder--v4-net-by-region-2025",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 23,
+  "case_id": "sphere-stakeholder--v4-no-save-category-2025",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 24,
+  "case_id": "sphere-stakeholder--v4-no-save-then-top",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 25,
+  "case_id": "sphere-stakeholder--v4-pending-exposure",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 26,
+  "case_id": "sphere-stakeholder--v4-product-drill",
+  "disagree": true,
+  "wobble": false,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 27,
+  "case_id": "sphere-stakeholder--v4-q3-2025-emea-net",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 28,
+  "case_id": "sphere-stakeholder--v4-q4-months-then-mom",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 29,
+  "case_id": "sphere-stakeholder--v4-refund-rate-drill",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 30,
+  "case_id": "sphere-stakeholder--v4-refund-share-apac",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 31,
+  "case_id": "sphere-stakeholder--v4-refunded-status-net",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 32,
+  "case_id": "sphere-stakeholder--v4-refunds-then-share-na",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 33,
+  "case_id": "sphere-stakeholder--v4-region-gap-yearcheck",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 34,
+  "case_id": "sphere-stakeholder--v4-region-then-gap",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 35,
+  "case_id": "sphere-stakeholder--v4-save-after-confirm",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 36,
+  "case_id": "sphere-stakeholder--v4-save-staged-emea",
+  "disagree": true,
+  "wobble": false,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 37,
+  "case_id": "sphere-stakeholder--v4-save-top-region",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 38,
+  "case_id": "sphere-stakeholder--v4-segment-then-2024-check",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 39,
+  "case_id": "sphere-stakeholder--v4-singapore-then-apac-share",
+  "disagree": true,
+  "wobble": true,
+  "raw_agreement": 0.6666666666666666
+ },
+ {
+  "i": 40,
+  "case_id": "sphere-stakeholder--v4-software-share",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 41,
+  "case_id": "sphere-stakeholder--v4-top-country-net",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 42,
+  "case_id": "sphere-stakeholder--v4-top-product-2025",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 43,
+  "case_id": "sphere-stakeholder--v4-top3-countries-then-segment",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 44,
+  "case_id": "sphere-stakeholder--v4-total-gross-2025",
+  "disagree": false,
+  "wobble": true,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 45,
+  "case_id": "sphere-stakeholder--v4-total-net-2024",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 46,
+  "case_id": "sphere-stakeholder--v4-units-hardware",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 47,
+  "case_id": "sphere-stakeholder--v4-units-then-price-hardware",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 48,
+  "case_id": "sphere-stakeholder--v4-unknown-region",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ },
+ {
+  "i": 49,
+  "case_id": "sphere-stakeholder--v4-yoy-net-growth",
+  "disagree": false,
+  "wobble": false,
+  "raw_agreement": 1.0
+ }
+]

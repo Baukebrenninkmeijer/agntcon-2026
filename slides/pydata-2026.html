@@ -131,6 +131,8 @@
   .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
+  .dots .rank-mark{font-family:var(--mono);font-size:24px;fill:var(--muted);text-anchor:middle;opacity:0;transition:opacity .4s ease .5s}
+  .slide[data-step="2"] .dots .rank-mark{opacity:1}
   .queue-line{opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
@@ -396,6 +398,8 @@
         <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
         <text class="lane-count start" x="1178" y="38">0 / 50</text>
         <text class="lane-count done" x="1178" y="38">12 / 50</text>
+        <text class="rank-mark" x="115" y="216">1st</text>
+        <text class="rank-mark" x="1105" y="216">12th</text>
         <g class="g" style="--x:110px;--y:300px"><g class="wb" style="animation-delay:0.00s"><circle class="case" r="27"/></g></g>
 <g class="g" style="--x:226px;--y:300px"><g class="wb" style="animation-delay:1.37s"><circle class="case" r="27"/></g></g>
 <g class="g q dis" style="--x:342px;--y:300px;--qx:295px;--qy:122px"><g class="wb" style="animation-delay:0.34s"><circle class="ring disagree" r="43"/><circle class="case" r="27"/></g></g>

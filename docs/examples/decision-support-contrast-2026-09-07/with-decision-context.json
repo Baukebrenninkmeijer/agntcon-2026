@@ -1,0 +1,15 @@
+{
+  "case_id": "sphere-stakeholder--v4-total-gross-2025",
+  "decision_context": {
+    "communication_need": "Please distinguish gross from realized performance.",
+    "decision": "I need to compare booked demand with realized revenue.",
+    "delivery_setting": "a leadership Slack update",
+    "stakeholder": "commercial director"
+  },
+  "evaluation_split": "dev",
+  "recorded_output": "**Total gross revenue for 2025: $51,226,989.17**\n\nThis is gross (booked) revenue \u2014 the sum of the `gross_revenue` field for all orders dated Jan 1 \u2013 Dec 31, 2025, before any realized/status or refund adjustments. It is **not** realized revenue; for the realized comparison in your leadership update you'd want `net_revenue` (with cancelled/pending contributing zero and refunds reducing it).\n\nSupporting SQL:\n\n```sql\nSELECT SUM(gross_revenue) AS total_gross_revenue_2025\nFROM orders\nWHERE order_date BETWEEN DATE '2025-01-01' AND DATE '2025-12-31';\n```\n\nResult: `51226989.17`\n\nWant me to pull the realized (net) figure for the same period so you have both sides of the booked-vs-realized comparison?",
+  "jury_pass": true,
+  "jury_value": "pass",
+  "jury_explanation": "The response foregrounds the requested 2025 gross revenue, clearly labels it as booked rather than realized, and explains the date scope and relevant distinction for the leadership comparison. It appropriately notes that the realized figure is not included and offers to retrieve it, without making an unsolicited recommendation; the supporting SQL is secondary and does not obscure the takeaway. [jury: 3/3 judges, raw agreement 100%]",
+  "source": "runs/v4-jury-20260907.jsonl (canonical v4 jury run, 2026-09-07)"
+}

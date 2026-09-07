@@ -293,6 +293,8 @@ html = r'''<!doctype html>
   .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
+  .dots .rank-mark{font-family:var(--mono);font-size:24px;fill:var(--muted);text-anchor:middle;opacity:0;transition:opacity .4s ease .5s}
+  .slide[data-step="2"] .dots .rank-mark{opacity:1}
   .queue-line{opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
@@ -499,6 +501,8 @@ html = r'''<!doctype html>
         <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
         <text class="lane-count start" x="1178" y="38">0 / 50</text>
         <text class="lane-count done" x="1178" y="38">__QUEUE_SIZE__ / 50</text>
+        <text class="rank-mark" x="115" y="216">1st</text>
+        <text class="rank-mark" x="__QLAST_X__" y="216">__QUEUE_SIZE__th</text>
         __CASE_DOTS__
       </svg>
       <div class="legend"><span><i class="swatch"></i>models disagree</span><span><i class="swatch w"></i>one model wobbles</span></div>
@@ -716,6 +720,7 @@ html = (
     .replace("__REPLAY_BAR__", replay_bar)
     .replace("__REPLAY_ROWS__", replay_rows)
     .replace("__TRAJ_H__", str(traj_height))
+    .replace("__QLAST_X__", str(115 + (queue_size - 1) * 90))
     .replace("__QUEUE_SIZE__", str(queue_size))
 )
 
