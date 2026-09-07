@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     hosted_agent_model: str = "agent/analytics-chatbot"
     database_path: Path = Path("data/analytics.duckdb")
     runs_path: Path = Path("runs")
-    max_tool_steps: int = Field(default=8, ge=1, le=32)
+    max_tool_steps: int = Field(default=30, ge=1, le=32)
     max_query_rows: int = Field(default=200, ge=1, le=10_000)
     query_timeout_seconds: float = Field(default=10.0, gt=0, le=300)
     dataset_version: str = "sphere-orders-v1"

@@ -248,7 +248,7 @@
       </div>
       <div class="date-range">
         7 September 2026 &nbsp;&middot;&nbsp;
-        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ e605429</span>
+        <span class="repo">pydata-2026 / feature/decision-support-evaluation @ a17a158</span>
       </div>
     </header>
 
@@ -259,10 +259,10 @@
           <div class="stat-label">Offline tests</div>
           <div class="stat-delta up">passed · 1 live deselected</div>
         </div>
-        <div class="stat-card ready">
-          <div class="stat-num">1<span style="font-size:22px;color:var(--gray-500)">/1</span></div>
-          <div class="stat-label">Observation pilot</div>
-          <div class="stat-delta up">accepted · clean replay</div>
+        <div class="stat-card warn">
+          <div class="stat-num">50</div>
+          <div class="stat-label">Rows uploaded</div>
+          <div class="stat-delta flat">canonical export failed</div>
         </div>
         <div class="stat-card warn">
           <div class="stat-num">0<span style="font-size:22px;color:var(--gray-500)">/450</span></div>
@@ -286,7 +286,8 @@
         <li><strong>Every Experiment routes through <code>pydata2026</code>.</strong> Both runners are hardened: the observation runner refuses unsafe output paths, while the jury runner supports a strict two-development-row smoke and retains complete mechanical-error evidence.</li>
         <li><strong>The offline gate is green.</strong> All 212 non-live tests passed, one live test was deselected, Ruff is clean, and the sdist/wheel build succeeded.</li>
         <li><strong>The one-case pilot passed.</strong> <code>sphere-stakeholder--v4-total-gross-2025</code> completed in one turn; both <code>goal_achieved</code> and <code>criteria_met</code> passed.</li>
-        <li><strong>The replay is structurally clean.</strong> The loader accepted one row with zero rejected rows, duplicates, or warnings. The canonical unbatched 50-row observation Experiment is now the sole next gate.</li>
+        <li><strong>The first canonical attempt reached all 50 rows.</strong> It uploaded 49 goal-achieved results and one boundary failure to <code>pydata2026</code>, but evaluatorq then raised before the local canonical output could be exported.</li>
+        <li><strong>The boundary is remediated.</strong> <code>max_tool_steps</code> now defaults to 30 instead of 8, and the focused config/agent suite passes 16/16. The explicitly requested retry—with a fresh Experiment and output path—is the sole next gate.</li>
       </ul>
     </section>
 
@@ -333,6 +334,16 @@
             <td><span class="risk"><span class="risk-dot low"></span>Accepted</span></td>
           </tr>
           <tr>
+            <td>Canonical attempt</td>
+            <td>Experiment <code>01M1Y50DDXDM5E8VVENRH0Y9CG</code>, run <code>01M1Y50DDXAQD8N0DDHRN8WV3T</code>: 50 rows uploaded, 49/50 goals achieved. <code>sphere-stakeholder--v4-mutation-then-counterfactual</code> hit the old eight-step tool boundary; evaluatorq raised and no local canonical output was exported.</td>
+            <td><span class="risk"><span class="risk-dot med"></span>Retry</span></td>
+          </tr>
+          <tr>
+            <td>Remediation</td>
+            <td>The default <code>max_tool_steps</code> is now 30. Focused configuration and agent tests pass 16/16.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
+          </tr>
+          <tr>
             <td>Annotation boundary</td>
             <td>Ties, clean abstentions, and inconclusive outcomes rank first; disagreement and wobble stay separate; mechanical errors stay outside the queue.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Ready offline</span></td>
@@ -364,7 +375,7 @@
           </g>
           <g transform="translate(450 75)">
             <circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">4</text>
-            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">50</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">observations</text>
+            <text y="42" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">50-row</text><text y="58" text-anchor="middle" font-family="system-ui" font-size="12" fill="#3D3D3A">retry</text>
           </g>
           <g transform="translate(576 75)">
             <circle r="17" fill="#F0EEE6" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-family="system-ui" font-size="13" fill="#3D3D3A">5</text>
@@ -392,7 +403,7 @@
       <div class="carryover">
         <div class="carry-item">
           <span class="carry-tag">Next</span>
-          <div class="carry-body">Run the canonical unbatched 50-row Sphere observation Experiment in <code>pydata2026</code>; require exactly 50 accepted identities, zero rejected or duplicate rows, and the frozen 30/20 split.</div>
+          <div class="carry-body">Retry the canonical unbatched 50-row Sphere observation Experiment in <code>pydata2026</code> with a fresh Experiment name and fresh output/report paths; require 50 accepted identities, zero rejected or duplicate rows, and the frozen 30/20 split.</div>
         </div>
         <div class="carry-item">
           <span class="carry-tag">After</span>
@@ -407,7 +418,7 @@
 
     <footer>
       Sources: abstract.md · outline-manual.md · evaluation delivery plan · single-run execution design and plan<br>
-      Current status: one accepted v4 pilot observation; no canonical 50-row observation, jury, or annotation artifact yet.
+      Current status: pilot accepted; first 50-row attempt retained remotely but failed before local export; no accepted canonical observation, jury, or annotation artifact yet.
     </footer>
   </div>
 </body>

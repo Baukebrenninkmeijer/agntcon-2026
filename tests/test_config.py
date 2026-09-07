@@ -10,6 +10,7 @@ def test_settings_default_to_sphere_versions() -> None:
 
     assert settings.dataset_version == "sphere-orders-v1"
     assert settings.agent_version == "sphere-baseline-v1"
+    assert settings.max_tool_steps == 30
 
 
 def test_trace_context_defaults_to_sphere_versions() -> None:
