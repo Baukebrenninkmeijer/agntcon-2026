@@ -76,6 +76,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
+        "--case-id",
+        action="append",
+        help=(
+            "Run only this development case ID. Repeat for a bounded smoke run; "
+            "omit to run the complete corpus."
+        ),
+    )
+    parser.add_argument(
         "--approve-calls",
         action="store_true",
         help="Explicitly approve the printed number of paid jury model calls.",
@@ -159,6 +167,26 @@ def _validate_v4_samples(corpus: Any) -> list[Any]:
     return samples
 
 
+def _select_samples(samples: Sequence[Any], case_ids: Sequence[str] | None) -> list[Any]:
+    if not case_ids:
+        return list(samples)
+    if len(set(case_ids)) != len(case_ids):
+        raise JuryReplayError("requested case IDs must be unique")
+
+    by_case_id = {str(sample.case_id): sample for sample in samples}
+    selected: list[Any] = []
+    for case_id in case_ids:
+        sample = by_case_id.get(case_id)
+        if sample is None:
+            raise JuryReplayError(f"requested case ID is unknown: {case_id}")
+        if sample.row.evaluation_split != "dev":
+            raise JuryReplayError(
+                f"explicit jury smoke rows must be development cases: {case_id}"
+            )
+        selected.append(sample)
+    return selected
+
+
 def _require_raw_fields(
     value: object,
     *,
@@ -198,8 +226,16 @@ def validate_jury_record(raw_output: object) -> dict[str, Any]:
             context=f"jury vote {vote_index}",
         )
         repetitions = vote["repetitions"]
-        if not isinstance(repetitions, list) or len(repetitions) != EXPECTED_REPETITIONS:
-            raise JuryReplayError("each decision-support vote must retain three repetitions")
+        if not isinstance(repetitions, list):
+            raise JuryReplayError("each decision-support vote must retain repetitions")
+        if vote["success"] and len(repetitions) != EXPECTED_REPETITIONS:
+            raise JuryReplayError(
+                "each successful decision-support vote must retain three repetitions"
+            )
+        if not vote["success"] and len(repetitions) > EXPECTED_REPETITIONS:
+            raise JuryReplayError(
+                "a failed decision-support vote cannot retain more than three repetitions"
+            )
         for repetition_index, repetition in enumerate(repetitions):
             _require_raw_fields(
                 repetition,
@@ -215,17 +251,6 @@ def validate_jury_record(raw_output: object) -> dict[str, Any]:
         raise JuryReplayError("decision-support jury must configure exactly three judges")
     if [vote.model for vote in typed_jury.votes] != list(DEFAULT_JUDGES):
         raise JuryReplayError("decision-support jury must retain the ordered configured models")
-    if (
-        typed_jury.judges_failed
-        or typed_jury.replacements_used
-        or any(
-            not vote.success or vote.error is not None or vote.repetitions_failed
-            for vote in typed_jury.votes
-        )
-    ):
-        raise JuryReplayError("decision-support jury contains a mechanical judge failure")
-    if not typed_jury.inconclusive and typed_jury.judges_succeeded < 2:
-        raise JuryReplayError("decision-support jury requires at least two successful judges")
     return jury
 
 
@@ -359,7 +384,10 @@ async def run(
 ) -> int:
     cases_path, results_path, output_path = _resolve_paths(args)
     corpus = replay_loader(cases_path=cases_path, results_path=results_path)
-    samples = _validate_v4_samples(corpus)
+    samples = _select_samples(
+        _validate_v4_samples(corpus),
+        getattr(args, "case_id", None),
+    )
 
     row_count = len(samples)
     budget = expected_calls(row_count)
@@ -376,16 +404,20 @@ async def run(
         AtomicJudge.DECISION_SUPPORT_QUALITY,
         repetitions=EXPECTED_REPETITIONS,
     )
+    experiment_urls: list[str] = []
     results = await evaluation_runner(
         [sample.row for sample in samples],
         evaluators=[evaluator],
         inference=False,
         experiment_path=EXPERIMENT_PATH,
         print_results=False,
+        experiment_url_out=experiment_urls,
     )
     scores = _validated_scores(results, samples=samples)
     _write_results(output_path, samples=samples, scores=scores)
     printer(f"Saved {row_count} complete jury record(s) to {output_path}")
+    if experiment_urls:
+        printer(f"Experiment: {experiment_urls[-1]}")
     return 0
 
 

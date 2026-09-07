@@ -64,6 +64,13 @@ def _corpus(row_count: int = 2) -> SimpleNamespace:
     return SimpleNamespace(samples=samples, rejected=[], duplicates=[], warnings=[])
 
 
+def _dev_corpus(row_count: int = 2) -> SimpleNamespace:
+    corpus = _corpus(row_count)
+    for sample in corpus.samples:
+        sample.row = sample.row.model_copy(update={"evaluation_split": "dev"})
+    return corpus
+
+
 def _jury() -> dict[str, Any]:
     return {
         "judges_configured": 3,
@@ -132,6 +139,7 @@ def _args(tmp_path: Path, *, approve_calls: bool) -> Namespace:
         results=tmp_path / "observed.jsonl",
         output=tmp_path / "jury.jsonl",
         approve_calls=approve_calls,
+        case_id=None,
     )
     args.cases.write_text("{}\n", encoding="utf-8")
     args.results.write_text("{}\n", encoding="utf-8")
@@ -155,6 +163,30 @@ def test_parser_requires_all_input_and_output_paths() -> None:
         ]
     )
     assert args.approve_calls is False
+
+
+def test_parser_collects_repeatable_case_ids() -> None:
+    runner = _load_script()
+
+    args = runner.build_parser().parse_args(
+        [
+            "--cases",
+            "cases.jsonl",
+            "--results",
+            "results.jsonl",
+            "--output",
+            "jury.jsonl",
+            "--case-id",
+            "sphere-stakeholder--v4-case-0",
+            "--case-id",
+            "sphere-stakeholder--v4-case-1",
+        ]
+    )
+
+    assert args.case_id == [
+        "sphere-stakeholder--v4-case-0",
+        "sphere-stakeholder--v4-case-1",
+    ]
 
 
 def test_expected_calls_multiplies_rows_judges_and_repetitions() -> None:
@@ -259,6 +291,63 @@ async def test_unapproved_run_prints_budget_without_building_or_calling_jury(
 
 
 @pytest.mark.asyncio
+async def test_explicit_dev_case_ids_select_two_rows_and_report_18_calls(
+    tmp_path: Path,
+) -> None:
+    runner = _load_script()
+    corpus = _dev_corpus()
+    args = _args(tmp_path, approve_calls=False)
+    args.case_id = [sample.case_id for sample in corpus.samples]
+    printed: list[str] = []
+
+    await runner.run(
+        args,
+        replay_loader=lambda **_kwargs: corpus,
+        evaluator_builder=lambda *_args, **_kwargs: pytest.fail("jury must not build"),
+        evaluation_runner=lambda *_args, **_kwargs: pytest.fail("jury must not run"),
+        printer=printed.append,
+    )
+
+    assert printed == [
+        "2 rows × 3 judges × 3 repetitions = 18 model calls; "
+        "rerun with --approve-calls to execute."
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("case_ids", "message"),
+    [
+        (
+            [
+                "sphere-stakeholder--v4-case-0",
+                "sphere-stakeholder--v4-case-0",
+            ],
+            "unique",
+        ),
+        (["sphere-stakeholder--v4-missing"], "unknown"),
+        (["sphere-stakeholder--v4-case-1"], "development"),
+    ],
+)
+async def test_case_id_selection_rejects_duplicate_unknown_or_test_rows(
+    tmp_path: Path,
+    case_ids: list[str],
+    message: str,
+) -> None:
+    runner = _load_script()
+    args = _args(tmp_path, approve_calls=False)
+    args.case_id = case_ids
+
+    with pytest.raises(runner.JuryReplayError, match=message):
+        await runner.run(
+            args,
+            replay_loader=lambda **_kwargs: _corpus(),
+            evaluator_builder=lambda *_args, **_kwargs: pytest.fail("jury must not build"),
+            evaluation_runner=lambda *_args, **_kwargs: pytest.fail("jury must not run"),
+        )
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("row", "sample_overrides", "message"),
     [
@@ -303,6 +392,7 @@ async def test_approved_run_uses_only_decision_support_jury_and_no_inference(
     runner = _load_script()
     build_calls: list[tuple[Any, dict[str, Any]]] = []
     run_calls: list[tuple[list[TraceBackedEvaluationRow], dict[str, Any]]] = []
+    printed: list[str] = []
 
     def fake_builder(judge: Any, **kwargs: Any) -> dict[str, Any]:
         build_calls.append((judge, kwargs))
@@ -312,6 +402,7 @@ async def test_approved_run_uses_only_decision_support_jury_and_no_inference(
         rows: list[TraceBackedEvaluationRow], **kwargs: Any
     ) -> list[SimpleNamespace]:
         run_calls.append((rows, kwargs))
+        kwargs["experiment_url_out"].append("https://example.test/experiment/jury")
         return _results()
 
     await runner.run(
@@ -319,7 +410,7 @@ async def test_approved_run_uses_only_decision_support_jury_and_no_inference(
         replay_loader=lambda **_kwargs: _corpus(),
         evaluator_builder=fake_builder,
         evaluation_runner=fake_evaluation_runner,
-        printer=lambda _message: None,
+        printer=printed.append,
     )
 
     assert build_calls == [
@@ -332,6 +423,10 @@ async def test_approved_run_uses_only_decision_support_jury_and_no_inference(
     ]
     assert kwargs["inference"] is False
     assert kwargs["experiment_path"] == "pydata2026"
+    assert kwargs["experiment_url_out"] == [
+        "https://example.test/experiment/jury"
+    ]
+    assert printed[-1] == "Experiment: https://example.test/experiment/jury"
 
 
 @pytest.mark.asyncio
@@ -670,7 +765,7 @@ def test_jury_validation_requires_exact_ordered_models_and_repetition_objects() 
         runner.validate_jury_record({"jury": missing_explanation})
 
 
-def test_jury_validation_rejects_top_level_or_mechanical_errors() -> None:
+def test_jury_validation_rejects_top_level_evaluation_errors() -> None:
     runner = _load_script()
     for evaluation_error in ("provider transport failed", None):
         with pytest.raises(runner.JuryReplayError, match="evaluation_error"):
@@ -678,6 +773,10 @@ def test_jury_validation_rejects_top_level_or_mechanical_errors() -> None:
                 {"jury": _jury(), "evaluation_error": evaluation_error}
             )
 
+
+
+def test_jury_validation_preserves_complete_mechanical_failures() -> None:
+    runner = _load_script()
     mechanical = _jury()
     mechanical["judges_succeeded"] = 2
     mechanical["judges_failed"] = 1
@@ -686,15 +785,20 @@ def test_jury_validation_rejects_top_level_or_mechanical_errors() -> None:
         value=None,
         explanation="",
         error="provider transport failed",
-        repetitions=[
-            {"value": None, "explanation": None},
-            {"value": None, "explanation": None},
-            {"value": None, "explanation": None},
-        ],
+        repetitions=[],
         repetitions_failed=3,
     )
-    with pytest.raises(runner.JuryReplayError, match="mechanical judge failure"):
-        runner.validate_jury_record({"jury": mechanical})
+
+    assert runner.validate_jury_record({"jury": mechanical}) is mechanical
+
+
+def test_jury_validation_requires_three_repetitions_for_successful_votes() -> None:
+    runner = _load_script()
+    incomplete = _jury()
+    incomplete["votes"][0]["repetitions"].pop()
+
+    with pytest.raises(runner.JuryReplayError, match="successful.*three repetitions"):
+        runner.validate_jury_record({"jury": incomplete})
 
 
 @pytest.mark.asyncio
