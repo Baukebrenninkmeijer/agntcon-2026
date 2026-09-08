@@ -363,9 +363,6 @@ html = r'''<!doctype html>
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
   .portrait{width:100%;max-width:520px;justify-self:end;border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:0 10px 34px rgba(37,35,46,.12)}
   .portrait img{display:block;width:100%;height:auto}
-  .orq-note{margin-top:54px;border-left:6px solid var(--orange);padding:4px 0 4px 30px}
-  .orq-note .k{font-family:var(--mono);font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-dark);margin-bottom:16px}
-  .orq-note p{font-size:31px;line-height:1.38;color:var(--ink2)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -407,10 +404,6 @@ html = r'''<!doctype html>
         <li>6 years data science @ ABN AMRO &amp; ING</li>
         <li>Organiser @ MLOps Community Amsterdam</li>
       </ul>
-      <div class="orq-note">
-        <div class="k">Orq.ai</div>
-        <p>A platform for building, shipping and evaluating LLM apps and agents. One gateway to every model, with tracing, evaluators and experiments on top.</p>
-      </div>
     </div>
     <div class="portrait"><img src="data:image/jpeg;base64,__HEADSHOT__" alt="Bauke Brenninkmeijer"></div>
   </div>
