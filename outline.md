@@ -196,6 +196,10 @@ behavior. A false pass matters most because it allows a bad answer to ship.
 A panel reduces dependence on one model’s preferences. Consensus still does not prove correctness;
 it only tells us the models agree.
 
+For the live walkthrough, open the single dev-only Orq Experiment that places prompt v1, v2, and
+v3 side by side. Its boolean cells separate human alignment, panel consensus, and within-judge
+stability: v3 is visibly less wobbly while human agreement remains unchanged.
+
 ### Slide: One answer exposed another ambiguity
 
 Use the first human boundary answer as the walkthrough: visible analytical claims should always be

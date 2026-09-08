@@ -291,7 +291,7 @@
     <header>
       <div class="header-top">
         <h1>Evaluation execution status</h1>
-        <span class="auto-pill">prompt v3 measured · still unaligned</span>
+        <span class="auto-pill">three-version comparison live · still unaligned</span>
       </div>
       <div class="date-range">
         8 September 2026 &nbsp;&middot;&nbsp;
@@ -328,6 +328,7 @@
       <h2>What changed</h2>
       <hr class="rule">
       <ul class="highlights">
+        <li><strong>The three prompt versions are now visible side by side in one Orq Experiment.</strong> Thirty development rows are shown as three jobs with colourable boolean cells for human alignment, panel consensus, and within-judge stability. The upload reused stored jury evidence and made zero judge calls.</li>
         <li><strong>The prompt v3 jury is complete.</strong> evaluatorq replayed all 50 frozen responses through three judges with three repetitions each: 450 calls, 50 complete records, and zero mechanical errors. One Qwen rate limit succeeded on the bounded retry.</li>
         <li><strong>Less wobble did not improve aggregate correctness.</strong> Development disagreement fell from eight cases to three and self-wobble from eight to three, but the jury still passes all 30 development cases and misses all three human failures.</li>
         <li><strong>The panel now reveals a calibration problem.</strong> Luna detects two human failures and incorrectly fails one human pass; Qwen and Gemini each pass all 30 cases and all 90 of their repetitions, overruling Luna under majority aggregation.</li>
@@ -396,7 +397,7 @@
           </tr>
           <tr>
             <td>Offline gate</td>
-            <td>217 passed, one live test deselected; Ruff clean; <code>uv build</code> produced both distribution artifacts successfully.</td>
+            <td>222 passed, one live test deselected; Ruff clean; <code>uv build</code> produced both distribution artifacts successfully.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
           </tr>
           <tr>
@@ -433,6 +434,11 @@
             <td>Prompt v3 jury</td>
             <td>Run <code>01M20F16K491SBD344Z5T2S63Q</code> contains 50 complete rows / 450 calls with zero mechanical errors. Development disagreement and wobble both fell to three, but aggregate failure recall remains 0%. No row-level test evidence was inspected; one aggregate distribution was inadvertently summarized, so independent test reviewers are now required.</td>
             <td><span class="risk"><span class="risk-dot med"></span>Unaligned</span></td>
+          </tr>
+          <tr>
+            <td>Version comparison</td>
+            <td>Experiment <code>01M20HXBVGJGSP31DMJ2MXDQEG</code>, run <code>01M20HXBVG64SBWTH5RZMDK0HS</code>, shows prompt v1/v2/v3 as A/B/C jobs across all 30 labelled development rows. Boolean cells render green/red in Orq. Human agreement stays 90% for every version; panel consensus is 86.7%/73.3%/90%; within-judge stability is 80%/73.3%/90%. No held-out row or judge call was used.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified live</span></td>
           </tr>
           <tr>
             <td>Annotation bundle</td>
@@ -519,7 +525,7 @@
 
     <footer>
       Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
-      Current status: prompt v3 reduced development disagreement and wobble to three cases each but still misses all three human failures. Row-level test evidence remains uninspected, but independent test reviewers are required because one aggregate distribution was inadvertently summarized.
+      Current status: the live three-version comparison shows that prompt v3 reduces development disagreement and wobble without improving human alignment; all three versions still miss the same three failures. Row-level test evidence remains uninspected, but independent test reviewers are required because one aggregate distribution was inadvertently summarized.
     </footer>
   </div>
 </body>

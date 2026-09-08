@@ -208,3 +208,37 @@ def test_prompt_v3_alignment_analysis_is_development_only_and_matches_labels() -
         "segment-then-2024-check",
         "product-drill",
     }
+
+
+def test_three_version_comparison_receipt_is_bound_to_tracked_development_evidence() -> None:
+    receipt = json.loads((BUNDLE / "version-comparison/receipt.json").read_text())
+
+    assert receipt["schema_version"] == "decision-support-jury-comparison-v1"
+    assert receipt["development_rows"] == 30
+    assert receipt["prompt_versions"] == 3
+    assert receipt["boolean_evaluators"] == 3
+    assert receipt["local_scores"] == 270
+    assert receipt["judge_calls"] == 0
+    assert receipt["source_hashes"] == {
+        "baseline": _sha256(BUNDLE / "jury-baseline/jury-results.jsonl"),
+        "human_rules": _sha256(BUNDLE / "jury-human-rules-v1/jury-results.jsonl"),
+        "labels": _sha256(BUNDLE / "human-labels-dev-v1.jsonl"),
+        "prompt_v3": _sha256(BUNDLE / "jury-prompt-v3/jury-results.jsonl"),
+    }
+    assert receipt["summary"]["versions"] == {
+        "Prompt v1 · baseline": {
+            "aligned_with_human": 27,
+            "panel_consensus": 26,
+            "within_judge_stability": 24,
+        },
+        "Prompt v2 · human rules": {
+            "aligned_with_human": 27,
+            "panel_consensus": 22,
+            "within_judge_stability": 22,
+        },
+        "Prompt v3 · materiality": {
+            "aligned_with_human": 27,
+            "panel_consensus": 27,
+            "within_judge_stability": 27,
+        },
+    }

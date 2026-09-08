@@ -8,6 +8,8 @@ This directory is the durable, tracked copy of the accepted Sphere.com v4 evalua
 - `jury-human-rules-v1/` — the diagnostic rerun after adding the three human boundary rules.
 - `jury-prompt-v3/` — the repeated jury after applying all six confirmed development rules,
   including its development-only alignment analysis and residual grey-zone queue.
+- `version-comparison/` — the dev-only evaluatorq Experiment receipt comparing all three prompt
+  versions with boolean human-alignment, panel-consensus, and within-judge-stability cells.
 - `human-labels-dev-v1.jsonl` — 30 human-confirmed development labels with written explanations;
   the 20-case test split remains sealed.
 - `prompt-lineage.md` — the authoritative mapping between prompt iterations and hosted versions.
