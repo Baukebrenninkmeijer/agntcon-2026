@@ -508,8 +508,7 @@ html = r'''<!doctype html>
     <ol class="spine" aria-label="Manual evaluation sequence">
       <li><span class="n">01</span><p>random sample</p></li>
       <li><span class="n">02</span><p>human label + written critique</p></li>
-      <li><span class="n">03</span><p>split dev / test</p></li>
-      <li class="last"><span class="n">04</span><p>identify gaps with judge</p></li>
+      <li class="last"><span class="n">03</span><p>identify gaps with judge</p></li>
     </ol>
     <div class="cost">
       <div class="big">every<br>change</div>
@@ -518,7 +517,24 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 11 · Lazy queue -->
+<!-- 11 · Unstable cases -->
+<section class="slide">
+  <h2>Let the judge pick<br>what humans read first.</h2>
+  <p class="sub">Three models, one rubric, three votes each. Where the verdict will not hold still, the boundary is unclear.</p>
+  <div class="compare">
+    <div class="answer">
+      <div class="tag">MODELS DISAGREE</div>
+      <p>Three judges, same case, different verdicts.</p>
+    </div>
+    <div class="answer b">
+      <div class="tag">ONE MODEL WOBBLES</div>
+      <p>One judge, same case, a different verdict each run.</p>
+    </div>
+  </div>
+  <p class="body" style="margin-top:64px">Those cases go to the front of the human queue. Nothing here needs a human label yet.</p>
+</section>
+
+<!-- 12 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -534,7 +550,6 @@ html = r'''<!doctype html>
       <div class="legend"><span><i class="swatch"></i>models disagree</span><span><i class="swatch w"></i>one model wobbles</span></div>
     </div>
     <div>
-      <div class="eyebrow">Three judges · one rubric</div>
       <h2>We are lazy</h2>
       <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
       <ul class="plain">
@@ -546,7 +561,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 12 · Alignment -->
+<!-- 13 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -558,7 +573,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 13 · One human answer exposes another ambiguity -->
+<!-- 14 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -584,7 +599,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 14 · Grey-zone loop -->
+<!-- 15 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -608,7 +623,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 15 · Agent evaluation -->
+<!-- 16 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow"><span class="qn">Question 03</span> · What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
@@ -624,7 +639,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 16 · Operating modes -->
+<!-- 17 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -636,7 +651,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 17 · Lifecycle -->
+<!-- 18 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -671,7 +686,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Finding to knowledge -->
+<!-- 19 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -683,7 +698,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 19 · Software factory -->
+<!-- 20 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -697,7 +712,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 20 · Close -->
+<!-- 21 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>

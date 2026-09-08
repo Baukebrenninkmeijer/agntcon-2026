@@ -33,8 +33,8 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 10-14 | `Question 02 · Trust the judge` (slide 10) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 15-16 | `Question 03 · What changes with agents` (slide 15) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 10-15 | `Question 02 · Trust the judge` (slide 10) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-17 | `Question 03 · What changes with agents` (slide 15) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -133,13 +133,23 @@ judges the conversation, visible tool evidence, and final response against the s
 Show the conventional workflow first:
 
 1. Randomly sample cases.
-2. Ask humans to review all of them.
-3. Record pass/fail labels and critiques.
-4. Split the annotations into development and test sets.
-5. Rewrite the judge on development disagreements.
-6. Measure human–judge agreement on the untouched test set.
+2. Ask humans to review all of them and record pass/fail labels with critiques.
+3. Rewrite the judge on the gaps this exposes.
+
+The development and test split belongs to this method too, but it is introduced once, on the
+`Align the evaluator like any other model` slide, rather than named here and again there.
 
 This is methodologically clean and expensive in expert attention.
+
+### Slide: Let the judge pick what humans read first
+
+The concept before the picture. Three models, one rubric, three votes each. Two ways a verdict
+fails to hold still: the models disagree with each other, or one model disagrees with itself across
+runs. Either way the rubric's boundary is unclear at that case, so it goes to the front of the
+human queue. No human labels are needed to compute this.
+
+Keep this slide plain. The fifty-dot chart on the next slide is the payoff and needs the concept
+already in the room.
 
 ### Slide: We are lazy—make the queue smarter
 
