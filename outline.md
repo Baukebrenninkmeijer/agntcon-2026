@@ -215,9 +215,8 @@ than the threshold for “unsupported,” giving humans a better next question t
 ### Slide: What changes with agents?
 
 A divider carrying only the question. Question 03 was named on slide 4 and then not heard from
-again until its block opened, so it gets stated once in full before the block starts: the heading
-asks what changes with agents, the line beneath repeats the slide 4 phrasing, "what do you evaluate
-in an agent that is not the final answer?".
+again until its block opened, so it gets stated once in full before the block starts: the heading asks
+what changes with agents, and nothing else is on screen.
 
 ### Slide: The answer is only the endpoint
 

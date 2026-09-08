@@ -629,7 +629,6 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
-  <p class="sub">What do you evaluate in an agent that is not the final answer?</p>
 </section>
 
 <!-- 17 · Agent evaluation -->
