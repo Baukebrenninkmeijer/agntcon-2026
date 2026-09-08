@@ -18,6 +18,21 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def test_prompt_lineage_distinguishes_prompt_and_hosted_versions() -> None:
+    lineage = (BUNDLE / "prompt-lineage.md").read_text()
+    prompt_v3 = (BUNDLE / "prompt-v3.md").read_text()
+
+    assert "| v1 | Original baseline rubric" in lineage
+    assert "| v2 | First human-rules revision" in lineage
+    assert "`1.0.0`" in lineage
+    assert "`ca4a7cfc9e1af721`" in lineage
+    assert "| v3 | Current revision" in lineage
+    assert "`1.0.1`" in lineage
+    assert "`d76043efb73cc08c`" in lineage
+    assert prompt_v3.startswith("# Decision-support-quality prompt v3\n")
+    assert not (BUNDLE / "proposed-prompt-v2.md").exists()
+
+
 def test_tracked_v4_evidence_is_complete_sanitized_and_identity_bound() -> None:
     observations = BUNDLE / "observations.jsonl"
 

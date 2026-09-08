@@ -20,6 +20,10 @@ fonts = {
     "MONO": b64("ESKlarheitKurrentMono-Md.ttf"),
 }
 
+headshot = base64.b64encode(
+    (pathlib.Path(__file__).parent / "assets" / "headshot.jpg").read_bytes()
+).decode()
+
 
 # Preserved grey-zone visual: overlapping classes and several defensible boundaries.
 rng = random.Random(7)
@@ -153,7 +157,9 @@ replay_bar = "".join(
 replay_rows = "".join(
     f'<div class="replay-row"><span class="rv-name">{verdict["version"]}</span>'
     f'<span class="rv-why">{verdict["line"]}</span>'
-    f'<span class="rv-mark {verdict["value"]}">{verdict["mark"]}</span></div>'
+    f'<span class="rv-mark {verdict["value"]}">'
+    f'<b>{verdict["mark"].rsplit(" ", 1)[0]}</b><em>{verdict["value"]}</em>'
+    f"</span></div>"
     for verdict in replay["verdicts"]
 )
 
@@ -166,6 +172,7 @@ html = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Evaluating Agents at Scale</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23025558%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2247%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Cpath%20d%3D%22M6%2046%20C22%2046%2026%2018%2058%2018%22%20stroke%3D%22%23ff9747%22%20stroke-width%3D%228%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <style>
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__RG__) format("woff2");font-weight:400;font-display:swap}
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__MD__) format("woff2");font-weight:500;font-display:swap}
@@ -245,23 +252,28 @@ html = r'''<!doctype html>
   @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
   @keyframes dotIn{to{opacity:1}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
-  .frozen{position:relative;margin-top:64px;border:4px dashed var(--teal);border-radius:16px;padding:30px;background:rgba(77,162,150,.06)}
-  .frozen .tag{position:absolute;top:-18px;left:34px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:22px;letter-spacing:.14em;color:var(--teal-deep)}
+  .frozen{position:relative;margin-top:58px;border:3px dashed rgba(77,162,150,.55);border-radius:16px;padding:32px 34px 28px;background:rgba(77,162,150,.05)}
+  .frozen .tag{position:absolute;top:-17px;left:32px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:21px;letter-spacing:.14em;color:var(--teal-deep)}
   .frozen .bar{display:flex;height:52px;gap:3px}
   .frozen .bar .seg{display:block;border-radius:4px}
   .frozen .bar .user{background:var(--ink)}
   .frozen .bar .assistant{background:var(--teal)}
   .frozen .bar .call{background:var(--orange)}
   .frozen .bar .result{background:var(--muted);opacity:.55}
-  .frozen .note{display:flex;justify-content:space-between;font-family:var(--mono);font-size:21px;color:var(--muted);margin-top:18px}
-  .replay-verdicts{display:flex;flex-direction:column;gap:22px;margin-top:44px}
-  .replay-row{display:grid;grid-template-columns:470px 1fr 200px;align-items:center;gap:38px;background:var(--paper);border-radius:14px;padding:26px 30px}
-  .replay-row .rv-name{font-family:var(--mono);font-size:24px;color:var(--ink)}
+  .frozen .note{font-family:var(--mono);font-size:21px;letter-spacing:.06em;color:var(--ink2);margin-top:20px}
+  .replay-verdicts{display:flex;flex-direction:column;gap:24px;margin-top:52px}
+  .replay-row{display:grid;grid-template-columns:440px 1fr 232px;align-items:center;gap:44px;background:var(--paper);border-radius:14px;padding:28px 32px;opacity:0;transform:translateY(20px)}
+  .slide.active .replay-row{animation:rowIn .5s cubic-bezier(.16,1,.3,1) forwards}
+  .slide.active .replay-row:nth-child(2){animation-delay:.14s}
+  @keyframes rowIn{to{opacity:1;transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){.replay-row{opacity:1;transform:none;animation:none!important}}
+  .replay-row .rv-name{font-family:var(--mono);font-size:24px;line-height:1.3;color:var(--ink)}
   .replay-row .rv-why{font-size:29px;line-height:1.35;color:var(--ink2)}
-  .replay-row .rv-mark{text-align:center;font-size:28px;font-weight:600;letter-spacing:.08em;padding:14px 0;border-radius:10px}
+  .replay-row .rv-mark{display:grid;gap:7px;justify-items:center;padding:17px 0;border-radius:12px}
+  .replay-row .rv-mark b{font-size:42px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .replay-row .rv-mark em{font-style:normal;font-family:var(--mono);font-size:17px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink2)}
   .replay-row .rv-mark.unanimous{background:rgba(77,162,150,.18);color:var(--teal-deep)}
   .replay-row .rv-mark.split{background:rgba(223,83,37,.16);color:var(--orange-dark)}
-  .replay-foot{font-family:var(--mono);font-size:21px;letter-spacing:.12em;color:var(--muted);margin-top:38px}
   .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
   .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
   .slide[data-step="1"] .traj .result:not(.final){opacity:.17}
@@ -311,13 +323,15 @@ html = r'''<!doctype html>
   .process-card.dark{border-color:var(--ink)}
   .process-card h3{margin:0;font-size:38px}
   .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-  .life-simple{display:grid;grid-template-columns:1fr 320px 1fr;align-items:center;gap:30px;margin-top:20px}
-  .life-loop{height:350px;position:relative;display:grid;place-items:center}
-  .life-loop svg{position:absolute;inset:0;width:100%;height:100%}
-  .life-loop strong{position:relative;font-size:38px;font-weight:500;text-align:center;line-height:1.2}
-  .life-bridge{text-align:center;font-size:29px;color:var(--ink2)}
-  .life-bridge span{display:block;font-size:72px;line-height:.9;color:var(--teal)}
-  .life-return{width:72%;margin:14px auto 0;padding-top:20px;border-top:3px dashed var(--muted);text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.06em;color:var(--muted)}
+  .track{display:block;width:100%;margin-top:26px}
+  .track .seg-build{fill:var(--teal)}
+  .track .seg-guard{fill:var(--orange)}
+  .track .tick{fill:var(--bg)}
+  .track .gate{fill:var(--ink)}
+  .track .back{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
+  .track .name{font-family:var(--sans);font-size:42px;font-weight:600;fill:var(--ink)}
+  .track .meta{font-family:var(--sans);font-size:28px;fill:var(--ink2)}
+  .track .mono{font-family:var(--mono);font-size:21px;letter-spacing:.12em;fill:var(--ink2)}
   .learning-flow{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:58px;margin-top:24px}
   .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
   .learning-stage:nth-child(2){border-color:var(--orange)}
@@ -364,6 +378,11 @@ html = r'''<!doctype html>
   .ambiguity-metric span{font-size:27px;line-height:1.22;color:var(--ink2)}
   .ambiguity-takeaway{margin-top:42px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
+  .portrait{width:100%;max-width:520px;justify-self:end;border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:0 10px 34px rgba(37,35,46,.12)}
+  .portrait img{display:block;width:100%;height:auto}
+  .orq-note{margin-top:54px;border-left:6px solid var(--orange);padding:4px 0 4px 30px}
+  .orq-note .k{font-family:var(--mono);font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-dark);margin-bottom:16px}
+  .orq-note p{font-size:31px;line-height:1.38;color:var(--ink2)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -397,7 +416,38 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 3 · Sphere -->
+<!-- 3 · Speaker -->
+<section class="slide">
+  <div class="eyebrow">Who is saying this</div>
+  <div class="cols wide">
+    <div>
+      <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
+      <ul class="plain">
+        <li>Research Engineer @ Orq.ai — agent infrastructure and LLM evaluation</li>
+        <li>6 years data science @ ABN AMRO &amp; ING</li>
+        <li>Organiser @ MLOps Community Amsterdam</li>
+      </ul>
+      <div class="orq-note">
+        <div class="k">Orq.ai</div>
+        <p>A platform for building, shipping and evaluating LLM apps and agents. One gateway to every model, with tracing, evaluators and experiments on top.</p>
+      </div>
+    </div>
+    <div class="portrait"><img src="data:image/jpeg;base64,__HEADSHOT__" alt="Bauke Brenninkmeijer"></div>
+  </div>
+</section>
+
+<!-- 4 · Questions -->
+<section class="slide">
+  <div class="eyebrow">Where this goes</div>
+  <h2>Three questions</h2>
+  <ol class="spine" aria-label="Questions this talk answers">
+    <li><span class="n">01</span><p>How do you get a first signal with no labels?</p></li>
+    <li><span class="n">02</span><p>When can you trust a judge instead of a human?</p></li>
+    <li class="last"><span class="n">03</span><p>What do you evaluate in an agent that is not the final answer?</p></li>
+  </ol>
+</section>
+
+<!-- 5 · Sphere -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -413,7 +463,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 4 · Review pool -->
+<!-- 6 · Review pool -->
 <section class="slide">
   <div class="eyebrow">Start with humans</div>
   <h2>A fifty-case review pool</h2>
@@ -426,7 +476,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:60px">Stakeholder, decision, delivery setting and communication need are visible to the agent.</p>
 </section>
 
-<!-- 5 · Binary -->
+<!-- 7 · Binary -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -444,7 +494,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 6 · Grey zone -->
+<!-- 8 · Grey zone -->
 <section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
@@ -468,13 +518,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 7 · Criterion -->
+<!-- 9 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
   <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
-<!-- 8 · Historical method -->
+<!-- 10 · Historical method -->
 <section class="slide">
   <h2>The historical method</h2>
   <p class="sub">Random sampling, manual review.</p>
@@ -492,7 +542,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 9 · Lazy queue -->
+<!-- 11 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -520,7 +570,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 11 · Alignment -->
+<!-- 12 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -532,7 +582,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 12 · One human answer exposes another ambiguity -->
+<!-- 13 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -558,7 +608,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 13 · Agent evaluation -->
+<!-- 14 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
@@ -574,21 +624,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 14 · Replay -->
+<!-- 15 · Replay -->
 <section class="slide">
   <div class="eyebrow">Reproducible agent evaluation</div>
   <h2>Replay the trace</h2>
   <p class="sub">The trace is fixed. The judge is the thing that changed.</p>
   <div class="frozen">
-    <span class="tag">FROZEN · V4-YOY-NET-GROWTH</span>
+    <span class="tag">FROZEN</span>
     <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results">__REPLAY_BAR__</div>
-    <div class="note"><span>answered &minus;3.16% &middot; &minus;$1.32M</span><span>replayed, never re-run</span></div>
+    <div class="note"><span>replayed, never re-run</span></div>
   </div>
   <div class="replay-verdicts">__REPLAY_ROWS__</div>
-  <p class="replay-foot">SAME TRACE · SAME ANSWER · TWO RUBRIC VERSIONS</p>
 </section>
 
-<!-- 15 · Operating modes -->
+<!-- 16 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -600,18 +649,29 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 16 · Lifecycle -->
+<!-- 17 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
-  <div class="life-simple" aria-label="Evaluation build lifecycle followed by regression lifecycle">
-    <div class="life-loop"><svg viewBox="0 0 520 350" aria-hidden="true"><defs><marker id="cycleT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker></defs><path d="M112 250 A155 155 0 1 1 408 250" fill="none" stroke="var(--teal)" stroke-width="7" marker-end="url(#cycleT)"/><path d="M385 290 A155 155 0 0 1 135 290" fill="none" stroke="var(--teal)" stroke-width="7" marker-end="url(#cycleT)"/></svg><strong>Build with<br>humans</strong></div>
-    <div class="life-bridge">Alignment holds<span>→</span></div>
-    <div class="life-loop"><svg viewBox="0 0 520 350" aria-hidden="true"><defs><marker id="cycleO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--orange)"/></marker></defs><path d="M112 250 A155 155 0 1 1 408 250" fill="none" stroke="var(--orange)" stroke-width="7" marker-end="url(#cycleO)"/><path d="M385 290 A155 155 0 0 1 135 290" fill="none" stroke="var(--orange)" stroke-width="7" marker-end="url(#cycleO)"/></svg><strong>Guard every<br>commit</strong></div>
-  </div>
-  <div class="life-return">← Escapes become review cases</div>
+  <svg class="track" viewBox="0 0 1800 486" role="img" aria-label="One track: a build phase that climbs, a promotion gate, then a check on every commit, with escapes returning to the build phase">
+    <path class="back" d="M1480 152 C1480 46, 340 46, 340 152" marker-end="url(#backArrow)"/>
+    <defs><marker id="backArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>
+    <text class="mono" x="900" y="28" text-anchor="middle">ESCAPES BECOME REVIEW CASES</text>
+    <text class="mono" x="40" y="196">PASS RATE CLIMBS</text>
+    <text class="mono" x="720" y="196">HOLDS ON EVERY COMMIT</text>
+    <path class="seg-build" d="M40 300 L40 276 L660 218 L660 300 z"/>
+    <rect class="seg-guard" x="720" y="214" width="1040" height="86" rx="8"/>
+    <g class="tick"><rect x="800" y="214" width="7" height="86"/><rect x="880" y="214" width="7" height="86"/><rect x="960" y="214" width="7" height="86"/><rect x="1040" y="214" width="7" height="86"/><rect x="1120" y="214" width="7" height="86"/><rect x="1200" y="214" width="7" height="86"/><rect x="1280" y="214" width="7" height="86"/><rect x="1360" y="214" width="7" height="86"/><rect x="1440" y="214" width="7" height="86"/><rect x="1520" y="214" width="7" height="86"/><rect x="1600" y="214" width="7" height="86"/><rect x="1680" y="214" width="7" height="86"/></g>
+    <path class="gate" d="M690 202 l30 55 -30 55 -30 -55 z"/>
+    <text class="name" x="40" y="376">Build with humans</text>
+    <text class="meta" x="40" y="422">Hard cases and edge cases.</text>
+    <text class="meta" x="40" y="460">A low pass rate is the point.</text>
+    <text class="name" x="720" y="376">Guard every commit</text>
+    <text class="meta" x="720" y="422">Known behavior and core paths.</text>
+    <text class="meta" x="720" y="460">Everything passes, or the commit stops.</text>
+  </svg>
 </section>
 
-<!-- 17 · Finding to knowledge -->
+<!-- 18 · Finding to knowledge -->
 <section class="slide">
   <h2>What the agent learns<br>from a failed eval</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes a Sphere skill update">
@@ -622,7 +682,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 18 · Software factory -->
+<!-- 19 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -636,7 +696,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 19 · Close -->
+<!-- 20 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -711,6 +771,7 @@ html = (
     .replace("__MD__", fonts["MD"])
     .replace("__SB__", fonts["SB"])
     .replace("__MONO__", fonts["MONO"])
+    .replace("__HEADSHOT__", headshot)
     .replace("__GREY_DOTS__", grey_dot_svg)
     .replace("__GREY_P1__", grey_paths[0])
     .replace("__GREY_P2__", grey_paths[1])

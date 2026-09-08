@@ -1,7 +1,7 @@
-# Proposed decision-support-quality prompt update
+# Decision-support-quality prompt v3
 
 Status: accepted from 30 confirmed development labels; applied locally and synced to the hosted
-shadow evaluator on 8 September 2026. The v2 repeated jury has not run yet.
+shadow evaluator on 8 September 2026. The v3 repeated jury has not run yet.
 
 This update sharpens the three existing human-aligned boundary rules without changing the
 criterion, verdict labels, jury models, evidence mapping, or reference-free scope. It resolves the
@@ -15,7 +15,7 @@ The human-rules-v1 jury aggregates to `pass` on all 30 development cases. Agains
 balanced accuracy 0.50, and Cohen's kappa 0. The prompt therefore needs to improve discrimination,
 not preserve headline accuracy.
 
-## Proposed replacement
+## Accepted replacement
 
 Replace the current **Human-aligned boundary rules** block and its following evaluator-scope
 paragraph with:
@@ -60,5 +60,5 @@ ground truth.
   secondary simple-average scope discrepancy is not decision-material.
 - The other 26 development cases pass.
 
-The next validation step is an offline comparison of this proposal against the 30 confirmed human
-labels. A new repeated jury run, hosted evaluator update, or promotion remains a separate action.
+The next validation step is a repeated jury run followed by a development-only comparison against
+the 30 confirmed human labels. Promotion and held-out evaluation remain separate actions.
