@@ -33,8 +33,8 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 10-16 | `Question 02 · Trust the judge` (slide 10) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 17-18 | `Question 03 · What changes with agents` (slide 15) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 10-15 | `Question 02 · Trust the judge` (slide 10) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-17 | `Question 03 · What changes with agents` (slide 17) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -149,11 +149,9 @@ reads first.
 - model disagreement
 - model wobbling
 
-### Slide: Wobbly
-
-A dictionary definition, one word on screen. **Wobbly**, adjective: LLM-as-a-judge flips sides on
-repeated evaluations of the same case. The term recurs for the rest of the talk, so it gets
-defined once and properly.
+On the click, the definition of the second one appears on the same slide: **Wobbly**, adjective,
+LLM-as-a-judge flips sides on repeated evaluations of the same case. The term recurs for the rest
+of the talk, so define it here and do not re-explain it later.
 
 ### Slide: We are lazy—make the queue smarter
 

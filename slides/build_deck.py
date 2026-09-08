@@ -169,10 +169,12 @@ html = r'''<!doctype html>
   .slide.active{opacity:1;pointer-events:auto}
   .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
   .eyebrow .qn{color:var(--orange-dark)}
-  .define{max-width:1280px;margin-top:40px;border-left:8px solid var(--orange);padding:14px 0 14px 46px}
-  .define .word{font-size:104px;font-weight:600;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
-  .define .gram{font-family:var(--mono);font-size:24px;letter-spacing:.08em;color:var(--ink2);margin:14px 0 34px}
-  .define .meaning{font-size:44px;line-height:1.32;color:var(--ink2)}
+  .define{max-width:1280px;margin-top:76px;border-left:8px solid var(--orange);padding:14px 0 14px 46px;opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+  .slide[data-step="1"] .define{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.define{transition:none;transform:none}}
+  .define .word{font-size:86px;font-weight:600;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+  .define .gram{font-family:var(--mono);font-size:22px;letter-spacing:.08em;color:var(--ink2);margin:12px 0 26px}
+  .define .meaning{font-size:38px;line-height:1.32;color:var(--ink2)}
   h1{font-size:128px;line-height:1.01;letter-spacing:-.03em;font-weight:600;margin-bottom:36px}
   h2{font-size:82px;line-height:1.06;letter-spacing:-.025em;font-weight:600;margin-bottom:48px;max-width:1760px}
   h3{font-size:42px;line-height:1.15;font-weight:500;color:var(--ink);margin-bottom:20px}
@@ -521,16 +523,12 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 11 · Priority -->
-<section class="slide">
+<section class="slide" data-steps="1">
   <h2>LLM judges determine priority</h2>
   <ul class="plain">
     <li>Model disagreement</li>
     <li>Model wobbling</li>
   </ul>
-</section>
-
-<!-- 12 · Wobbly -->
-<section class="slide">
   <div class="define">
     <div class="word">Wobbly</div>
     <div class="gram">ADJECTIVE</div>
@@ -538,7 +536,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 13 · Lazy queue -->
+<!-- 12 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -565,7 +563,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 14 · Alignment -->
+<!-- 13 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -577,7 +575,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 15 · One human answer exposes another ambiguity -->
+<!-- 14 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -603,7 +601,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 16 · Grey-zone loop -->
+<!-- 15 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -627,7 +625,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Agent evaluation -->
+<!-- 16 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow"><span class="qn">Question 03</span> · What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
@@ -643,7 +641,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Operating modes -->
+<!-- 17 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -655,7 +653,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 19 · Lifecycle -->
+<!-- 18 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -690,7 +688,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Finding to knowledge -->
+<!-- 19 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -702,7 +700,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 21 · Software factory -->
+<!-- 20 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -716,7 +714,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 22 · Close -->
+<!-- 21 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
