@@ -44,11 +44,11 @@
   .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
   .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:16px}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:44px;max-width:1500px}
   .answer{border-top:6px solid var(--teal);padding:34px 0 0;min-height:0}
   .answer.b{border-color:var(--orange)}
-  .answer .tag{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--ink2);margin-bottom:26px}
-  .answer p{font-size:40px;line-height:1.36;color:var(--ink2)}
+  .answer .tag{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--ink2);margin-bottom:22px}
+  .answer p{font-size:33px;line-height:1.38;color:var(--ink2)}
   .answer strong{color:var(--ink);font-weight:500}
   .answer .quiet{font-size:27px;color:var(--muted);margin-top:18px}
   .answer mark{background:rgba(77,162,150,.24);color:var(--ink);padding:.06em .12em;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
@@ -238,7 +238,6 @@
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
   <h2>Two correct answers.<br>One useful decision.</h2>
-  <p class="sub">Same question, same data, same number.</p>
   <div class="compare">
     <div class="answer">
       <div class="tag">ANSWER A · ANALYTICALLY VALID</div>
@@ -246,7 +245,7 @@
     </div>
     <div class="answer b">
       <div class="tag">ANSWER B · DECISION SUPPORT</div>
-      <p><mark>That is booked revenue, <strong>not</strong> realized. For your leadership update you want <code>net_revenue</code>.</mark></p>
+      <p>Gross revenue for 2025 is <strong>$51,226,989.17</strong>. <mark>That is booked revenue, <strong>not</strong> realized. For your leadership update you want <code>net_revenue</code>.</mark></p>
     </div>
   </div>
 </section>
