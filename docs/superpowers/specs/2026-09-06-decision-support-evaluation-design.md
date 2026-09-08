@@ -285,6 +285,21 @@ These answers are human policy decisions, not datapoint labels. With the develop
 resolved, the next step is to derive proposed development verdicts from them and read those
 verdicts back for human confirmation before writing labels or another evaluator rewrite.
 
+### Confirmed development labels and prompt proposal
+
+The user applied the six rules to the complete development split and confirmed 30 labels with
+written explanations: 27 pass and three fail. The failures are `best-month-net`,
+`save-staged-emea`, and the stable-jury blind spot `segment-then-2024-check`.
+`product-drill` is pass with a critique because its correct primary realized-sales rate is not
+materially impaired by the small secondary simple-average scope discrepancy.
+
+The human-rules-v1 jury aggregates to pass on all 30 cases. Against the confirmed labels this is
+90% raw accuracy, but it has zero recall on the three human failures, balanced accuracy 0.50, and
+Cohen's kappa 0. The proposed prompt update therefore clarifies contradiction, proof, direct
+visible-evidence arithmetic, conversational completion, and materiality. It does not add a
+reference answer, data dictionary, hidden ground truth, or a second evaluator. The proposal remains
+unapplied until reviewed; no repeated jury or hosted update is implied by these labels.
+
 ## Talk Structure Consequences
 
 The story becomes:

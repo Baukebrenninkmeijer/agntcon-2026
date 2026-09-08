@@ -6,6 +6,9 @@ This directory is the durable, tracked copy of the accepted Sphere.com v4 evalua
 - `observations.jsonl` — 50 accepted observed conversations from the canonical retry.
 - `jury-baseline/` — the original rubric run used to surface the first grey zones.
 - `jury-human-rules-v1/` — the diagnostic rerun after adding the three human boundary rules.
+- `human-labels-dev-v1.jsonl` — 30 human-confirmed development labels with written explanations;
+  the 20-case test split remains sealed.
+- `proposed-prompt-v2.md` — the unapplied prompt clarification derived from those labels.
 
 Each jury version contains:
 
@@ -16,7 +19,10 @@ Each jury version contains:
 - `annotation/jury_errors.json` — mechanically invalid jury records; empty in both versions.
 - `annotation/manifest.json` — schema, readiness state, and hashes for the annotation files.
 
-The observations and jury results are immutable evidence. Do not regenerate or edit them in place. The ignored `runs/` copies remain only as working inputs for the currently running annotation server; human annotations must remain distinct from these machine-generated records.
+The observations and jury results are immutable evidence. Do not regenerate or edit them in place.
+The confirmed development labels are a separate human artifact and must not be inferred from jury
+votes. The ignored `runs/` copies remain only as working inputs for the currently running
+annotation server.
 
 ## Provenance
 

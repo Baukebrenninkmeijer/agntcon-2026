@@ -11,6 +11,7 @@ from analytics_chatbot.evaluation_ops.simulation_artifacts import load_simulatio
 ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "orq/resources/datasets/simulation-cases-v4.jsonl"
 BUNDLE = ROOT / "orq/resources/datasets/decision-support-v4"
+HUMAN_LABELS = BUNDLE / "human-labels-dev-v1.jsonl"
 
 
 def _sha256(path: Path) -> str:
@@ -72,3 +73,72 @@ def test_tracked_v4_evidence_is_complete_sanitized_and_identity_bound() -> None:
         assert manifest["status"] == "ready"
         for filename, expected_hash in manifest["files"].items():
             assert _sha256(annotation / filename) == expected_hash
+
+
+def test_confirmed_development_labels_cover_the_full_dev_split() -> None:
+    corpus = load_simulation_replay(
+        cases_path=CASES,
+        results_path=BUNDLE / "observations.jsonl",
+    )
+    rows = [
+        json.loads(line)
+        for line in HUMAN_LABELS.read_text().splitlines()
+        if line.strip()
+    ]
+
+    expected_identities = {
+        sample.identity
+        for sample in corpus.samples
+        if sample.row.evaluation_split == "dev"
+    }
+    actual_identities = {
+        (row["case_id"], row["transcript_fingerprint"]) for row in rows
+    }
+    assert len(rows) == 30
+    assert actual_identities == expected_identities
+    assert all(row["evaluation_split"] == "dev" for row in rows)
+    assert all(row["evaluator_key"] == "analytics-decision-support-quality" for row in rows)
+    assert all(row["reviewed_by"] == "human" for row in rows)
+    assert all(row["explanation"].strip() for row in rows)
+    assert {row["label"] for row in rows} == {"pass", "fail"}
+    assert sum(row["label"] == "pass" for row in rows) == 27
+    assert {
+        row["case_id"].removeprefix("sphere-stakeholder--v4-")
+        for row in rows
+        if row["label"] == "fail"
+    } == {
+        "best-month-net",
+        "save-staged-emea",
+        "segment-then-2024-check",
+    }
+
+    jury_rows = {
+        (row["case_id"], row["transcript_fingerprint"]): row
+        for line in (
+            BUNDLE / "jury-human-rules-v1/jury-results.jsonl"
+        ).read_text().splitlines()
+        if line.strip()
+        for row in [json.loads(line)]
+        if row["evaluation_split"] == "dev"
+    }
+    assert set(jury_rows) == actual_identities
+    assert all(row["value"] == "pass" for row in jury_rows.values())
+    assert {
+        identity
+        for identity, row in jury_rows.items()
+        if row["value"]
+        != next(
+            label["label"]
+            for label in rows
+            if (label["case_id"], label["transcript_fingerprint"]) == identity
+        )
+    } == {
+        identity
+        for identity in actual_identities
+        if identity[0].removeprefix("sphere-stakeholder--v4-")
+        in {
+            "best-month-net",
+            "save-staged-emea",
+            "segment-then-2024-check",
+        }
+    }
