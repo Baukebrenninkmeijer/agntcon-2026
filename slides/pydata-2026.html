@@ -22,6 +22,7 @@
   .slide{position:absolute;inset:0;padding:42px 48px;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
   .slide.active{opacity:1;pointer-events:auto}
   .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
+  .eyebrow .qn{color:var(--orange-dark)}
   h1{font-size:128px;line-height:1.01;letter-spacing:-.03em;font-weight:600;margin-bottom:36px}
   h2{font-size:82px;line-height:1.06;letter-spacing:-.025em;font-weight:600;margin-bottom:48px;max-width:1760px}
   h3{font-size:42px;line-height:1.15;font-weight:500;color:var(--ink);margin-bottom:20px}
@@ -276,6 +277,7 @@
 
 <!-- 5 · Sphere -->
 <section class="slide">
+  <div class="eyebrow">The case</div>
   <div class="cols wide">
     <div>
       <div class="sphere-brand" aria-label="Sphere.com logo"><span class="sphere-mark"></span><span class="sphere-word">sphere.com</span></div>
@@ -292,7 +294,7 @@
 
 <!-- 6 · Review pool -->
 <section class="slide">
-  <div class="eyebrow">Start with humans</div>
+  <div class="eyebrow"><span class="qn">Question 01</span> · Start with humans</div>
   <h2>A fifty-case review pool</h2>
   <div class="stats">
     <div class="stat"><div class="n">50</div><div class="l">distinct business situations</div></div>
@@ -412,6 +414,7 @@
 
 <!-- 10 · Historical method -->
 <section class="slide">
+  <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
   <h2>The historical method</h2>
   <p class="sub">Random sampling, manual review.</p>
   <div class="cols spine-layout">
@@ -563,13 +566,13 @@
     <div class="version-rule"><b>Human rule</b>Visible claims must be correct</div>
     <div class="version-chip"><strong>v2</strong><span>more wobble</span></div>
     <div class="version-rule"><b>Human rule</b>Unsupported means contradicted, not merely unproven</div>
-    <div class="version-chip current"><strong>v3</strong><span>ready to rerun</span></div>
+    <div class="version-chip current"><strong>v3</strong><span>less wobble<br>misses 3 / 3</span></div>
   </div>
 </section>
 
 <!-- 15 · Agent evaluation -->
 <section class="slide" data-steps="1">
-  <div class="eyebrow">What changes with agents</div>
+  <div class="eyebrow"><span class="qn">Question 03</span> · What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
   <svg class="traj" viewBox="0 0 1824 596" width="1824" height="596" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">

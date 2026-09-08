@@ -28,11 +28,11 @@ Throughout the talk we evaluate a data-analysis agent answering questions like "
 
 ## Outline (30 minutes, including 5 min Q&A)
 
-1. **The evaluation gap (3 min)** — why agents break classical evaluation.
+1. **Opening and the evaluation gap (3 min)** — two correct answers to the same question, a one-minute speaker and Orq introduction, the three questions the talk answers, and why agents break classical evaluation.
 2. **Start with humans, not infrastructure (5 min)** — bootstrapping from ~50 hand-reviewed examples, binary pass/fail with written critiques, why this beats scored rubrics.
 3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Dev/test split applied to evaluation itself. Panel-of-judges to mitigate bias. A short live walkthrough.
 4. **Agent-specific evaluation (5 min)** — three levels (single-step, full-turn, multi-turn) and three dimensions to grade (final response, trajectory, state changes). Handling non-determinism at scale.
-5. **Scaling: offline, online, continuous (4 min)** — CI integration, error analysis as the dominant time spend, and a brief look at automated prompt optimization via natural-language feedback.
+5. **Scaling: offline, online, continuous (3.5 min)** — CI integration and error analysis as the dominant time spend. Automated prompt optimization via natural-language feedback is named and shown on one slide, not walked through.
 6. **Takeaways and Q&A (6 min)**
 
 ## What you'll take away
