@@ -452,7 +452,6 @@ html = r'''<!doctype html>
     <div class="stat"><div class="n">20</div><div class="l">held-out test cases</div></div>
     <div class="stat"><div class="n hl">0</div><div class="l">human labels so far</div></div>
   </div>
-  <p class="body" style="margin-top:60px">Stakeholder, decision, delivery setting and communication need are visible to the agent.</p>
 </section>
 
 <!-- 7 · Binary -->
