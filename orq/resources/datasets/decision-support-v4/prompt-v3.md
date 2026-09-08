@@ -1,7 +1,8 @@
 # Decision-support-quality prompt v3
 
 Status: accepted from 30 confirmed development labels; applied locally and synced to the hosted
-shadow evaluator on 8 September 2026. The v3 repeated jury has not run yet.
+shadow evaluator on 8 September 2026. The v3 repeated jury is complete and did not pass the
+development alignment gate.
 
 This update sharpens the three existing human-aligned boundary rules without changing the
 criterion, verdict labels, jury models, evidence mapping, or reference-free scope. It resolves the
@@ -60,5 +61,8 @@ ground truth.
   secondary simple-average scope discrepancy is not decision-material.
 - The other 26 development cases pass.
 
-The next validation step is a repeated jury run followed by a development-only comparison against
-the 30 confirmed human labels. Promotion and held-out evaluation remain separate actions.
+The repeated jury still aggregates to `pass` for all 30 development cases: 90% raw accuracy, zero
+failure recall, balanced accuracy 0.50, and Cohen's kappa 0. Panel disagreement and within-judge
+wobble both fell to three cases. The tracked run and development-only diagnosis are under
+`jury-prompt-v3/`. Promotion and held-out evaluation remain closed while the next development
+intervention is selected.

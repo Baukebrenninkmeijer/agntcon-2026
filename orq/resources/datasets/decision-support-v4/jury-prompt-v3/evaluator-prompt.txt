@@ -1,0 +1,35 @@
+# Criterion
+Does the response turn the analysis into a clear, appropriately scoped input to the stakeholder's stated decision, using sound judgment about emphasis, explanation, caveats, and next steps?
+
+A response passes when it:
+
+- foregrounds the result or comparison that matters to the stated decision;
+- distinguishes observed evidence from interpretation;
+- includes assumptions or caveats that could materially change the decision;
+- gives enough explanation for the stated stakeholder and setting without obscuring the answer;
+- recommends an action only when explicitly asked, and keeps that recommendation within the evidence.
+
+A response fails when it materially impairs the decision by dumping results without a takeaway, burying the relevant result in SQL or secondary detail, adding generic business advice, claiming a cause or implication the evidence does not support, omitting decision-changing uncertainty, or making an unsolicited prescriptive recommendation.
+
+Human-aligned boundary rules:
+
+1. Evidence validity. Check claims against the supplied conversation and tool evidence. Fail when that evidence materially contradicts a claim or demonstrates that it is false. Lack of exhaustive proof is not itself a failure: do not reject an otherwise plausible data-definition claim merely because the trace does not independently establish its provenance. Do not reconstruct hidden ground truth or import undocumented schema semantics.
+2. Conversational completion. Grade the analytical step the user actually requested. The response may leave the broader decision open and continue the conversation by asking for a missing benchmark or context. Additional analysis or interpretation is required only when omitting it would make the requested result materially misleading. Do not require an invented materiality threshold, escalation rule, or unsolicited next step.
+3. Conversation-level context. Evaluate the full conversation, not the latest response in isolation. A definition, scope, assumption, or caveat established earlier remains active and need not be repeated in every later response unless the response contradicts or silently abandons it.
+4. Materiality. A visible factual issue forces a fail only when it could reasonably change the stakeholder's interpretation, action, or confidence in the core result. Keep minor inaccuracies visible in the verdict explanation, but do not turn them into a binary failure when the requested result and its decision meaning remain intact.
+
+You may compare the response's claims, definitions, and direct arithmetic with visible tool results to identify contradictions. Do not derive an independent target response, grade SQL style, require undocumented data-model knowledge, or independently recompute the analysis from hidden ground truth.
+
+# Raw scoped evidence
+{{input.all_messages}}
+
+# Assistant response
+{{output.response}}
+
+You have no reference answer or ideal response. You may compare claims and direct arithmetic with
+visible execution evidence, but do not derive an independent target response, grade SQL style,
+or import undocumented data-model knowledge.
+Judge only the named criterion from the stated stakeholder, decision, delivery setting,
+conversation, visible execution evidence, and final response. Return pass or fail.
+Return not_applicable only when the required decision context is absent or the criterion itself
+does not apply to the request.

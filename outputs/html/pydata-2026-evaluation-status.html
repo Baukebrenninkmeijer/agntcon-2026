@@ -291,7 +291,7 @@
     <header>
       <div class="header-top">
         <h1>Evaluation execution status</h1>
-        <span class="auto-pill">grey-zone loop added · v3 retest pending</span>
+        <span class="auto-pill">prompt v3 measured · still unaligned</span>
       </div>
       <div class="date-range">
         8 September 2026 &nbsp;&middot;&nbsp;
@@ -318,7 +318,7 @@
         </div>
         <div class="stat-card ready">
           <div class="stat-num">0<span style="font-size:22px;color:var(--gray-500)">%</span></div>
-          <div class="stat-label">Prompt v2 failure recall</div>
+          <div class="stat-label">Prompt v3 failure recall</div>
           <div class="stat-delta down">90% accuracy · κ = 0</div>
         </div>
       </div>
@@ -328,13 +328,16 @@
       <h2>What changed</h2>
       <hr class="rule">
       <ul class="highlights">
-        <li><strong>The talk now teaches the grey-zone process as a reusable loop.</strong> Slide 14 moves from the concrete ambiguity result to the five steps used here: run the jury on frozen development cases, surface wobble, inspect judge reasons, ask a human boundary question, and update the evaluator before rerunning. A click reveals the v1→v2→v3 journey; v3 remains explicitly pending measurement.</li>
-        <li><strong>The full development split is now human-reviewed.</strong> All 30 development identities have a confirmed binary label and written explanation: 27 pass, three fail. The 20 test identities remain sealed.</li>
+        <li><strong>The prompt v3 jury is complete.</strong> evaluatorq replayed all 50 frozen responses through three judges with three repetitions each: 450 calls, 50 complete records, and zero mechanical errors. One Qwen rate limit succeeded on the bounded retry.</li>
+        <li><strong>Less wobble did not improve aggregate correctness.</strong> Development disagreement fell from eight cases to three and self-wobble from eight to three, but the jury still passes all 30 development cases and misses all three human failures.</li>
+        <li><strong>The panel now reveals a calibration problem.</strong> Luna detects two human failures and incorrectly fails one human pass; Qwen and Gemini each pass all 30 cases and all 90 of their repetitions, overruling Luna under majority aggregation.</li>
+        <li><strong>The talk now teaches the grey-zone process as a reusable loop.</strong> Slide 15 moves from the concrete ambiguity result to the five steps used here: run the jury on frozen development cases, surface wobble, inspect judge reasons, ask a human boundary question, and update the evaluator before rerunning. Its click reveal now ends with v3's measured result: less wobble, but all three human failures still missed.</li>
+        <li><strong>The full development split is now human-reviewed.</strong> All 30 development identities have a confirmed binary label and written explanation: 27 pass, three fail. The 20 test identities remain unlabeled and sealed at row level.</li>
         <li><strong>The review went beyond the six newly surfaced cases.</strong> It covered all 14 revised priority rows, five controls, the removed baseline control, and the remaining stable development cases.</li>
         <li><strong>Stable consensus hid a real failure.</strong> <code>segment-then-2024-check</code> received nine pass votes despite a visible, material double deduction. Stable controls were essential.</li>
-        <li><strong>Headline accuracy is misleading.</strong> The prompt v2 jury predicts pass for all 30 development rows: 90% raw accuracy, but zero recall on human failures, balanced accuracy 0.50, and Cohen's κ of 0.</li>
+        <li><strong>Headline accuracy is misleading.</strong> The prompt v3 jury predicts pass for all 30 development rows: 90% raw accuracy, but zero recall on human failures, balanced accuracy 0.50, and Cohen's κ of 0.</li>
         <li><strong>Six human boundary rules are settled.</strong> They cover visible correctness, continued conversation, conversation-level context, contradiction versus missing proof, requested-step completeness, and decision materiality.</li>
-        <li><strong>The minimal prompt v3 is active in shadow.</strong> It allows direct comparison with visible evidence, rejects exhaustive-proof requirements, and ties binary failure to material decision impact. Local and hosted sources now match; the repeated jury has not run.</li>
+        <li><strong>The minimal prompt v3 remains active in shadow.</strong> It allows direct comparison with visible evidence, rejects exhaustive-proof requirements, and ties binary failure to material decision impact. Its repeated jury is now complete and shows that another development intervention is required.</li>
         <li><strong>The original annotation server remains operational history.</strong> Port 8765 still serves the older 14-row baseline queue with zero UI-saved labels; the authoritative confirmed labels are the separate tracked 30-row artifact.</li>
       </ul>
     </section>
@@ -368,7 +371,7 @@
         <tbody>
           <tr>
             <td>Talk deck</td>
-            <td>The grey-zone loop now follows the development ambiguity result. It keeps the held-out test set outside the iteration loop and replaces the historical correctness replay, preserving the 20-slide and 30-minute contracts. Both reveal states were rendered at 1600×900 without clipping or overlap.</td>
+            <td>The grey-zone loop now follows the development ambiguity result. It keeps the held-out test set outside the iteration loop and replaces the historical correctness replay. It is slide 15 in the current 22-slide deck; the fixed 30-minute allocation is unchanged.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
           </tr>
           <tr>
@@ -393,7 +396,7 @@
           </tr>
           <tr>
             <td>Offline gate</td>
-            <td>212 passed, one live test deselected; Ruff clean; <code>uv build</code> produced both distribution artifacts successfully.</td>
+            <td>217 passed, one live test deselected; Ruff clean; <code>uv build</code> produced both distribution artifacts successfully.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
           </tr>
           <tr>
@@ -427,8 +430,13 @@
             <td><span class="risk"><span class="risk-dot low"></span>Complete</span></td>
           </tr>
           <tr>
+            <td>Prompt v3 jury</td>
+            <td>Run <code>01M20F16K491SBD344Z5T2S63Q</code> contains 50 complete rows / 450 calls with zero mechanical errors. Development disagreement and wobble both fell to three, but aggregate failure recall remains 0%. No row-level test evidence was inspected; one aggregate distribution was inadvertently summarized, so independent test reviewers are now required.</td>
+            <td><span class="risk"><span class="risk-dot med"></span>Unaligned</span></td>
+          </tr>
+          <tr>
             <td>Annotation bundle</td>
-            <td><code>jury-baseline/annotation</code> contains 14 items (nine prioritized + five controls); <code>jury-human-rules-v1/annotation</code> contains 19 (14 prioritized + five controls). Both have zero mechanical errors, identity-only sealed-test manifests, and verified file hashes.</td>
+            <td><code>jury-baseline/annotation</code> contains 14 items (nine prioritized + five controls); <code>jury-human-rules-v1/annotation</code> contains 19 (14 prioritized + five controls); <code>jury-prompt-v3/annotation</code> contains eight (three prioritized + five controls). All have zero mechanical errors, identity-only test manifests, and verified file hashes.</td>
             <td><span class="risk"><span class="risk-dot low"></span>Ready</span></td>
           </tr>
           <tr>
@@ -438,8 +446,8 @@
           </tr>
           <tr>
             <td>Evaluator alignment</td>
-            <td>The prompt v2 jury predicts pass for all 30 development rows. Raw accuracy is 90%, but failure recall is 0%, balanced accuracy is 0.50, and Cohen's κ is 0. Prompt v3 is synced in shadow; its repeated jury is pending.</td>
-            <td><span class="risk"><span class="risk-dot med"></span>Needs retest</span></td>
+            <td>Prompt v3 predicts pass for all 30 development rows. Raw accuracy is 90%, but failure recall is 0%, balanced accuracy is 0.50, and Cohen's κ is 0. Luna detects two failures, while Qwen and Gemini produce no fail verdicts.</td>
+            <td><span class="risk"><span class="risk-dot med"></span>Needs revision</span></td>
           </tr>
         </tbody>
       </table>
@@ -447,7 +455,7 @@
 
     <section>
       <h2>Evaluator prompt alignment</h2>
-      <p class="section-note">The active shadow prompt v3 sharpens the existing subjective criterion. It adds no oracle, reference answer, or data dictionary.</p>
+      <p class="section-note">The active shadow prompt v3 was measured on development labels. It remains reference-free, but it does not yet discriminate failures.</p>
       <hr class="rule">
       <div class="prompt-diff">
         <div class="diff-panel">
@@ -465,7 +473,7 @@
         </div>
       </div>
       <p class="diff-unchanged">UNCHANGED · pass / fail / not_applicable · full conversation evidence · no oracle or reference answer · three judges × three repetitions</p>
-      <p class="diff-unchanged">PROMPT V2 ALIGNMENT · 27 / 30 aggregate agreement · 0 / 3 human failures found · balanced accuracy 0.50 · κ = 0</p>
+      <p class="diff-unchanged">PROMPT V3 ALIGNMENT · 27 / 30 aggregate agreement · 0 / 3 human failures found · balanced accuracy 0.50 · κ = 0</p>
     </section>
 
     <section>
@@ -477,7 +485,7 @@
           <path d="M70 70 H1030 V215 H70" fill="none" stroke="#D1CFC5" stroke-width="3"/>
           <line x1="70" y1="70" x2="1030" y2="70" stroke="#788C5D" stroke-width="3"/>
           <line x1="1030" y1="70" x2="1030" y2="215" stroke="#788C5D" stroke-width="3"/>
-          <line x1="1030" y1="215" x2="646" y2="215" stroke="#788C5D" stroke-width="3"/>
+          <line x1="1030" y1="215" x2="454" y2="215" stroke="#788C5D" stroke-width="3"/>
 
           <g transform="translate(70 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">1</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Offline</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">gate</text></g>
           <g transform="translate(262 70)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">2</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Agent</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">pilot</text></g>
@@ -489,12 +497,12 @@
           <g transform="translate(1030 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">7</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Grey-zone</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">analysis</text></g>
           <g transform="translate(838 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">8</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Record</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">human rules</text></g>
           <g transform="translate(646 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">9</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Apply rules +</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">label dev</text></g>
-          <g transform="translate(454 215)"><circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">10</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Prompt v3 synced</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">rerun jury</text></g>
-          <g transform="translate(262 215)"><circle r="17" fill="#F5F3ED" stroke="#D1CFC5" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">11</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Inspect residual</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">wobbliness</text></g>
+          <g transform="translate(454 215)"><circle r="17" fill="#788C5D"/><text y="5" text-anchor="middle" font-size="13" fill="#fff">10</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Prompt v3</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">jury complete</text></g>
+          <g transform="translate(262 215)"><circle r="17" fill="#E3DACC" stroke="#D97757" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13" fill="#3D3D3A">11</text><text y="42" text-anchor="middle" font-size="12" fill="#3D3D3A">Inspect residual</text><text y="58" text-anchor="middle" font-size="12" fill="#3D3D3A">wobbliness</text></g>
 
-          <text x="454" y="178" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT REVIEW GATE</text>
+          <text x="262" y="178" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#D97757">NEXT REVIEW GATE</text>
         </svg>
-        <div class="chart-caption">Human rules, all 30 development labels, and the local and hosted prompt v3 update are complete. The next gate is a repeated jury measuring whether v3 finds the three human failures without overfailing the 27 passes. Residual wobbliness returns to grey-zone analysis.</div>
+        <div class="chart-caption">The prompt v3 jury is complete. It reduced disagreement and wobble but still missed all three human failures. The next gate is residual analysis and one attributable choice: strengthen the evidence-audit procedure, recalibrate the panel, or test those changes separately.</div>
       </div>
     </section>
 
@@ -504,14 +512,14 @@
       <div class="carryover">
         <div class="carry-item">
           <span class="carry-tag">Next</span>
-          <div class="carry-body">Run the separately gated prompt v3 jury against the frozen 50 observations, then compare development verdicts and wobbliness with prompt v2 and the 30 identity-bound human labels. Held-out measurement and CI promotion remain separate later gates.</div>
+          <div class="carry-body">Choose the next development intervention: require an explicit claim-to-evidence audit, recalibrate the two all-pass judges, or test prompt and panel changes separately. Only then run another candidate jury. Held-out measurement and CI promotion remain separate later gates.</div>
         </div>
       </div>
     </section>
 
     <footer>
       Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
-      Current status: the 20-slide deck now includes the grey-zone alignment loop; 30 development labels are confirmed (27 pass / three fail); prompt v2 misses all three failures; prompt v3 is synced in shadow with its repeated jury pending; held-out test outcomes remain sealed.
+      Current status: prompt v3 reduced development disagreement and wobble to three cases each but still misses all three human failures. Row-level test evidence remains uninspected, but independent test reviewers are required because one aggregate distribution was inadvertently summarized.
     </footer>
   </div>
 </body>

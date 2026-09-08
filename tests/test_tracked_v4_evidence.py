@@ -65,6 +65,11 @@ def test_tracked_v4_evidence_is_complete_sanitized_and_identity_bound() -> None:
             "prompt_hash": "a2c3568d3efc4de644d40d986c9e88a46eda2af3e52ecf21790ce59527c55e3d",
             "queue_items": 19,
         },
+        "jury-prompt-v3": {
+            "jury_hash": "1dfb054684d89cfaebe6342385e4967e24f9801aa2c3eb874bb80c2307145fe4",
+            "prompt_hash": "8011acd31590d123afd0a560e523819d8f61888e966fe4635e57f384afc25604",
+            "queue_items": 8,
+        },
     }
     for version, expected in versions.items():
         version_dir = BUNDLE / version
@@ -156,4 +161,50 @@ def test_confirmed_development_labels_cover_the_full_dev_split() -> None:
             "save-staged-emea",
             "segment-then-2024-check",
         }
+    }
+
+
+def test_prompt_v3_alignment_analysis_is_development_only_and_matches_labels() -> None:
+    analysis = json.loads((BUNDLE / "jury-prompt-v3/alignment-analysis.json").read_text())
+
+    assert analysis["scope"] == "development-only"
+    assert analysis["held_out_test_evidence"] == {
+        "row_level_outcomes_inspected": False,
+        "aggregate_jury_distribution_inadvertently_summarized": True,
+        "human_labels_exist": False,
+        "mitigation": (
+            "Use independent test reviewers who have not seen jury outcomes. "
+            "Do not use the aggregate summary for development decisions."
+        ),
+    }
+    assert analysis["human_labels"] == {"total": 30, "pass": 27, "fail": 3}
+    assert analysis["aggregate_jury"] == {
+        "predicted_pass": 30,
+        "predicted_fail": 0,
+        "true_fail": 0,
+        "missed_fail": 3,
+        "true_pass": 27,
+        "false_fail": 0,
+        "raw_accuracy": 0.9,
+        "failure_recall": 0.0,
+        "false_pass_rate_on_human_failures": 1.0,
+        "balanced_accuracy": 0.5,
+        "cohen_kappa": 0.0,
+    }
+    assert analysis["development_signals"] == {
+        "panel_disagreement": 3,
+        "within_judge_wobble": 3,
+        "ties": 0,
+        "abstentions": 0,
+        "inconclusive": 0,
+        "mechanical_errors": 0,
+    }
+    assert {
+        row["case_id"].removeprefix("sphere-stakeholder--v4-")
+        for row in analysis["residual_cases"]
+    } == {
+        "best-month-net",
+        "save-staged-emea",
+        "segment-then-2024-check",
+        "product-drill",
     }

@@ -6,6 +6,8 @@ This directory is the durable, tracked copy of the accepted Sphere.com v4 evalua
 - `observations.jsonl` — 50 accepted observed conversations from the canonical retry.
 - `jury-baseline/` — the original rubric run used to surface the first grey zones.
 - `jury-human-rules-v1/` — the diagnostic rerun after adding the three human boundary rules.
+- `jury-prompt-v3/` — the repeated jury after applying all six confirmed development rules,
+  including its development-only alignment analysis and residual grey-zone queue.
 - `human-labels-dev-v1.jsonl` — 30 human-confirmed development labels with written explanations;
   the 20-case test split remains sealed.
 - `prompt-lineage.md` — the authoritative mapping between prompt iterations and hosted versions.
@@ -33,4 +35,5 @@ annotation server.
 - Baseline tracked jury SHA-256: `1c1a900fcbf33f84c1db9e9076a409c654e32614d6dfc0538762183dc81e1f69`
 - Human-rules-v1 tracked jury SHA-256: `bbbddb22d3fbcc9fa71ff22ba39a76247bfd59170a3cbb5ae0a92569ef2a4a9f`
 - Human-rules-v1 accepted raw jury SHA-256: `5a9915cf8e3130fb2e9f5419db482f86df79bde4203eb544450a51caa78ebec2`
+- Prompt-v3 tracked jury SHA-256: `1dfb054684d89cfaebe6342385e4967e24f9801aa2c3eb874bb80c2307145fe4`
 - Annotation schema: `jury-annotation-v1`
