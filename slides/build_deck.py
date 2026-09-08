@@ -190,13 +190,14 @@ html = r'''<!doctype html>
   .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
   .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:36px}
-  .answer{border-top:6px solid var(--teal);padding:30px 34px;background:var(--paper);min-height:330px}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:16px}
+  .answer{border-top:6px solid var(--teal);padding:34px 0 0;min-height:0}
   .answer.b{border-color:var(--orange)}
-  .answer .tag{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted);margin-bottom:22px}
-  .answer p{font-size:32px;line-height:1.4;color:var(--ink2)}
+  .answer .tag{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--ink2);margin-bottom:26px}
+  .answer p{font-size:40px;line-height:1.36;color:var(--ink2)}
   .answer strong{color:var(--ink);font-weight:500}
   .answer .quiet{font-size:27px;color:var(--muted);margin-top:18px}
+  .answer mark{background:rgba(77,162,150,.24);color:var(--ink);padding:.06em .12em;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
   .answer code{font-family:var(--mono);font-size:.88em;color:var(--teal-deep)}
   .source{position:absolute;left:48px;bottom:26px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.04em}
   .checks{display:flex;flex-direction:column;gap:26px}
@@ -383,17 +384,15 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
   <h2>Two correct answers.<br>One useful decision.</h2>
-  <p class="sub">Same question, same data, same number. One agent run with the stakeholder’s decision in the prompt, one without.</p>
+  <p class="sub">Same question, same data, same number.</p>
   <div class="compare">
     <div class="answer">
       <div class="tag">ANSWER A · ANALYTICALLY VALID</div>
-      <p>Total gross revenue for 2025 is <strong>$51,226,989.17</strong>, based on 12,454 orders with an order date in calendar year 2025.</p>
-      <p class="quiet">Scope: all orders from 2025-01-01 through 2025-12-31, summed on <code>gross_revenue</code>. Supporting SQL below.</p>
+      <p>Gross revenue for 2025 is <strong>$51,226,989.17</strong>.</p>
     </div>
     <div class="answer b">
       <div class="tag">ANSWER B · DECISION SUPPORT</div>
-      <p>Total gross revenue for 2025: <strong>$51,226,989.17</strong>. This is gross (booked) revenue. It is <strong>not</strong> realized revenue.</p>
-      <p class="quiet">For the booked-versus-realized comparison in your leadership update you would want <code>net_revenue</code>. Want me to pull it for the same period?</p>
+      <p><mark>That is booked revenue, <strong>not</strong> realized. For your leadership update you want <code>net_revenue</code>.</mark></p>
     </div>
   </div>
 </section>
