@@ -268,10 +268,16 @@ data-definition claim requires.
    it into a reference-oriented correctness or data-dictionary evaluator. A correctness error that
    cannot be established from the supplied evidence may therefore remain outside this evaluator's
    scope.
+5. **Must a response proactively advance the broader decision beyond the analytical step the user
+   requested?** No. A correct response to the requested step is sufficient when it remains open to
+   continued conversation. Additional benchmarks, nearby analysis, or interpretation are required
+   only when omitting them would make the requested result materially misleading. The evaluator
+   must not assume that every response is the final opportunity to resolve the stakeholder's full
+   decision.
 
-This fourth answer is a human policy decision, not a datapoint label. The remaining development
-signals still need separate boundary decisions about proactive decision completeness and the
-materiality of ancillary errors before labels or another evaluator rewrite are proposed.
+These answers are human policy decisions, not datapoint labels. The remaining development signals
+still need a separate boundary decision about the materiality of ancillary errors before labels or
+another evaluator rewrite are proposed.
 
 ## Talk Structure Consequences
 
