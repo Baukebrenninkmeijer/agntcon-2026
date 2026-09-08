@@ -249,8 +249,9 @@ def test_jury_configuration_preserves_template_variables_and_verdict_space() -> 
             "explanation, caveats, and next steps?"
         ) in prompt
         assert (
-            "You have no reference answer or ideal response. Do not recompute the analysis or "
-            "grade SQL."
+            "You have no reference answer or ideal response. You may compare claims and direct "
+            "arithmetic with\nvisible execution evidence, but do not derive an independent "
+            "target response"
         ) in prompt
         assert (
             "Return not_applicable only when the required decision context is absent or the "
@@ -283,12 +284,16 @@ def test_decision_support_prompt_includes_human_aligned_boundary_rules() -> None
 
     prompt = captured["prompt"]
     assert "Human-aligned boundary rules" in prompt
-    assert "must be valid, correct, and consistent with the visible evidence" in prompt
-    assert "even when the headline result is useful" in prompt
-    assert "continue the conversation by asking for the missing benchmark or context" in prompt
-    assert "Do not require it to invent a materiality threshold or escalation rule" in prompt
+    assert "Lack of exhaustive proof is not itself a failure" in prompt
+    assert "Grade the analytical step the user actually requested" in prompt
+    assert "continue the conversation by asking for a missing benchmark or context" in prompt
+    assert "only when omitting it would make the requested result materially misleading" in prompt
     assert "Evaluate the full conversation, not the latest response in isolation" in prompt
     assert "need not be repeated in every later response" in prompt
+    assert "A visible factual issue forces a fail only when" in prompt
+    assert "direct arithmetic with visible tool results" in prompt
+    assert "Do not derive an independent target response" in prompt
+    assert "unsupported data-definition claim" not in prompt
 
 
 def test_atomic_evaluator_accepts_repetition_override() -> None:

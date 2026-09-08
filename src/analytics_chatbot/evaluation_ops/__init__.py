@@ -174,23 +174,31 @@ _SPECS = (
             "omitting decision-changing uncertainty, or making an unsolicited prescriptive "
             "recommendation.\n\n"
             "Human-aligned boundary rules:\n\n"
-            "1. Evidence validity. Analytical claims that can be checked against the supplied "
-            "conversation or tool evidence must be valid, correct, and consistent with the "
-            "visible evidence. Fail a material contradiction or unsupported data-definition "
-            "claim even when the headline result is useful. Do not reconstruct hidden ground "
-            "truth.\n"
-            "2. Conversational completion. When the available evidence cannot settle the "
-            "stakeholder's broader decision, the response may state what remains unknown and "
-            "continue the conversation by asking for the missing benchmark or context. Do not "
-            "require it to invent a materiality threshold or escalation rule, and do not fail it "
-            "merely because the broader decision remains open.\n"
+            "1. Evidence validity. Check claims against the supplied conversation and tool "
+            "evidence. Fail when that evidence materially contradicts a claim or demonstrates "
+            "that it is false. Lack of exhaustive proof is not itself a failure: do not reject "
+            "an otherwise plausible data-definition claim merely because the trace does not "
+            "independently establish its provenance. Do not reconstruct hidden ground truth or "
+            "import undocumented schema semantics.\n"
+            "2. Conversational completion. Grade the analytical step the user actually "
+            "requested. The response may leave the broader decision open and continue the "
+            "conversation by asking for a missing benchmark or context. Additional analysis or "
+            "interpretation is required only when omitting it would make the requested result "
+            "materially misleading. Do not require an invented materiality threshold, "
+            "escalation rule, or unsolicited next step.\n"
             "3. Conversation-level context. Evaluate the full conversation, not the latest "
             "response in isolation. A definition, scope, assumption, or caveat established "
             "earlier remains active and need not be repeated in every later response unless the "
-            "response contradicts or silently abandons it.\n\n"
-            "The evaluator does not independently recompute the answer or grade SQL semantics. "
-            "A factual issue matters only when it is visible in the supplied conversation and "
-            "makes the decision support misleading."
+            "response contradicts or silently abandons it.\n"
+            "4. Materiality. A visible factual issue forces a fail only when it could reasonably "
+            "change the stakeholder's interpretation, action, or confidence in the core result. "
+            "Keep minor inaccuracies visible in the verdict explanation, but do not turn them "
+            "into a binary failure when the requested result and its decision meaning remain "
+            "intact.\n\n"
+            "You may compare the response's claims, definitions, and direct arithmetic with "
+            "visible tool results to identify contradictions. Do not derive an independent "
+            "target response, grade SQL style, require undocumented data-model knowledge, or "
+            "independently recompute the analysis from hidden ground truth."
         ),
         applies=lambda row: row.decision_context is not None,
         project=_subjective_evidence,
@@ -208,7 +216,9 @@ _PROMPT = """# Criterion
 # Assistant response
 {{{{output.response}}}}
 
-You have no reference answer or ideal response. Do not recompute the analysis or grade SQL.
+You have no reference answer or ideal response. You may compare claims and direct arithmetic with
+visible execution evidence, but do not derive an independent target response, grade SQL style,
+or import undocumented data-model knowledge.
 Judge only the named criterion from the stated stakeholder, decision, delivery setting,
 conversation, visible execution evidence, and final response. Return pass or fail.
 Return not_applicable only when the required decision context is absent or the criterion itself

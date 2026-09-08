@@ -24,6 +24,8 @@ def empty_snapshot() -> RemoteSnapshot:
         models={
             "deepseek/deepseek-v4-flash": True,
             "wafer/DeepSeek-V4-Flash-0731-Fast": True,
+            "google/gemini-3.6-flash": True,
+            "tensorix/qwen/qwen3.8-flash-next": True,
             **dict.fromkeys(DEFAULT_JUDGES, True),
         },
     )
@@ -41,6 +43,7 @@ def test_sync_plan_orders_tools_agent_and_mixed_evaluators() -> None:
         ("create", "evaluator", "analytics-state-change-policy"),
         ("create", "evaluator", "analytics-tool-execution-integrity"),
         ("create", "evaluator", "analytics-decision-support-quality"),
+        ("create", "evaluator", "podcast-claudish"),
     ]
 
 

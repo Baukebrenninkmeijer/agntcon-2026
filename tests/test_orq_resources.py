@@ -19,7 +19,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert bundle.project.key == "pydata2026"
     assert bundle.project.project_id == "${ORQ_PROJECT_ID}"
     assert [tool.key for tool in bundle.tools] == ["query-sql", "save-insight"]
-    assert len(bundle.evaluators) == 3
+    assert len(bundle.evaluators) == 4
 
     query = bundle.tool_payloads()[0]
     assert query["path"] == "pydata2026/tools"
@@ -55,14 +55,20 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
         if isinstance(evaluator, LlmEvaluatorResource)
     ]
     llm_keys = {evaluator.key for evaluator in llm_resources}
-    assert llm_keys == {"analytics-decision-support-quality"}
-    for evaluator in llm_resources:
+    assert llm_keys == {"analytics-decision-support-quality", "podcast-claudish"}
+    decision_support_resources = [
+        evaluator
+        for evaluator in llm_resources
+        if evaluator.key == "analytics-decision-support-quality"
+    ]
+    assert len(decision_support_resources) == 1
+    for evaluator in decision_support_resources:
         assert evaluator.mode == "jury"
         assert evaluator.judges == list(DEFAULT_JUDGES)
         assert evaluator.min_successful_judges == 2
         assert evaluator.repetitions == 3
         assert evaluator.validation.status == "shadow"
-        assert evaluator.validation.human_labeled_examples == 0
+        assert evaluator.validation.human_labeled_examples == 30
         assert evaluator.input_mapping == {
             "input.all_messages": "full ordered conversation including tool calls and results",
             "output.response": "final assistant response",
@@ -95,14 +101,11 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert "{{input.all_messages}}" in decision_support["prompt"]
     assert "{{output.response}}" in decision_support["prompt"]
     assert "Human-aligned boundary rules" in decision_support["prompt"]
-    assert (
-        "must be valid, correct, and consistent with the visible evidence"
-        in decision_support["prompt"]
-    )
-    assert (
-        "continue the conversation by asking for the missing benchmark or context"
-        in decision_support["prompt"]
-    )
+    assert "Lack of exhaustive proof is not itself a failure" in decision_support["prompt"]
+    assert "Grade the analytical step the user actually requested" in decision_support["prompt"]
+    assert "A visible factual issue forces a fail only when" in decision_support["prompt"]
+    assert "direct arithmetic with visible tool results" in decision_support["prompt"]
+    assert "unsupported data-definition claim" not in decision_support["prompt"]
     assert (
         "Evaluate the full conversation, not the latest response in isolation"
         in decision_support["prompt"]

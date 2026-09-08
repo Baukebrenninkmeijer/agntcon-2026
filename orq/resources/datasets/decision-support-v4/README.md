@@ -8,7 +8,7 @@ This directory is the durable, tracked copy of the accepted Sphere.com v4 evalua
 - `jury-human-rules-v1/` — the diagnostic rerun after adding the three human boundary rules.
 - `human-labels-dev-v1.jsonl` — 30 human-confirmed development labels with written explanations;
   the 20-case test split remains sealed.
-- `proposed-prompt-v2.md` — the unapplied prompt clarification derived from those labels.
+- `proposed-prompt-v2.md` — the accepted v2 prompt clarification derived from those labels.
 
 Each jury version contains:
 

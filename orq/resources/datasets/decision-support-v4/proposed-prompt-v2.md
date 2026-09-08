@@ -1,6 +1,7 @@
 # Proposed decision-support-quality prompt update
 
-Status: proposed from 30 confirmed development labels; not applied locally or hosted.
+Status: accepted from 30 confirmed development labels; applied locally and synced to the hosted
+shadow evaluator on 8 September 2026. The v2 repeated jury has not run yet.
 
 This update sharpens the three existing human-aligned boundary rules without changing the
 criterion, verdict labels, jury models, evidence mapping, or reference-free scope. It resolves the
@@ -42,9 +43,9 @@ Human-aligned boundary rules:
    result and its decision meaning remain intact.
 
 You may compare the response's claims, definitions, and direct arithmetic with visible tool
-results to identify contradictions. Do not derive a separate ideal answer, grade SQL style, require
-undocumented data-model knowledge, or independently recompute the analysis from hidden ground
-truth.
+results to identify contradictions. Do not derive an independent target response, grade SQL style,
+require undocumented data-model knowledge, or independently recompute the analysis from hidden
+ground truth.
 ```
 
 ## Expected effect on confirmed development cases
