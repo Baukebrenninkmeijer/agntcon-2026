@@ -155,15 +155,19 @@
   .process-card.dark{border-color:var(--ink)}
   .process-card h3{margin:0;font-size:38px}
   .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-  .track{display:block;width:100%;margin-top:26px}
-  .track .seg-build{fill:var(--teal)}
-  .track .seg-guard{fill:var(--orange)}
-  .track .tick{fill:var(--bg)}
-  .track .gate{fill:var(--ink)}
-  .track .back{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
-  .track .name{font-family:var(--sans);font-size:42px;font-weight:600;fill:var(--ink)}
-  .track .meta{font-family:var(--sans);font-size:28px;fill:var(--ink2)}
-  .track .mono{font-family:var(--mono);font-size:21px;letter-spacing:.12em;fill:var(--ink2)}
+  .phases{display:grid;grid-template-columns:1fr 1fr;gap:78px;margin-top:30px}
+  .phase h3{font-size:40px;font-weight:600;line-height:1.15}
+  .phase .lead{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--ink2);margin-bottom:8px}
+  .phase p{font-size:26px;line-height:1.35;color:var(--ink2);margin-top:14px;max-width:22em}
+  .chart{display:block;width:100%;margin-top:20px}
+  .chart .axis{stroke:var(--ink);stroke-width:3}
+  .chart .target{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
+  .chart .curve{fill:none;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+  .chart .curve.build{stroke:var(--teal)}
+  .chart .curve.guard{stroke:var(--orange)}
+  .chart .dip{fill:var(--orange-dark)}
+  .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
+  .chart .lbl.dim{fill:var(--muted)}
   .learning-flow{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:58px;margin-top:24px}
   .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
   .learning-stage:nth-child(2){border-color:var(--orange)}
@@ -641,23 +645,36 @@
 <!-- 17 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
-  <svg class="track" viewBox="0 0 1800 486" role="img" aria-label="One track: a build phase that climbs, a promotion gate, then a check on every commit, with escapes returning to the build phase">
-    <path class="back" d="M1480 152 C1480 46, 340 46, 340 152" marker-end="url(#backArrow)"/>
-    <defs><marker id="backArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>
-    <text class="mono" x="900" y="28" text-anchor="middle">ESCAPES BECOME REVIEW CASES</text>
-    <text class="mono" x="40" y="196">PASS RATE CLIMBS</text>
-    <text class="mono" x="720" y="196">HOLDS ON EVERY COMMIT</text>
-    <path class="seg-build" d="M40 300 L40 276 L660 218 L660 300 z"/>
-    <rect class="seg-guard" x="720" y="214" width="1040" height="86" rx="8"/>
-    <g class="tick"><rect x="800" y="214" width="7" height="86"/><rect x="880" y="214" width="7" height="86"/><rect x="960" y="214" width="7" height="86"/><rect x="1040" y="214" width="7" height="86"/><rect x="1120" y="214" width="7" height="86"/><rect x="1200" y="214" width="7" height="86"/><rect x="1280" y="214" width="7" height="86"/><rect x="1360" y="214" width="7" height="86"/><rect x="1440" y="214" width="7" height="86"/><rect x="1520" y="214" width="7" height="86"/><rect x="1600" y="214" width="7" height="86"/><rect x="1680" y="214" width="7" height="86"/></g>
-    <path class="gate" d="M690 202 l30 55 -30 55 -30 -55 z"/>
-    <text class="name" x="40" y="376">Build with humans</text>
-    <text class="meta" x="40" y="422">Hard cases and edge cases.</text>
-    <text class="meta" x="40" y="460">A low pass rate is the point.</text>
-    <text class="name" x="720" y="376">Guard every commit</text>
-    <text class="meta" x="720" y="422">Known behavior and core paths.</text>
-    <text class="meta" x="720" y="460">Everything passes, or the commit stops.</text>
-  </svg>
+  <div class="phases">
+    <div class="phase">
+      <div class="lead">FIRST</div>
+      <h3>Build with humans</h3>
+      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate climbs from a deliberately low start toward the target over rounds of human review">
+        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
+        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
+        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
+        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
+        <path class="curve build" d="M84 276 C200 268, 250 236, 330 208 S520 148, 768 100"/>
+        <text class="lbl" x="70" y="344">ROUNDS OF HUMAN REVIEW &#8594;</text>
+      </svg>
+      <p>Hard cases and edge cases. A low pass rate at the start is the point.</p>
+    </div>
+    <div class="phase">
+      <div class="lead">THEN</div>
+      <h3>Guard every commit</h3>
+      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate sits at the target on every commit until one commit dips below it and is stopped">
+        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
+        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
+        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
+        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
+        <path class="curve guard" d="M84 86 L380 86 L440 244 L500 86 L768 86"/>
+        <circle class="dip" cx="440" cy="244" r="12"/>
+        <text class="lbl" x="440" y="288" text-anchor="middle">CAUGHT</text>
+        <text class="lbl" x="70" y="344">EVERY COMMIT &#8594;</text>
+      </svg>
+      <p>Known behavior and core paths. Everything passes, or the commit stops.</p>
+    </div>
+  </div>
 </section>
 
 <!-- 18 · Finding to knowledge -->
