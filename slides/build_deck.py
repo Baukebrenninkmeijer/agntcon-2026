@@ -402,7 +402,7 @@ html = r'''<!doctype html>
       <ul class="plain">
         <li>Research Engineer @ Orq.ai — agent infrastructure and LLM evaluation</li>
         <li>6 years data science @ ABN AMRO &amp; ING</li>
-        <li>Organiser @ MLOps Community Amsterdam</li>
+        <li>Lead @ Agentic AI Foundation Amsterdam</li>
       </ul>
     </div>
     <div class="portrait"><img src="data:image/jpeg;base64,__HEADSHOT__" alt="Bauke Brenninkmeijer"></div>
