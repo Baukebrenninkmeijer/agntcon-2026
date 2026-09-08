@@ -33,8 +33,8 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 10-15 | `Question 02 · Trust the judge` (slide 10) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-17 | `Question 03 · What changes with agents` (slide 15) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 10-16 | `Question 02 · Trust the judge` (slide 10) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 17-18 | `Question 03 · What changes with agents` (slide 15) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -141,15 +141,19 @@ The development and test split belongs to this method too, but it is introduced 
 
 This is methodologically clean and expensive in expert attention.
 
-### Slide: Let the judge pick what humans read first
+### Slide: LLM judges determine priority
 
-The concept before the picture. Three models, one rubric, three votes each. Two ways a verdict
-fails to hold still: the models disagree with each other, or one model disagrees with itself across
-runs. Either way the rubric's boundary is unclear at that case, so it goes to the front of the
-human queue. No human labels are needed to compute this.
+The concept before the picture, stated as plainly as it will go: two signals decide what a human
+reads first.
 
-Keep this slide plain. The fifty-dot chart on the next slide is the payoff and needs the concept
-already in the room.
+- model disagreement
+- model wobbling
+
+### Slide: Wobbly
+
+A dictionary definition, one word on screen. **Wobbly**, adjective: LLM-as-a-judge flips sides on
+repeated evaluations of the same case. The term recurs for the rest of the talk, so it gets
+defined once and properly.
 
 ### Slide: We are lazy—make the queue smarter
 

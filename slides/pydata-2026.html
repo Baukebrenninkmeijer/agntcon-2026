@@ -23,6 +23,10 @@
   .slide.active{opacity:1;pointer-events:auto}
   .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
   .eyebrow .qn{color:var(--orange-dark)}
+  .define{max-width:1280px;margin-top:40px;border-left:8px solid var(--orange);padding:14px 0 14px 46px}
+  .define .word{font-size:104px;font-weight:600;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+  .define .gram{font-family:var(--mono);font-size:24px;letter-spacing:.08em;color:var(--ink2);margin:14px 0 34px}
+  .define .meaning{font-size:44px;line-height:1.32;color:var(--ink2)}
   h1{font-size:128px;line-height:1.01;letter-spacing:-.03em;font-weight:600;margin-bottom:36px}
   h2{font-size:82px;line-height:1.06;letter-spacing:-.025em;font-weight:600;margin-bottom:48px;max-width:1760px}
   h3{font-size:42px;line-height:1.15;font-weight:500;color:var(--ink);margin-bottom:20px}
@@ -430,24 +434,25 @@
   </div>
 </section>
 
-<!-- 11 · Unstable cases -->
+<!-- 11 · Priority -->
 <section class="slide">
-  <h2>Let the judge pick<br>what humans read first.</h2>
-  <p class="sub">Three models, one rubric, three votes each. Where the verdict will not hold still, the boundary is unclear.</p>
-  <div class="compare">
-    <div class="answer">
-      <div class="tag">MODELS DISAGREE</div>
-      <p>Three judges, same case, different verdicts.</p>
-    </div>
-    <div class="answer b">
-      <div class="tag">ONE MODEL WOBBLES</div>
-      <p>One judge, same case, a different verdict each run.</p>
-    </div>
-  </div>
-  <p class="body" style="margin-top:64px">Those cases go to the front of the human queue. Nothing here needs a human label yet.</p>
+  <h2>LLM judges determine priority</h2>
+  <ul class="plain">
+    <li>Model disagreement</li>
+    <li>Model wobbling</li>
+  </ul>
 </section>
 
-<!-- 12 · Lazy queue -->
+<!-- 12 · Wobbly -->
+<section class="slide">
+  <div class="define">
+    <div class="word">Wobbly</div>
+    <div class="gram">ADJECTIVE</div>
+    <p class="meaning">LLM-as-a-judge flips sides on repeated evaluations of the same case.</p>
+  </div>
+</section>
+
+<!-- 13 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -523,7 +528,7 @@
   </div>
 </section>
 
-<!-- 13 · Alignment -->
+<!-- 14 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -535,7 +540,7 @@
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 14 · One human answer exposes another ambiguity -->
+<!-- 15 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -561,7 +566,7 @@
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 15 · Grey-zone loop -->
+<!-- 16 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -585,7 +590,7 @@
   </div>
 </section>
 
-<!-- 16 · Agent evaluation -->
+<!-- 17 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow"><span class="qn">Question 03</span> · What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
@@ -650,7 +655,7 @@
   </div>
 </section>
 
-<!-- 17 · Operating modes -->
+<!-- 18 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -662,7 +667,7 @@
   <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 18 · Lifecycle -->
+<!-- 19 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -697,7 +702,7 @@
   </div>
 </section>
 
-<!-- 19 · Finding to knowledge -->
+<!-- 20 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -709,7 +714,7 @@
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 20 · Software factory -->
+<!-- 21 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -723,7 +728,7 @@
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 21 · Close -->
+<!-- 22 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
