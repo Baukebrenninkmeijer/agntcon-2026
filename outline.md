@@ -212,6 +212,15 @@ to eight cases, within-judge wobble increased from six to eight, and no aggregat
 This does not show that the rule made the evaluator worse. It shows that the principle was clearer
 than the threshold for “unsupported,” giving humans a better next question to answer.
 
+### Slide: v3 keeps the agreement and stops flipping
+
+Screenshot of the real Orq experiment grid for `decision-support-quality`: one row per frozen
+development case, the three evaluator prompt versions (v1 baseline, v2 human rules, v3
+materiality) scored side by side under `aligned_with_human`, `panel_consensus` and
+`within_judge_stability`. Agreement with humans holds at 90% across all three versions; panel
+consensus and within-judge stability both reach 90% only at v3. Evidence for the loop, not new
+argument — no commentary beyond reading the three averages.
+
 ---
 
 ## 4. What makes agent evaluation different (4 min)

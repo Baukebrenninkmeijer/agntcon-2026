@@ -24,6 +24,10 @@ headshot = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "headshot.jpg").read_bytes()
 ).decode()
 
+experiment_grid = base64.b64encode(
+    (pathlib.Path(__file__).parent / "assets" / "experiment-grid.jpg").read_bytes()
+).decode()
+
 
 # Preserved grey-zone visual: overlapping classes and several defensible boundaries.
 rng = random.Random(7)
@@ -373,6 +377,9 @@ html = r'''<!doctype html>
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
   .portrait{width:100%;max-width:520px;justify-self:end;border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:0 10px 34px rgba(37,35,46,.12)}
   .portrait img{display:block;width:100%;height:auto}
+  .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
+  .shot img{display:block;width:100%;height:auto}
+  .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -628,13 +635,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 16 · Question 03 -->
+<!-- 16 · Experiment grid -->
+<section class="slide">
+  <h2>v3 keeps the agreement and stops flipping</h2>
+  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
+  <p class="shot-caption">One row per case · v1 · v2 · v3 under each evaluator · green passed, red failed</p>
+</section>
+
+<!-- 17 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 17 · Agent evaluation -->
+<!-- 18 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
@@ -649,7 +663,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Operating modes -->
+<!-- 19 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -671,7 +685,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 19 · Lifecycle -->
+<!-- 20 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -706,7 +720,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Finding to knowledge -->
+<!-- 21 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -718,7 +732,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 21 · Software factory -->
+<!-- 22 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -732,7 +746,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 22 · Close -->
+<!-- 23 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -808,6 +822,7 @@ html = (
     .replace("__SB__", fonts["SB"])
     .replace("__MONO__", fonts["MONO"])
     .replace("__HEADSHOT__", headshot)
+    .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__GREY_DOTS__", grey_dot_svg)
     .replace("__GREY_P1__", grey_paths[0])
     .replace("__GREY_P2__", grey_paths[1])
