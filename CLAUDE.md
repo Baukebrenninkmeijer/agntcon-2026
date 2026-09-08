@@ -8,6 +8,18 @@ When reality changes, update the plan in the same task and commit as the change.
 
 Mark work `VERIFIED` or complete only after running the relevant checks, reviewing their fresh output, and recording the evidence required by the plan's status taxonomy. Code or configuration presence by itself is not completion evidence. Keep unfinished, unintegrated, or unvalidated work `ACTIVE`, `BLOCKED`, or `NOT STARTED` as appropriate.
 
+## Never Rewrite `outline-manual.md`
+
+[`outline-manual.md`](outline-manual.md) holds Bauke's own handwritten notes. Read it, quote it,
+and take direction from it, but never rewrite, restructure, reformat, or "bring it up to date".
+It is allowed to be terse, incomplete, and out of step with the deck; that is what a personal
+scratch file looks like, and its value is that it says what the author thought, in the author's
+words.
+
+When outline material needs to be written or corrected, put it in [`outline.md`](outline.md),
+which is the maintained talk outline, and leave the manual notes alone. Only edit
+`outline-manual.md` when Bauke explicitly asks for that specific file to be changed.
+
 ## Check Every Change Against the Talk's Contract
 
 [`abstract.md`](abstract.md) is the promise made to the conference and the audience;

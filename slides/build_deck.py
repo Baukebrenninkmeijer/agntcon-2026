@@ -455,7 +455,7 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="cols wide">
     <div>
-      <div class="eyebrow">Binary verdict · written critique</div>
+      <div class="eyebrow">How do you create an eval?</div>
       <h2>Pass or fail</h2>
       <div class="verdicts"><div class="verdict">PASS</div><div class="verdict fail">FAIL</div><div class="verdict-note">The critique carries the nuance</div></div>
     </div>

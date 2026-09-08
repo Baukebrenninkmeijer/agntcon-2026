@@ -25,6 +25,23 @@ Honesty constraints:
 
 ---
 
+## Spine: the three questions
+
+Slide 4 names three questions, and every block after the opening answers one of them. The block's
+first slide carries its question in the eyebrow, so the promise on slide 4 is visibly kept.
+
+| Question | Answered in | Deck slides | Block eyebrow |
+|---|---|---|---|
+| 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 10-14 | `Question 02 · Trust the judge` (slide 10) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 15-16 | `Question 03 · What changes with agents` (slide 15) |
+
+Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
+
+Moving or renaming a block means updating slide 4, that block's eyebrow, and this table together.
+
+---
+
 ## 1. The evaluation gap (3 min)
 
 ### Slide: Two correct answers, one useful answer
@@ -39,6 +56,14 @@ Only one makes the relevant comparison clear enough to support the stated decisi
 
 That is the evaluation gap. Reference matching can verify a number, but it cannot determine whether
 the response used sound judgment about emphasis, explanation, caveats, and scope.
+
+### Slide: Who is saying this
+
+Three lines of bio. Orq is introduced out loud, not on the slide.
+
+### Slide: Three questions
+
+Name the three questions the talk answers, then hand each one to a block below.
 
 ### Slide: Agents widen the gap
 
@@ -64,7 +89,7 @@ not useful for the decision.
 Until review is complete, call this the **fifty-case review pool**. It becomes “roughly fifty
 hand-reviewed examples” only after those judgments exist.
 
-### Slide: Binary verdict, written critique
+### Slide: How do you create an eval?
 
 For every applicable case, the reviewer must choose `pass` or `fail` and explain why. The critique
 contains the nuance; the label makes the boundary operational.
