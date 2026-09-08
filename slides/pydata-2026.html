@@ -84,28 +84,27 @@
   @keyframes bandIn{to{opacity:.68;transform:scaleY(1)}}
   @keyframes dotIn{to{opacity:1}}
   @keyframes drawLine{to{stroke-dashoffset:0}}
-  .frozen{position:relative;margin-top:58px;border:3px dashed rgba(77,162,150,.55);border-radius:16px;padding:32px 34px 28px;background:rgba(77,162,150,.05)}
-  .frozen .tag{position:absolute;top:-17px;left:32px;background:var(--bg);padding:0 16px;font-family:var(--mono);font-size:21px;letter-spacing:.14em;color:var(--teal-deep)}
-  .frozen .bar{display:flex;height:52px;gap:3px}
-  .frozen .bar .seg{display:block;border-radius:4px}
-  .frozen .bar .user{background:var(--ink)}
-  .frozen .bar .assistant{background:var(--teal)}
-  .frozen .bar .call{background:var(--orange)}
-  .frozen .bar .result{background:var(--muted);opacity:.55}
-  .frozen .note{font-family:var(--mono);font-size:21px;letter-spacing:.06em;color:var(--ink2);margin-top:20px}
-  .replay-verdicts{display:flex;flex-direction:column;gap:24px;margin-top:52px}
-  .replay-row{display:grid;grid-template-columns:440px 1fr 232px;align-items:center;gap:44px;background:var(--paper);border-radius:14px;padding:28px 32px;opacity:0;transform:translateY(20px)}
-  .slide.active .replay-row{animation:rowIn .5s cubic-bezier(.16,1,.3,1) forwards}
-  .slide.active .replay-row:nth-child(2){animation-delay:.14s}
-  @keyframes rowIn{to{opacity:1;transform:translateY(0)}}
-  @media (prefers-reduced-motion:reduce){.replay-row{opacity:1;transform:none;animation:none!important}}
-  .replay-row .rv-name{font-family:var(--mono);font-size:24px;line-height:1.3;color:var(--ink)}
-  .replay-row .rv-why{font-size:29px;line-height:1.35;color:var(--ink2)}
-  .replay-row .rv-mark{display:grid;gap:7px;justify-items:center;padding:17px 0;border-radius:12px}
-  .replay-row .rv-mark b{font-size:42px;font-weight:600;letter-spacing:-.02em;line-height:1}
-  .replay-row .rv-mark em{font-style:normal;font-family:var(--mono);font-size:17px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink2)}
-  .replay-row .rv-mark.unanimous{background:rgba(77,162,150,.18);color:var(--teal-deep)}
-  .replay-row .rv-mark.split{background:rgba(223,83,37,.16);color:var(--orange-dark)}
+  .grey-loop{position:relative;margin-top:42px}
+  .grey-loop-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:52px;position:relative}
+  .grey-loop-grid::before{content:"";position:absolute;left:6%;right:6%;top:72px;border-top:4px solid rgba(77,162,150,.38);z-index:0}
+  .grey-loop-stage{position:relative;z-index:1;background:var(--bg);padding:0 14px;text-align:center}
+  .grey-loop-stage .n{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 24px;background:var(--teal);color:var(--paper);font-family:var(--mono);font-size:23px}
+  .grey-loop-stage.human .n{background:var(--orange);color:var(--ink)}
+  .grey-loop-stage h3{font-size:32px;line-height:1.16;margin:0 auto 13px;max-width:9em}
+  .grey-loop-stage p{font-size:22px;line-height:1.32;color:var(--ink2);max-width:12em;margin:0 auto}
+  .grey-loop-return{position:relative;height:68px;margin:20px 9% 0;border-right:4px solid rgba(77,162,150,.55);border-bottom:4px solid rgba(77,162,150,.55);border-left:4px solid rgba(77,162,150,.55);border-radius:0 0 34px 34px}
+  .grey-loop-return::before{content:"";position:absolute;left:-11px;top:-1px;width:18px;height:18px;border-left:4px solid var(--teal);border-bottom:4px solid var(--teal);transform:rotate(45deg)}
+  .grey-loop-return span{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);background:var(--bg);padding:0 22px;font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--teal-deep);white-space:nowrap}
+  .sealed-note{position:absolute;right:0;top:-96px;font-family:var(--mono);font-size:19px;letter-spacing:.12em;color:var(--muted)}
+  .version-proof{display:grid;grid-template-columns:150px 1fr 190px 1fr 150px;align-items:center;gap:30px;margin-top:58px;padding-top:30px;border-top:3px solid rgba(140,138,145,.42);opacity:.15;transition:opacity .45s ease}
+  .slide[data-step="1"] .version-proof{opacity:1}
+  .version-chip{text-align:center}
+  .version-chip strong{display:grid;place-items:center;width:78px;height:78px;border-radius:50%;margin:0 auto 10px;background:var(--teal);color:var(--paper);font-family:var(--mono);font-size:25px}
+  .version-chip.current strong{background:var(--orange);color:var(--ink)}
+  .version-chip span{font-size:20px;color:var(--ink2)}
+  .version-rule{font-size:25px;line-height:1.34;color:var(--ink2);text-align:center}
+  .version-rule b{display:block;color:var(--orange-dark);font-weight:500;margin-bottom:7px}
+  @media (prefers-reduced-motion:reduce){.version-proof{transition:none}}
   .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
   .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
   .slide[data-step="1"] .traj .result:not(.final){opacity:.17}
@@ -553,7 +552,31 @@
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 14 · Agent evaluation -->
+<!-- 14 · Grey-zone loop -->
+<section class="slide" data-steps="1">
+  <h2>The grey-zone loop</h2>
+  <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
+  <div class="grey-loop">
+    <div class="sealed-note">HELD-OUT TEST SET STAYS SEALED</div>
+    <div class="grey-loop-grid">
+      <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3><p>Same frozen development cases</p></div>
+      <div class="grey-loop-stage"><span class="n">02</span><h3>Surface wobble</h3><p>Disagreement and self-flips</p></div>
+      <div class="grey-loop-stage"><span class="n">03</span><h3>Read the reasons</h3><p>Find competing interpretations</p></div>
+      <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3><p>The human chooses the rule</p></div>
+      <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3><p>Encode the accepted rule</p></div>
+    </div>
+    <div class="grey-loop-return"><span>RERUN THE SAME FROZEN DEVELOPMENT CASES</span></div>
+  </div>
+  <div class="version-proof" aria-label="The loop applied to evaluator prompt versions one through three">
+    <div class="version-chip"><strong>v1</strong><span>baseline</span></div>
+    <div class="version-rule"><b>Human rule</b>Visible claims must be correct</div>
+    <div class="version-chip"><strong>v2</strong><span>more wobble</span></div>
+    <div class="version-rule"><b>Human rule</b>Unsupported means contradicted, not merely unproven</div>
+    <div class="version-chip current"><strong>v3</strong><span>ready to rerun</span></div>
+  </div>
+</section>
+
+<!-- 15 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
@@ -616,19 +639,6 @@
     <span><i style="background:#ff9747"></i>tool call</span>
     <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
   </div>
-</section>
-
-<!-- 15 · Replay -->
-<section class="slide">
-  <div class="eyebrow">Reproducible agent evaluation</div>
-  <h2>Replay the trace</h2>
-  <p class="sub">The trace is fixed. The judge is the thing that changed.</p>
-  <div class="frozen">
-    <span class="tag">FROZEN</span>
-    <div class="bar" aria-label="One recorded trace: user turns, assistant turns and tool results"><i class="seg user" style="width:3.98%"></i><i class="seg call" style="width:2.84%"></i><i class="seg result" style="width:14.78%"></i><i class="seg call" style="width:5.16%"></i><i class="seg result" style="width:7.58%"></i><i class="seg call" style="width:5.42%"></i><i class="seg result" style="width:6.10%"></i><i class="seg call" style="width:11.17%"></i><i class="seg result" style="width:12.26%"></i><i class="seg call" style="width:3.70%"></i><i class="seg result" style="width:3.76%"></i><i class="seg assistant" style="width:23.26%"></i></div>
-    <div class="note"><span>replayed, never re-run</span></div>
-  </div>
-  <div class="replay-verdicts"><div class="replay-row"><span class="rv-name">decision_support_quality v1</span><span class="rv-why">Leads with direction and magnitude, flags that both years are full and comparable — all three judges accept it, three times each.</span><span class="rv-mark unanimous"><b>9 / 9</b><em>unanimous</em></span></div><div class="replay-row"><span class="rv-name">decision_support_quality v2</span><span class="rv-why">Rules rewritten from human notes: the same answer now reads as an unsupported claim that <code>net_revenue</code> is already net of refunds — four of nine reads reject it.</span><span class="rv-mark split"><b>5 / 9</b><em>split</em></span></div></div>
 </section>
 
 <!-- 16 · Operating modes -->
