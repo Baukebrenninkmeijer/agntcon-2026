@@ -274,10 +274,16 @@ data-definition claim requires.
    only when omitting them would make the requested result materially misleading. The evaluator
    must not assume that every response is the final opportunity to resolve the stakeholder's full
    decision.
+6. **Does every demonstrably false secondary statement force a binary failure?** No. A factual
+   issue fails `decision_support_quality` only when it could reasonably change the stakeholder's
+   interpretation, action, or confidence in the core result. Minor inaccuracies remain visible in
+   the written critique but do not force a fail when the requested result and its decision meaning
+   remain intact. Material scope or metric mismatches still fail; unsupported details that are not
+   contradicted remain governed by the preceding evidence-threshold rule.
 
-These answers are human policy decisions, not datapoint labels. The remaining development signals
-still need a separate boundary decision about the materiality of ancillary errors before labels or
-another evaluator rewrite are proposed.
+These answers are human policy decisions, not datapoint labels. With the development boundaries
+resolved, the next step is to derive proposed development verdicts from them and read those
+verdicts back for human confirmation before writing labels or another evaluator rewrite.
 
 ## Talk Structure Consequences
 
