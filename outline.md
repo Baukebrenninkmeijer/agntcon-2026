@@ -255,6 +255,10 @@ members inspect the same behavior.
 
 ### Slide: Three operating modes
 
+A single time axis with a release marker rather than three equal cards. Offline sits before the
+marker, online after it, and continuous is a ticked band spanning both, so the modes read as
+positions in the lifecycle rather than three competing definitions of quality.
+
 Keep this slide about where and when evaluation runs:
 
 - **Offline:** curated cases used during development, alignment, and model or prompt comparison.

@@ -211,11 +211,15 @@ html = r'''<!doctype html>
   .check{display:grid;grid-template-columns:58px 1fr;gap:26px;align-items:center;font-size:35px;color:var(--ink2)}
   .check i{width:58px;height:58px;border:3px solid var(--teal);border-radius:50%;display:grid;place-items:center;font-style:normal;color:var(--teal);font-size:31px}
   .pillrow{display:flex;gap:24px;align-items:stretch}
-  .mode{flex:1;border-top:5px solid var(--teal);background:var(--paper);padding:34px;min-height:340px}
-  .mode:nth-child(2){border-color:var(--orange)}
-  .mode:nth-child(3){border-color:var(--ink)}
-  .mode h3{font-size:48px}
-  .mode p{font-size:30px;line-height:1.4;color:var(--ink2)}
+  .life-axis{display:block;width:100%;margin-top:30px}
+  .life-axis .ax{stroke:var(--ink);stroke-width:3}
+  .life-axis .rel{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
+  .life-axis .mono{font-family:var(--mono);font-size:21px;letter-spacing:.11em;fill:var(--muted)}
+  .life-axis .name{font-family:var(--sans);font-size:38px;font-weight:600;fill:var(--ink)}
+  .life-axis .meta{font-family:var(--sans);font-size:26px;fill:var(--ink2)}
+  .life-axis .band{fill:rgba(37,35,46,.10)}
+  .life-axis .tick{fill:var(--bg)}
+  .life-axis .beat{fill:var(--ink2)}
   svg text{font-family:var(--sans)}
   .lbl{fill:var(--ink2);font-size:28px}
   .lbl.dark{fill:var(--ink)}
@@ -650,12 +654,22 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
-  <div class="pillrow">
-    <div class="mode"><h3>Offline</h3><p>Curated cases for development, alignment and comparisons.</p></div>
-    <div class="mode"><h3>Online</h3><p>Sampled production traces reveal new failures and drift.</p></div>
-    <div class="mode"><h3>Continuous</h3><p>Checks run on changes and repeat over time.</p></div>
-  </div>
-  <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
+  <svg class="life-axis" viewBox="0 0 1800 500" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
+    <line class="rel" x1="800" y1="40" x2="800" y2="300"/>
+    <text class="mono" x="812" y="56">RELEASE</text>
+    <rect x="40" y="86" width="720" height="76" rx="8" fill="var(--teal)"/>
+    <text class="name" x="40" y="212">Offline</text>
+    <text class="meta" x="40" y="252">The curated 50, when you ask.</text>
+    <rect x="840" y="86" width="920" height="76" rx="8" fill="var(--orange)"/>
+    <text class="name" x="840" y="212">Online</text>
+    <text class="meta" x="840" y="252">Sampled production traces, as traffic arrives.</text>
+    <line class="ax" x1="40" y1="304" x2="1760" y2="304"/>
+    <rect class="band" x="40" y="330" width="1720" height="58" rx="8"/>
+    <g class="beat"><rect x="150" y="345" width="4" height="28" rx="2"/><rect x="310" y="345" width="4" height="28" rx="2"/><rect x="470" y="345" width="4" height="28" rx="2"/><rect x="630" y="345" width="4" height="28" rx="2"/><rect x="790" y="345" width="4" height="28" rx="2"/><rect x="950" y="345" width="4" height="28" rx="2"/><rect x="1110" y="345" width="4" height="28" rx="2"/><rect x="1270" y="345" width="4" height="28" rx="2"/><rect x="1430" y="345" width="4" height="28" rx="2"/><rect x="1590" y="345" width="4" height="28" rx="2"/></g>
+    <text class="name" x="40" y="446">Continuous</text>
+    <text class="meta" x="40" y="486">Both, on every change and then on a schedule.</text>
+  </svg>
+  <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
 <!-- 19 · Lifecycle -->
