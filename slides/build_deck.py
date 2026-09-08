@@ -336,14 +336,15 @@ html = r'''<!doctype html>
   .chart .dip{fill:var(--orange-dark)}
   .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
   .chart .lbl.dim{fill:var(--muted)}
-  .learning-flow{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:58px;margin-top:24px}
+  .learning-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:46px;margin-top:24px}
   .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
-  .learning-stage:nth-child(2){border-color:var(--orange)}
-  .learning-stage:not(:last-child)::after{content:"→";position:absolute;right:-47px;top:8px;color:var(--teal);font-size:44px}
+  .learning-stage:nth-child(2){border-color:var(--ink)}
+  .learning-stage:nth-child(4){border-color:var(--orange)}
+  .learning-stage:not(:last-child)::after{content:"→";position:absolute;right:-40px;top:6px;color:var(--teal);font-size:38px}
   .learning-label{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:22px}
-  .learning-stage p{font-size:31px;line-height:1.38;color:var(--ink2)}
-  .learning-stage strong{display:block;font-size:37px;line-height:1.24;font-weight:500;color:var(--ink);margin-bottom:18px}
-  .learning-rerun{margin-top:52px;font-size:29px;color:var(--orange-dark);text-align:right}
+  .learning-stage p{font-size:26px;line-height:1.38;color:var(--ink2)}
+  .learning-stage strong{display:block;font-size:31px;line-height:1.24;font-weight:500;color:var(--ink);margin-bottom:18px}
+  .learning-rerun{margin-top:64px;font-size:29px;color:var(--orange-dark);text-align:right}
   .flow-arrow{font-size:64px;color:var(--orange);text-align:center}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
@@ -690,11 +691,12 @@ html = r'''<!doctype html>
 
 <!-- 18 · Finding to knowledge -->
 <section class="slide">
-  <h2>What the agent learns<br>from a failed eval</h2>
-  <div class="learning-flow" aria-label="A failed evaluation becomes a Sphere skill update">
+  <h2>What a failed eval teaches<br>the agent and the rubric</h2>
+  <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
     <div class="learning-stage"><div class="learning-label">Evaluator finding</div><strong>The analysis reports declining revenue.</strong><p>It never explains what the CFO should decide.</p></div>
-    <div class="learning-stage"><div class="learning-label">Diagnosis</div><strong>Sphere’s decision criteria are missing.</strong><p>This is an agent knowledge gap, not a data or SQL error.</p></div>
-    <div class="learning-stage"><div class="learning-label">Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, and lead with the business implication.</p></div>
+    <div class="learning-stage"><div class="learning-label">Diagnosis</div><strong>Two gaps, not one.</strong><p>Sphere never connects analysis to decision, and the rubric never said what unsupported means.</p></div>
+    <div class="learning-stage"><div class="learning-label">Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, lead with the implication.</p></div>
+    <div class="learning-stage"><div class="learning-label">Evaluator update</div><strong>Say what unsupported means.</strong><p>A claim fails when the visible evidence contradicts it, not merely when proof is absent.</p></div>
   </div>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
