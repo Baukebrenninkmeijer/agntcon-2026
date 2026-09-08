@@ -249,6 +249,30 @@ No datapoint labels are derived by documenting these answers. The next human ste
 rules to the surfaced development rows, review those derived verdicts, and then label or correct
 them explicitly.
 
+### Second development-set boundary discussion
+
+The diagnostic rerun was reviewed across the complete thirty-case development slice: all fourteen
+prioritized rows, all five stable controls, the baseline control that left the revised queue, and
+the eleven remaining stable rows. This wider review found both useful catches and a stable blind
+spot. Three responses contain contradictions visible in their own evidence, while
+`segment-then-2024-check` subtracts refunds from `net_revenue` again and nevertheless receives nine
+pass votes. Similar revenue-definition language also fails in some rows and passes unanimously in
+others. This shows that the revised prompt left the judges to choose how much proof a
+data-definition claim requires.
+
+4. **Is the absence of visible proof enough to fail a data-definition claim?** No. Lack of proof is
+   not itself a failure. For `decision_support_quality`, fail the claim only when the supplied
+   conversation or execution evidence materially contradicts it or demonstrates that it is false.
+   An unproven but plausible definition does not fail merely because the trace lacks exhaustive
+   provenance. This keeps the evaluator focused on subjective decision support instead of turning
+   it into a reference-oriented correctness or data-dictionary evaluator. A correctness error that
+   cannot be established from the supplied evidence may therefore remain outside this evaluator's
+   scope.
+
+This fourth answer is a human policy decision, not a datapoint label. The remaining development
+signals still need separate boundary decisions about proactive decision completeness and the
+materiality of ancillary errors before labels or another evaluator rewrite are proposed.
+
 ## Talk Structure Consequences
 
 The story becomes:
