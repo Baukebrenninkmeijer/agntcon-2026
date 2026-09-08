@@ -34,7 +34,7 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 10-15 | `Question 02 · Trust the judge` (slide 10) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-17 | `Question 03 · What changes with agents` (slide 17) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-18 | `Question 03 · What changes with agents` (slide 17) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -211,6 +211,13 @@ than the threshold for “unsupported,” giving humans a better next question t
 ---
 
 ## 4. What makes agent evaluation different (4 min)
+
+### Slide: What changes with agents?
+
+A divider carrying only the question. Question 03 was named on slide 4 and then not heard from
+again until its block opened, so it gets stated once in full before the block starts: the heading
+asks what changes with agents, the line beneath repeats the slide 4 phrasing, "what do you evaluate
+in an agent that is not the final answer?".
 
 ### Slide: The answer is only the endpoint
 

@@ -625,9 +625,15 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 16 · Agent evaluation -->
+<!-- 16 · Question 03 -->
+<section class="slide">
+  <div class="eyebrow"><span class="qn">Question 03</span></div>
+  <h2>What changes<br>with agents?</h2>
+  <p class="sub">What do you evaluate in an agent that is not the final answer?</p>
+</section>
+
+<!-- 17 · Agent evaluation -->
 <section class="slide" data-steps="1">
-  <div class="eyebrow"><span class="qn">Question 03</span> · What changes with agents</div>
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
   <svg class="traj" viewBox="0 0 1824 __TRAJ_H__" width="1824" height="__TRAJ_H__" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
@@ -641,7 +647,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Operating modes -->
+<!-- 18 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -653,7 +659,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:44px">The criterion can move between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 18 · Lifecycle -->
+<!-- 19 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -688,7 +694,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 19 · Finding to knowledge -->
+<!-- 20 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -700,7 +706,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 20 · Software factory -->
+<!-- 21 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -714,7 +720,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 21 · Close -->
+<!-- 22 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
