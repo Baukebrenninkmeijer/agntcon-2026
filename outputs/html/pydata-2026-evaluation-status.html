@@ -291,7 +291,7 @@
     <header>
       <div class="header-top">
         <h1>Evaluation execution status</h1>
-        <span class="auto-pill">prompt v3 synced · retest pending</span>
+        <span class="auto-pill">grey-zone loop added · v3 retest pending</span>
       </div>
       <div class="date-range">
         8 September 2026 &nbsp;&middot;&nbsp;
@@ -328,6 +328,7 @@
       <h2>What changed</h2>
       <hr class="rule">
       <ul class="highlights">
+        <li><strong>The talk now teaches the grey-zone process as a reusable loop.</strong> Slide 14 moves from the concrete ambiguity result to the five steps used here: run the jury on frozen development cases, surface wobble, inspect judge reasons, ask a human boundary question, and update the evaluator before rerunning. A click reveals the v1→v2→v3 journey; v3 remains explicitly pending measurement.</li>
         <li><strong>The full development split is now human-reviewed.</strong> All 30 development identities have a confirmed binary label and written explanation: 27 pass, three fail. The 20 test identities remain sealed.</li>
         <li><strong>The review went beyond the six newly surfaced cases.</strong> It covered all 14 revised priority rows, five controls, the removed baseline control, and the remaining stable development cases.</li>
         <li><strong>Stable consensus hid a real failure.</strong> <code>segment-then-2024-check</code> received nine pass votes despite a visible, material double deduction. Stable controls were essential.</li>
@@ -365,6 +366,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td>Talk deck</td>
+            <td>The grey-zone loop now follows the development ambiguity result. It keeps the held-out test set outside the iteration loop and replaces the historical correctness replay, preserving the 20-slide and 30-minute contracts. Both reveal states were rendered at 1600×900 without clipping or overlap.</td>
+            <td><span class="risk"><span class="risk-dot low"></span>Verified</span></td>
+          </tr>
           <tr>
             <td>Talk contract</td>
             <td>Supports the abstract’s short judge walkthrough: start from 50 examples, expose jury disagreement, then hand ambiguous cases to a human.</td>
@@ -505,7 +511,7 @@
 
     <footer>
       Sources: abstract.md · outline.md · evaluation delivery plan · decision-support evaluation design<br>
-      Current status: 30 development labels confirmed (27 pass / three fail); prompt v2 misses all three failures; prompt v3 is synced in shadow with its repeated jury pending; held-out test outcomes remain sealed.
+      Current status: the 20-slide deck now includes the grey-zone alignment loop; 30 development labels are confirmed (27 pass / three fail); prompt v2 misses all three failures; prompt v3 is synced in shadow with its repeated jury pending; held-out test outcomes remain sealed.
     </footer>
   </div>
 </body>
