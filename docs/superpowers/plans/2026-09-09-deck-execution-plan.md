@@ -96,7 +96,7 @@ is identical in both rows because that is the point. The current spine (`random 
 label + written critique`, `identify gaps with judge`) and the "every change" cost panel are cut —
 the analogy carries the same argument in a shape people already trust.
 
-### W4 — Restore the ordering constraint *(C2)*
+### W4 — Restore the two lost intro slides *(C2, and Bauke's 2026-09-09 call)*
 
 Reinstate the slide dropped in `c280a25`, immediately after slide 4:
 
@@ -104,21 +104,33 @@ Reinstate the slide dropped in `c280a25`, immediately after slide 4:
 > the eval is aligned.**
 
 Verbatim from history, including the `.hl` on "aligned". This is the fast why-align beat: good agent
-needs a good judge, and a good judge needs human alignment. **+1 slide.**
+needs a good judge, and a good judge needs human alignment.
+
+Also restore, from the same commit, the metric-lineage slide that went with it:
+
+> eyebrow **We have been here before** · heading **Hard metrics gave way to judgement. Judgement had
+> to be measured.**
+
+with its timeline SVG (countable target → human relevance → …). It earns its place by making the
+ordering constraint feel inevitable rather than asserted: this field has already done this once.
+**+2 slides.**
 
 ### W5 — Rebuild slide 13 as the judge grid *(A4)*
 
 The two bullets and the definition block are replaced by a stepped 3D grid. Three steps:
 
-1. **A 3×3 grid, one real case.** Rows are the three judges by name (`gpt-5.6-luna`, and the two
-   others as configured), columns are the three repetitions, each cell a real pass/fail. Heading
-   states the two signals we read off it: judges disagreeing with each other, and a judge
-   disagreeing with itself.
-2. **Instability shown, not described.** The cells of an unstable judge flip red/green on a loop
-   (B3). Reduced motion: the flipping cells carry a static marker instead.
-3. **Rotate to the dataset.** The container rotates roughly 28 degrees and 49 further case-layers
-   slide back along Z and fade in, so one case becomes fifty. Reduced motion: crossfade straight to
-   the rotated end state.
+1. **A 3×3 grid, one real case.** Rows are the three judges by name (`gpt-5.6-luna`,
+   `qwen3.8-27b`, `gemini-3.5-flash-lite`), columns are the three repetitions, each cell a real
+   pass/fail. The front case is `sphere-stakeholder--v4-best-month-net`: Luna votes fail, pass,
+   fail; the other two never move. Heading states the two signals read off it.
+2. **Rotate to the dataset.** The container rotates about 27 degrees, scaling to 0.64, and 49
+   further case-layers stand behind the front one at 58px spacing, so one case becomes fifty.
+   Reduced motion: crossfade straight to the rotated end state.
+
+**Each cell is one decision, so it holds one colour.** No flipping on this slide — the red/green
+flip belongs to the fifty datapoints on slide 14 (W7). Decided against the mocked alternatives: a
+static isometric stack (safe but hands over the picture instead of turning it) and fifty small
+multiples (readable, but a chart rather than a move). Companion mock: `variantA.html`.
 
 Data: real, from `runs/decision-support-jury-prompt-v3-20260908.jsonl`, which carries per-judge,
 per-repetition verdicts for all 50 cases — 450 cells, nothing invented. Extract to a
