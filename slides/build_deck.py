@@ -276,7 +276,7 @@ html = r'''<!doctype html>
   .grey-loop-stage h3{font-size:32px;line-height:1.16;margin:0 auto 13px;max-width:9em}
   .grey-loop-stage p{font-size:22px;line-height:1.32;color:var(--ink2);max-width:12em;margin:0 auto}
   .grey-loop-return{position:relative;height:68px;margin:20px 9% 0;border-right:4px solid rgba(77,162,150,.55);border-bottom:4px solid rgba(77,162,150,.55);border-left:4px solid rgba(77,162,150,.55);border-radius:0 0 34px 34px}
-  .grey-loop-return::before{content:"";position:absolute;left:-11px;top:-1px;width:18px;height:18px;border-left:4px solid var(--teal);border-bottom:4px solid var(--teal);transform:rotate(45deg)}
+  .grey-loop-return::before{content:"";position:absolute;left:-11px;top:-8px;width:18px;height:18px;border-top:4px solid var(--teal);border-right:4px solid var(--teal);transform:rotate(-45deg)}
   .grey-loop-return span{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);background:var(--bg);padding:0 22px;font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--teal-deep);white-space:nowrap}
   .sealed-note{position:absolute;right:0;top:-96px;font-family:var(--mono);font-size:19px;letter-spacing:.12em;color:var(--muted)}
   .version-proof{display:grid;grid-template-columns:150px 1fr 190px 1fr 150px;align-items:center;gap:30px;margin-top:58px;padding-top:30px;border-top:3px solid rgba(140,138,145,.42);opacity:.15;transition:opacity .45s ease}
