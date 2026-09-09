@@ -211,8 +211,9 @@
   .twoloop .ring-name{font-size:46px;font-weight:500;fill:var(--ink)}
   .twoloop .stage{font-family:var(--mono);font-size:26px;letter-spacing:.06em;fill:var(--ink2)}
   .twoloop .stage.dim{font-size:23px;fill:var(--muted)}
-  .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
-  .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
+  .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px;margin-top:38px}
+  .factory .process-card{width:272px;min-height:205px;padding:26px 14px}
+  .factory .process-card h3{font-size:34px}
   .factory .flow-arrow{font-size:48px;color:var(--teal)}
   .feedback{margin-top:34px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--muted)}
   .sphere-brand{display:flex;align-items:center;gap:26px;margin-bottom:50px}
@@ -521,13 +522,13 @@
 <section class="slide" data-steps="1">
   <h2>LLM judges determine priority</h2>
   <ul class="plain">
-    <li>Model disagreement</li>
-    <li>Model wobbling</li>
+    <li>Judge disagreement</li>
+    <li>Judge instability</li>
   </ul>
   <div class="define">
-    <div class="word">Wobbly</div>
+    <div class="word">Unstable</div>
     <div class="gram">ADJECTIVE</div>
-    <p class="meaning">LLM-as-a-judge flips sides on repeated evaluations of the same case.</p>
+    <p class="meaning">Of an LLM judge: returning different verdicts on repeated evaluations of the same case.</p>
   </div>
 </section>
 
@@ -535,7 +536,7 @@
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
-      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and self-wobble lift twelve of them into the review queue">
+      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability lift twelve of them into the review queue">
         <rect class="lane" x="62" y="64" width="1116" height="116" rx="14"/>
         <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
         <text class="lane-count start" x="1178" y="38">0 / 50</text>
@@ -593,13 +594,13 @@
 <g class="g" style="--x:1038px;--y:700px"><g class="wb" style="animation-delay:0.96s"><circle class="case" r="27"/></g></g>
 <g class="g" style="--x:1154px;--y:700px"><g class="wb" style="animation-delay:2.33s"><circle class="case" r="27"/></g></g>
       </svg>
-      <div class="legend"><span><i class="swatch"></i>models disagree</span><span><i class="swatch w"></i>one model wobbles</span></div>
+      <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
     </div>
     <div>
       <h2>We are lazy</h2>
       <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
       <ul class="plain">
-        <li>Each judge votes three times: disagreement between models, wobble within one</li>
+        <li>Each judge votes three times: disagreement between judges, instability within one</li>
         <li><b class="hl">Those cases go to the front of the human queue</b></li>
       </ul>
       <p class="body queue-line">12 of 50 reviewed first. The unanimous rest are sampled as a control.</p>
@@ -637,7 +638,7 @@
       <div class="ambiguity-label">Development signals</div>
       <div class="ambiguity-metrics">
         <div class="ambiguity-metric"><strong>4 to 8</strong><span>panel disagreements</span></div>
-        <div class="ambiguity-metric"><strong>6 to 8</strong><span>self-wobbles</span></div>
+        <div class="ambiguity-metric"><strong>6 to 8</strong><span>unstable judges</span></div>
         <div class="ambiguity-metric"><strong>0</strong><span>aggregate verdict flips</span></div>
       </div>
     </section>
@@ -653,7 +654,7 @@
     <div class="sealed-note">HELD-OUT TEST SET STAYS SEALED</div>
     <div class="grey-loop-grid">
       <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3><p>Same frozen development cases</p></div>
-      <div class="grey-loop-stage"><span class="n">02</span><h3>Surface wobble</h3><p>Disagreement and self-flips</p></div>
+      <div class="grey-loop-stage"><span class="n">02</span><h3>Surface instability</h3><p>Disagreement and self-flips</p></div>
       <div class="grey-loop-stage"><span class="n">03</span><h3>Read the reasons</h3><p>Find competing interpretations</p></div>
       <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3><p>The human chooses the rule</p></div>
       <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3><p>Encode the accepted rule</p></div>
@@ -663,9 +664,9 @@
   <div class="version-proof" aria-label="The loop applied to evaluator prompt versions one through three">
     <div class="version-chip"><strong>v1</strong><span>baseline</span></div>
     <div class="version-rule"><b>Human rule</b>Visible claims must be correct</div>
-    <div class="version-chip"><strong>v2</strong><span>more wobble</span></div>
+    <div class="version-chip"><strong>v2</strong><span>less stable</span></div>
     <div class="version-rule"><b>Human rule</b>Unsupported means contradicted, not merely unproven</div>
-    <div class="version-chip current"><strong>v3</strong><span>less wobble<br>misses 3 / 3</span></div>
+    <div class="version-chip current"><strong>v3</strong><span>more stable<br>misses 3 / 3</span></div>
   </div>
 </section>
 
@@ -807,8 +808,8 @@
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
     <div class="learning-stage"><div class="learning-label">Evaluator finding</div><strong>The analysis reports declining revenue.</strong><p>It never explains what the CFO should decide.</p></div>
-    <div class="learning-stage"><div class="learning-label">Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, lead with the implication.</p></div>
-    <div class="learning-stage"><div class="learning-label">Evaluator update</div><strong>Say what unsupported means.</strong><p>A claim fails when the visible evidence contradicts it, not merely when proof is absent.</p></div>
+    <div class="learning-stage"><div class="learning-label">Agent loop &#183; Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, lead with the implication.</p></div>
+    <div class="learning-stage"><div class="learning-label">Evaluator loop &#183; evaluator update</div><strong>Say what unsupported means.</strong><p>A claim fails when the visible evidence contradicts it, not merely when proof is absent.</p></div>
   </div>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
@@ -817,6 +818,7 @@
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
+  <p class="sub">With software we write tests. With a software factory we build evals.</p>
   <div class="factory" aria-label="Agents prepare an analyzed and validated pull request for human review">
     <div class="process-card"><h3>evaluation</h3><p>finding</p></div><div class="flow-arrow">→</div>
     <div class="process-card"><h3>analysis agent</h3><p>structural cause</p></div><div class="flow-arrow">→</div>

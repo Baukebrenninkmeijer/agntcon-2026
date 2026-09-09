@@ -167,10 +167,10 @@ This is methodologically clean and expensive in expert attention.
 The concept before the picture, stated as plainly as it will go: two signals decide what a human
 reads first.
 
-- model disagreement
-- model wobbling
+- judge disagreement
+- judge instability
 
-On the click, the definition of the second one appears on the same slide: **Wobbly**, adjective,
+On the click, the definition of the second one appears on the same slide: **Unstable**, adjective,
 LLM-as-a-judge flips sides on repeated evaluations of the same case. The term recurs for the rest
 of the talk, so define it here and do not re-explain it later.
 
@@ -181,7 +181,7 @@ We still need human judgment, but we do not have to review cases in random order
 Run the unaligned evaluator as a three-model jury, with three repetitions per model. This yields two
 signals before annotation:
 
-- **self-wobble:** one model changes its verdict across repetitions;
+- **instability:** one judge changes its verdict across repetitions;
 - **jury disagreement:** different models place the same case on different sides.
 
 Prioritize those cases for human review, then add a sample of unanimous cases to catch confidently
@@ -189,17 +189,17 @@ wrong consensus. Continue until the reviewed set is broad enough to support alig
 
 The slide carries this in three beats: fifty plain case dots, then the rings for the two signals,
 then the flagged cases rising into the review lane in priority order. Positions come from the
-canonical v4 jury run: six cases with jury disagreement, eight with self-wobble, twelve flagged in
+canonical v4 jury run: six cases with jury disagreement, eight unstable, twelve flagged in
 total.
 
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
 
-### Slide: Wobbly
+### Slide: Unstable
 
 Give the term a compact dictionary definition before showing the measured queue:
 
-> **wobbly**, adjective — of an LLM judge: returning different verdicts when asked to grade the
+> **unstable**, adjective — of an LLM judge: returning different verdicts when asked to grade the
 > same case with the same rubric.
 
 For this walkthrough, one pass/fail change across a model's three repetitions is enough to flag the
@@ -219,7 +219,7 @@ it only tells us the models agree.
 
 For the live walkthrough, open the single dev-only Orq Experiment that places prompt v1, v2, and
 v3 side by side. Its boolean cells separate human alignment, panel consensus, and within-judge
-stability: v3 is visibly less wobbly while human agreement remains unchanged.
+stability: v3 is visibly more stable while human agreement remains unchanged.
 
 ### Slide: One answer exposed another ambiguity
 
@@ -229,7 +229,7 @@ treated a claim as incorrect when the visible evidence did not prove it; others 
 for a visible contradiction.
 
 The development-only rerun made the boundary more visible: panel disagreement increased from four
-to eight cases, within-judge wobble increased from six to eight, and no aggregate verdict flipped.
+to eight cases, within-judge instability increased from six to eight, and no aggregate verdict flipped.
 This does not show that the rule made the evaluator worse. It shows that the principle was clearer
 than the threshold for “unsupported,” giving humans a better next question to answer.
 
@@ -240,7 +240,7 @@ Qwen and Gemini returned `pass` on all 180 of their repetition-level judgments. 
 of the three human failures, but the two constant-pass judges overruled it both times. The panel's
 majority verdict therefore caught none of the three failures.
 
-The lower wobble is real, but it came largely from convergence on `pass`, not from learning the
+The greater stability is real, but it came largely from convergence on `pass`, not from learning the
 human boundary. One further human failure was a unanimous, stable miss and surfaced only because
 the development cases already had human labels. That is the stopping point for this talk: preserve
 v3 as evidence of a judge capability limit, keep it in shadow, and do not imply that another prompt
