@@ -42,17 +42,17 @@ not in the deck. Either build it or cut it from the outline — see item 12.
 
 | # | Feedback | Change |
 |---|---|---|
-| A1 | "Historical method" is ambiguous | Slide 10 heading → **"The pre-LLM method"**. Same everywhere in `outline.md`. |
-| A2 | Discovery vs. regression distinction missing | Slide 20 stage leads: `FIRST` → **`DISCOVERY`**, `THEN` → **`REGRESSION`**. Body copy already says the right thing ("a low pass rate at the start is the point" / "everything passes, or the commit stops"); only the vocabulary is missing. |
-| A3 | Test-coverage analogy for the software factory | Slide 22 eyebrow → **"With software we write tests. With a software factory we build evals."** Replaces the current "Evals in the software factory". Exactly the sentence Arian predicts the PyData room will respond to. |
-| A4 | Jury mechanics unclear | Slide 11: add **"three repetitions per judge"** to the model-wobbling bullet. The number is what makes self-flip mean anything. |
-| A5 | Non-wobbly ≠ correct | Slide 12: one line under the queue — **"Stable cases are not assumed correct. They get random-sampled as a second layer."** Arian's point, and it closes an honesty hole in the lazy-queue argument. |
+| A1 | "Historical method" is ambiguous | Slide 10 heading → **"The pre-LLM method"**. Same everywhere in `outline.md`. | - yes, combine with the later slide about the process with and without llms. 
+| A2 | Discovery vs. regression distinction missing | Slide 20 stage leads: `FIRST` → **`DISCOVERY`**, `THEN` → **`REGRESSION`**. Body copy already says the right thing ("a low pass rate at the start is the point" / "everything passes, or the commit stops"); only the vocabulary is missing. | - we have this covered, don't update. 
+| A3 | Test-coverage analogy for the software factory | Slide 22 eyebrow → **"With software we write tests. With a software factory we build evals."** Replaces the current "Evals in the software factory". Exactly the sentence Arian predicts the PyData room will respond to. | - yes add this. 
+| A4 | Jury mechanics unclear | Slide 11: add **"three repetitions per judge"** to the model-wobbling bullet. The number is what makes self-flip mean anything. | - yes add. Do something with 1 datapoint, and then we show a 2d grid, on one axis repetitions, on the other different judges (we can even show model names). Woudl be cool if we can start 2d from the front like that, and then rotate about 30 degrees to the top right, and show and 3d grid, with the z-axis being the 50 datapoints. quiz me if you have unclarities here. 
+| A5 | Non-wobbly ≠ correct | Slide 12: one line under the queue — **"Stable cases are not assumed correct. They get random-sampled as a second layer."** Arian's point, and it closes an honesty hole in the lazy-queue argument. | - yes, on slide 14 we need a review queue with 50% randomly sampled datapoints and 50% from the priority queue. 
 | A6 | Priority queue tiers | Slide 12: make the three tiers explicit — **both signals → top, disagreement only → middle, self-flip only → bottom.** Check whether the current visual already implies this; if it does, label it rather than adding copy. |
 | A7 | Double feedback loop | Slide 21 already *is* the double loop (Sphere skill update + evaluator update from one finding). It is not labelled as two loops. Label the two right-hand stages **"agent loop"** and **"evaluator loop"**. No new slide. |
 
 ### B. Cheap — rewrite an existing slide, no net slide added
 
-**B1 — The intern analogy becomes slide 10 (the biggest single win).**
+**B1 — The intern analogy becomes slide 10 (the biggest single win).** - Yes indeed, as described in the other places, lets' fold in and update. 
 
 Arian's framing and the pre-LLM method are the same story, so they should be the same slide rather
 than two. Rewrite slide 10 as:
@@ -65,7 +65,7 @@ This does three jobs at once: it renames the slide (A1), it gives the audience a
 model they already trust, and it makes "alignment" concrete before any judge appears. It also sets
 up `aligned_with_human` on slide 16 for free.
 
-**B2 — Trim slide 19 (offline / online / continuous).**
+**B2 — Trim slide 19 (offline / online / continuous).** - Dont trim, keep as is. was already updated. 
 
 Arian: too much text. The axis rebuild already cut the three cards; the three `meta` lines are what
 is left. Cut each to four words or fewer:
@@ -77,7 +77,7 @@ is left. Cut each to four words or fewer:
 Keep the honesty footnote ("the criterion moves between modes only while production stays inside
 the slice validated by humans") — it is load-bearing for the close.
 
-**B3 — Wobble stays, and earns it with motion.**
+**B3 — Wobble stays, and earns it with motion.** - we can clarify the wobbling more with making them go red/green back and forth. omits the visual movement, we keep the rings. We probably should use instable judge everywhere instead of wobbly. 
 
 Arian's verdict: keep "wobble" if the animation lands; flag that it is industry vocabulary, not
 academic. Today the Wobbly definition fades in on click with no motion. Add a small CSS wobble to
@@ -87,7 +87,7 @@ term, not academic — the academic word is instability."*
 
 ### C. Structural — costs slides, needs displacement
 
-**C1 — Fix the three-questions spine (this is the "storyline not flowing" fix).**
+**C1 — Fix the three-questions spine (this is the "storyline not flowing" fix).** - replace with empty placeholder for now. we will come back to this later. 
 
 Questions 01 and 02 arrive as small eyebrows on content slides; question 03 gets a full divider.
 The spine only works if the audience notices it three times, the same way each time.
@@ -99,7 +99,7 @@ The spine only works if the audience notices it three times, the same way each t
 
 Recommend the dividers. Displacement to pay for them is in C3.
 
-**C2 — "Why align at all", before the binary-evals slide.**
+**C2 — "Why align at all", before the binary-evals slide.** - good, and this should be really fast. I'm thinking, into the problem: you need good judge to get good agent. How do you get good judge: human alignment. Can be slide 4/5. We had a goodd intro slide on this problem of needing a good judge before as well, but it seems that was lost somewhere. see if you can retrieve it from history and add it back in. Then after that, we need a slide to explain the traditional alignment method with an human expert writing criteria for non-experts to do the work. I want two visual flows, one before with the expert, and then a new one where the interns/non-experts are llm judges. 
 
 Arian's missing-intro point. With B1 in place, most of this is already covered — the intern
 analogy explains why agreement matters. What is still missing is the lazy framing *as a question*:
@@ -110,14 +110,14 @@ question is what slides 11 and 12 answer, and right now nobody asks it out loud.
   **"We need humans to agree. Humans do not scale."** Zero slide cost, and the divider stops being
   decoration.
 
-**C3 — Displacement: merge slides 8 and 9.**
+**C3 — Displacement: merge slides 8 and 9.** - No, dont do. slide 9 is super fast, does not take much time. extra slide does not increase presentation length. 
 
 To pay for C1's two dividers inside the fixed 30 minutes: slide 8 (the grey zone) and slide 9
 (*does the answer help the decision?*) are the same beat — the criterion exists because the middle
 is grey. Merge into one slide: the grey-zone visual with the criterion as its heading.
 **Cost: −1 slide, ~40 seconds recovered.** Net after C1: **+1 slide, roughly time-neutral.**
 
-**C4 — The agent transition (open question, needs Bauke's call).**
+**C4 — The agent transition (open question, needs Bauke's call).** - keep it. 
 
 Arian says the jump to agent evals is abrupt and wants a bridging slide. Slide 17 is that bridge,
 and it was added after this deck version — Arian may not have seen it. Its subtitle was
@@ -143,7 +143,7 @@ Recommend 1 unless the run-through shows the transition still landing hard.
 ## Not accepted as-is
 
 - **"Wobbly" → "unstable".** Arian himself leaves this open and prefers wobble if the motion lands.
-  Keeping wobble; B3 makes it earn the name.
+  Keeping wobble; B3 makes it earn the name. - let's move to unstable. makes more sense.
 
 ## Open items
 
