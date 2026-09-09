@@ -124,6 +124,20 @@ for case in case_signals:
     )
 case_dot_svg = "\n".join(case_marks)
 
+# Real jury verdicts from the v3 decision-support run
+# (runs/decision-support-jury-prompt-v3-20260908.jsonl, 2026-09-08). One layer per case, nine cells
+# per layer: three judges by three repetitions. The front layer is the case discussed out loud.
+judge_grid = json.loads(
+    pathlib.Path(__file__).with_name("judge-grid-v3.json").read_text(encoding="utf-8")
+)
+judge_names = "".join(f"<span>{name}</span>" for name in judge_grid["judges"])
+judge_layers = "".join(
+    f'<div class="layer{" front" if depth == 0 else ""}" style="--i:{depth}">'
+    + "".join(f'<i class="{cell}"></i>' for cell in layer)
+    + "</div>"
+    for depth, layer in enumerate(judge_grid["layers"])
+)
+
 # Real agent trajectories from the canonical v4 observation run
 # (runs/v4-observations-retry-20260907.jsonl, 2026-09-07). One bar per case; each segment is one
 # message, its width the size of that message, its colour the kind of turn.
@@ -305,6 +319,25 @@ html = r'''<!doctype html>
   .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
+  .gridwrap{position:relative;height:600px;margin-top:26px;perspective:2400px}
+  .deck3d{position:absolute;left:660px;top:300px;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
+  .slide[data-step="1"] .deck3d{transform:translateX(30px) scale(.64) rotateX(12deg) rotateY(-27deg)}
+  .layer{position:absolute;left:-195px;top:-195px;width:390px;height:390px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;transform:translateZ(calc(var(--i) * -88px));opacity:0;transition:opacity .9s ease}
+  .layer.front{opacity:1}
+  .slide[data-step="1"] .layer{opacity:.42}
+  .slide[data-step="1"] .layer.front{opacity:1}
+  .layer i{border-radius:10px;background:var(--teal)}
+  .layer i.f{background:var(--orange-dark)}
+  .layer i.n{background:var(--muted)}
+  .gridwrap .axis{position:absolute;left:0;top:105px;height:390px;width:420px;display:flex;flex-direction:column;justify-content:space-around;text-align:right;font-family:var(--mono);font-size:26px;color:var(--ink2);transition:opacity .6s ease}
+  .gridwrap .reps{position:absolute;left:465px;top:56px;width:390px;text-align:center;font-family:var(--mono);font-size:24px;color:var(--muted);transition:opacity .6s ease}
+  .slide[data-step="1"] .gridwrap .axis,.slide[data-step="1"] .gridwrap .reps{opacity:0}
+  .gridwrap .depth{position:absolute;left:290px;top:500px;font-family:var(--mono);font-size:26px;color:var(--muted);opacity:0;transition:opacity .8s ease .5s}
+  .slide[data-step="1"] .gridwrap .depth{opacity:1}
+  .grid-cap{transition:opacity .4s ease}
+  .grid-cap.step1,.slide[data-step="1"] .grid-cap.step0{position:absolute;opacity:0}
+  .slide[data-step="1"] .grid-cap.step1{position:static;opacity:1}
+  @media (prefers-reduced-motion:reduce){.deck3d,.layer,.gridwrap .axis,.gridwrap .reps,.gridwrap .depth{transition-duration:.01ms}}
   .queue-line{margin-top:34px;opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
@@ -669,18 +702,18 @@ html = r'''<!doctype html>
   <p class="body analogy-note">The expert never left. Only the annotators changed.</p>
 </section>
 
-<!-- 15 · Priority -->
+<!-- 15 · Judge grid -->
 <section class="slide" data-steps="1">
-  <h2>LLM judges determine priority</h2>
-  <ul class="plain">
-    <li>Judge disagreement</li>
-    <li>Judge instability</li>
-  </ul>
-  <div class="define">
-    <div class="word">Unstable</div>
-    <div class="gram">ADJECTIVE</div>
-    <p class="meaning">Of an LLM judge: returning different verdicts on repeated evaluations of the same case.</p>
+  <h2>Two ways a verdict fails to hold still</h2>
+  <p class="sub">Three judges &#183; three repetitions &#183; one real case</p>
+  <div class="gridwrap">
+    <div class="axis">__JUDGE_NAMES__</div>
+    <div class="reps">3 repetitions &#8594;</div>
+    <div class="deck3d">__JUDGE_LAYERS__</div>
+    <div class="depth">&hellip; &times; 50 cases</div>
   </div>
+  <p class="body grid-cap step0">Judges disagree with each other, and one judge disagrees with itself.</p>
+  <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
 <!-- 16 · Lazy queue -->
@@ -968,6 +1001,8 @@ html = (
     .replace("__TRAJ_ROWS__", traj_svg)
     .replace("__TRAJ_H__", str(traj_height))
     .replace("__FLAGGED__", str(flagged_size))
+    .replace("__JUDGE_NAMES__", judge_names)
+    .replace("__JUDGE_LAYERS__", judge_layers)
 )
 
 output = pathlib.Path(__file__).with_name("pydata-2026.html")

@@ -173,17 +173,16 @@ The development and test split belongs to this method too, but it is introduced 
 
 This is methodologically clean and expensive in expert attention.
 
-### Slide: LLM judges determine priority
+### Slide: Two ways a verdict fails to hold still
 
-The concept before the picture, stated as plainly as it will go: two signals decide what a human
-reads first.
+Both signals in one picture, on real verdicts. A three-by-three grid: rows are the three judges by
+name, columns are the three repetitions of the same case, each cell coloured by its verdict. Read
+across a row and you see one judge disagreeing with itself; read down a column and you see the
+judges disagreeing with each other. Every cell is one measured decision, so it holds one colour.
 
-- judge disagreement
-- judge instability
-
-On the click, the definition of the second one appears on the same slide: **Unstable**, adjective,
-LLM-as-a-judge flips sides on repeated evaluations of the same case. The term recurs for the rest
-of the talk, so define it here and do not re-explain it later.
+On the click, the grid rotates back into depth and forty-nine further layers appear behind it, one
+per case in the pool: the same two signals exist for all fifty. Verdicts come from the v3
+decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
 
 ### Slide: We are lazy—make the queue smarter
 
