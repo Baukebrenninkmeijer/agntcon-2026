@@ -180,6 +180,11 @@ name, columns are the three repetitions of the same case, each cell coloured by 
 across a row and you see one judge disagreeing with itself; read down a column and you see the
 judges disagreeing with each other. Every cell is one measured decision, so it holds one colour.
 
+This is also where the term is defined, by picture rather than by dictionary: a judge is *unstable*
+when it returns different verdicts on repeated evaluations of the same case, and one pass/fail
+change across a model's three repetitions is enough to flag the case for review. The term recurs
+for the rest of the talk and is not re-explained.
+
 On the click, the grid rotates back into depth and forty-nine further layers appear behind it, one
 per case in the pool: the same two signals exist for all fifty. Verdicts come from the v3
 decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
@@ -205,17 +210,6 @@ with jury disagreement, eight unstable, twelve flagged in total.
 
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
-
-### Slide: Unstable
-
-Give the term a compact dictionary definition before showing the measured queue:
-
-> **unstable**, adjective — of an LLM judge: returning different verdicts when asked to grade the
-> same case with the same rubric.
-
-For this walkthrough, one pass/fail change across a model's three repetitions is enough to flag the
-case for review. This definition takes the detailed explanation off the preceding queue slide; it
-does not add time to the seven-minute section.
 
 ### Slide: Align the evaluator like any other model
 
