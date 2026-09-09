@@ -32,9 +32,9 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 5-9 | `Question 01 · Start with humans` (slide 6) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 10-15 | `Question 02 · Trust the judge` (slide 10) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 16-18 | `Question 03 · What changes with agents` (slide 17) |
+| 01 · How do you get a first signal with no labels? | section 2 | 7-11 | `Question 01 · Start with humans` (slide 8) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-23 | `Question 03 · What changes with agents` (slide 21) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -64,6 +64,17 @@ Three lines of bio. Orq is introduced out loud, not on the slide.
 ### Slide: Three questions
 
 Name the three questions the talk answers, then hand each one to a block below.
+
+### Slide: Hard metrics gave way to judgement
+
+A timeline of what evaluation has measured: a countable target, then human relevance, then n-gram
+overlap, then an LLM judge. The task got more open-ended, the metric got softer, and agreement
+between judges became the thing that had to be measured. The field has done this before.
+
+### Slide: The ordering constraint
+
+You cannot use evals to improve an agent before the eval is aligned. This is why the alignment work
+in section 3 comes before the agent work in section 4, and it is stated once, plainly.
 
 ### Slide: Agents widen the gap
 
