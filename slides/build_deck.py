@@ -20,10 +20,6 @@ fonts = {
     "MONO": b64("ESKlarheitKurrentMono-Md.ttf"),
 }
 
-headshot = base64.b64encode(
-    (pathlib.Path(__file__).parent / "assets" / "headshot.jpg").read_bytes()
-).decode()
-
 experiment_grid = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "experiment-grid.jpg").read_bytes()
 ).decode()
@@ -328,16 +324,27 @@ html = r'''<!doctype html>
   .chart .dip{fill:var(--orange-dark)}
   .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
   .chart .lbl.dim{fill:var(--muted)}
-  .learning-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:46px;margin-top:24px}
+  .learning-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:46px;margin-top:24px}
   .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
-  .learning-stage:nth-child(2){border-color:var(--ink)}
-  .learning-stage:nth-child(4){border-color:var(--orange)}
+  .learning-stage:nth-child(3){border-color:var(--orange)}
+  .learning-stage:nth-child(2)::after{color:var(--orange)}
   .learning-stage:not(:last-child)::after{content:"→";position:absolute;right:-40px;top:6px;color:var(--teal);font-size:38px}
   .learning-label{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:22px}
   .learning-stage p{font-size:26px;line-height:1.38;color:var(--ink2)}
   .learning-stage strong{display:block;font-size:31px;line-height:1.24;font-weight:500;color:var(--ink);margin-bottom:18px}
   .learning-rerun{margin-top:64px;font-size:29px;color:var(--orange-dark);text-align:right}
   .flow-arrow{font-size:64px;color:var(--orange);text-align:center}
+  .dual-loop{display:grid;grid-template-columns:auto 60px 1fr 60px 1fr;grid-template-rows:1fr 1fr;align-items:center;column-gap:0;row-gap:38px;margin-top:44px}
+  .dual-loop .finding{grid-row:1 / span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;width:420px;border:4px solid var(--ink);border-radius:22px;background:var(--paper);padding:34px}
+  .dual-loop .finding strong{display:block;font-size:40px;line-height:1.15;color:var(--ink)}
+  .dual-loop .finding span{margin-top:16px;font-family:var(--mono);font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .dual-loop .arrow{font-size:52px;text-align:center;color:var(--teal)}
+  .dual-loop .arrow.row2{color:var(--orange)}
+  .dual-loop .step.row2{--accent:var(--orange)}
+  .dual-loop .step{border-top:4px solid var(--accent,var(--teal));padding-top:26px}
+  .dual-loop .step .lbl{font-family:var(--mono);font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  .dual-loop .step strong{display:block;font-size:34px;line-height:1.22;font-weight:500;color:var(--ink)}
+  .dual-loop-note{margin-top:56px;font-size:34px;color:var(--orange-dark)}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
   .factory .flow-arrow{font-size:48px;color:var(--teal)}
@@ -375,8 +382,6 @@ html = r'''<!doctype html>
   .ambiguity-metric span{font-size:27px;line-height:1.22;color:var(--ink2)}
   .ambiguity-takeaway{margin-top:42px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
-  .portrait{width:100%;max-width:520px;justify-self:end;border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:0 10px 34px rgba(37,35,46,.12)}
-  .portrait img{display:block;width:100%;height:auto}
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
@@ -413,16 +418,13 @@ html = r'''<!doctype html>
 <!-- 3 · Speaker -->
 <section class="slide">
   <div class="eyebrow">Who is saying this</div>
-  <div class="cols wide">
-    <div>
+  <div>
       <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
       <ul class="plain">
-        <li>Research Engineer @ Orq.ai — agent infrastructure and LLM evaluation</li>
+        <li>Research Engineer @ Orq.ai</li>
         <li>6 years data science @ ABN AMRO &amp; ING</li>
         <li>Lead @ Agentic AI Foundation Amsterdam</li>
       </ul>
-    </div>
-    <div class="portrait"><img src="data:image/jpeg;base64,__HEADSHOT__" alt="Bauke Brenninkmeijer"></div>
   </div>
 </section>
 
@@ -514,9 +516,26 @@ html = r'''<!doctype html>
   <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
-<!-- 10 · Historical method -->
+<!-- 10 · Two loops -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
+  <h2>Every failure has two suspects</h2>
+  <div class="dual-loop" aria-label="One failing evaluation starts either the system loop or the evaluator loop">
+    <div class="finding"><strong>The eval says FAIL</strong><span>one case, one criterion</span></div>
+    <div class="arrow">&#8599;</div>
+    <div class="step"><div class="lbl">System loop</div><strong>The answer really was wrong</strong></div>
+    <div class="arrow">&#8594;</div>
+    <div class="step"><div class="lbl">Fix</div><strong>Update the agent</strong></div>
+    <div class="arrow row2">&#8600;</div>
+    <div class="step row2"><div class="lbl">Evaluator loop</div><strong>The judge was wrong</strong></div>
+    <div class="arrow row2">&#8594;</div>
+    <div class="step row2"><div class="lbl">Fix</div><strong>Update the evaluator</strong></div>
+  </div>
+  <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
+</section>
+
+<!-- 11 · Historical method -->
+<section class="slide">
   <h2>The historical method</h2>
   <p class="sub">Random sampling, manual review.</p>
   <div class="cols spine-layout">
@@ -532,7 +551,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 11 · Priority -->
+<!-- 12 · Priority -->
 <section class="slide" data-steps="1">
   <h2>LLM judges determine priority</h2>
   <ul class="plain">
@@ -546,7 +565,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 12 · Lazy queue -->
+<!-- 13 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -573,7 +592,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 13 · Alignment -->
+<!-- 14 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -585,7 +604,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 14 · One human answer exposes another ambiguity -->
+<!-- 15 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -611,7 +630,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 15 · Grey-zone loop -->
+<!-- 16 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -635,20 +654,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 16 · Experiment grid -->
+<!-- 17 · Experiment grid -->
 <section class="slide">
   <h2>v3 keeps the agreement and stops flipping</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">One row per case · v1 · v2 · v3 under each evaluator · green passed, red failed</p>
 </section>
 
-<!-- 17 · Question 03 -->
+<!-- 18 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 18 · Agent evaluation -->
+<!-- 19 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
@@ -663,7 +682,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 19 · Operating modes -->
+<!-- 20 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -685,7 +704,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 20 · Lifecycle -->
+<!-- 21 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -720,19 +739,18 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 21 · Finding to knowledge -->
+<!-- 22 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
     <div class="learning-stage"><div class="learning-label">Evaluator finding</div><strong>The analysis reports declining revenue.</strong><p>It never explains what the CFO should decide.</p></div>
-    <div class="learning-stage"><div class="learning-label">Diagnosis</div><strong>Two gaps, not one.</strong><p>Sphere never connects analysis to decision, and the rubric never said what unsupported means.</p></div>
     <div class="learning-stage"><div class="learning-label">Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, lead with the implication.</p></div>
     <div class="learning-stage"><div class="learning-label">Evaluator update</div><strong>Say what unsupported means.</strong><p>A claim fails when the visible evidence contradicts it, not merely when proof is absent.</p></div>
   </div>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 22 · Software factory -->
+<!-- 23 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -746,7 +764,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 23 · Close -->
+<!-- 24 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -821,7 +839,6 @@ html = (
     .replace("__MD__", fonts["MD"])
     .replace("__SB__", fonts["SB"])
     .replace("__MONO__", fonts["MONO"])
-    .replace("__HEADSHOT__", headshot)
     .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__GREY_DOTS__", grey_dot_svg)
     .replace("__GREY_P1__", grey_paths[0])

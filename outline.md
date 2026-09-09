@@ -128,6 +128,18 @@ judges the conversation, visible tool evidence, and final response against the s
 
 ## 3. Align an LLM-as-a-judge (7 min)
 
+### Slide: Every failure has two suspects
+
+Opens the question 02 block, before the pre-LLM method. One failing evaluation starts one of two
+loops: either the answer really was wrong and the agent gets updated (system loop), or the judge
+was wrong and the evaluator gets updated (evaluator loop). The point of the slide is the closing
+line: aligning the judge to humans is how you tell the two apart. This is the motivation for
+everything in section 3 — without alignment you cannot know which loop a failure belongs to, so
+you risk fixing the agent to satisfy a judge that is itself wrong.
+
+The concrete instance of both loops appears in section 6 ("A finding is not yet knowledge"), where
+one Sphere finding produces a skill update and an evaluator update from the same case.
+
 ### Slide: The historical method
 
 Show the conventional workflow first:
