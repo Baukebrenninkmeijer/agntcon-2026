@@ -137,20 +137,18 @@
   .dots .g{transform:translate(var(--x),var(--y));transition:transform .9s cubic-bezier(.2,.7,.25,1),opacity .5s ease}
   .dots .ring{opacity:0;transition:opacity .5s ease}
   .slide[data-step="1"] .dots .ring,.slide[data-step="2"] .dots .ring{opacity:1}
-  .slide[data-step="1"] .dots .wob .wb,.slide[data-step="1"] .dots .dis .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
-  .slide[data-step="2"] .dots .wob:not(.q) .wb,.slide[data-step="2"] .dots .dis:not(.q) .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
+  .slide[data-step="1"] .dots .wob .case,.slide[data-step="2"] .dots .wob .case{animation:flip 2.6s steps(1,end) infinite}
+  @keyframes flip{0%{fill:var(--teal)}50%{fill:var(--orange-dark)}100%{fill:var(--teal)}}
+  @media (prefers-reduced-motion:reduce){.dots .case{animation:none!important}}
   .slide[data-step="2"] .dots .q{transform:translate(var(--qx),var(--qy)) scale(.82)}
   .slide[data-step="2"] .dots .g:not(.q){opacity:.22}
-  @keyframes wobble-hard{0%,100%{transform:translate(0,0)}12.5%{transform:translate(4px,-3px)}25%{transform:translate(5px,3px)}37.5%{transform:translate(1px,5px)}50%{transform:translate(-4px,4px)}62.5%{transform:translate(-5px,-1px)}75%{transform:translate(-3px,-5px)}87.5%{transform:translate(2px,-4px)}}
   .dots .lane{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10;opacity:.55}
   .dots .lane-label{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--muted)}
   .dots .lane-count{font-family:var(--mono);font-size:30px;fill:var(--muted);text-anchor:end}
   .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
-  .dots .rank-mark{font-family:var(--mono);font-size:24px;fill:var(--muted);text-anchor:middle;opacity:0;transition:opacity .4s ease .5s}
-  .slide[data-step="2"] .dots .rank-mark{opacity:1}
-  .queue-line{opacity:0;transition:opacity .4s ease}
+  .queue-line{margin-top:34px;opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
   .legend span{display:flex;align-items:center;gap:12px}
@@ -591,63 +589,65 @@
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
-      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability lift twelve of them into the review queue">
-        <rect class="lane" x="62" y="64" width="1116" height="116" rx="14"/>
-        <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
-        <text class="lane-count start" x="1178" y="38">0 / 50</text>
-        <text class="lane-count done" x="1178" y="38">12 / 50</text>
-        <text class="rank-mark" x="115" y="216">1st</text>
-        <text class="rank-mark" x="1105" y="216">12th</text>
-        <g class="g" style="--x:110px;--y:300px"><g class="wb" style="animation-delay:0.00s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:226px;--y:300px"><g class="wb" style="animation-delay:1.37s"><circle class="case" r="27"/></g></g>
-<g class="g q dis" style="--x:342px;--y:300px;--qx:295px;--qy:122px"><g class="wb" style="animation-delay:0.34s"><circle class="ring disagree" r="43"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:458px;--y:300px"><g class="wb" style="animation-delay:1.71s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:574px;--y:300px"><g class="wb" style="animation-delay:0.68s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:690px;--y:300px"><g class="wb" style="animation-delay:2.05s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:806px;--y:300px"><g class="wb" style="animation-delay:1.02s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:922px;--y:300px"><g class="wb" style="animation-delay:2.39s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:1038px;--y:300px;--qx:655px;--qy:122px"><g class="wb" style="animation-delay:1.36s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1154px;--y:300px"><g class="wb" style="animation-delay:0.33s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:110px;--y:400px"><g class="wb" style="animation-delay:1.70s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:226px;--y:400px"><g class="wb" style="animation-delay:0.67s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:342px;--y:400px;--qx:745px;--qy:122px"><g class="wb" style="animation-delay:2.04s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g q wob dis" style="--x:458px;--y:400px;--qx:115px;--qy:122px"><g class="wb" style="animation-delay:1.01s"><circle class="ring disagree" r="43"/><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:574px;--y:400px"><g class="wb" style="animation-delay:2.38s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:690px;--y:400px"><g class="wb" style="animation-delay:1.35s"><circle class="case" r="27"/></g></g>
-<g class="g q dis" style="--x:806px;--y:400px;--qx:385px;--qy:122px"><g class="wb" style="animation-delay:0.32s"><circle class="ring disagree" r="43"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:922px;--y:400px"><g class="wb" style="animation-delay:1.69s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:1038px;--y:400px;--qx:835px;--qy:122px"><g class="wb" style="animation-delay:0.66s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1154px;--y:400px"><g class="wb" style="animation-delay:2.03s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:110px;--y:500px"><g class="wb" style="animation-delay:1.00s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:226px;--y:500px"><g class="wb" style="animation-delay:2.37s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:342px;--y:500px"><g class="wb" style="animation-delay:1.34s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:458px;--y:500px"><g class="wb" style="animation-delay:0.31s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:574px;--y:500px"><g class="wb" style="animation-delay:1.68s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:690px;--y:500px;--qx:925px;--qy:122px"><g class="wb" style="animation-delay:0.65s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g q dis" style="--x:806px;--y:500px;--qx:475px;--qy:122px"><g class="wb" style="animation-delay:2.02s"><circle class="ring disagree" r="43"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:922px;--y:500px"><g class="wb" style="animation-delay:0.99s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1038px;--y:500px"><g class="wb" style="animation-delay:2.36s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1154px;--y:500px"><g class="wb" style="animation-delay:1.33s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:110px;--y:600px"><g class="wb" style="animation-delay:0.30s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:226px;--y:600px"><g class="wb" style="animation-delay:1.67s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:342px;--y:600px"><g class="wb" style="animation-delay:0.64s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:458px;--y:600px"><g class="wb" style="animation-delay:2.01s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:574px;--y:600px;--qx:1015px;--qy:122px"><g class="wb" style="animation-delay:0.98s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:690px;--y:600px"><g class="wb" style="animation-delay:2.35s"><circle class="case" r="27"/></g></g>
-<g class="g q dis" style="--x:806px;--y:600px;--qx:565px;--qy:122px"><g class="wb" style="animation-delay:1.32s"><circle class="ring disagree" r="43"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:922px;--y:600px"><g class="wb" style="animation-delay:0.29s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1038px;--y:600px"><g class="wb" style="animation-delay:1.66s"><circle class="case" r="27"/></g></g>
-<g class="g q wob dis" style="--x:1154px;--y:600px;--qx:205px;--qy:122px"><g class="wb" style="animation-delay:0.63s"><circle class="ring disagree" r="43"/><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:110px;--y:700px"><g class="wb" style="animation-delay:2.00s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:226px;--y:700px"><g class="wb" style="animation-delay:0.97s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:342px;--y:700px"><g class="wb" style="animation-delay:2.34s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:458px;--y:700px"><g class="wb" style="animation-delay:1.31s"><circle class="case" r="27"/></g></g>
-<g class="g q wob" style="--x:574px;--y:700px;--qx:1105px;--qy:122px"><g class="wb" style="animation-delay:0.28s"><circle class="ring wobble" r="35"/><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:690px;--y:700px"><g class="wb" style="animation-delay:1.65s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:806px;--y:700px"><g class="wb" style="animation-delay:0.62s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:922px;--y:700px"><g class="wb" style="animation-delay:1.99s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1038px;--y:700px"><g class="wb" style="animation-delay:0.96s"><circle class="case" r="27"/></g></g>
-<g class="g" style="--x:1154px;--y:700px"><g class="wb" style="animation-delay:2.33s"><circle class="case" r="27"/></g></g>
+      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability flag twelve, four of which go to the review batch alongside four randomly sampled cases">
+        <rect class="lane" x="62" y="56" width="1116" height="104" rx="14"/>
+        <text class="lane-label" x="62" y="34">REVIEW FIRST</text>
+        <text class="lane-count start" x="1178" y="34">0</text>
+        <text class="lane-count done" x="1178" y="34">4 flagged</text>
+        <rect class="lane" x="62" y="200" width="1116" height="104" rx="14"/>
+        <text class="lane-label" x="62" y="186">CONTROL</text>
+        <text class="lane-count start" x="1178" y="186">0</text>
+        <text class="lane-count done" x="1178" y="186">4 sampled</text>
+        <g class="g" style="--x:110px;--y:356px"><circle class="case" r="27" style="animation-delay:0.00s"/></g>
+<g class="g" style="--x:226px;--y:356px"><circle class="case" r="27" style="animation-delay:1.37s"/></g>
+<g class="g q dis" style="--x:342px;--y:356px;--qx:690px;--qy:108px"><circle class="ring disagree" r="43"/><circle class="case" r="27" style="animation-delay:0.34s"/></g>
+<g class="g" style="--x:458px;--y:356px"><circle class="case" r="27" style="animation-delay:1.71s"/></g>
+<g class="g" style="--x:574px;--y:356px"><circle class="case" r="27" style="animation-delay:0.68s"/></g>
+<g class="g" style="--x:690px;--y:356px"><circle class="case" r="27" style="animation-delay:2.05s"/></g>
+<g class="g" style="--x:806px;--y:356px"><circle class="case" r="27" style="animation-delay:1.02s"/></g>
+<g class="g q sam" style="--x:922px;--y:356px;--qx:690px;--qy:252px"><circle class="case" r="27" style="animation-delay:2.39s"/></g>
+<g class="g wob" style="--x:1038px;--y:356px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:1.36s"/></g>
+<g class="g" style="--x:1154px;--y:356px"><circle class="case" r="27" style="animation-delay:0.33s"/></g>
+<g class="g" style="--x:110px;--y:448px"><circle class="case" r="27" style="animation-delay:1.70s"/></g>
+<g class="g" style="--x:226px;--y:448px"><circle class="case" r="27" style="animation-delay:0.67s"/></g>
+<g class="g wob" style="--x:342px;--y:448px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:2.04s"/></g>
+<g class="g q wob dis" style="--x:458px;--y:448px;--qx:190px;--qy:108px"><circle class="ring disagree" r="43"/><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:1.01s"/></g>
+<g class="g" style="--x:574px;--y:448px"><circle class="case" r="27" style="animation-delay:2.38s"/></g>
+<g class="g" style="--x:690px;--y:448px"><circle class="case" r="27" style="animation-delay:1.35s"/></g>
+<g class="g q dis" style="--x:806px;--y:448px;--qx:940px;--qy:108px"><circle class="ring disagree" r="43"/><circle class="case" r="27" style="animation-delay:0.32s"/></g>
+<g class="g" style="--x:922px;--y:448px"><circle class="case" r="27" style="animation-delay:1.69s"/></g>
+<g class="g wob" style="--x:1038px;--y:448px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:0.66s"/></g>
+<g class="g" style="--x:1154px;--y:448px"><circle class="case" r="27" style="animation-delay:2.03s"/></g>
+<g class="g" style="--x:110px;--y:540px"><circle class="case" r="27" style="animation-delay:1.00s"/></g>
+<g class="g q sam" style="--x:226px;--y:540px;--qx:190px;--qy:252px"><circle class="case" r="27" style="animation-delay:2.37s"/></g>
+<g class="g" style="--x:342px;--y:540px"><circle class="case" r="27" style="animation-delay:1.34s"/></g>
+<g class="g" style="--x:458px;--y:540px"><circle class="case" r="27" style="animation-delay:0.31s"/></g>
+<g class="g" style="--x:574px;--y:540px"><circle class="case" r="27" style="animation-delay:1.68s"/></g>
+<g class="g wob" style="--x:690px;--y:540px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:0.65s"/></g>
+<g class="g dis" style="--x:806px;--y:540px"><circle class="ring disagree" r="43"/><circle class="case" r="27" style="animation-delay:2.02s"/></g>
+<g class="g q sam" style="--x:922px;--y:540px;--qx:440px;--qy:252px"><circle class="case" r="27" style="animation-delay:0.99s"/></g>
+<g class="g" style="--x:1038px;--y:540px"><circle class="case" r="27" style="animation-delay:2.36s"/></g>
+<g class="g" style="--x:1154px;--y:540px"><circle class="case" r="27" style="animation-delay:1.33s"/></g>
+<g class="g" style="--x:110px;--y:632px"><circle class="case" r="27" style="animation-delay:0.30s"/></g>
+<g class="g" style="--x:226px;--y:632px"><circle class="case" r="27" style="animation-delay:1.67s"/></g>
+<g class="g" style="--x:342px;--y:632px"><circle class="case" r="27" style="animation-delay:0.64s"/></g>
+<g class="g q sam" style="--x:458px;--y:632px;--qx:940px;--qy:252px"><circle class="case" r="27" style="animation-delay:2.01s"/></g>
+<g class="g wob" style="--x:574px;--y:632px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:0.98s"/></g>
+<g class="g" style="--x:690px;--y:632px"><circle class="case" r="27" style="animation-delay:2.35s"/></g>
+<g class="g dis" style="--x:806px;--y:632px"><circle class="ring disagree" r="43"/><circle class="case" r="27" style="animation-delay:1.32s"/></g>
+<g class="g" style="--x:922px;--y:632px"><circle class="case" r="27" style="animation-delay:0.29s"/></g>
+<g class="g" style="--x:1038px;--y:632px"><circle class="case" r="27" style="animation-delay:1.66s"/></g>
+<g class="g q wob dis" style="--x:1154px;--y:632px;--qx:440px;--qy:108px"><circle class="ring disagree" r="43"/><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:0.63s"/></g>
+<g class="g" style="--x:110px;--y:724px"><circle class="case" r="27" style="animation-delay:2.00s"/></g>
+<g class="g" style="--x:226px;--y:724px"><circle class="case" r="27" style="animation-delay:0.97s"/></g>
+<g class="g" style="--x:342px;--y:724px"><circle class="case" r="27" style="animation-delay:2.34s"/></g>
+<g class="g" style="--x:458px;--y:724px"><circle class="case" r="27" style="animation-delay:1.31s"/></g>
+<g class="g wob" style="--x:574px;--y:724px"><circle class="ring wobble" r="35"/><circle class="case" r="27" style="animation-delay:0.28s"/></g>
+<g class="g" style="--x:690px;--y:724px"><circle class="case" r="27" style="animation-delay:1.65s"/></g>
+<g class="g" style="--x:806px;--y:724px"><circle class="case" r="27" style="animation-delay:0.62s"/></g>
+<g class="g" style="--x:922px;--y:724px"><circle class="case" r="27" style="animation-delay:1.99s"/></g>
+<g class="g" style="--x:1038px;--y:724px"><circle class="case" r="27" style="animation-delay:0.96s"/></g>
+<g class="g" style="--x:1154px;--y:724px"><circle class="case" r="27" style="animation-delay:2.33s"/></g>
       </svg>
       <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
     </div>
@@ -658,7 +658,7 @@
         <li>Each judge votes three times: disagreement between judges, instability within one</li>
         <li><b class="hl">Those cases go to the front of the human queue</b></li>
       </ul>
-      <p class="body queue-line">12 of 50 reviewed first. The unanimous rest are sampled as a control.</p>
+      <p class="body queue-line">12 of 50 were flagged. Review four of them, plus four sampled at random.</p>
     </div>
   </div>
 </section>

@@ -84,18 +84,30 @@ queue = sorted(
     (case for case in case_signals if case["disagree"] or case["wobble"]),
     key=lambda case: (not case["disagree"], not case["wobble"], case["raw_agreement"]),
 )
-queue_rank = {case["i"]: rank for rank, case in enumerate(queue)}
+flagged_size = len(queue)
+# The recommended review batch: the four highest-signal flagged cases, plus four
+# unflagged cases sampled at random, so the human sees a control alongside the queue.
+review_batch = 4
+queue_rank = {case["i"]: rank for rank, case in enumerate(queue[:review_batch])}
+unflagged = [case["i"] for case in case_signals if not (case["disagree"] or case["wobble"])]
+sample_rank = {
+    index: rank
+    for rank, index in enumerate(random.Random(4).sample(unflagged, review_batch))
+}
 
 case_marks: list[str] = []
 for case in case_signals:
     index = case["i"]
     cx = 110 + (index % 10) * 116
-    cy = 300 + (index // 10) * 100
+    cy = 356 + (index // 10) * 92
     classes = ["g"]
     style = f"--x:{cx}px;--y:{cy}px"
     if index in queue_rank:
         classes.append("q")
-        style += f";--qx:{115 + queue_rank[index] * 90}px;--qy:122px"
+        style += f";--qx:{190 + queue_rank[index] * 250}px;--qy:108px"
+    elif index in sample_rank:
+        classes.append("q sam")
+        style += f";--qx:{190 + sample_rank[index] * 250}px;--qy:252px"
     if case["wobble"]:
         classes.append("wob")
     if case["disagree"]:
@@ -107,10 +119,9 @@ for case in case_signals:
         rings += '<circle class="ring wobble" r="35"/>'
     case_marks.append(
         f'<g class="{" ".join(classes)}" style="{style}">'
-        f'<g class="wb" style="animation-delay:{(index * 137 % 240) / 100:.2f}s">'
-        f'{rings}<circle class="case" r="27"/></g></g>'
+        f'{rings}<circle class="case" r="27"'
+        f' style="animation-delay:{(index * 137 % 240) / 100:.2f}s"/></g>'
     )
-queue_size = len(queue)
 case_dot_svg = "\n".join(case_marks)
 
 # Real agent trajectories from the canonical v4 observation run
@@ -283,20 +294,18 @@ html = r'''<!doctype html>
   .dots .g{transform:translate(var(--x),var(--y));transition:transform .9s cubic-bezier(.2,.7,.25,1),opacity .5s ease}
   .dots .ring{opacity:0;transition:opacity .5s ease}
   .slide[data-step="1"] .dots .ring,.slide[data-step="2"] .dots .ring{opacity:1}
-  .slide[data-step="1"] .dots .wob .wb,.slide[data-step="1"] .dots .dis .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
-  .slide[data-step="2"] .dots .wob:not(.q) .wb,.slide[data-step="2"] .dots .dis:not(.q) .wb{animation:wobble-hard 2.2s linear infinite;will-change:transform}
+  .slide[data-step="1"] .dots .wob .case,.slide[data-step="2"] .dots .wob .case{animation:flip 2.6s steps(1,end) infinite}
+  @keyframes flip{0%{fill:var(--teal)}50%{fill:var(--orange-dark)}100%{fill:var(--teal)}}
+  @media (prefers-reduced-motion:reduce){.dots .case{animation:none!important}}
   .slide[data-step="2"] .dots .q{transform:translate(var(--qx),var(--qy)) scale(.82)}
   .slide[data-step="2"] .dots .g:not(.q){opacity:.22}
-  @keyframes wobble-hard{0%,100%{transform:translate(0,0)}12.5%{transform:translate(4px,-3px)}25%{transform:translate(5px,3px)}37.5%{transform:translate(1px,5px)}50%{transform:translate(-4px,4px)}62.5%{transform:translate(-5px,-1px)}75%{transform:translate(-3px,-5px)}87.5%{transform:translate(2px,-4px)}}
   .dots .lane{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10;opacity:.55}
   .dots .lane-label{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--muted)}
   .dots .lane-count{font-family:var(--mono);font-size:30px;fill:var(--muted);text-anchor:end}
   .dots .lane-count.done{fill:var(--orange-dark);opacity:0}
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
-  .dots .rank-mark{font-family:var(--mono);font-size:24px;fill:var(--muted);text-anchor:middle;opacity:0;transition:opacity .4s ease .5s}
-  .slide[data-step="2"] .dots .rank-mark{opacity:1}
-  .queue-line{opacity:0;transition:opacity .4s ease}
+  .queue-line{margin-top:34px;opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
   .legend span{display:flex;align-items:center;gap:12px}
@@ -678,13 +687,15 @@ html = r'''<!doctype html>
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
-      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability lift twelve of them into the review queue">
-        <rect class="lane" x="62" y="64" width="1116" height="116" rx="14"/>
-        <text class="lane-label" x="62" y="38">REVIEW FIRST</text>
-        <text class="lane-count start" x="1178" y="38">0 / 50</text>
-        <text class="lane-count done" x="1178" y="38">__QUEUE_SIZE__ / 50</text>
-        <text class="rank-mark" x="115" y="216">1st</text>
-        <text class="rank-mark" x="__QLAST_X__" y="216">__QUEUE_SIZE__th</text>
+      <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability flag twelve, four of which go to the review batch alongside four randomly sampled cases">
+        <rect class="lane" x="62" y="56" width="1116" height="104" rx="14"/>
+        <text class="lane-label" x="62" y="34">REVIEW FIRST</text>
+        <text class="lane-count start" x="1178" y="34">0</text>
+        <text class="lane-count done" x="1178" y="34">4 flagged</text>
+        <rect class="lane" x="62" y="200" width="1116" height="104" rx="14"/>
+        <text class="lane-label" x="62" y="186">CONTROL</text>
+        <text class="lane-count start" x="1178" y="186">0</text>
+        <text class="lane-count done" x="1178" y="186">4 sampled</text>
         __CASE_DOTS__
       </svg>
       <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
@@ -696,7 +707,7 @@ html = r'''<!doctype html>
         <li>Each judge votes three times: disagreement between judges, instability within one</li>
         <li><b class="hl">Those cases go to the front of the human queue</b></li>
       </ul>
-      <p class="body queue-line">__QUEUE_SIZE__ of 50 reviewed first. The unanimous rest are sampled as a control.</p>
+      <p class="body queue-line">__FLAGGED__ of 50 were flagged. Review four of them, plus four sampled at random.</p>
     </div>
   </div>
 </section>
@@ -956,8 +967,7 @@ html = (
     .replace("__CASE_DOTS__", case_dot_svg)
     .replace("__TRAJ_ROWS__", traj_svg)
     .replace("__TRAJ_H__", str(traj_height))
-    .replace("__QLAST_X__", str(115 + (queue_size - 1) * 90))
-    .replace("__QUEUE_SIZE__", str(queue_size))
+    .replace("__FLAGGED__", str(flagged_size))
 )
 
 output = pathlib.Path(__file__).with_name("pydata-2026.html")

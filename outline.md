@@ -198,10 +198,11 @@ signals before annotation:
 Prioritize those cases for human review, then add a sample of unanimous cases to catch confidently
 wrong consensus. Continue until the reviewed set is broad enough to support alignment claims.
 
-The slide carries this in three beats: fifty plain case dots, then the rings for the two signals,
-then the flagged cases rising into the review lane in priority order. Positions come from the
-canonical v4 jury run: six cases with jury disagreement, eight unstable, twelve flagged in
-total.
+The slide carries this in three beats: fifty plain case dots, then the rings for the two signals
+with the unstable cases flipping red and green, then a review batch rising out of the grid: four
+flagged cases into the review lane and four unflagged cases into a control lane beside it. That
+half-and-half batch is the recommendation. Positions come from the canonical v4 jury run: six cases
+with jury disagreement, eight unstable, twelve flagged in total.
 
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
