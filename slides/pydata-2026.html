@@ -137,8 +137,8 @@
   .dots .g{transform:translate(var(--x),var(--y));transition:transform .9s cubic-bezier(.2,.7,.25,1),opacity .5s ease}
   .dots .ring{opacity:0;transition:opacity .5s ease}
   .slide[data-step="1"] .dots .ring,.slide[data-step="2"] .dots .ring{opacity:1}
-  .slide[data-step="1"] .dots .wob .case,.slide[data-step="2"] .dots .wob .case{fill:url(#unstable)}
-  @media (prefers-reduced-motion:reduce){.dots .wob .case{fill:var(--teal)}}
+  .slide[data-step="1"] .dots .wob .case,.slide[data-step="1"] .dots .dis .case,.slide[data-step="2"] .dots .wob .case,.slide[data-step="2"] .dots .dis .case{fill:url(#unstable)}
+  @media (prefers-reduced-motion:reduce){.dots .wob .case,.dots .dis .case{fill:var(--teal)}}
   .slide[data-step="2"] .dots .q{transform:translate(var(--qx),var(--qy)) scale(.82)}
   .slide[data-step="2"] .dots .g:not(.q){opacity:.22}
   .dots .lane{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10;opacity:.55}
