@@ -173,6 +173,16 @@ The development and test split belongs to this method too, but it is introduced 
 
 This is methodologically clean and expensive in expert attention.
 
+### Slide: Nothing about this is new. The interns are now models.
+
+Two horizontal tracks, one above the other, each with three stops: the domain expert writes the
+guidelines, annotators label, and an agreement number decides whether to trust the labels. The grey
+track is the pre-LLM version, where the annotators are interns and students, and agreement is
+measured between annotators. The orange track is the same method with LLM judges as the annotators,
+three of them run three times each, and agreement measured against the expert.
+
+The point is the shape being identical: the expert never left, only the annotators changed.
+
 ### Slide: Two ways a verdict fails to hold still
 
 Both signals in one picture, on real verdicts. A three-by-three grid: rows are the three judges by

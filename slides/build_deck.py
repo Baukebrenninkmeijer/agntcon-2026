@@ -399,17 +399,15 @@ html = r'''<!doctype html>
   .twoloop .ring-name{font-size:46px;font-weight:500;fill:var(--ink)}
   .twoloop .stage{font-family:var(--mono);font-size:26px;letter-spacing:.06em;fill:var(--ink2)}
   .twoloop .stage.dim{font-size:23px;fill:var(--muted)}
-  .analogy{margin-top:54px;display:flex;flex-direction:column;gap:52px}
-  .analogy-row{display:grid;grid-template-columns:150px 1fr 60px 1fr 60px 1.15fr;align-items:center;gap:0 22px}
-  .analogy-tag{font-family:var(--mono);font-size:22px;letter-spacing:.14em;color:var(--muted)}
-  .analogy-step{border-top:5px solid var(--accent);padding-top:24px}
-  .analogy-row.then{--accent:var(--muted)}
-  .analogy-row.now{--accent:var(--orange)}
-  .analogy-step strong{display:block;font-size:36px;line-height:1.18;font-weight:500;color:var(--ink)}
-  .analogy-step p{margin-top:12px;font-size:26px;line-height:1.3;color:var(--ink2)}
-  .analogy-step.last{border-color:var(--teal)}
-  .analogy-arrow{font-size:44px;color:var(--accent);text-align:center}
-  .analogy-note{margin-top:58px;color:var(--orange-dark)}
+  .analogy{display:block;width:100%;max-width:1660px;margin:56px auto 0}
+  .analogy .track{stroke:var(--muted);stroke-width:5}
+  .analogy .stop{fill:var(--muted)}
+  .analogy .now .track,.analogy .now .stop{stroke:var(--orange);fill:var(--orange)}
+  .analogy .now .track{fill:none}
+  .analogy .tag{font-family:var(--mono);font-size:24px;letter-spacing:.14em;fill:var(--muted)}
+  .analogy .head{font-size:38px;font-weight:500;fill:var(--ink);text-anchor:middle}
+  .analogy .sub{font-size:27px;fill:var(--ink2);text-anchor:middle}
+  .analogy-note{margin-top:52px;color:var(--orange-dark)}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px;margin-top:38px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 14px}
   .factory .process-card h3{font-size:34px}
@@ -680,24 +678,34 @@ html = r'''<!doctype html>
 <!-- 14 · Two ways to get labels -->
 <section class="slide">
   <h2>Nothing about this is new.<br>The interns are now models.</h2>
-  <div class="analogy" aria-label="The same three-step method, once with human annotators and once with LLM judges">
-    <div class="analogy-row then">
-      <div class="analogy-tag">THEN</div>
-      <div class="analogy-step"><strong>A domain expert</strong><p>writes the guidelines</p></div>
-      <div class="analogy-arrow">&#8594;</div>
-      <div class="analogy-step"><strong>Interns</strong><p>students, Mechanical Turk</p></div>
-      <div class="analogy-arrow">&#8594;</div>
-      <div class="analogy-step last"><strong>Inter-annotator agreement</strong><p>decides whether to trust the labels</p></div>
-    </div>
-    <div class="analogy-row now">
-      <div class="analogy-tag">NOW</div>
-      <div class="analogy-step"><strong>A domain expert</strong><p>writes the guidelines</p></div>
-      <div class="analogy-arrow">&#8594;</div>
-      <div class="analogy-step"><strong>LLM judges</strong><p>three of them, three times each</p></div>
-      <div class="analogy-arrow">&#8594;</div>
-      <div class="analogy-step last"><strong>Agreement with the expert</strong><p>decides whether to trust the judge</p></div>
-    </div>
-  </div>
+  <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="The same three-step method, once with human annotators and once with LLM judges">
+    <g class="then">
+      <text class="tag" x="0" y="98">THEN</text>
+      <line class="track" x1="150" y1="90" x2="1680" y2="90"/>
+      <circle class="stop" cx="330" cy="90" r="13"/>
+      <text class="head" x="330" y="162">A domain expert</text>
+      <text class="sub" x="330" y="208">writes the guidelines</text>
+      <circle class="stop" cx="900" cy="90" r="13"/>
+      <text class="head" x="900" y="162">Interns</text>
+      <text class="sub" x="900" y="208">students, Mechanical Turk</text>
+      <circle class="stop" cx="1450" cy="90" r="13"/>
+      <text class="head" x="1450" y="162">Inter-annotator agreement</text>
+      <text class="sub" x="1450" y="208">decides whether to trust the labels</text>
+    </g>
+    <g class="now">
+      <text class="tag" x="0" y="308">NOW</text>
+      <line class="track" x1="150" y1="300" x2="1680" y2="300"/>
+      <circle class="stop" cx="330" cy="300" r="13"/>
+      <text class="head" x="330" y="372">A domain expert</text>
+      <text class="sub" x="330" y="418">writes the guidelines</text>
+      <circle class="stop" cx="900" cy="300" r="13"/>
+      <text class="head" x="900" y="372">LLM judges</text>
+      <text class="sub" x="900" y="418">three of them, three times each</text>
+      <circle class="stop" cx="1450" cy="300" r="13"/>
+      <text class="head" x="1450" y="372">Agreement with the expert</text>
+      <text class="sub" x="1450" y="418">decides whether to trust the judge</text>
+    </g>
+  </svg>
   <p class="body analogy-note">The expert never left. Only the annotators changed.</p>
 </section>
 
