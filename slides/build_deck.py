@@ -183,7 +183,7 @@ html = r'''<!doctype html>
   @font-face{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,__MONO__) format("truetype");font-weight:500;font-display:swap}
   :root{
     --bg:#f9f8f6;--paper:#fff;--ink:#25232e;--ink2:#55535c;--muted:#8c8a91;
-    --orange:#ff9747;--orange-dark:#df5325;--teal:#4da296;--teal-deep:#025558;
+    --orange:#ff9747;--orange-dark:#df5325;--red:#c94f45;--teal:#4da296;--teal-deep:#025558;
     --sans:"Kurrent",-apple-system,"Inter",system-ui,sans-serif;
     --mono:"Kurrent Mono",ui-monospace,"SF Mono",Menlo,monospace;
   }
@@ -251,6 +251,13 @@ html = r'''<!doctype html>
   .stroke-t{stroke:var(--teal);fill:none;stroke-width:5}
   .stroke-o{stroke:var(--orange);fill:none;stroke-width:6}
   .stroke-d{stroke:var(--muted);fill:none;stroke-width:3}
+  .cols.origin-layout{grid-template-columns:1.5fr .85fr;gap:60px}
+  .origin{display:block;width:100%;max-width:640px;margin:0 auto}
+  .origin .arm{fill:none;stroke:var(--teal);stroke-width:5}
+  .origin .pod{fill:var(--paper);stroke:var(--ink);stroke-width:4}
+  .origin .name{font-size:34px;fill:var(--ink)}
+  .origin .side{font-family:var(--mono);font-size:24px;fill:var(--ink2)}
+  .origin .break{stroke:var(--orange-dark);stroke-width:7;fill:none;stroke-linecap:round}
   .lineage{display:block;width:100%;max-width:1720px;margin:56px auto 0}
   .gz .d.a{fill:var(--ink)}.gz .d.b{fill:var(--teal)}
   .gz .band{opacity:0;transform:scaleY(.15);transform-origin:center;animation:none}
@@ -279,15 +286,15 @@ html = r'''<!doctype html>
   .grey-loop-return::before{content:"";position:absolute;left:-11px;top:-8px;width:18px;height:18px;border-top:4px solid var(--teal);border-right:4px solid var(--teal);transform:rotate(-45deg)}
   .grey-loop-return span{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);background:var(--bg);padding:0 22px;font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--teal-deep);white-space:nowrap}
   .sealed-note{position:absolute;right:0;top:-96px;font-family:var(--mono);font-size:19px;letter-spacing:.12em;color:var(--muted)}
-  .version-proof{display:grid;grid-template-columns:150px 1fr 190px 1fr 150px;align-items:center;gap:30px;margin-top:58px;padding-top:30px;border-top:3px solid rgba(140,138,145,.42);opacity:.15;transition:opacity .45s ease}
-  .slide[data-step="1"] .version-proof{opacity:1}
-  .version-chip{text-align:center}
-  .version-chip strong{display:grid;place-items:center;width:78px;height:78px;border-radius:50%;margin:0 auto 10px;background:var(--teal);color:var(--paper);font-family:var(--mono);font-size:25px}
-  .version-chip.current strong{background:var(--orange);color:var(--ink)}
-  .version-chip span{font-size:20px;color:var(--ink2)}
-  .version-rule{font-size:25px;line-height:1.34;color:var(--ink2);text-align:center}
-  .version-rule b{display:block;color:var(--orange-dark);font-weight:500;margin-bottom:7px}
-  @media (prefers-reduced-motion:reduce){.version-proof{transition:none}}
+  .case-proof{position:relative;display:grid;grid-template-columns:repeat(3,1fr);align-items:start;gap:64px;margin-top:58px;padding:42px 46px 0;border-top:3px solid rgba(140,138,145,.42);opacity:.15;transition:opacity .45s ease}
+  .case-proof::before{content:"AFTER THE BOUNDARY QUESTIONS · APPLY THE DECISIONS TO CASES";position:absolute;left:50%;top:-15px;transform:translateX(-50%);background:var(--bg);padding:0 22px;font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+  .slide[data-step="1"] .case-proof{opacity:1}
+  .proof-case{text-align:center}
+  .proof-case strong{display:grid;place-items:center;width:78px;height:78px;border-radius:50%;margin:0 auto 12px;background:var(--teal);color:var(--paper);font-family:var(--mono);font-size:23px}
+  .proof-case.fail strong{background:var(--red)}
+  .proof-case h4{font-size:25px;line-height:1.2;font-weight:500;margin-bottom:7px}
+  .proof-case p{font-size:21px;line-height:1.3;color:var(--ink2);max-width:25em;margin:0 auto}
+  @media (prefers-reduced-motion:reduce){.case-proof{transition:none}}
   .traj .seg{shape-rendering:crispEdges;transition:opacity .55s ease}
   .slide[data-step="1"] .traj .seg:not(.final){opacity:.3}
   .slide[data-step="1"] .traj .result:not(.final){opacity:.17}
@@ -503,7 +510,34 @@ html = r'''<!doctype html>
   </ol>
 </section>
 
-<!-- 5 · Lineage -->
+<!-- 5 · Origin -->
+<section class="slide">
+  <div class="cols origin-layout">
+    <div>
+      <div class="eyebrow">Where this started</div>
+      <h2>We came for optimization.<br>We got stuck on the signal.</h2>
+      <p class="body">Feed the judge's critiques back into the agent and let it improve itself. That works &#8212; <b>if you can trust the judge</b>. An unaligned judge optimizes the agent toward its own mistakes.</p>
+    </div>
+    <svg class="origin" viewBox="0 0 720 640" role="img" aria-label="An optimization loop between the agent and the judge, with the signal arm broken">
+      <defs>
+        <marker id="mOrg" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M1 1 L10 6 L1 11 z" fill="var(--teal)"/>
+        </marker>
+      </defs>
+      <path class="arm" d="M470 168 A230 230 0 0 1 470 472" marker-end="url(#mOrg)"/>
+      <path class="arm" d="M250 472 A230 230 0 0 1 250 168" marker-end="url(#mOrg)"/>
+      <circle class="pod" cx="360" cy="110" r="72"/>
+      <text class="name" x="360" y="122" text-anchor="middle">agent</text>
+      <circle class="pod" cx="360" cy="530" r="72"/>
+      <text class="name" x="360" y="542" text-anchor="middle">judge</text>
+      <text class="side" x="612" y="326" text-anchor="middle">signal</text>
+      <text class="side" x="128" y="330" text-anchor="middle">prompt update</text>
+      <path class="break" d="M501 294 L553 346 M553 294 L501 346"/>
+    </svg>
+  </div>
+</section>
+
+<!-- 6 · Lineage -->
 <section class="slide">
   <div class="eyebrow">We have been here before</div>
   <h2>Hard metrics gave way to judgement.<br>Judgement had to be measured.</h2>
@@ -533,13 +567,13 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 6 · Ordering constraint -->
+<!-- 7 · Ordering constraint -->
 <section class="slide">
   <div class="eyebrow">The ordering constraint</div>
   <h2>You cannot use evals to improve an agent<br>before the eval is <span class="hl">aligned</span>.</h2>
 </section>
 
-<!-- 7 · Sphere -->
+<!-- 8 · Sphere -->
 <section class="slide">
   <div class="eyebrow">The case</div>
   <div class="cols wide">
@@ -556,7 +590,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 8 · Review pool -->
+<!-- 9 · Review pool -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 01</span> · Start with humans</div>
   <h2>A fifty-case review pool</h2>
@@ -568,7 +602,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 9 · Binary -->
+<!-- 10 · Binary -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -586,7 +620,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 10 · Grey zone -->
+<!-- 11 · Grey zone -->
 <section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
@@ -610,13 +644,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 11 · Criterion -->
+<!-- 12 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
   <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
-<!-- 12 · Two loops -->
+<!-- 13 · Two loops -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
   <h2>Every failure has two suspects</h2>
@@ -634,7 +668,7 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 13 · Two lifecycles -->
+<!-- 14 · Two lifecycles -->
 <section class="slide">
   <h2>Two lifecycles, not one</h2>
   <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
@@ -675,41 +709,41 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 14 · Two ways to get labels -->
+<!-- 15 · Two ways to get labels -->
 <section class="slide">
-  <h2>Nothing about this is new.<br>The interns are now models.</h2>
-  <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="The same three-step method, once with human annotators and once with LLM judges">
+  <h2>The quality-control process<br>has not changed.</h2>
+  <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
     <g class="then">
       <text class="tag" x="0" y="98">THEN</text>
       <line class="track" x1="150" y1="90" x2="1680" y2="90"/>
       <circle class="stop" cx="330" cy="90" r="13"/>
-      <text class="head" x="330" y="162">A domain expert</text>
-      <text class="sub" x="330" y="208">writes the guidelines</text>
+      <text class="head" x="330" y="162">An expert annotates</text>
+      <text class="sub" x="330" y="208">the reference cases</text>
       <circle class="stop" cx="900" cy="90" r="13"/>
-      <text class="head" x="900" y="162">Interns</text>
-      <text class="sub" x="900" y="208">students, Mechanical Turk</text>
+      <text class="head" x="900" y="162">A non-expert annotates</text>
+      <text class="sub" x="900" y="208">student or Mechanical Turk worker</text>
       <circle class="stop" cx="1450" cy="90" r="13"/>
-      <text class="head" x="1450" y="162">Inter-annotator agreement</text>
-      <text class="sub" x="1450" y="208">decides whether to trust the labels</text>
+      <text class="head" x="1450" y="162">Compare the annotations</text>
+      <text class="sub" x="1450" y="208">expert–delegate agreement</text>
     </g>
     <g class="now">
       <text class="tag" x="0" y="308">NOW</text>
       <line class="track" x1="150" y1="300" x2="1680" y2="300"/>
       <circle class="stop" cx="330" cy="300" r="13"/>
-      <text class="head" x="330" y="372">A domain expert</text>
-      <text class="sub" x="330" y="418">writes the guidelines</text>
+      <text class="head" x="330" y="372">An expert annotates</text>
+      <text class="sub" x="330" y="418">the reference cases</text>
       <circle class="stop" cx="900" cy="300" r="13"/>
-      <text class="head" x="900" y="372">LLM judges</text>
-      <text class="sub" x="900" y="418">three of them, three times each</text>
+      <text class="head" x="900" y="372">An LLM judge annotates</text>
+      <text class="sub" x="900" y="418">the same cases</text>
       <circle class="stop" cx="1450" cy="300" r="13"/>
-      <text class="head" x="1450" y="372">Agreement with the expert</text>
-      <text class="sub" x="1450" y="418">decides whether to trust the judge</text>
+      <text class="head" x="1450" y="372">Compare the annotations</text>
+      <text class="sub" x="1450" y="418">expert–judge agreement</text>
     </g>
   </svg>
-  <p class="body analogy-note">The expert never left. Only the annotators changed.</p>
+  <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 15 · Judge grid -->
+<!-- 16 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways a verdict fails to hold still</h2>
   <p class="sub">Three judges &#183; three repetitions &#183; one real case</p>
@@ -723,7 +757,7 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 16 · Lazy queue -->
+<!-- 17 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -759,7 +793,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Alignment -->
+<!-- 18 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -771,7 +805,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 18 · One human answer exposes another ambiguity -->
+<!-- 19 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -797,7 +831,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 19 · Grey-zone loop -->
+<!-- 20 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -806,35 +840,33 @@ html = r'''<!doctype html>
     <div class="grey-loop-grid">
       <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3><p>Same frozen development cases</p></div>
       <div class="grey-loop-stage"><span class="n">02</span><h3>Surface instability</h3><p>Disagreement and self-flips</p></div>
-      <div class="grey-loop-stage"><span class="n">03</span><h3>Read the reasons</h3><p>Find competing interpretations</p></div>
+      <div class="grey-loop-stage"><span class="n">03</span><h3>Collaborator reads the reasons</h3><p>Find competing interpretations</p></div>
       <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3><p>The human chooses the rule</p></div>
       <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3><p>Encode the accepted rule</p></div>
     </div>
     <div class="grey-loop-return"><span>RERUN THE SAME FROZEN DEVELOPMENT CASES</span></div>
   </div>
-  <div class="version-proof" aria-label="The loop applied to evaluator prompt versions one through three">
-    <div class="version-chip"><strong>v1</strong><span>baseline</span></div>
-    <div class="version-rule"><b>Human rule</b>Visible claims must be correct</div>
-    <div class="version-chip"><strong>v2</strong><span>less stable</span></div>
-    <div class="version-rule"><b>Human rule</b>Unsupported means contradicted, not merely unproven</div>
-    <div class="version-chip current"><strong>v3</strong><span>more stable<br>misses 3 / 3</span></div>
+  <div class="case-proof" aria-label="Three real development cases labelled after the boundary questions were resolved">
+    <div class="proof-case"><strong>PASS</strong><h4>Clarify the metric first</h4><p>Valid evidence supports the scoped answer.</p></div>
+    <div class="proof-case fail"><strong>FAIL</strong><h4>Best month net</h4><p>Visible evidence contradicts the stated definition.</p></div>
+    <div class="proof-case"><strong>PASS</strong><h4>Earlier context still counts</h4><p>The response established the context earlier in the conversation.</p></div>
   </div>
 </section>
 
-<!-- 20 · Experiment grid -->
+<!-- 21 · Experiment grid -->
 <section class="slide">
-  <h2>Stability came from constant passes</h2>
+  <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
-  <p class="shot-caption">Qwen and Gemini passed all 180 judgments. Luna found two of three human failures. Majority voting caught none.</p>
+  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 21 · Question 03 -->
+<!-- 22 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 22 · Agent evaluation -->
+<!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
@@ -849,7 +881,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 23 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -870,7 +902,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 24 · Lifecycle -->
+<!-- 25 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -905,7 +937,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 25 · Finding to knowledge -->
+<!-- 26 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -916,7 +948,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -931,7 +963,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 27 · Close -->
+<!-- 28 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>

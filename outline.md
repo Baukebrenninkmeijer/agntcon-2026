@@ -32,9 +32,9 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 7-11 | `Question 01 · Start with humans` (slide 8) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-23 | `Question 03 · What changes with agents` (slide 21) |
+| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01 · Start with humans` (slide 9) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 13-21 | `Question 02 · Trust the judge` (slide 13) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 22-24 | `Question 03 · What changes with agents` (slide 22) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -67,6 +67,16 @@ Three lines of bio. Orq is introduced out loud, not on the slide.
 ### Slide: Three questions
 
 Name the three questions the talk answers, then hand each one to a block below.
+
+### Slide: We came for optimization. We got stuck on the signal.
+
+Where the project actually started, and why this talk is about evaluation at all. The plan was to
+feed the judge's critiques back into the agent and let it improve itself. That works only if the
+judge can be trusted: an unaligned judge optimizes the agent toward its own mistakes. The diagram is
+that loop with the signal arm crossed out.
+
+This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
+2026-09-09.
 
 ### Slide: Hard metrics gave way to judgement
 
@@ -163,28 +173,18 @@ gates every release, and failures found in production become new cases — over 
 both loops act on: the same cases, the same prompt versions, the same human labels. The line to say
 out loud is the subtitle: the application loop only moves as fast as the evaluation loop it trusts.
 
-### Slide: The historical method
+### Slide: The quality-control process has not changed
 
-Show the conventional workflow first:
+Show the conventional quality-control workflow as two parallel tracks. In both, an expert annotates
+reference cases, a delegate independently annotates the same cases, and their annotations are
+compared. The grey track delegates to a student or Mechanical Turk worker. The orange track delegates
+to an LLM judge.
 
-1. Randomly sample cases.
-2. Ask humans to review all of them and record pass/fail labels with critiques.
-3. Rewrite the judge on the gaps this exposes.
-
-The development and test split belongs to this method too, but it is introduced once, on the
-`Align the evaluator like any other model` slide, rather than named here and again there.
-
-This is methodologically clean and expensive in expert attention.
-
-### Slide: Nothing about this is new. The interns are now models.
-
-Two horizontal tracks, one above the other, each with three stops: the domain expert writes the
-guidelines, annotators label, and an agreement number decides whether to trust the labels. The grey
-track is the pre-LLM version, where the annotators are interns and students, and agreement is
-measured between annotators. The orange track is the same method with LLM judges as the annotators,
-three of them run three times each, and agreement measured against the expert.
-
-The point is the shape being identical: the expert never left, only the annotators changed.
+Expert–delegate agreement answers the alignment question: can we trust this delegate's labels?
+Agreement among students or among repeated LLM judges remains a useful stability measure, but it is
+not the base flow taught on this slide. The unchanged comparison with expert annotations establishes
+version one of the process. The later grey-zone loop proposes a faster way to sharpen the criteria
+before applying them across the dataset.
 
 ### Slide: Two ways a verdict fails to hold still
 
@@ -252,18 +252,32 @@ to eight cases, within-judge instability increased from six to eight, and no agg
 This does not show that the rule made the evaluator worse. It shows that the principle was clearer
 than the threshold for “unsupported,” giving humans a better next question to answer.
 
-### Slide: Stability came from constant passes
+### Slide: The grey-zone loop
 
-Keep the real Orq experiment grid, but use it to show why consistency is not enough. Under v3,
-Qwen and Gemini returned `pass` on all 180 of their repetition-level judgments. Luna detected two
-of the three human failures, but the two constant-pass judges overruled it both times. The panel's
-majority verdict therefore caught none of the three failures.
+Present the proposed version-two process as an acceleration layer before full annotation. Run the
+jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
+the collaborator read the reasons to identify competing interpretations. The collaborator formulates
+one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
+same cases run again. Repeat until the important boundary questions have been answered.
 
-The greater stability is real, but it came largely from convergence on `pass`, not from learning the
-human boundary. One further human failure was a unanimous, stable miss and surfaced only because
-the development cases already had human labels. That is the stopping point for this talk: preserve
-v3 as evidence of a judge capability limit, keep it in shadow, and do not imply that another prompt
-iteration or more repetitions would supply the missing judgment.
+Only after those iterations do the human decisions get applied across cases to create reference
+labels. The click-revealed lower strip makes this exit explicit with three real development cases:
+clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
+context established earlier in the conversation still counts. Orange remains reserved for the human
+step in the loop; the failed case uses red.
+
+### Slide: Human labels reveal the judge limits
+
+Keep the real Orq experiment grid as evidence rather than presenting a detailed experiment report.
+The jury signals helped locate unresolved questions. The collaborator turned those signals into
+boundary questions, the human supplied the decisions, and those decisions became reference labels.
+Comparing the judge labels with the expert labels then exposed which judges could reproduce the
+human boundary.
+
+The detailed development result remains supporting evidence for questions: prompt v3 is more stable,
+but its aggregate still misses all three human failures. That is the stopping point for this talk:
+preserve v3 as evidence of a judge capability limit, keep it in shadow, and do not imply that another
+prompt iteration or more repetitions would supply the missing judgment.
 
 ---
 
