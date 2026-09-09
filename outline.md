@@ -143,10 +143,11 @@ one Sphere finding produces a skill update and an evaluator update from the same
 ### Slide: Two lifecycles, not one
 
 Follows the two-suspects slide and gives the same idea a picture, revived from the earlier version
-of this deck: an application loop (build, ship, observe) and an evaluation loop (criteria, label,
-align) turning side by side, coupled through a gate, over a line naming what they share — the same
-cases, the same prompt versions, the same human labels. The line to say out loud is the subtitle:
-the application loop only moves as fast as the evaluation loop it trusts.
+of this deck. Two three-stage cycles turn side by side: application (build, ship, observe) and
+evaluation (criteria, label, align). Two dashed links between them carry the coupling — evaluation
+gates every release, and failures found in production become new cases — over a line naming what
+both loops act on: the same cases, the same prompt versions, the same human labels. The line to say
+out loud is the subtitle: the application loop only moves as fast as the evaluation loop it trusts.
 
 ### Slide: The historical method
 

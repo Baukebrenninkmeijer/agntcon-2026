@@ -200,13 +200,17 @@
   .dual-loop .step strong{display:block;font-size:34px;line-height:1.22;font-weight:500;color:var(--ink)}
   .dual-loop-note{margin-top:56px;font-size:34px;color:var(--orange-dark)}
   .twoloop{display:block;width:100%;max-width:1600px;margin:30px auto 0}
-  .twoloop .ring{fill:none;stroke-width:7}
+  .twoloop .ring{fill:none;stroke-width:6}
   .twoloop .ring.t{stroke:var(--teal)}
   .twoloop .ring.o{stroke:var(--orange)}
-  .twoloop .ring-name{font-size:44px;font-weight:500;fill:var(--ink)}
-  .twoloop .ring-step{font-family:var(--mono);font-size:24px;letter-spacing:.06em;fill:var(--muted)}
-  .twoloop .couple{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
-  .twoloop .gate{fill:var(--bg);stroke:var(--ink);stroke-width:3}
+  .twoloop .node.t{fill:var(--teal)}
+  .twoloop .node.o{fill:var(--orange)}
+  .twoloop .link{stroke-width:3;stroke-dasharray:9 9}
+  .twoloop .link.t{stroke:var(--teal)}
+  .twoloop .link.o{stroke:var(--orange)}
+  .twoloop .ring-name{font-size:46px;font-weight:500;fill:var(--ink)}
+  .twoloop .stage{font-family:var(--mono);font-size:26px;letter-spacing:.06em;fill:var(--ink2)}
+  .twoloop .stage.dim{font-size:23px;fill:var(--muted)}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
   .factory .flow-arrow{font-size:48px;color:var(--teal)}
@@ -459,24 +463,40 @@
 <section class="slide">
   <h2>Two lifecycles, not one</h2>
   <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
-  <svg class="twoloop" viewBox="0 0 1720 700" role="img" aria-label="An application loop and an evaluation loop turning side by side, coupled by a gate">
+  <svg class="twoloop" viewBox="0 0 1720 640" role="img" aria-label="The application cycle and the evaluation cycle, each three stages, coupled by a release gate and by new failures becoming new cases">
     <defs>
-      <marker id="mT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker>
-      <marker id="mO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--orange)"/></marker>
+      <marker id="mT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L9 5 L0 9 z" fill="var(--teal)"/></marker>
+      <marker id="mO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L9 5 L0 9 z" fill="var(--orange)"/></marker>
     </defs>
-    <path class="ring t" d="M290 238 A200 200 0 1 1 670 238" marker-end="url(#mT)"/>
-    <path class="ring t" d="M650 405 A200 200 0 0 1 310 405" marker-end="url(#mT)"/>
-    <text class="ring-name" x="480" y="316" text-anchor="middle">application</text>
-    <text class="ring-step" x="480" y="580" text-anchor="middle">build &#183; ship &#183; observe</text>
-    <path class="ring o" d="M1050 238 A200 200 0 1 1 1430 238" marker-end="url(#mO)"/>
-    <path class="ring o" d="M1410 405 A200 200 0 0 1 1070 405" marker-end="url(#mO)"/>
-    <text class="ring-name" x="1240" y="316" text-anchor="middle">evaluation</text>
-    <text class="ring-step" x="1240" y="580" text-anchor="middle">criteria &#183; label &#183; align</text>
-    <line class="couple" x1="695" y1="300" x2="815" y2="300"/>
-    <line class="couple" x1="905" y1="300" x2="1025" y2="300"/>
-    <rect class="gate" x="820" y="260" width="80" height="80" rx="14"/>
-    <text class="ring-step" x="860" y="308" text-anchor="middle">gate</text>
-    <text class="ring-step" x="860" y="660" text-anchor="middle">same cases &#183; same prompt versions &#183; same human labels</text>
+
+    <path class="ring t" d="M480.8 136.2 A210 210 0 0 1 631.9 397.9" marker-end="url(#mT)"/>
+    <path class="ring t" d="M581.1 485.9 A210 210 0 0 1 278.9 485.9" marker-end="url(#mT)"/>
+    <path class="ring t" d="M228.1 397.9 A210 210 0 0 1 379.2 136.2" marker-end="url(#mT)"/>
+    <circle class="node t" cx="430" cy="130" r="13"/>
+    <circle class="node t" cx="612" cy="445" r="13"/>
+    <circle class="node t" cx="248" cy="445" r="13"/>
+    <text class="stage" x="430" y="185" text-anchor="middle">build</text>
+    <text class="stage" x="564" y="425" text-anchor="middle">ship</text>
+    <text class="stage" x="296" y="425" text-anchor="middle">observe</text>
+    <text class="ring-name" x="430" y="356" text-anchor="middle">application</text>
+
+    <path class="ring o" d="M1340.8 136.2 A210 210 0 0 1 1491.9 397.9" marker-end="url(#mO)"/>
+    <path class="ring o" d="M1441.1 485.9 A210 210 0 0 1 1138.9 485.9" marker-end="url(#mO)"/>
+    <path class="ring o" d="M1088.1 397.9 A210 210 0 0 1 1239.2 136.2" marker-end="url(#mO)"/>
+    <circle class="node o" cx="1290" cy="130" r="13"/>
+    <circle class="node o" cx="1472" cy="445" r="13"/>
+    <circle class="node o" cx="1108" cy="445" r="13"/>
+    <text class="stage" x="1290" y="185" text-anchor="middle">criteria</text>
+    <text class="stage" x="1424" y="425" text-anchor="middle">label</text>
+    <text class="stage" x="1156" y="425" text-anchor="middle">align</text>
+    <text class="ring-name" x="1290" y="356" text-anchor="middle">evaluation</text>
+
+    <line class="link o" x1="1072" y1="300" x2="668" y2="300" marker-end="url(#mO)"/>
+    <text class="stage" x="870" y="272" text-anchor="middle">gates every release</text>
+    <line class="link t" x1="668" y1="400" x2="1072" y2="400" marker-end="url(#mT)"/>
+    <text class="stage" x="870" y="372" text-anchor="middle">failures become cases</text>
+
+    <text class="stage dim" x="860" y="604" text-anchor="middle">same cases &#183; same prompt versions &#183; same human labels</text>
   </svg>
 </section>
 
