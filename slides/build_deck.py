@@ -99,15 +99,15 @@ case_marks: list[str] = []
 for case in case_signals:
     index = case["i"]
     cx = 110 + (index % 10) * 116
-    cy = 356 + (index // 10) * 92
+    cy = 290 + (index // 10) * 96
     classes = ["g"]
     style = f"--x:{cx}px;--y:{cy}px"
     if index in queue_rank:
         classes.append("q")
-        style += f";--qx:{190 + queue_rank[index] * 250}px;--qy:108px"
+        style += f";--qx:{152 + queue_rank[index] * 116}px;--qy:108px"
     elif index in sample_rank:
         classes.append("q sam")
-        style += f";--qx:{190 + sample_rank[index] * 250}px;--qy:252px"
+        style += f";--qx:{728 + sample_rank[index] * 116}px;--qy:108px"
     if case["wobble"]:
         classes.append("wob")
     if case["disagree"]:
@@ -308,9 +308,8 @@ html = r'''<!doctype html>
   .dots .g{transform:translate(var(--x),var(--y));transition:transform .9s cubic-bezier(.2,.7,.25,1),opacity .5s ease}
   .dots .ring{opacity:0;transition:opacity .5s ease}
   .slide[data-step="1"] .dots .ring,.slide[data-step="2"] .dots .ring{opacity:1}
-  .slide[data-step="1"] .dots .wob .case,.slide[data-step="2"] .dots .wob .case{animation:flip 2.6s steps(1,end) infinite}
-  @keyframes flip{0%{fill:var(--teal)}50%{fill:var(--orange-dark)}100%{fill:var(--teal)}}
-  @media (prefers-reduced-motion:reduce){.dots .case{animation:none!important}}
+  .slide[data-step="1"] .dots .wob .case,.slide[data-step="2"] .dots .wob .case{fill:url(#unstable)}
+  @media (prefers-reduced-motion:reduce){.dots .wob .case{fill:var(--teal)}}
   .slide[data-step="2"] .dots .q{transform:translate(var(--qx),var(--qy)) scale(.82)}
   .slide[data-step="2"] .dots .g:not(.q){opacity:.22}
   .dots .lane{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10;opacity:.55}
@@ -721,14 +720,21 @@ html = r'''<!doctype html>
   <div class="cols wide">
     <div>
       <svg class="dots" viewBox="0 0 1200 800" width="1220" height="813" aria-label="Fifty cases; judge disagreement and instability flag twelve, four of which go to the review batch alongside four randomly sampled cases">
-        <rect class="lane" x="62" y="56" width="1116" height="104" rx="14"/>
+        <defs>
+          <linearGradient id="unstable" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--teal)"/>
+            <stop offset="1" stop-color="var(--orange-dark)"/>
+            <animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5" dur="7s" repeatCount="indefinite"/>
+          </linearGradient>
+        </defs>
+        <rect class="lane" x="62" y="56" width="540" height="104" rx="14"/>
         <text class="lane-label" x="62" y="34">REVIEW FIRST</text>
+        <text class="lane-count start" x="602" y="34">0</text>
+        <text class="lane-count done" x="602" y="34">4 flagged</text>
+        <rect class="lane" x="638" y="56" width="540" height="104" rx="14"/>
+        <text class="lane-label" x="638" y="34">CONTROL</text>
         <text class="lane-count start" x="1178" y="34">0</text>
-        <text class="lane-count done" x="1178" y="34">4 flagged</text>
-        <rect class="lane" x="62" y="200" width="1116" height="104" rx="14"/>
-        <text class="lane-label" x="62" y="186">CONTROL</text>
-        <text class="lane-count start" x="1178" y="186">0</text>
-        <text class="lane-count done" x="1178" y="186">4 sampled</text>
+        <text class="lane-count done" x="1178" y="34">4 sampled</text>
         __CASE_DOTS__
       </svg>
       <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
