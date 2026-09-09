@@ -345,6 +345,14 @@ html = r'''<!doctype html>
   .dual-loop .step .lbl{font-family:var(--mono);font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
   .dual-loop .step strong{display:block;font-size:34px;line-height:1.22;font-weight:500;color:var(--ink)}
   .dual-loop-note{margin-top:56px;font-size:34px;color:var(--orange-dark)}
+  .twoloop{display:block;width:100%;max-width:1600px;margin:30px auto 0}
+  .twoloop .ring{fill:none;stroke-width:7}
+  .twoloop .ring.t{stroke:var(--teal)}
+  .twoloop .ring.o{stroke:var(--orange)}
+  .twoloop .ring-name{font-size:44px;font-weight:500;fill:var(--ink)}
+  .twoloop .ring-step{font-family:var(--mono);font-size:24px;letter-spacing:.06em;fill:var(--muted)}
+  .twoloop .couple{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
+  .twoloop .gate{fill:var(--bg);stroke:var(--ink);stroke-width:3}
   .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px}
   .factory .process-card{width:272px;min-height:205px;padding:26px 18px}
   .factory .flow-arrow{font-size:48px;color:var(--teal)}
@@ -534,7 +542,32 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 11 · Historical method -->
+<!-- 11 · Two lifecycles -->
+<section class="slide">
+  <h2>Two lifecycles, not one</h2>
+  <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
+  <svg class="twoloop" viewBox="0 0 1720 700" role="img" aria-label="An application loop and an evaluation loop turning side by side, coupled by a gate">
+    <defs>
+      <marker id="mT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker>
+      <marker id="mO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--orange)"/></marker>
+    </defs>
+    <path class="ring t" d="M290 238 A200 200 0 1 1 670 238" marker-end="url(#mT)"/>
+    <path class="ring t" d="M650 405 A200 200 0 0 1 310 405" marker-end="url(#mT)"/>
+    <text class="ring-name" x="480" y="316" text-anchor="middle">application</text>
+    <text class="ring-step" x="480" y="580" text-anchor="middle">build &#183; ship &#183; observe</text>
+    <path class="ring o" d="M1050 238 A200 200 0 1 1 1430 238" marker-end="url(#mO)"/>
+    <path class="ring o" d="M1410 405 A200 200 0 0 1 1070 405" marker-end="url(#mO)"/>
+    <text class="ring-name" x="1240" y="316" text-anchor="middle">evaluation</text>
+    <text class="ring-step" x="1240" y="580" text-anchor="middle">criteria &#183; label &#183; align</text>
+    <line class="couple" x1="695" y1="300" x2="815" y2="300"/>
+    <line class="couple" x1="905" y1="300" x2="1025" y2="300"/>
+    <rect class="gate" x="820" y="260" width="80" height="80" rx="14"/>
+    <text class="ring-step" x="860" y="308" text-anchor="middle">gate</text>
+    <text class="ring-step" x="860" y="660" text-anchor="middle">same cases &#183; same prompt versions &#183; same human labels</text>
+  </svg>
+</section>
+
+<!-- 12 · Historical method -->
 <section class="slide">
   <h2>The historical method</h2>
   <p class="sub">Random sampling, manual review.</p>
@@ -551,7 +584,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 12 · Priority -->
+<!-- 13 · Priority -->
 <section class="slide" data-steps="1">
   <h2>LLM judges determine priority</h2>
   <ul class="plain">
@@ -565,7 +598,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 13 · Lazy queue -->
+<!-- 14 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -592,7 +625,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 14 · Alignment -->
+<!-- 15 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Treat the judge like a model</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -604,7 +637,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 15 · One human answer exposes another ambiguity -->
+<!-- 16 · One human answer exposes another ambiguity -->
 <section class="slide">
   <h2>One answer exposed another ambiguity</h2>
   <div class="ambiguity">
@@ -630,7 +663,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 16 · Grey-zone loop -->
+<!-- 17 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -654,20 +687,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Experiment grid -->
+<!-- 18 · Experiment grid -->
 <section class="slide">
-  <h2>v3 keeps the agreement and stops flipping</h2>
+  <h2>Stability came from constant passes</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
-  <p class="shot-caption">One row per case · v1 · v2 · v3 under each evaluator · green passed, red failed</p>
+  <p class="shot-caption">Qwen and Gemini passed all 180 judgments. Luna found two of three human failures. Majority voting caught none.</p>
 </section>
 
-<!-- 18 · Question 03 -->
+<!-- 19 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 19 · Agent evaluation -->
+<!-- 20 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
@@ -682,11 +715,11 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Operating modes -->
+<!-- 21 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
-  <svg class="life-axis" viewBox="0 0 1800 500" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
+  <svg class="life-axis" viewBox="0 0 1800 510" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
     <line class="rel" x1="800" y1="40" x2="800" y2="300"/>
     <text class="mono" x="812" y="56">RELEASE</text>
     <rect x="40" y="86" width="720" height="76" rx="8" fill="var(--teal)"/>
@@ -696,15 +729,14 @@ html = r'''<!doctype html>
     <text class="name" x="840" y="212">Online</text>
     <text class="meta" x="840" y="252">Sampled production traces, as traffic arrives.</text>
     <line class="ax" x1="40" y1="304" x2="1760" y2="304"/>
-    <rect class="band" x="40" y="330" width="1720" height="58" rx="8"/>
-    <g class="beat"><rect x="150" y="345" width="4" height="28" rx="2"/><rect x="310" y="345" width="4" height="28" rx="2"/><rect x="470" y="345" width="4" height="28" rx="2"/><rect x="630" y="345" width="4" height="28" rx="2"/><rect x="790" y="345" width="4" height="28" rx="2"/><rect x="950" y="345" width="4" height="28" rx="2"/><rect x="1110" y="345" width="4" height="28" rx="2"/><rect x="1270" y="345" width="4" height="28" rx="2"/><rect x="1430" y="345" width="4" height="28" rx="2"/><rect x="1590" y="345" width="4" height="28" rx="2"/></g>
-    <text class="name" x="40" y="446">Continuous</text>
-    <text class="meta" x="40" y="486">Both, on every change and then on a schedule.</text>
+    <g class="beat"><rect x="40" y="330" width="130" height="68" rx="8"/><rect x="184" y="330" width="130" height="68" rx="8"/><rect x="329" y="330" width="130" height="68" rx="8"/><rect x="474" y="330" width="130" height="68" rx="8"/><rect x="618" y="330" width="130" height="68" rx="8"/><rect x="762" y="330" width="130" height="68" rx="8"/><rect x="907" y="330" width="130" height="68" rx="8"/><rect x="1052" y="330" width="130" height="68" rx="8"/><rect x="1196" y="330" width="130" height="68" rx="8"/><rect x="1340" y="330" width="130" height="68" rx="8"/><rect x="1485" y="330" width="130" height="68" rx="8"/><rect x="1630" y="330" width="130" height="68" rx="8"/></g>
+    <text class="name" x="40" y="456">Continuous</text>
+    <text class="meta" x="40" y="496">Both, on every change and then on a schedule.</text>
   </svg>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 21 · Lifecycle -->
+<!-- 22 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -739,7 +771,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 22 · Finding to knowledge -->
+<!-- 23 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -750,7 +782,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 23 · Software factory -->
+<!-- 24 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -764,7 +796,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 24 · Close -->
+<!-- 25 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>

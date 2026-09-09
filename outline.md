@@ -140,6 +140,14 @@ you risk fixing the agent to satisfy a judge that is itself wrong.
 The concrete instance of both loops appears in section 6 ("A finding is not yet knowledge"), where
 one Sphere finding produces a skill update and an evaluator update from the same case.
 
+### Slide: Two lifecycles, not one
+
+Follows the two-suspects slide and gives the same idea a picture, revived from the earlier version
+of this deck: an application loop (build, ship, observe) and an evaluation loop (criteria, label,
+align) turning side by side, coupled through a gate, over a line naming what they share — the same
+cases, the same prompt versions, the same human labels. The line to say out loud is the subtitle:
+the application loop only moves as fast as the evaluation loop it trusts.
+
 ### Slide: The historical method
 
 Show the conventional workflow first:
@@ -224,14 +232,18 @@ to eight cases, within-judge wobble increased from six to eight, and no aggregat
 This does not show that the rule made the evaluator worse. It shows that the principle was clearer
 than the threshold for “unsupported,” giving humans a better next question to answer.
 
-### Slide: v3 keeps the agreement and stops flipping
+### Slide: Stability came from constant passes
 
-Screenshot of the real Orq experiment grid for `decision-support-quality`: one row per frozen
-development case, the three evaluator prompt versions (v1 baseline, v2 human rules, v3
-materiality) scored side by side under `aligned_with_human`, `panel_consensus` and
-`within_judge_stability`. Agreement with humans holds at 90% across all three versions; panel
-consensus and within-judge stability both reach 90% only at v3. Evidence for the loop, not new
-argument — no commentary beyond reading the three averages.
+Keep the real Orq experiment grid, but use it to show why consistency is not enough. Under v3,
+Qwen and Gemini returned `pass` on all 180 of their repetition-level judgments. Luna detected two
+of the three human failures, but the two constant-pass judges overruled it both times. The panel's
+majority verdict therefore caught none of the three failures.
+
+The lower wobble is real, but it came largely from convergence on `pass`, not from learning the
+human boundary. One further human failure was a unanimous, stable miss and surfaced only because
+the development cases already had human labels. That is the stopping point for this talk: preserve
+v3 as evidence of a judge capability limit, keep it in shadow, and do not imply that another prompt
+iteration or more repetitions would supply the missing judgment.
 
 ---
 
@@ -277,8 +289,9 @@ members inspect the same behavior.
 ### Slide: Three operating modes
 
 A single time axis with a release marker rather than three equal cards. Offline sits before the
-marker, online after it, and continuous is a ticked band spanning both, so the modes read as
-positions in the lifecycle rather than three competing definitions of quality.
+marker, online after it, and continuous is a row of separated dark-grey blocks spanning both, one
+per repeated run, so the modes read as positions in the lifecycle rather than three competing
+definitions of quality.
 
 Keep this slide about where and when evaluation runs:
 
