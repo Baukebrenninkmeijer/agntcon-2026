@@ -151,3 +151,21 @@ Recommend 1 unless the run-through shows the transition still landing hard.
   Build it or cut it — it is currently a promise to a reader that the deck does not keep.
 - Every change above must be reflected in `abstract.md` / `outline.md` in the same commit, per the
   repository's contract rule.
+
+---
+
+## Second pass, 2026-09-09: what the audit found still open
+
+A four-agent audit re-checked this document's items against the built 27-slide deck. Delivered and
+verified: the `unstable` rename, the random-sample control lane, the double-loop slide, the
+test-coverage line, and the three-repetitions jury mechanics. Still open after that audit, with
+Bauke's decisions, now tracked as W9 to W13 in
+[the execution plan](2026-09-09-deck-execution-plan.md#second-review-pass--2026-09-09-after-the-four-agent-audit):
+name discovery and regression (W9), give the trajectory slide its argument (W10), swap the lifecycle
+and operating-modes slides rather than add a bridge (W11), say `human alignment` out loud (W12), and
+add the why-and-how-to-align intro (W13, proposal first).
+
+Declined: the visible three-tier priority queue, which is covered verbally; the persistent then/now
+signposting; and the `Replay, do not regenerate` slide, whose promise is to be removed from
+`outline.md` instead. Recorded so it is not raised again: that you cannot improve what you have no
+eval for is the talk's subject, not an unaddressed contradiction.

@@ -175,3 +175,63 @@ sentence. Plan changelog entry per commit. `outline-manual.md` untouched.
 W1 → W2 → W3 → W4 → W6 → W7 → W5 → W8, then a timed run-through, then send to Arian. W5 is last
 because it is the only item that can fail on the night; everything before it is finished work if
 the grid has to be abandoned.
+
+---
+
+## Second review pass — 2026-09-09, after the four-agent audit
+
+Four agents audited the current 27-slide deck against `review-arian.md` and
+`review-arian-transcript.md`. Bauke's decisions on their findings, recorded verbatim in intent:
+
+| # | Finding | Decision |
+|---|---|---|
+| 1 | The three-tier priority queue (both signals, disagreement only, instability only) is computed but not visible on slide 16 | **Not building it.** Covered verbally on stage |
+| 2 | `discovery` and `regression` are never named; slide 24 has the shapes under generic `FIRST` / `THEN` leads | **Do it** (W9) |
+| 3 | The trajectory slide carries no framing: slide 21 is a bare title card and slide 22 has no argument text | **Do it, expanded** (W10): x-axis marker `Nr. of tokens →`, new subtitle *Agents require evaluating behaviour, rather than final answers*, the present chart-description subtitle demoted to a caption under the chart, and example agentic evals down the right side (tool-call efficiency, error recovery, and one more) |
+| 4 | Nothing bridges slide 22 into slide 23; this, not the question 02 to 03 pivot, is the abrupt transition Arian meant | **Swap instead** (W11): operating modes and `Build the eval once` change places, so the lifecycle argument lands before the modes it is run in. No bridge slide |
+| 5 | The phrase `human alignment` appears nowhere in the deck | **Do it** (W12) |
+| 6 | No persistent then/now signposting across the method slides; Arian said he got lost | **Omit** |
+| 7 | No intro explaining why alignment is needed and how to do it well before the binary-evals slide | **Do it** (W13), proposal first |
+| 8 | `outline.md` section 4 promises a `Replay, do not regenerate` slide the deck does not have | **Omit.** Remove the promise from the outline instead |
+
+Not a gap, recorded to stop it being re-raised: the apparent contradiction that you cannot improve
+what you have no eval for is not unaddressed. It is the talk's subject. The whole middle section is
+the answer to it: how to align a judge efficiently enough that the eval exists before the agent work
+begins.
+
+Confirmed done by the audit and not to be redone: the `unstable` rename, stable-is-not-correct via
+the control lane, the double-loop slide, the test-coverage line, the three-repetitions mechanics, and
+workstreams W1 and W3 through W7. Dropped as non-gaps: literal red/green flicker, which the rotating
+gradient carries, and the text density of the operating-modes slide, which is already a compact SVG.
+
+### W9 — Name the two phases
+
+Slide 24's two leads become `DISCOVERY` and `REGRESSION`. Add Arian's rule in one line: during
+discovery a high failure rate is the eval working, and an eval that never fails is too easy; once a
+behaviour is a regression, a failure means something broke. No new slide.
+
+### W10 — Give the trajectory slide its argument
+
+Slide 22 gains, in this order: the subtitle `Agents require evaluating behaviour, rather than final
+answers`; the existing bar-chart description moved below the chart as a caption; a mono
+`Nr. of tokens →` marker on the x-axis; and a short right-hand column of example agentic evals —
+tool-call efficiency, error recovery, and one more drawn from the observation run rather than
+invented. Slide 21 stays a bare divider.
+
+### W11 — Swap the lifecycle and operating-modes slides
+
+`Build the eval once. Then it guards every commit.` moves before `Offline, online, continuous`. The
+lifecycle argument then hands off to the modes that lifecycle runs in, which removes the jump Arian
+flagged without spending a slide on a bridge. Update the outline section order to match.
+
+### W12 — Say `human alignment` out loud
+
+The term goes on slide 17, whose whole subject it is, either as the eyebrow or in the sub-line.
+
+### W13 — The why-and-how-to-align intro
+
+Needs a proposal before it is built. It sits after the ordering constraint (slide 6) and before the
+case, and it must not restate slide 12 (two suspects), slide 14 (the interns analogy) or slide 17
+(develop on 30, measure on 20). Its job is to say what aligning a judge actually consists of, so the
+rest of the section reads as the efficient way to do a thing the audience already understands the
+shape of.
