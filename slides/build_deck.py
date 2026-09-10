@@ -476,11 +476,6 @@ html = r'''<!doctype html>
   .verdict.fail{border-color:var(--orange);color:var(--orange-dark)}
   .verdict-note{grid-column:1/-1;font-family:var(--mono);font-size:20px;line-height:1.4;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;text-align:center}
   .replay{display:grid;grid-template-columns:1.2fr 90px 1fr;align-items:center;gap:20px}
-  .process-card{min-height:180px;border:4px solid var(--teal);border-radius:22px;background:var(--paper);padding:34px;display:flex;flex-direction:column;justify-content:center;text-align:center}
-  .process-card.orange{border-color:var(--orange)}
-  .process-card.dark{border-color:var(--ink)}
-  .process-card h3{margin:0;font-size:38px}
-  .process-card p{margin-top:14px;font-family:var(--mono);font-size:18px;line-height:1.35;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
   .phases{display:grid;grid-template-columns:1fr 1fr;gap:78px;margin-top:30px}
   .phase h3{font-size:40px;font-weight:600;line-height:1.15}
   .phase .lead{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--ink2);margin-bottom:8px}
@@ -494,16 +489,23 @@ html = r'''<!doctype html>
   .chart .dip{fill:var(--orange-dark)}
   .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
   .chart .lbl.dim{fill:var(--muted)}
-  .learning-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:46px;margin-top:24px}
-  .learning-stage{border-top:4px solid var(--teal);padding-top:28px;position:relative}
-  .learning-stage:nth-child(3){border-color:var(--orange)}
-  .learning-stage:nth-child(2)::after{color:var(--orange)}
-  .learning-stage:not(:last-child)::after{content:"→";position:absolute;right:-40px;top:6px;color:var(--teal);font-size:38px}
-  .learning-label{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:22px}
-  .learning-stage p{font-size:26px;line-height:1.38;color:var(--ink2)}
-  .learning-stage strong{display:block;font-size:31px;line-height:1.24;font-weight:500;color:var(--ink);margin-bottom:18px}
-  .learning-rerun{margin-top:64px;font-size:29px;color:var(--orange-dark);text-align:right}
-  .flow-arrow{font-size:64px;color:var(--orange);text-align:center}
+  .fac-note{margin-top:64px;font-family:var(--mono);font-size:24px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
+  .twin{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px}
+  .twin-card{border:4px solid var(--muted);border-radius:22px;background:var(--paper);padding:36px 38px}
+  .twin-card.ok{border-color:var(--teal-deep)}
+  .twin-card.bad{border-color:var(--orange-dark)}
+  .twin-lab{font-family:var(--mono);font-size:20px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+  .twin-gauge{height:34px;border-radius:999px;background:rgba(140,138,145,.22);overflow:hidden}
+  .twin-gauge i{display:block;height:100%;width:86%;background:var(--ink2);border-radius:999px}
+  .twin-caption{margin-top:18px;font-size:27px;color:var(--ink2)}
+  .twin-rule{margin:34px 0 26px;border-top:3px dashed var(--muted)}
+  .twin-verdict{display:flex;align-items:baseline;gap:18px}
+  .twin-verdict b{font-size:44px;font-weight:600;letter-spacing:-.02em}
+  .twin-verdict span{font-size:27px;color:var(--ink2)}
+  .twin-card.ok .twin-verdict b{color:var(--teal-deep)}
+  .twin-card.bad .twin-verdict b{color:var(--orange-dark)}
+  .twin-foot{margin-top:46px;font-size:31px;color:var(--ink)}
+  .twin-foot b{color:var(--teal-deep);font-weight:500}
   .dual-loop{display:grid;grid-template-columns:auto 60px 1fr 60px 1fr;grid-template-rows:1fr 1fr;align-items:center;column-gap:0;row-gap:38px;margin-top:44px}
   .dual-loop .finding{grid-row:1 / span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;width:420px;border:4px solid var(--ink);border-radius:22px;background:var(--paper);padding:34px}
   .dual-loop .finding strong{display:block;font-size:40px;line-height:1.15;color:var(--ink)}
@@ -536,11 +538,6 @@ html = r'''<!doctype html>
   .analogy .head{font-size:38px;font-weight:500;fill:var(--ink);text-anchor:middle}
   .analogy .sub{font-size:27px;fill:var(--ink2);text-anchor:middle}
   .analogy-note{margin-top:52px;color:var(--orange-dark)}
-  .factory{display:grid;grid-template-columns:repeat(9,auto);align-items:center;gap:14px;margin-top:38px}
-  .factory .process-card{width:272px;min-height:205px;padding:26px 14px}
-  .factory .process-card h3{font-size:34px}
-  .factory .flow-arrow{font-size:48px;color:var(--teal)}
-  .feedback{margin-top:34px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--muted)}
   .sphere-brand{display:flex;align-items:flex-end;gap:26px;margin-bottom:50px}
   .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:28px}
   .sphere-mark::before{content:"";position:absolute;left:50%;top:-32px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
@@ -1094,30 +1091,34 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 26 · Finding to knowledge -->
-<section class="slide">
-  <h2>What a failed eval teaches<br>the agent and the rubric</h2>
-  <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
-    <div class="learning-stage"><div class="learning-label">Evaluator finding</div><strong>The analysis reports declining revenue.</strong><p>It never explains what the CFO should decide.</p></div>
-    <div class="learning-stage"><div class="learning-label">Agent loop &#183; Sphere skill update</div><strong>Connect the analysis to the decision.</strong><p>Explain the commercial drivers, separate evidence from assumptions, lead with the implication.</p></div>
-    <div class="learning-stage"><div class="learning-label">Evaluator loop &#183; evaluator update</div><strong>Say what unsupported means.</strong><p>A claim fails when the visible evidence contradicts it, not merely when proof is absent.</p></div>
-  </div>
-  <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
+<!-- 26 · Unreviewed -->
+<section class="slide statement">
+  <h2>Most software will ship<br>without a human reading it.</h2>
+  <p class="sub">You cannot scale review. You can scale the thing that decides what is worth reviewing.</p>
+  <p class="fac-note">Evals in the software factory</p>
 </section>
 
 <!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
-  <h2>Automate the preparation.<br>Keep the decision human.</h2>
-  <p class="sub">With software we write tests. With a software factory we build evals.</p>
-  <div class="factory" aria-label="Agents prepare an analyzed and validated pull request for human review">
-    <div class="process-card"><h3>evaluation</h3><p>finding</p></div><div class="flow-arrow">→</div>
-    <div class="process-card"><h3>analysis agent</h3><p>structural cause</p></div><div class="flow-arrow">→</div>
-    <div class="process-card orange"><h3>improvement agent</h3><p>opens PR</p></div><div class="flow-arrow">→</div>
-    <div class="process-card"><h3>validation agent</h3><p>regression evidence</p></div><div class="flow-arrow">→</div>
-    <div class="process-card dark"><h3>human</h3><p>review + merge</p></div>
+  <h2>Same throughput.<br>Different factory.</h2>
+  <div class="twin">
+    <div class="twin-card ok">
+      <div class="twin-lab">Factory A</div>
+      <div class="twin-gauge"><i></i></div>
+      <p class="twin-caption">Most pull requests merge untouched.</p>
+      <div class="twin-rule"></div>
+      <div class="twin-verdict"><b>Holding</b><span>the criterion still passes</span></div>
+    </div>
+    <div class="twin-card bad">
+      <div class="twin-lab">Factory B</div>
+      <div class="twin-gauge"><i></i></div>
+      <p class="twin-caption">Most pull requests merge untouched.</p>
+      <div class="twin-rule"></div>
+      <div class="twin-verdict"><b>Rotting</b><span>the same criterion started failing</span></div>
+    </div>
   </div>
-  <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
+  <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
 <!-- 28 · Close -->

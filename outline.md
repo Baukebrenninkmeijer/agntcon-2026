@@ -388,56 +388,35 @@ factory’s job.
 
 ## 6. Evals in the software factory (2 min)
 
-### Slide: A finding is not yet knowledge
+### Slide: Most software will ship without a human reading it
 
-An evaluator produces a finding: a failed case plus a critique. The finding becomes reusable only
-after repeated failures are analyzed into a structural rule.
+A full-bleed statement, the same treatment as "But we are lazy" in section 3, so the deck already
+has the grammar for it. The claim is the premise the next slide needs: pull requests increasingly
+merge without anyone opening them.
 
-Show the relationship explicitly:
+The line under it is the argument: you cannot scale review, you can scale the thing that decides
+what is worth reviewing. That is the same move as "the judge sorts the queue" in section 3, one
+level up, and it is worth naming the callback out loud.
 
-| Artifact | Role |
-|---|---|
-| Finding | Evidence that a specific behavior failed |
-| Structural analysis | Explanation of the recurring cause |
-| Evaluator | Defines how success and failure are recognized |
-| Skill | Teaches the agent domain knowledge, criteria, and task-specific behavior |
-| System prompt | Holds the small set of global identity, safety, and behavioral invariants |
+### Slide: Same throughput. Different factory.
 
-The evaluator says what failed. The skill teaches the agent what to know or do differently. Do not
-blindly paste evaluator prose into the system prompt.
+Two identical cards, side by side. Same unlabelled gauge, same sentence: most pull requests merge
+untouched. Below a dashed rule they diverge. One is holding, its criterion still passes. The other
+is rotting, the same criterion started failing.
 
-Domain-specific knowledge belongs primarily in skills because it can be scoped, versioned, tested,
-and loaded for the relevant task. Only genuinely global rules should move into the system prompt.
+The point is that the throughput number is identical in both. A factory reports how much moved; it
+cannot tell these two apart. Only an eval can.
 
-If the finding shows that the evaluator misunderstood the boundary, update the evaluator instead of
-teaching the agent to satisfy a broken judge.
-
-### Slide: Automate preparation, preserve human authority
-
-The software-factory loop is:
-
-1. The evaluator identifies failures or changed behavior.
-2. An analysis agent clusters cases and proposes a structural cause.
-3. The analysis is presented to a human with the underlying evidence.
-4. An improvement agent prepares a skill, prompt, tool, or code change and opens a PR.
-5. A separate validation agent runs the regression set and reviews the proposed change.
-6. A human decides whether the diagnosis is valid and whether the PR should merge.
-
-Example: several failures show that the agent does not understand a company-specific revenue
-definition.
-
-The factory proposes a tested skill update containing that domain rule and examples. It opens a PR
-and attaches the affected cases and validation results for review.
+No numbers on the slide. The gauges are unlabelled, and the argument is borrowed from Warp's own
+write-up on evals and scorers, without their marketing figures.
 
 CI asks whether a change can ship. The software factory investigates what went wrong and prepares a
 reviewable response.
 
-This closes the application lifecycle without collapsing it into the evaluator lifecycle.
-
-Agent knowledge can improve while the definition of quality stays fixed. The evaluator changes only
-when human review shows that its boundary is wrong.
-
----
+Narration, not slides: the loop behind this is an evaluator finding, a structural analysis, a
+proposed skill or evaluator change that arrives as a pull request, and a human who decides. Nothing
+writes back to configuration on its own. If the finding shows the evaluator misread the boundary,
+the evaluator changes rather than the agent.
 
 ## 7. Takeaways and Q&A (6 min)
 
