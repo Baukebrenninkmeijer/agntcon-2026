@@ -210,7 +210,7 @@ html = r'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Evaluating Agents at Scale</title>
+<title>Building the evaluation flywheel</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23025558%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2247%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Cpath%20d%3D%22M6%2046%20C22%2046%2026%2018%2058%2018%22%20stroke%3D%22%23ff9747%22%20stroke-width%3D%228%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <style>
   @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__RG__) format("woff2");font-weight:400;font-display:swap}
@@ -502,8 +502,8 @@ html = r'''<!doctype html>
 <!-- 1 · Title -->
 <section class="slide active">
   <div class="eyebrow">PyData Amsterdam 2026</div>
-  <h1>Evaluating Agents<br>at Scale</h1>
-  <p class="sub">From human judgment to an evaluator that can support continuous improvement.</p>
+  <h1>Building the<br>evaluation flywheel</h1>
+  <p class="sub">How human judgment becomes an evaluator you can run on every change.</p>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span><span>September 2026</span></div>
 </section>
 
@@ -542,7 +542,7 @@ html = r'''<!doctype html>
     <div>
       <div class="eyebrow">Where this started</div>
       <h2>We came for optimization.<br>We got stuck on the signal.</h2>
-      <p class="body">Feed the judge's critiques back into the agent and let it improve itself. That works &#8212; <b>if you can trust the judge</b>. An unaligned judge optimizes the agent toward its own mistakes.</p>
+      <p class="body">Feed the judge's critiques back into the agent and let it improve itself. That works, <b>but only if you can trust the judge</b>. An unaligned judge optimizes the agent toward its own mistakes.</p>
     </div>
     <svg class="origin" viewBox="0 0 720 640" role="img" aria-label="An optimization loop between the agent and the judge, with the signal arm broken">
       <defs>
@@ -631,13 +631,13 @@ html = r'''<!doctype html>
     </div>
     <ul class="plain">
       <li>Clear enough to act on</li>
-      <li>No precision from a 1–5 scale</li>
+      <li>No false precision from a 1 to 5 scale</li>
       <li>Lower cognitive load and faster review</li>
       <li>Agreement and false passes become measurable</li>
-      <li><b class="hl">No “maybe” bucket means a harder alignment problem</b></li>
+      <li><b class="hl">No "maybe" bucket means a harder alignment problem</b></li>
     </ul>
   </div>
-  <p class="binary-takeaway">An <b>unaligned boolean judge</b> is worse than an unaligned ordinal judge (for example, 1–5): every mistake becomes a hard boundary decision.</p>
+  <p class="binary-takeaway">An <b>unaligned boolean judge</b> is worse than an unaligned ordinal judge (for example, 1 to 5): every mistake becomes a hard boundary decision.</p>
 </section>
 
 <!-- 10 · Grey zone -->
@@ -744,7 +744,7 @@ html = r'''<!doctype html>
       <text class="sub" x="900" y="208">student or Mechanical Turk worker</text>
       <circle class="stop" cx="1450" cy="90" r="13"/>
       <text class="head" x="1450" y="162">Compare the annotations</text>
-      <text class="sub" x="1450" y="208">expert–delegate agreement</text>
+      <text class="sub" x="1450" y="208">expert / delegate agreement</text>
     </g>
     <g class="now">
       <text class="tag" x="0" y="308">NOW</text>
@@ -757,7 +757,7 @@ html = r'''<!doctype html>
       <text class="sub" x="900" y="418">the same cases</text>
       <circle class="stop" cx="1450" cy="300" r="13"/>
       <text class="head" x="1450" y="372">Compare the annotations</text>
-      <text class="sub" x="1450" y="418">expert–judge agreement</text>
+      <text class="sub" x="1450" y="418">expert / judge agreement</text>
     </g>
   </svg>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
@@ -806,7 +806,7 @@ html = r'''<!doctype html>
       <h2>We are lazy</h2>
       <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
       <ul class="plain">
-        <li>Each judge votes three times: disagreement between judges, instability within one</li>
+        <li>Each judge votes three times, so both signals show up</li>
         <li><b class="hl">Those cases go to the front of the human queue</b></li>
       </ul>
       <p class="body queue-line">__FLAGGED__ of 50 were flagged. Review four of them, plus four sampled at random.</p>
@@ -822,7 +822,7 @@ html = r'''<!doctype html>
   <div class="stats">
     <div class="stat"><div class="n">30</div><div class="l">read critiques<br>revise the rubric</div></div>
     <div class="stat"><div class="n">20</div><div class="l">held out<br>until measurement</div></div>
-    <div class="stat"><div class="n hl">FP</div><div class="l">false passes<br>receive special attention</div></div>
+    <div class="stat"><div class="n hl">FP</div><div class="l">false passes<br>get the closest look</div></div>
   </div>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
@@ -961,7 +961,7 @@ html = r'''<!doctype html>
     <text class="name" x="40" y="456">Continuous</text>
     <text class="meta" x="40" y="496">Both, on every change and then on a schedule.</text>
   </svg>
-  <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
+  <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
 <!-- 25 · Finding to knowledge -->
