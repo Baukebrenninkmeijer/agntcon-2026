@@ -78,6 +78,16 @@ that loop with the signal arm crossed out.
 This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
 2026-09-09.
 
+### Slide: What that actually takes
+
+The answer to the slide before it, and the setup for everything after. Aligning a judge is three
+things: a human decides the boundary on a small set of cases, the judge is measured against those
+decisions, and only agreement lets it gate anything.
+
+Then the cost, stated once: the price is human attention, and the rest of the talk is how to spend
+less of it. That line is what the priority queue and the jury pay off later, so do not also explain
+the shortcut here.
+
 ### Slide: Hard metrics gave way to judgement
 
 A timeline of what evaluation has measured: a countable target, then human relevance, then n-gram
