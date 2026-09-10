@@ -262,8 +262,8 @@ html = r'''<!doctype html>
   .hl{color:var(--orange-dark)}
   .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
-  body:has(.who-slide.active){background:#022f2f}
-  .who-slide{padding:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
+  body:has(.who-slide.active){background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
+  .who-slide{padding:0;display:grid;place-items:center;overflow:hidden}
   .who-slide::before{content:"";position:absolute;width:860px;height:860px;border-radius:50%;background:repeating-radial-gradient(circle, transparent 0 40px, rgba(255,255,255,.04) 40px 41px);pointer-events:none}
   .who{position:relative;display:flex;flex-direction:column;align-items:center;gap:30px;text-align:center}
   .who-ring{position:relative;width:600px;height:600px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);box-shadow:0 30px 90px rgba(0,0,0,.45)}
