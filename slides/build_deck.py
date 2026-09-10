@@ -245,7 +245,7 @@ html = r'''<!doctype html>
   .hl{color:var(--orange-dark)}
   .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
-  .byline-sub{margin-top:18px;font-family:var(--mono);font-size:21px;line-height:1.4;color:var(--muted)}
+  .orq-sub{display:block;margin-top:10px;font-family:var(--mono);font-size:22px;line-height:1.4;color:var(--muted)}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
@@ -507,7 +507,6 @@ html = r'''<!doctype html>
   <h1>Building the<br>evaluation flywheel</h1>
   <p class="sub">How human judgment becomes an evaluator you can run on every change.</p>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span><span>September 2026</span></div>
-  <p class="byline-sub">Helping you build better agents: observability, agents, experimentation, software automation</p>
 </section>
 
 <!-- 2 · Evaluation gap -->
@@ -560,7 +559,9 @@ html = r'''<!doctype html>
   <div>
       <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
       <ul class="plain">
-        <li>Research Engineer @ Orq.ai</li>
+        <li>Research Engineer @ Orq.ai
+          <span class="orq-sub">Helping you build better agents: observability, agents, experimentation, software automation</span>
+        </li>
         <li>6 years data science @ ABN AMRO &amp; ING</li>
         <li>Lead @ Agentic AI Foundation Amsterdam</li>
       </ul>
