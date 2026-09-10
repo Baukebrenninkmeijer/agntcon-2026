@@ -282,6 +282,17 @@ For the live walkthrough, open the single dev-only Orq Experiment that places pr
 v3 side by side. Its boolean cells separate human alignment, panel consensus, and within-judge
 stability: v3 is visibly more stable while human agreement remains unchanged.
 
+### Slide: Disagreement was a question, not noise
+
+The bridge out of the queue and into the grey-zone work. A funnel: the cases the panel split on, drawn
+as dashed orange dots, converge on one dark teal circle carrying a question mark, labelled one boundary
+question. Under it, the line that says what happened: they gave us no labels, they gave us one
+question the criterion never answered.
+
+The slide is deliberately general. The premise of this whole section is that scattered disagreement
+collapses into a small number of answerable questions, so naming any single case here would argue the
+opposite. The cases stay anonymous; the next slide shows what answering one of them did.
+
 ### Slide: One answer exposed another ambiguity
 
 Use the first human boundary answer as the walkthrough: visible analytical claims should always be

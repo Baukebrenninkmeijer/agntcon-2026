@@ -296,6 +296,13 @@ html = r'''<!doctype html>
   .maybe-cut{filter:grayscale(1)}
   .maybe-cut.active{opacity:.55}
   .maybe-cut::after{content:"maybe cut";position:absolute;right:48px;top:42px;font-family:var(--mono);font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:2px solid var(--muted);border-radius:999px;padding:6px 18px}
+  .funnel{width:1720px;margin-top:62px;overflow:visible}
+  .funnel .fdot{fill:none;stroke:var(--orange);stroke-width:4;stroke-dasharray:5 7}
+  .funnel .fline{fill:none;stroke:var(--orange);stroke-width:2.5;opacity:.38}
+  .funnel .flab,.funnel .tlab{font-family:var(--mono);font-size:21px;letter-spacing:.14em;fill:var(--muted)}
+  .funnel .target{fill:var(--teal-deep)}
+  .funnel .qmark{fill:var(--paper);font-family:var(--sans);font-size:108px;font-weight:600;text-anchor:middle;dominant-baseline:central}
+  .funnel-sub{margin-top:52px}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
@@ -411,14 +418,14 @@ html = r'''<!doctype html>
   .slide.active .traj .tr{animation:trIn .5s ease forwards}
   @keyframes trIn{to{opacity:1;transform:translateX(0)}}
   .traj{display:block;width:100%;height:auto}
-  .cols.traj-layout{grid-template-columns:1.5fr .5fr;gap:0;align-items:start;margin-top:30px}
+  .cols.traj-layout{grid-template-columns:1.72fr .28fr;gap:0;align-items:start;margin-top:30px}
   .traj-axis{margin-top:14px;font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted)}
   .traj-caption{margin-top:26px;font-size:27px}
-  .traj-evals{position:relative;z-index:2;margin-left:-118px;padding:12px 0 0 38px;background:linear-gradient(90deg,rgba(248,247,245,.9),var(--bg) 16%)}
-  .traj-evals-label{font-family:var(--mono);font-size:17px;letter-spacing:.14em;color:var(--muted);margin-bottom:22px}
-  .traj-eval{border-top:3px solid var(--orange);padding-top:14px;margin-bottom:24px}
-  .traj-eval strong{display:block;font-size:28px;font-weight:500;color:var(--ink)}
-  .traj-eval p{margin-top:7px;font-size:20px;line-height:1.28;color:var(--ink2)}
+  .traj-evals{position:relative;z-index:2;width:360px;margin-left:-118px;padding:12px 0 0 38px;background:linear-gradient(90deg,rgba(248,247,245,.9),var(--bg) 16%)}
+  .traj-evals-label{font-family:var(--mono);font-size:17px;letter-spacing:.14em;color:var(--muted);margin-bottom:24px}
+  .traj-eval{position:relative;padding-top:11px;margin-bottom:24px}
+  .traj-eval::before{content:"";position:absolute;left:0;top:0;width:42px;border-top:2px solid rgba(224,145,72,.62)}
+  .traj-eval strong{display:block;font-size:27px;font-weight:500;color:var(--ink)}
   .traj-legend{display:flex;gap:34px;font-size:23px;color:var(--ink2);margin-top:22px}
   .traj-legend span{display:flex;align-items:center;gap:13px}
   .traj-legend i{width:26px;height:26px;border-radius:5px;display:block}
@@ -926,7 +933,34 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · One human answer exposes another ambiguity -->
+<!-- 18 · Disagreement was a question -->
+<section class="slide">
+  <h2>Disagreement was a question,<br>not noise</h2>
+  <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
+    <text class="flab" x="60" y="-10">CASES THE PANEL SPLIT ON</text>
+    <path class="fline" d="M104 24 C 418 24, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M222 96 C 536 96, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M112 190 C 426 190, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M258 262 C 572 262, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M130 356 C 444 356, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M326 178 C 640 178, 820 215.0, 1038 215.0"/>
+    <path class="fline" d="M294 372 C 608 372, 820 215.0, 1038 215.0"/>
+    <circle class="fdot" cx="78" cy="24" r="18"/>
+    <circle class="fdot" cx="196" cy="96" r="18"/>
+    <circle class="fdot" cx="86" cy="190" r="18"/>
+    <circle class="fdot" cx="232" cy="262" r="18"/>
+    <circle class="fdot" cx="104" cy="356" r="18"/>
+    <circle class="fdot" cx="300" cy="178" r="18"/>
+    <circle class="fdot" cx="268" cy="372" r="18"/>
+    <circle class="target" cx="1150" cy="215.0" r="104"/>
+    <text class="qmark" x="1150" y="215.0">?</text>
+    <text class="tlab" x="1296" y="203.0">ONE BOUNDARY</text>
+    <text class="tlab" x="1296" y="243.0">QUESTION</text>
+  </svg>
+  <p class="sub funnel-sub">They gave us no labels. They gave us one question the criterion never answered.</p>
+</section>
+
+<!-- 19 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -945,14 +979,14 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 19 · Experiment grid -->
+<!-- 20 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 20 · Grey-zone loop -->
+<!-- 21 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -974,13 +1008,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 21 · Question 03 -->
+<!-- 22 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 22 · Agent evaluation -->
+<!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -1000,14 +1034,14 @@ html = r'''<!doctype html>
     </div>
     <div class="traj-evals">
       <div class="traj-evals-label">EVALS ON THE BEHAVIOR</div>
-      <div class="traj-eval"><strong>Tool-call efficiency</strong><p>Did it query once, or five times for the same fact?</p></div>
-      <div class="traj-eval"><strong>Error recovery</strong><p>A query fails. Does the run recover, or answer anyway?</p></div>
-      <div class="traj-eval"><strong>Instruction adherence</strong><p>The user said do not save yet. Did it wait?</p></div>
+      <div class="traj-eval"><strong>Tool-call efficiency</strong></div>
+      <div class="traj-eval"><strong>Error recovery</strong></div>
+      <div class="traj-eval"><strong>Instruction adherence</strong></div>
     </div>
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 24 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1042,7 +1076,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 25 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1063,7 +1097,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Finding to knowledge -->
+<!-- 26 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -1074,7 +1108,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -1089,7 +1123,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 27 · Close -->
+<!-- 28 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
