@@ -293,13 +293,15 @@ html = r'''<!doctype html>
   .orq-card .name{font-size:48px;font-weight:600;line-height:1.05}
   .orq-card .desc{font-size:26px;line-height:1.4;opacity:.92}
   .orq-card .peer{margin-top:auto;font-family:var(--mono);font-size:19px;letter-spacing:.02em;opacity:.72;padding-top:14px;border-top:1px solid currentColor}
-  .maybe-cut{filter:grayscale(1);opacity:.55}
+  .maybe-cut{filter:grayscale(1)}
+  .maybe-cut.active{opacity:.55}
   .maybe-cut::after{content:"maybe cut";position:absolute;right:48px;top:42px;font-family:var(--mono);font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:2px solid var(--muted);border-radius:999px;padding:6px 18px}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
   .cols.grey-layout{grid-template-columns:1.55fr .9fr;gap:54px}
   .statement h2{font-size:104px;margin:0;max-width:1800px}
+  .statement .sub{margin-top:40px}
   ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
@@ -873,7 +875,7 @@ html = r'''<!doctype html>
 <!-- 15 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways a verdict fails to hold still</h2>
-  <p class="sub">Three judges &#183; three repetitions &#183; one real case</p>
+  <p class="sub">Three judges &#183; three repetitions</p>
   <div class="gridwrap">
     <div class="axis">__JUDGE_NAMES__</div>
     <div class="reps">3 repetitions &#8594;</div>
@@ -884,7 +886,14 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 16 · Lazy queue -->
+<!-- 16 · Lazy -->
+<section class="slide statement">
+  <div class="eyebrow">The price is human attention</div>
+  <h2>But we are lazy</h2>
+  <p class="sub">So let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
+</section>
+
+<!-- 17 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -909,9 +918,8 @@ html = r'''<!doctype html>
       <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
     </div>
     <div>
-      <div class="eyebrow">The price is human attention</div>
-      <h2>We are lazy</h2>
-      <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
+      <h2>The judge<br>sorts the queue</h2>
+      <p class="sub">Disagreement and instability decide what humans inspect first.</p>
       <ul class="plain">
         <li>Each judge votes three times, so both signals show up</li>
         <li><b class="hl">Those cases go to the front of the human queue</b></li>
@@ -921,7 +929,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Alignment -->
+<!-- 18 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Human alignment</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -934,7 +942,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 18 · One human answer exposes another ambiguity -->
+<!-- 19 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -953,7 +961,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 19 · Grey-zone loop -->
+<!-- 20 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -975,20 +983,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Experiment grid -->
+<!-- 21 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 21 · Question 03 -->
+<!-- 22 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 22 · Agent evaluation -->
+<!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -1015,7 +1023,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 24 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1050,7 +1058,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 25 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1071,7 +1079,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Finding to knowledge -->
+<!-- 26 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -1082,7 +1090,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -1097,7 +1105,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 27 · Close -->
+<!-- 28 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>

@@ -234,9 +234,13 @@ On the click, the grid rotates back into depth and forty-nine further layers app
 per case in the pool: the same two signals exist for all fifty. Verdicts come from the v3
 decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
 
-### Slide: We are lazy—make the queue smarter
+### Slide: But we are lazy
 
-The eyebrow carries the cost this whole block is spending: the price is human attention.
+A statement slide, spoken in about fifteen seconds. The eyebrow carries the cost this whole block is
+spending, the price is human attention, and the line under the heading says the move: let the LLM
+judges find the ambiguous cases and spend the humans only there. The mechanics come next.
+
+### Slide: The judge sorts the queue
 
 We still need human judgment, but we do not have to review cases in random order.
 
