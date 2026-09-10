@@ -299,20 +299,6 @@ boundary band, before the rule and, on click, after it. The band widens rather t
 count of split cases goes from four to eight. The dot positions are the slide-12 illustration reused;
 only the counts are measured. The instability and no-flip numbers are spoken, not printed.
 
-### Slide: The grey-zone loop
-
-Present the proposed version-two process as an acceleration layer before full annotation. Run the
-jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
-the collaborator read the reasons to identify competing interpretations. The collaborator formulates
-one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
-same cases run again. Repeat until the important boundary questions have been answered.
-
-Only after those iterations do the human decisions get applied across cases to create reference
-labels. The click-revealed lower strip makes this exit explicit with three real development cases:
-clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
-context established earlier in the conversation still counts. Orange remains reserved for the human
-step in the loop; the failed case uses red.
-
 ### Slide: Human labels reveal the judge limits
 
 Keep the real Orq experiment grid as evidence rather than presenting a detailed experiment report.
@@ -329,6 +315,20 @@ prompt iteration or more repetitions would supply the missing judgment.
 ---
 
 ## 4. What makes agent evaluation different (4 min)
+
+### Slide: The grey-zone loop
+
+Present the proposed version-two process as an acceleration layer before full annotation. Run the
+jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
+the collaborator read the reasons to identify competing interpretations. The collaborator formulates
+one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
+same cases run again. Repeat until the important boundary questions have been answered.
+
+Only after those iterations do the human decisions get applied across cases to create reference
+labels. The click-revealed lower strip makes this exit explicit with three real development cases:
+clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
+context established earlier in the conversation still counts. Orange remains reserved for the human
+step in the loop; the failed case uses red.
 
 ### Slide: What changes with agents?
 

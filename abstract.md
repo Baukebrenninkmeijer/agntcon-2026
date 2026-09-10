@@ -7,7 +7,7 @@ This talk walks through evaluating such an agent end-to-end. Our running example
 We cover the full lifecycle:
 
 - Bootstrapping evaluation from 50 hand-reviewed examples when you have no labels.
-- Aligning an LLM-as-a-judge to human judgment with the same rigor you'd apply to outsourced annotators: a dev/test split of the reviewed cases, agreement with the human labels, and repeated runs to see which verdicts hold still.
+- Aligning an LLM-as-a-judge to human judgment with the same rigor you'd apply to outsourced annotators: agreement with the human labels, and repeated runs to see which verdicts hold still.
 - Scaling to continuous online evaluation with CI integration, error analysis, and prompt optimization driven by natural-language feedback.
 
 We also cover what we got wrong in earlier iterations and what we'd do differently today.
@@ -30,7 +30,7 @@ Throughout the talk we evaluate a data-analysis agent answering questions like "
 
 1. **Opening and the evaluation gap (3 min)** — two correct answers to the same question, a one-minute speaker and Orq introduction, why we came to this from wanting to optimise an agent, and why agents break classical evaluation.
 2. **Start with humans, not infrastructure (5 min)** — bootstrapping from ~50 hand-reviewed examples, binary pass/fail with written critiques, why this beats scored rubrics.
-3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Dev/test split applied to evaluation itself. Panel-of-judges to mitigate bias. A short live walkthrough.
+3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Panel-of-judges to mitigate bias, disagreement used to find the questions the criterion never answered. A short live walkthrough.
 4. **Agent-specific evaluation (5 min)** — why the final answer is only the endpoint, and what the run itself exposes: tool-call efficiency, error recovery, instruction adherence. Handling non-determinism at scale.
 5. **Scaling: offline, online, continuous (3.5 min)** — CI integration and error analysis as the dominant time spend. Automated prompt optimization via natural-language feedback is named and shown on one slide, not walked through.
 6. **Takeaways and Q&A (6 min)**

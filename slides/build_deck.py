@@ -411,14 +411,14 @@ html = r'''<!doctype html>
   .slide.active .traj .tr{animation:trIn .5s ease forwards}
   @keyframes trIn{to{opacity:1;transform:translateX(0)}}
   .traj{display:block;width:100%;height:auto}
-  .cols.traj-layout{grid-template-columns:1.42fr .58fr;gap:56px;align-items:start;margin-top:30px}
+  .cols.traj-layout{grid-template-columns:1.5fr .5fr;gap:0;align-items:start;margin-top:30px}
   .traj-axis{margin-top:14px;font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted)}
   .traj-caption{margin-top:26px;font-size:27px}
-  .traj-evals{padding-top:6px}
-  .traj-evals-label{font-family:var(--mono);font-size:20px;letter-spacing:.14em;color:var(--muted);margin-bottom:30px}
-  .traj-eval{border-top:4px solid var(--orange);padding-top:20px;margin-bottom:34px}
-  .traj-eval strong{display:block;font-size:33px;font-weight:500;color:var(--ink)}
-  .traj-eval p{margin-top:10px;font-size:24px;line-height:1.32;color:var(--ink2)}
+  .traj-evals{position:relative;z-index:2;margin-left:-118px;padding:12px 0 0 38px;background:linear-gradient(90deg,rgba(248,247,245,.9),var(--bg) 16%)}
+  .traj-evals-label{font-family:var(--mono);font-size:17px;letter-spacing:.14em;color:var(--muted);margin-bottom:22px}
+  .traj-eval{border-top:3px solid var(--orange);padding-top:14px;margin-bottom:24px}
+  .traj-eval strong{display:block;font-size:28px;font-weight:500;color:var(--ink)}
+  .traj-eval p{margin-top:7px;font-size:20px;line-height:1.28;color:var(--ink2)}
   .traj-legend{display:flex;gap:34px;font-size:23px;color:var(--ink2);margin-top:22px}
   .traj-legend span{display:flex;align-items:center;gap:13px}
   .traj-legend i{width:26px;height:26px;border-radius:5px;display:block}
@@ -926,20 +926,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Alignment -->
-<section class="slide">
-  <div class="eyebrow">Human alignment</div>
-  <h2>Develop on 30.<br>Measure on 20.</h2>
-  <p class="sub">Agreement with the human labels is the number that decides whether the judge is trusted.</p>
-  <div class="stats">
-    <div class="stat"><div class="n">30</div><div class="l">read critiques<br>revise the rubric</div></div>
-    <div class="stat"><div class="n">20</div><div class="l">held out<br>until measurement</div></div>
-    <div class="stat"><div class="n hl">FP</div><div class="l">false passes<br>get the closest look</div></div>
-  </div>
-  <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
-</section>
-
-<!-- 19 · One human answer exposes another ambiguity -->
+<!-- 18 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -956,6 +943,13 @@ html = r'''<!doctype html>
     </section>
   </div>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
+</section>
+
+<!-- 19 · Experiment grid -->
+<section class="slide">
+  <h2>Human labels reveal the judge limits</h2>
+  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
+  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
 <!-- 20 · Grey-zone loop -->
@@ -980,20 +974,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 21 · Experiment grid -->
-<section class="slide">
-  <h2>Human labels reveal the judge limits</h2>
-  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
-  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
-</section>
-
-<!-- 22 · Question 03 -->
+<!-- 21 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 23 · Agent evaluation -->
+<!-- 22 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -1020,7 +1007,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Lifecycle -->
+<!-- 23 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1055,7 +1042,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 25 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1076,7 +1063,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 26 · Finding to knowledge -->
+<!-- 25 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -1087,7 +1074,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 26 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -1102,7 +1089,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 28 · Close -->
+<!-- 27 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
