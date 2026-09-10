@@ -514,11 +514,9 @@ html = r'''<!doctype html>
   .factory .process-card h3{font-size:34px}
   .factory .flow-arrow{font-size:48px;color:var(--teal)}
   .feedback{margin-top:34px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.08em;color:var(--muted)}
-  .sphere-brand{display:flex;align-items:center;gap:26px;margin-bottom:50px}
-  .sphere-mark{width:78px;height:78px;border-radius:50%;border:5px solid var(--teal-deep);position:relative;flex:none}
-  .sphere-mark::before,.sphere-mark::after{content:"";position:absolute;border:4px solid var(--orange);border-radius:50%}
-  .sphere-mark::before{inset:14px -17px;transform:rotate(-18deg)}
-  .sphere-mark::after{inset:-9px 21px;transform:rotate(28deg)}
+  .sphere-brand{display:flex;align-items:flex-end;gap:26px;margin-bottom:50px}
+  .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:36px}
+  .sphere-mark::before{content:"";position:absolute;left:50%;top:-44px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
   .sphere-word{font-size:62px;font-weight:600;letter-spacing:-.035em}
   .cost .big{font-size:76px;font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--orange-dark)}
   .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
