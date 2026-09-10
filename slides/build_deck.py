@@ -274,6 +274,7 @@ html = r'''<!doctype html>
   .who-line{margin-top:16px;font-family:var(--mono);font-size:21px;line-height:1.45;color:rgba(250,249,245,.62)}
   .who-slide .counter{color:rgba(250,249,245,.45)}
   .orq-slide h2{margin-bottom:34px}
+  .orq-band,.orq-cards{width:100%;max-width:1560px;margin-left:auto;margin-right:auto}
   .orq-band{display:flex;align-items:center;gap:26px;background:var(--teal-deep);border-radius:22px;padding:26px 34px;color:var(--paper)}
   .orq-band .mark{flex:none;width:66px;height:66px;display:grid;place-items:center;background:rgba(255,255,255,.12);border-radius:16px}
   .orq-band .mark svg{width:40px;height:40px}
