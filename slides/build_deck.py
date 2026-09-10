@@ -293,6 +293,8 @@ html = r'''<!doctype html>
   .orq-card .name{font-size:48px;font-weight:600;line-height:1.05}
   .orq-card .desc{font-size:26px;line-height:1.4;opacity:.92}
   .orq-card .peer{margin-top:auto;font-family:var(--mono);font-size:19px;letter-spacing:.02em;opacity:.72;padding-top:14px;border-top:1px solid currentColor}
+  .maybe-cut{filter:grayscale(1);opacity:.55}
+  .maybe-cut::after{content:"maybe cut";position:absolute;right:48px;top:42px;font-family:var(--mono);font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:2px solid var(--muted);border-radius:999px;padding:6px 18px}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
@@ -794,7 +796,7 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 13 · Two lifecycles -->
-<section class="slide">
+<section class="slide maybe-cut">
   <h2>Two lifecycles, not one</h2>
   <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
   <svg class="twoloop" viewBox="0 0 1720 640" role="img" aria-label="The application cycle and the evaluation cycle, each three stages, coupled by a release gate and by new failures becoming new cases">
