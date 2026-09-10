@@ -74,11 +74,6 @@ that loop with the signal arm crossed out.
 This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
 2026-09-09.
 
-### Slide: Who is saying this
-
-Three lines of bio. Orq is introduced out loud, not on the slide. Placing this after the origin
-story lets the opening problem and motivation land before the speaker introduction.
-
 ### Slide: Evaluation moved from correctness to alignment
 
 A three-stage evolution at the level needed for the talk. Known-answer evaluation compares an
@@ -90,6 +85,13 @@ detour and closes on the consequence: the evaluator now needs its own evaluation
 
 You cannot use evals to improve an agent before the eval is aligned. This is why the alignment work
 in section 3 comes before the agent work in section 4, and it is stated once, plainly.
+
+### Slide: Who is saying this
+
+Three lines of bio, with the Orq one-liner under the first of them. This sits last in section 1, so
+the whole problem lands before the speaker introduction: the two answers, the origin story, the
+lineage, and the ordering constraint all come first, and the bio arrives as a credential for what
+was just argued rather than as a preamble to it. The case slide follows immediately.
 
 ---
 
