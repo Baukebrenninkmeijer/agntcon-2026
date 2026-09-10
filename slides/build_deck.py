@@ -579,7 +579,7 @@ html = r'''<!doctype html>
     <g>
       <circle cx="1580" cy="120" r="22" fill="var(--orange)"/>
       <text x="1580" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
-      <text x="1580" y="245" text-anchor="middle" class="lbl small">COMPARE JUDGE LABELS WITH EXPERT LABELS</text>
+      <text x="1580" y="245" text-anchor="middle" class="lbl small">COMPARE WITH EXPERT LABELS</text>
     </g>
     <text x="60" y="382" class="lbl">The evaluator now needs <tspan fill="var(--orange-dark)">its own evaluation.</tspan></text>
   </svg>
