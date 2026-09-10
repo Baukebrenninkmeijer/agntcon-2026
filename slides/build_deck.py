@@ -258,7 +258,8 @@ html = r'''<!doctype html>
   .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
   .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:44px;max-width:1500px}
+  .ask{margin-top:46px;font-size:40px;color:var(--ink);font-weight:500}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:38px;max-width:1500px}
   .answer{border-top:6px solid var(--teal);padding:34px 0 0;min-height:0}
   .answer.b{border-color:var(--orange)}
   .answer .tag{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--ink2);margin-bottom:22px}
@@ -511,32 +512,20 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
   <h2>Two correct answers.<br>One useful decision.</h2>
+  <p class="ask">&#8220;Where is the station?&#8221;</p>
   <div class="compare">
     <div class="answer">
       <div class="tag">ANSWER A</div>
-      <p>2025 revenue was <strong>$51,226,989.17</strong>.</p>
+      <p><strong>52.3791&#176; N, 4.9003&#176; E.</strong></p>
     </div>
     <div class="answer b">
       <div class="tag">ANSWER B</div>
-      <p>2025 revenue was <strong>$51,226,989.17</strong> booked. <mark><strong>$40.4M</strong> was realized. Cancelled, pending and refunded orders are the other <strong>$10.8M</strong>.</mark></p>
+      <p><mark><strong>Two streets to your left</strong>, about five minutes on foot.</mark></p>
     </div>
   </div>
 </section>
 
-<!-- 3 · Speaker -->
-<section class="slide">
-  <div class="eyebrow">Who is saying this</div>
-  <div>
-      <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
-      <ul class="plain">
-        <li>Research Engineer @ Orq.ai</li>
-        <li>6 years data science @ ABN AMRO &amp; ING</li>
-        <li>Lead @ Agentic AI Foundation Amsterdam</li>
-      </ul>
-  </div>
-</section>
-
-<!-- 4 · Origin -->
+<!-- 3 · Origin -->
 <section class="slide">
   <div class="cols origin-layout">
     <div>
@@ -560,6 +549,19 @@ html = r'''<!doctype html>
       <text class="side" x="128" y="330" text-anchor="middle">prompt update</text>
       <path class="break" d="M501 294 L553 346 M553 294 L501 346"/>
     </svg>
+  </div>
+</section>
+
+<!-- 4 · Speaker -->
+<section class="slide">
+  <div class="eyebrow">Who is saying this</div>
+  <div>
+      <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
+      <ul class="plain">
+        <li>Research Engineer @ Orq.ai</li>
+        <li>6 years data science @ ABN AMRO &amp; ING</li>
+        <li>Lead @ Agentic AI Foundation Amsterdam</li>
+      </ul>
   </div>
 </section>
 

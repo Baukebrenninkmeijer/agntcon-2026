@@ -53,19 +53,16 @@ Introduce Sphere.com, an Amsterdam-based B2B wholesaler of physical home applian
 The board is asking about quality of growth: discounts, refunds, cancellations, and regional and
 category mix. The analytics agent can query order data and explain the result.
 
-Put two plausible answers to the same question on screen: what was 2025 revenue? Both report
-$51,226,989.17 and both are right. Only the second says that this is booked revenue, that $40.4M was
-realized, and that cancelled, pending and refunded orders are the other $10.8M. No criterion has been
-introduced at this point in the talk and none is needed: the room can see which answer a person could
-act on. Figures come from the recorded v4 responses for `v4-total-gross-2025` and
-`v4-cancelled-then-realized`, whose status breakdown gives the realized total.
+Put two answers to one question on screen: where is the station? One gives the coordinates, the
+other says two streets left, five minutes on foot. Both are true and the precise one is useless.
+Nothing here needs a criterion, a dataset, or a definition, which is the point: the room agrees on
+which answer is better before the talk has defined anything, and that agreement is the thing the
+rest of the talk has to teach a judge.
+
+Sphere.com and the quality-of-growth framing are introduced on the case slide, not here.
 
 That is the evaluation gap. Reference matching can verify a number, but it cannot determine whether
 the response used sound judgment about emphasis, explanation, caveats, and scope.
-
-### Slide: Who is saying this
-
-Three lines of bio. Orq is introduced out loud, not on the slide.
 
 ### Slide: We came for optimization. We got stuck on the signal.
 
@@ -76,6 +73,11 @@ that loop with the signal arm crossed out.
 
 This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
 2026-09-09.
+
+### Slide: Who is saying this
+
+Three lines of bio. Orq is introduced out loud, not on the slide. Placing this after the origin
+story lets the opening problem and motivation land before the speaker introduction.
 
 ### Slide: Evaluation moved from correctness to alignment
 
