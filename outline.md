@@ -33,7 +33,7 @@ though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01 · Start with humans` (slide 9) |
+| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01` over `Start with humans` (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 13-21 | `Question 02 · Trust the judge` (slide 13) |
 | 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 22-23 | `Question 03` over the question itself (slide 22) |
 
@@ -102,7 +102,7 @@ in section 3 comes before the agent work in section 4, and it is stated once, pl
 
 ## 2. Start with humans, not infrastructure (5 min)
 
-### Slide: Decisions for an eval
+### Slide: Start with humans
 
 Make three setup decisions visible before explaining any one of them: build fifty diverse cases
 around real business decisions, align one subjective criterion (`decision_support_quality`), and
