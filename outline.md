@@ -236,9 +236,11 @@ decision-support jury run of 2026-09-08; the front layer is the case discussed o
 
 ### Slide: But we are lazy
 
-A statement slide, spoken in about fifteen seconds. The eyebrow carries the cost this whole block is
-spending, the price is human attention, and the line under the heading says the move: let the LLM
-judges find the ambiguous cases and spend the humans only there. The mechanics come next.
+The text half of what used to be one crowded slide. The eyebrow carries the cost this whole block is
+spending, the price is human attention. Under the heading: let the LLM judges find the ambiguous
+cases and spend the humans only there, then the three lines that say how, ending on the one that
+matters, those cases go to the front of the human queue. No diagram, so it can be read from the back
+row and spoken in about twenty seconds.
 
 ### Slide: The judge sorts the queue
 

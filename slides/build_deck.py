@@ -457,7 +457,8 @@ html = r'''<!doctype html>
   .grid-cap.step1,.slide[data-step="1"] .grid-cap.step0{position:absolute;opacity:0}
   .slide[data-step="1"] .grid-cap.step1{position:static;opacity:1}
   @media (prefers-reduced-motion:reduce){.deck3d,.layer,.gridwrap .axis,.gridwrap .reps,.gridwrap .depth{transition-duration:.01ms}}
-  .queue-line{margin-top:34px;opacity:0;transition:opacity .4s ease}
+  .lazy-list{margin-top:52px;max-width:1500px}
+  .queue-line{margin-top:44px;opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
   .legend span{display:flex;align-items:center;gap:12px}
@@ -887,10 +888,15 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 16 · Lazy -->
-<section class="slide statement">
+<section class="slide">
   <div class="eyebrow">The price is human attention</div>
   <h2>But we are lazy</h2>
-  <p class="sub">So let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
+  <p class="sub">Let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
+  <ul class="plain lazy-list">
+    <li>Each judge votes three times, so both signals show up</li>
+    <li>Judges disagree with each other, or one judge disagrees with itself</li>
+    <li><b class="hl">Those cases go to the front of the human queue</b></li>
+  </ul>
 </section>
 
 <!-- 17 · Lazy queue -->
@@ -919,11 +925,7 @@ html = r'''<!doctype html>
     </div>
     <div>
       <h2>The judge<br>sorts the queue</h2>
-      <p class="sub">Disagreement and instability decide what humans inspect first.</p>
-      <ul class="plain">
-        <li>Each judge votes three times, so both signals show up</li>
-        <li><b class="hl">Those cases go to the front of the human queue</b></li>
-      </ul>
+      <p class="sub">Flagged cases go first. A random sample rides along to catch what the judges agreed on and got wrong.</p>
       <p class="body queue-line">__FLAGGED__ of 50 were flagged. Review four of them, plus four sampled at random.</p>
     </div>
   </div>
