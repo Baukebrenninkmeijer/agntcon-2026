@@ -755,12 +755,10 @@ html = r'''<!doctype html>
     <ul class="plain">
       <li>Clear enough to act on</li>
       <li>No false precision from a 1 to 5 scale</li>
-      <li>Lower cognitive load and faster review</li>
       <li>Agreement and false passes become measurable</li>
-      <li><b class="hl">No "maybe" bucket means a harder alignment problem</b></li>
     </ul>
   </div>
-  <p class="binary-takeaway">An <b>unaligned boolean judge</b> is worse than an unaligned ordinal judge (for example, 1 to 5): every mistake becomes a hard boundary decision.</p>
+  <p class="binary-takeaway">The cost: <b>no "maybe" bucket</b>. An unaligned boolean judge is worse than an unaligned 1 to 5 judge, because every mistake becomes a hard boundary decision.</p>
 </section>
 
 <!-- 11 · Grey zone -->
@@ -928,7 +926,6 @@ html = r'''<!doctype html>
     <div>
       <h2>The judge<br>sorts the queue</h2>
       <p class="sub">Flagged cases go first. A random sample comes along to catch the cases the judges agreed on and got wrong.</p>
-      <p class="body queue-line">__FLAGGED__ of 50 were flagged. Review four of them, plus four sampled at random.</p>
     </div>
   </div>
 </section>
@@ -979,14 +976,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 20 · Experiment grid -->
-<section class="slide">
-  <h2>Human labels reveal the judge limits</h2>
-  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
-  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
-</section>
-
-<!-- 21 · Grey-zone loop -->
+<!-- 20 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -1006,6 +996,13 @@ html = r'''<!doctype html>
     <div class="proof-case fail"><strong>FAIL</strong><h4>Best month net</h4><p>Visible evidence contradicts the stated definition.</p></div>
     <div class="proof-case"><strong>PASS</strong><h4>Earlier context still counts</h4><p>The response established the context earlier in the conversation.</p></div>
   </div>
+</section>
+
+<!-- 21 · Experiment grid -->
+<section class="slide">
+  <h2>Human labels reveal the judge limits</h2>
+  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
+  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
 <!-- 22 · Question 03 -->

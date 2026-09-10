@@ -138,23 +138,19 @@ split here; introduce it later when it becomes part of validating the judge.
 For every applicable case, the reviewer must choose `pass` or `fail` and explain why. The critique
 contains the nuance; the label makes the boundary operational.
 
-The practical benefits highlighted in the ECIR material are:
+Three benefits on the slide, taken from the ECIR material:
 
-- a binary decision is clear and actionable;
-- it gives up the precision of a 1–5 scale in exchange for an operational boundary;
-- it lowers cognitive load and increases annotation throughput;
-- agreement, precision, recall, and false-pass rate become directly measurable.
+- a binary decision is clear enough to act on;
+- no false precision from a 1–5 scale;
+- agreement and false passes become measurable.
 
-The important cost is also the point: binary grading offers no “maybe” bucket. Forcing the judge to
-go either way does not eliminate ambiguity. It forces every ambiguous case onto one side of the
-boundary.
+The cost gets stated once, at the bottom, and only once: binary grading offers no “maybe” bucket, so
+an unaligned boolean judge is worse than an unaligned 1–5 judge, because every mistake becomes a hard
+boundary decision instead of an imperfect position on a scale.
 
-That makes alignment harder and more important. Instability and disagreement reveal where the
-judge does not know how humans place the boundary.
-
-State the tradeoff plainly at the bottom of the slide: an unaligned boolean judge is worse than an
-unaligned ordinal judge because every mistake becomes a hard boundary decision rather than an
-imperfect position on a scale.
+Forcing the judge to choose does not remove ambiguity. It pushes every ambiguous case onto one side of
+the boundary, which is what makes alignment both harder and more important. The throughput and
+cognitive-load argument is narration, not a bullet.
 
 `not_applicable` is reserved for cases where the criterion genuinely does not apply. It is not an
 escape hatch for uncertainty.
@@ -264,24 +260,6 @@ with jury disagreement, eight unstable, twelve flagged in total.
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
 
-### Slide: Align the evaluator like any other model
-
-The eyebrow names the thing plainly: **human alignment**. Agreement with the human labels is the
-number that decides whether the judge is trusted.
-
-Use the 30-case development split to study disagreement patterns and revise the evaluator. Do not
-patch individual rows or expose the held-out cases during iteration.
-
-Use the 20-case test split only to measure agreement, precision, recall, and especially false-pass
-behavior. A false pass matters most because it allows a bad answer to ship.
-
-A panel reduces dependence on one model’s preferences. Consensus still does not prove correctness;
-it only tells us the models agree.
-
-For the live walkthrough, open the single dev-only Orq Experiment that places prompt v1, v2, and
-v3 side by side. Its boolean cells separate human alignment, panel consensus, and within-judge
-stability: v3 is visibly more stable while human agreement remains unchanged.
-
 ### Slide: Disagreement gives us a question
 
 The bridge out of the queue and into the grey-zone work. A funnel: the cases the panel split on, drawn
@@ -310,6 +288,20 @@ boundary band, before the rule and, on click, after it. The band widens rather t
 count of split cases goes from four to eight. The dot positions are the slide-12 illustration reused;
 only the counts are measured. The instability and no-flip numbers are spoken, not printed.
 
+### Slide: The grey-zone loop
+
+Present the proposed version-two process as an acceleration layer before full annotation. Run the
+jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
+the collaborator read the reasons to identify competing interpretations. The collaborator formulates
+one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
+same cases run again. Repeat until the important boundary questions have been answered.
+
+Only after those iterations do the human decisions get applied across cases to create reference
+labels. The click-revealed lower strip makes this exit explicit with three real development cases:
+clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
+context established earlier in the conversation still counts. Orange remains reserved for the human
+step in the loop; the failed case uses red.
+
 ### Slide: Human labels reveal the judge limits
 
 Keep the real Orq experiment grid as evidence rather than presenting a detailed experiment report.
@@ -326,20 +318,6 @@ prompt iteration or more repetitions would supply the missing judgment.
 ---
 
 ## 4. What makes agent evaluation different (4 min)
-
-### Slide: The grey-zone loop
-
-Present the proposed version-two process as an acceleration layer before full annotation. Run the
-jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
-the collaborator read the reasons to identify competing interpretations. The collaborator formulates
-one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
-same cases run again. Repeat until the important boundary questions have been answered.
-
-Only after those iterations do the human decisions get applied across cases to create reference
-labels. The click-revealed lower strip makes this exit explicit with three real development cases:
-clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
-context established earlier in the conversation still counts. Orange remains reserved for the human
-step in the loop; the failed case uses red.
 
 ### Slide: What changes with agents?
 
