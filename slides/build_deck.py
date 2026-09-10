@@ -810,8 +810,9 @@ html = r'''<!doctype html>
 
 <!-- 19 · Alignment -->
 <section class="slide">
-  <div class="eyebrow">Treat the judge like a model</div>
+  <div class="eyebrow">Human alignment</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
+  <p class="sub">Agreement with the human labels is the number that decides whether the judge is trusted.</p>
   <div class="stats">
     <div class="stat"><div class="n">30</div><div class="l">read critiques<br>revise the rubric</div></div>
     <div class="stat"><div class="n">20</div><div class="l">held out<br>until measurement</div></div>
@@ -896,7 +897,42 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 25 · Operating modes -->
+<!-- 25 · Lifecycle -->
+<section class="slide">
+  <h2>Build the eval once.<br>Then it guards every commit.</h2>
+  <div class="phases">
+    <div class="phase">
+      <div class="lead">DISCOVERY</div>
+      <h3>Build with humans</h3>
+      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate climbs from a deliberately low start toward the target over rounds of human review">
+        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
+        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
+        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
+        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
+        <path class="curve build" d="M84 276 C200 268, 250 236, 330 208 S520 148, 768 100"/>
+        <text class="lbl" x="70" y="344">ROUNDS OF HUMAN REVIEW &#8594;</text>
+      </svg>
+      <p>Hard cases and edge cases. A low pass rate is the eval working; one that never fails is too easy.</p>
+    </div>
+    <div class="phase">
+      <div class="lead">REGRESSION</div>
+      <h3>Guard every commit</h3>
+      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate sits at the target on every commit until one commit dips below it and is stopped">
+        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
+        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
+        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
+        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
+        <path class="curve guard" d="M84 86 L380 86 L440 244 L500 86 L768 86"/>
+        <circle class="dip" cx="440" cy="244" r="12"/>
+        <text class="lbl" x="440" y="288" text-anchor="middle">CAUGHT</text>
+        <text class="lbl" x="70" y="344">EVERY COMMIT &#8594;</text>
+      </svg>
+      <p>Known behavior and core paths. Everything passes, or something broke and the commit stops.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 26 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -915,41 +951,6 @@ html = r'''<!doctype html>
     <text class="meta" x="40" y="496">Both, on every change and then on a schedule.</text>
   </svg>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
-</section>
-
-<!-- 26 · Lifecycle -->
-<section class="slide">
-  <h2>Build the eval once.<br>Then it guards every commit.</h2>
-  <div class="phases">
-    <div class="phase">
-      <div class="lead">FIRST</div>
-      <h3>Build with humans</h3>
-      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate climbs from a deliberately low start toward the target over rounds of human review">
-        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
-        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
-        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
-        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
-        <path class="curve build" d="M84 276 C200 268, 250 236, 330 208 S520 148, 768 100"/>
-        <text class="lbl" x="70" y="344">ROUNDS OF HUMAN REVIEW &#8594;</text>
-      </svg>
-      <p>Hard cases and edge cases. A low pass rate at the start is the point.</p>
-    </div>
-    <div class="phase">
-      <div class="lead">THEN</div>
-      <h3>Guard every commit</h3>
-      <svg class="chart" viewBox="0 0 800 380" role="img" aria-label="Pass rate sits at the target on every commit until one commit dips below it and is stopped">
-        <line class="target" x1="70" y1="72" x2="782" y2="72"/>
-        <text class="lbl dim" x="782" y="52" text-anchor="end">TARGET</text>
-        <line class="axis" x1="70" y1="18" x2="70" y2="300"/>
-        <line class="axis" x1="70" y1="300" x2="782" y2="300"/>
-        <path class="curve guard" d="M84 86 L380 86 L440 244 L500 86 L768 86"/>
-        <circle class="dip" cx="440" cy="244" r="12"/>
-        <text class="lbl" x="440" y="288" text-anchor="middle">CAUGHT</text>
-        <text class="lbl" x="70" y="344">EVERY COMMIT &#8594;</text>
-      </svg>
-      <p>Known behavior and core paths. Everything passes, or the commit stops.</p>
-    </div>
-  </div>
 </section>
 
 <!-- 27 · Finding to knowledge -->

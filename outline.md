@@ -237,6 +237,9 @@ boundary belongs.
 
 ### Slide: Align the evaluator like any other model
 
+The eyebrow names the thing plainly: **human alignment**. Agreement with the human labels is the
+number that decides whether the judge is trusted.
+
 Use the 30-case development split to study disagreement patterns and revise the evaluator. Do not
 patch individual rows or expose the held-out cases during iteration.
 
@@ -311,20 +314,15 @@ Agent evaluation can inspect:
 - context, definitions, or constraints lost across turns;
 - state changes such as saving an insight or performing a write.
 
+Replay rather than regenerate: the runs under review are recorded, so the object stays fixed while
+the judge changes. That is spoken, not given a slide.
+
 Trajectory evidence can explain why an answer failed. Tool calls reveal whether the response rests
 on observed data. Multi-turn replay exposes context drift that a final-answer judge cannot see.
 
 For Sphere.com, `decision_support_quality` remains one focused subjective verdict. The conversation
 and tool events provide context for that verdict; they are not turned into additional evaluators in
 this stage.
-
-### Slide: Replay, do not regenerate
-
-Evaluate recorded runs without invoking the target agent again. The object under review must stay
-fixed while the judge changes.
-
-This separates target non-determinism from evaluator non-determinism and lets humans and jury
-members inspect the same behavior.
 
 ---
 
