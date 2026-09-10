@@ -637,7 +637,7 @@ html = r'''<!doctype html>
       <div class="who-name">Bauke Brenninkmeijer</div>
       <div class="who-role">Applied AI Researcher &#183; orq.ai</div>
       <div class="who-line">Red teaming &#183; Evaluation &#183; Agent simulation</div>
-      <div class="who-line">Lead at Agentic AI Foundation Amsterdam</div>
+      <div class="who-line">Lead @ Agentic AI Foundation Amsterdam</div>
     </div>
   </div>
 </section>
