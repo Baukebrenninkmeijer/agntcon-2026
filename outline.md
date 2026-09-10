@@ -33,7 +33,7 @@ though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 7-11 | `Question 01` over `Start with humans` (slide 8) |
+| 01 · How do you get a first signal with no labels? | section 2 | 9-11 | `Question 01` over `Start with humans` (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
 | 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
 
@@ -83,6 +83,11 @@ A three-stage evolution at the level needed for the talk. Known-answer evaluatio
 output with ground truth. Human-judgement evaluation compares an annotation with an expert.
 LLM-judge evaluation compares judge labels with expert labels. The slide drops the earlier n-gram
 detour and closes on the consequence: the evaluator now needs its own evaluation.
+
+On click, the full-width lineage moves upward without shrinking. A large horizontal diagram rises
+into the lower portion: Agent and Judge form one feedback loop, while Judge and Expert form the
+second. The shared judge makes the control visible: the agent can learn from the judge only while
+the judge learns from expert decisions.
 
 ### Slide: The ordering constraint
 
@@ -161,9 +166,11 @@ The consequence of the binary, shown rather than argued. The clear passes and cl
 either end; between them is the band of cases where reasonable reviewers disagree. That band is
 where all the alignment work happens, and it is the slide the later grey-zone loop refers back to.
 
-### Slide: One criterion at a time
+### The criterion, on the `Start with humans` slide
 
-For this talk we align only `decision_support_quality`:
+The criterion is not its own slide. It sits below the three setup numbers, under an orange rule,
+in the lower third of that slide, so the room reads the setup and the question it is a setup for in
+one place. For this talk we align only `decision_support_quality`:
 
 > Does the response turn the analysis into clear, appropriately scoped input to the stakeholder’s
 > stated decision, using sound judgment about emphasis, explanation, caveats, and next steps?
