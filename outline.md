@@ -218,6 +218,14 @@ not the base flow taught on this slide. The unchanged comparison with expert ann
 version one of the process. The later grey-zone loop proposes a faster way to sharpen the criteria
 before applying them across the dataset.
 
+### Slide: But we are lazy
+
+The text half of what used to be one crowded slide. The eyebrow carries the cost this whole block is
+spending, the price is human attention. Under the heading: let the LLM judges find the ambiguous
+cases and spend the humans only there, then the three lines that say how, ending on the one that
+matters, those cases go to the front of the human queue. No diagram, so it can be read from the back
+row and spoken in about twenty seconds.
+
 ### Slide: Two ways a verdict fails to hold still
 
 Both signals in one picture, on real verdicts. A three-by-three grid: rows are the three judges by
@@ -233,14 +241,6 @@ for the rest of the talk and is not re-explained.
 On the click, the grid rotates back into depth and forty-nine further layers appear behind it, one
 per case in the pool: the same two signals exist for all fifty. Verdicts come from the v3
 decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
-
-### Slide: But we are lazy
-
-The text half of what used to be one crowded slide. The eyebrow carries the cost this whole block is
-spending, the price is human attention. Under the heading: let the LLM judges find the ambiguous
-cases and spend the humans only there, then the three lines that say how, ending on the one that
-matters, those cases go to the front of the human queue. No diagram, so it can be read from the back
-row and spoken in about twenty seconds.
 
 ### Slide: The judge sorts the queue
 

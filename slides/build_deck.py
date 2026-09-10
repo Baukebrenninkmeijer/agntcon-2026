@@ -873,7 +873,19 @@ html = r'''<!doctype html>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 15 · Judge grid -->
+<!-- 15 · Lazy -->
+<section class="slide">
+  <div class="eyebrow">The price is human attention</div>
+  <h2>But we are lazy</h2>
+  <p class="sub">Let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
+  <ul class="plain lazy-list">
+    <li>Each judge votes three times, so both signals show up</li>
+    <li>Judges disagree with each other, or one judge disagrees with itself</li>
+    <li><b class="hl">Those cases go to the front of the human queue</b></li>
+  </ul>
+</section>
+
+<!-- 16 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways a verdict fails to hold still</h2>
   <p class="sub">Three judges &#183; three repetitions</p>
@@ -885,18 +897,6 @@ html = r'''<!doctype html>
   </div>
   <p class="body grid-cap step0">Judges disagree with each other, and one judge disagrees with itself.</p>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
-</section>
-
-<!-- 16 · Lazy -->
-<section class="slide">
-  <div class="eyebrow">The price is human attention</div>
-  <h2>But we are lazy</h2>
-  <p class="sub">Let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
-  <ul class="plain lazy-list">
-    <li>Each judge votes three times, so both signals show up</li>
-    <li>Judges disagree with each other, or one judge disagrees with itself</li>
-    <li><b class="hl">Those cases go to the front of the human queue</b></li>
-  </ul>
 </section>
 
 <!-- 17 · Lazy queue -->
