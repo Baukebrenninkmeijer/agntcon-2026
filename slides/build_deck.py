@@ -876,7 +876,7 @@ html = r'''<!doctype html>
 <!-- 15 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
-  <p class="sub">Let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
+  <p class="sub">Let the LLM judges find the ambiguous cases, and spend human time only there.</p>
   <p class="price">The price is human attention</p>
 </section>
 
