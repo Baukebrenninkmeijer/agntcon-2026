@@ -91,7 +91,9 @@ in section 3 comes before the agent work in section 4, and it is stated once, pl
 
 ### Slide: Who is saying this
 
-Three lines of bio, with the Orq one-liner under the first of them. This sits last in section 1, so
+A full-bleed slide on the deep teal, ported from the ADC red-teaming deck: the cartoon avatar in a
+ring, the name, the role, and two mono lines carrying the Orq one-liner and the rest of the bio. It
+is the only dark slide in the deck, which is what makes the break work. This sits last in section 1, so
 the whole problem lands before the speaker introduction: the two answers, the origin story, the
 lineage, and the ordering constraint all come first, and the bio arrives as a credential for what
 was just argued rather than as a preamble to it. The case slide follows immediately.

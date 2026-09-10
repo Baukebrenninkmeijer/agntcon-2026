@@ -24,6 +24,10 @@ experiment_grid = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "experiment-grid.jpg").read_bytes()
 ).decode()
 
+cartoon = base64.b64encode(
+    (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
+).decode()
+
 
 # Preserved grey-zone visual: overlapping classes and several defensible boundaries.
 rng = random.Random(7)
@@ -245,7 +249,16 @@ html = r'''<!doctype html>
   .hl{color:var(--orange-dark)}
   .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
-  .orq-sub{display:block;margin-top:10px;font-family:var(--mono);font-size:22px;line-height:1.4;color:var(--muted)}
+  .who-slide{padding:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
+  .who-slide::before{content:"";position:absolute;width:860px;height:860px;border-radius:50%;background:repeating-radial-gradient(circle, transparent 0 40px, rgba(255,255,255,.04) 40px 41px);pointer-events:none}
+  .who{position:relative;display:flex;flex-direction:column;align-items:center;gap:30px;text-align:center}
+  .who-ring{position:relative;width:600px;height:600px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);box-shadow:0 30px 90px rgba(0,0,0,.45)}
+  .who-ring::after{content:"";position:absolute;inset:-16px;border-radius:50%;border:2px solid rgba(255,255,255,.18)}
+  .who-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:8px solid var(--paper)}
+  .who-name{font-size:58px;font-weight:600;color:var(--paper);letter-spacing:-.01em}
+  .who-role{margin-top:10px;font-family:var(--mono);font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:#9fcfca}
+  .who-line{margin-top:16px;font-family:var(--mono);font-size:21px;line-height:1.45;color:rgba(250,249,245,.62)}
+  .who-slide .counter{color:rgba(250,249,245,.45)}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
@@ -584,17 +597,15 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 6 · Speaker -->
-<section class="slide">
-  <div class="eyebrow">Who is saying this</div>
-  <div>
-      <h2 style="font-size:66px;margin-bottom:44px">Bauke Brenninkmeijer</h2>
-      <ul class="plain">
-        <li>Research Engineer @ Orq.ai
-          <span class="orq-sub">Helping you build better agents: observability, agents, experimentation, software automation</span>
-        </li>
-        <li>6 years data science @ ABN AMRO &amp; ING</li>
-        <li>Lead @ Agentic AI Foundation Amsterdam</li>
-      </ul>
+<section class="slide who-slide">
+  <div class="who">
+    <div class="who-ring"><img src="data:image/jpeg;base64,__CARTOON__" alt="Bauke Brenninkmeijer"></div>
+    <div>
+      <div class="who-name">Bauke Brenninkmeijer</div>
+      <div class="who-role">Research Engineer &#183; orq.ai</div>
+      <div class="who-line">Helping you build better agents: observability, agents, experimentation, software automation</div>
+      <div class="who-line">6 years data science at ABN AMRO and ING &#183; Lead at Agentic AI Foundation Amsterdam</div>
+    </div>
   </div>
 </section>
 
@@ -1071,6 +1082,7 @@ html = (
     .replace("__SB__", fonts["SB"])
     .replace("__MONO__", fonts["MONO"])
     .replace("__EXPERIMENT_GRID__", experiment_grid)
+    .replace("__CARTOON__", cartoon)
     .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
     .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))
     .replace("__GREY_DOTS__", grey_dot_svg)
