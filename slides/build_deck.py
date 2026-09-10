@@ -40,6 +40,42 @@ grey_dot_svg = "\n".join(
 )
 
 
+# Slide 20: the grey zone redrawn, one dot per reviewed case. Positions are the
+# slide-12 illustration reused; the highlighted counts are the real development
+# signals (four split cases before the rule, eight after, no verdict flips).
+amb_rng = random.Random(11)
+amb_dots = [
+    (amb_rng.uniform(70, 1130), amb_rng.uniform(70, 630))
+    for _ in range(50)
+]
+
+
+def ambiguity_zone(spread: float, highlighted: int, gradient_id: str) -> str:
+    top, bottom = -90 - spread, 220 + spread
+    parts = [
+        f'<svg class="ambz" viewBox="0 0 1200 700" aria-label="The reviewed cases against the boundary band, {highlighted} of them inside it">',
+        f'<defs><linearGradient id="{gradient_id}" x1="0" y1="0" x2="1" y2="1">'
+        '<stop offset="0" stop-color="#ffffff" stop-opacity="0"/>'
+        '<stop offset=".5" stop-color="#b9b8b6" stop-opacity=".65"/>'
+        '<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>',
+        f'<path class="band" d="M 0 {top:.0f} L 1200 {top + 580:.0f} L 1200 {bottom + 580:.0f} L 0 {bottom:.0f} Z" fill="url(#{gradient_id})"/>',
+        f'<path class="edge" d="M 0 {top:.0f} L 1200 {top + 580:.0f}"/>',
+        f'<path class="edge" d="M 0 {bottom:.0f} L 1200 {bottom + 580:.0f}"/>',
+    ]
+    centre = (top + bottom) / 2
+    inside, outside = [], []
+    for x, y in amb_dots:
+        (inside if abs(y - (centre + x * 580 / 1200)) < spread else outside).append((x, y))
+    for x, y in outside:
+        parts.append(f'<circle class="d" cx="{x:.0f}" cy="{y:.0f}" r="9"/>')
+    inside.sort()
+    step = max(1, len(inside) // highlighted)
+    for x, y in inside[::step][:highlighted]:
+        parts.append(f'<circle class="d hi" cx="{x:.0f}" cy="{y:.0f}" r="13"/>')
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
 def wiggle(amplitude: float, frequency: float, phase: float, drift: float) -> str:
     def y_value(x: float) -> float:
         t = x / 1200
@@ -449,21 +485,20 @@ html = r'''<!doctype html>
   .cols.spine-layout{grid-template-columns:1.35fr .85fr;gap:80px}
   .cost .big{font-size:76px;font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--orange-dark)}
   .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
-  .ambiguity{display:grid;grid-template-columns:.88fr 1.12fr .92fr;gap:54px;align-items:start;margin-top:18px}
-  .ambiguity section{border-top:5px solid var(--teal);padding-top:27px;min-height:410px}
-  .ambiguity section:nth-child(2){border-color:var(--orange);padding-left:8px;padding-right:8px}
-  .ambiguity section:nth-child(3){border-color:var(--ink)}
-  .ambiguity-label{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:27px}
-  .ambiguity-question{font-size:39px;line-height:1.3;color:var(--ink2)}
-  .ambiguity-answer{font-size:92px;line-height:1;font-weight:600;color:var(--orange-dark);margin-top:42px}
-  .ambiguity-rule{font-size:37px;line-height:1.28;color:var(--teal-deep);font-weight:500}
-  .ambiguity-gap{font-size:31px;line-height:1.35;color:var(--ink2);margin-top:34px}
-  .ambiguity-gap b{color:var(--ink);font-weight:500}
-  .ambiguity-metrics{display:grid;gap:22px}
-  .ambiguity-metric{display:grid;grid-template-columns:145px 1fr;gap:22px;align-items:baseline}
-  .ambiguity-metric strong{font-size:57px;line-height:1;color:var(--orange-dark);font-weight:600;letter-spacing:-.03em}
-  .ambiguity-metric span{font-size:27px;line-height:1.22;color:var(--ink2)}
-  .ambiguity-takeaway{margin-top:42px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
+  .ambiguity{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:22px;align-items:start}
+  .ambiguity section{padding:0;border:0}
+  .ambiguity-label{font-family:var(--mono);font-size:21px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+  .ambiguity section.after .ambiguity-label{color:var(--orange-dark)}
+  .ambz{display:block;width:100%;height:auto}
+  .ambz .band{opacity:.85}
+  .ambz .edge{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:14 12;opacity:.5}
+  .ambz .d{fill:var(--muted);opacity:.42}
+  .ambz .d.hi{fill:var(--orange);opacity:1}
+  .ambiguity-count{margin-top:4px;font-size:30px;line-height:1.25;color:var(--ink2)}
+  .ambiguity-count strong{font-size:52px;font-weight:600;color:var(--orange-dark);letter-spacing:-.02em;margin-right:14px}
+  .ambiguity section.after{opacity:0;transition:opacity .5s ease}
+  .slide[data-step="1"] .ambiguity section.after{opacity:1}
+  .ambiguity-takeaway{margin-top:30px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
@@ -824,26 +859,19 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 20 · One human answer exposes another ambiguity -->
-<section class="slide">
+<section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
+  <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
   <div class="ambiguity">
     <section>
-      <div class="ambiguity-label">Human question</div>
-      <p class="ambiguity-question">Should visible analytical claims always be valid and correct?</p>
-      <div class="ambiguity-answer">Yes.</div>
+      <div class="ambiguity-label">Before the rule</div>
+      __AMB_BEFORE__
+      <p class="ambiguity-count"><strong>4</strong>cases the panel split on</p>
     </section>
-    <section>
-      <div class="ambiguity-label">Evaluator rule</div>
-      <p class="ambiguity-rule">Claims visible in the evidence must be valid.</p>
-      <p class="ambiguity-gap">The judges then split on <b>unsupported</b>: factually wrong, or simply not proven by the visible evidence?</p>
-    </section>
-    <section>
-      <div class="ambiguity-label">Development signals</div>
-      <div class="ambiguity-metrics">
-        <div class="ambiguity-metric"><strong>4 to 8</strong><span>panel disagreements</span></div>
-        <div class="ambiguity-metric"><strong>6 to 8</strong><span>unstable judges</span></div>
-        <div class="ambiguity-metric"><strong>0</strong><span>aggregate verdict flips</span></div>
-      </div>
+    <section class="after">
+      <div class="ambiguity-label">After the rule</div>
+      __AMB_AFTER__
+      <p class="ambiguity-count"><strong>8</strong>cases the panel split on</p>
     </section>
   </div>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
@@ -1069,6 +1097,8 @@ html = (
     .replace("__SB__", fonts["SB"])
     .replace("__MONO__", fonts["MONO"])
     .replace("__EXPERIMENT_GRID__", experiment_grid)
+    .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
+    .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))
     .replace("__GREY_DOTS__", grey_dot_svg)
     .replace("__GREY_P1__", grey_paths[0])
     .replace("__GREY_P2__", grey_paths[1])

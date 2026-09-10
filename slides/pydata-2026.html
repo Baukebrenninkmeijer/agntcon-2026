@@ -278,21 +278,20 @@
   .cols.spine-layout{grid-template-columns:1.35fr .85fr;gap:80px}
   .cost .big{font-size:76px;font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--orange-dark)}
   .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
-  .ambiguity{display:grid;grid-template-columns:.88fr 1.12fr .92fr;gap:54px;align-items:start;margin-top:18px}
-  .ambiguity section{border-top:5px solid var(--teal);padding-top:27px;min-height:410px}
-  .ambiguity section:nth-child(2){border-color:var(--orange);padding-left:8px;padding-right:8px}
-  .ambiguity section:nth-child(3){border-color:var(--ink)}
-  .ambiguity-label{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:27px}
-  .ambiguity-question{font-size:39px;line-height:1.3;color:var(--ink2)}
-  .ambiguity-answer{font-size:92px;line-height:1;font-weight:600;color:var(--orange-dark);margin-top:42px}
-  .ambiguity-rule{font-size:37px;line-height:1.28;color:var(--teal-deep);font-weight:500}
-  .ambiguity-gap{font-size:31px;line-height:1.35;color:var(--ink2);margin-top:34px}
-  .ambiguity-gap b{color:var(--ink);font-weight:500}
-  .ambiguity-metrics{display:grid;gap:22px}
-  .ambiguity-metric{display:grid;grid-template-columns:145px 1fr;gap:22px;align-items:baseline}
-  .ambiguity-metric strong{font-size:57px;line-height:1;color:var(--orange-dark);font-weight:600;letter-spacing:-.03em}
-  .ambiguity-metric span{font-size:27px;line-height:1.22;color:var(--ink2)}
-  .ambiguity-takeaway{margin-top:42px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
+  .ambiguity{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:22px;align-items:start}
+  .ambiguity section{padding:0;border:0}
+  .ambiguity-label{font-family:var(--mono);font-size:21px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+  .ambiguity section.after .ambiguity-label{color:var(--orange-dark)}
+  .ambz{display:block;width:100%;height:auto}
+  .ambz .band{opacity:.85}
+  .ambz .edge{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:14 12;opacity:.5}
+  .ambz .d{fill:var(--muted);opacity:.42}
+  .ambz .d.hi{fill:var(--orange);opacity:1}
+  .ambiguity-count{margin-top:4px;font-size:30px;line-height:1.25;color:var(--ink2)}
+  .ambiguity-count strong{font-size:52px;font-weight:600;color:var(--orange-dark);letter-spacing:-.02em;margin-right:14px}
+  .ambiguity section.after{opacity:0;transition:opacity .5s ease}
+  .slide[data-step="1"] .ambiguity section.after{opacity:1}
+  .ambiguity-takeaway{margin-top:30px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
@@ -761,26 +760,100 @@
 </section>
 
 <!-- 20 · One human answer exposes another ambiguity -->
-<section class="slide">
+<section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
+  <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
   <div class="ambiguity">
     <section>
-      <div class="ambiguity-label">Human question</div>
-      <p class="ambiguity-question">Should visible analytical claims always be valid and correct?</p>
-      <div class="ambiguity-answer">Yes.</div>
+      <div class="ambiguity-label">Before the rule</div>
+      <svg class="ambz" viewBox="0 0 1200 700" aria-label="The reviewed cases against the boundary band, 4 of them inside it">
+<defs><linearGradient id="ambBefore" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#b9b8b6" stop-opacity=".65"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>
+<path class="band" d="M 0 -145 L 1200 435 L 1200 855 L 0 275 Z" fill="url(#ambBefore)"/>
+<path class="edge" d="M 0 -145 L 1200 435"/>
+<path class="edge" d="M 0 275 L 1200 855"/>
+<circle class="d" cx="1050" cy="331" r="9"/>
+<circle class="d" cx="266" cy="357" r="9"/>
+<circle class="d" cx="738" cy="514" r="9"/>
+<circle class="d" cx="170" cy="240" r="9"/>
+<circle class="d" cx="166" cy="523" r="9"/>
+<circle class="d" cx="805" cy="93" r="9"/>
+<circle class="d" cx="237" cy="78" r="9"/>
+<circle class="d" cx="630" cy="103" r="9"/>
+<circle class="d" cx="102" cy="330" r="9"/>
+<circle class="d" cx="537" cy="542" r="9"/>
+<circle class="d" cx="620" cy="429" r="9"/>
+<circle class="d" cx="600" cy="441" r="9"/>
+<circle class="d" cx="555" cy="226" r="9"/>
+<circle class="d" cx="961" cy="466" r="9"/>
+<circle class="d" cx="404" cy="199" r="9"/>
+<circle class="d" cx="376" cy="109" r="9"/>
+<circle class="d" cx="882" cy="294" r="9"/>
+<circle class="d" cx="967" cy="286" r="9"/>
+<circle class="d" cx="71" cy="187" r="9"/>
+<circle class="d" cx="1035" cy="333" r="9"/>
+<circle class="d" cx="1109" cy="293" r="9"/>
+<circle class="d" cx="147" cy="422" r="9"/>
+<circle class="d" cx="895" cy="221" r="9"/>
+<circle class="d" cx="162" cy="256" r="9"/>
+<circle class="d" cx="1092" cy="495" r="9"/>
+<circle class="d" cx="915" cy="169" r="9"/>
+<circle class="d" cx="663" cy="321" r="9"/>
+<circle class="d" cx="272" cy="480" r="9"/>
+<circle class="d" cx="209" cy="430" r="9"/>
+<circle class="d" cx="193" cy="306" r="9"/>
+<circle class="d" cx="1099" cy="520" r="9"/>
+<circle class="d" cx="392" cy="566" r="9"/>
+<circle class="d" cx="293" cy="291" r="9"/>
+<circle class="d" cx="976" cy="429" r="9"/>
+<circle class="d" cx="176" cy="624" r="9"/>
+<circle class="d" cx="889" cy="254" r="9"/>
+<circle class="d" cx="384" cy="111" r="9"/>
+<circle class="d" cx="166" cy="396" r="9"/>
+<circle class="d" cx="328" cy="407" r="9"/>
+<circle class="d hi" cx="177" cy="104" r="13"/>
+<circle class="d hi" cx="272" cy="205" r="13"/>
+<circle class="d hi" cx="296" cy="215" r="13"/>
+<circle class="d hi" cx="608" cy="399" r="13"/>
+</svg>
+      <p class="ambiguity-count"><strong>4</strong>cases the panel split on</p>
     </section>
-    <section>
-      <div class="ambiguity-label">Evaluator rule</div>
-      <p class="ambiguity-rule">Claims visible in the evidence must be valid.</p>
-      <p class="ambiguity-gap">The judges then split on <b>unsupported</b>: factually wrong, or simply not proven by the visible evidence?</p>
-    </section>
-    <section>
-      <div class="ambiguity-label">Development signals</div>
-      <div class="ambiguity-metrics">
-        <div class="ambiguity-metric"><strong>4 to 8</strong><span>panel disagreements</span></div>
-        <div class="ambiguity-metric"><strong>6 to 8</strong><span>unstable judges</span></div>
-        <div class="ambiguity-metric"><strong>0</strong><span>aggregate verdict flips</span></div>
-      </div>
+    <section class="after">
+      <div class="ambiguity-label">After the rule</div>
+      <svg class="ambz" viewBox="0 0 1200 700" aria-label="The reviewed cases against the boundary band, 8 of them inside it">
+<defs><linearGradient id="ambAfter" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#b9b8b6" stop-opacity=".65"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>
+<path class="band" d="M 0 -255 L 1200 325 L 1200 965 L 0 385 Z" fill="url(#ambAfter)"/>
+<path class="edge" d="M 0 -255 L 1200 325"/>
+<path class="edge" d="M 0 385 L 1200 965"/>
+<circle class="d" cx="1050" cy="331" r="9"/>
+<circle class="d" cx="166" cy="523" r="9"/>
+<circle class="d" cx="805" cy="93" r="9"/>
+<circle class="d" cx="630" cy="103" r="9"/>
+<circle class="d" cx="102" cy="330" r="9"/>
+<circle class="d" cx="537" cy="542" r="9"/>
+<circle class="d" cx="882" cy="294" r="9"/>
+<circle class="d" cx="967" cy="286" r="9"/>
+<circle class="d" cx="1035" cy="333" r="9"/>
+<circle class="d" cx="1109" cy="293" r="9"/>
+<circle class="d" cx="147" cy="422" r="9"/>
+<circle class="d" cx="895" cy="221" r="9"/>
+<circle class="d" cx="915" cy="169" r="9"/>
+<circle class="d" cx="272" cy="480" r="9"/>
+<circle class="d" cx="209" cy="430" r="9"/>
+<circle class="d" cx="392" cy="566" r="9"/>
+<circle class="d" cx="176" cy="624" r="9"/>
+<circle class="d" cx="889" cy="254" r="9"/>
+<circle class="d" cx="166" cy="396" r="9"/>
+<circle class="d" cx="328" cy="407" r="9"/>
+<circle class="d hi" cx="71" cy="187" r="13"/>
+<circle class="d hi" cx="177" cy="104" r="13"/>
+<circle class="d hi" cx="237" cy="78" r="13"/>
+<circle class="d hi" cx="293" cy="291" r="13"/>
+<circle class="d hi" cx="376" cy="109" r="13"/>
+<circle class="d hi" cx="550" cy="383" r="13"/>
+<circle class="d hi" cx="608" cy="399" r="13"/>
+<circle class="d hi" cx="738" cy="514" r="13"/>
+</svg>
+      <p class="ambiguity-count"><strong>8</strong>cases the panel split on</p>
     </section>
   </div>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>

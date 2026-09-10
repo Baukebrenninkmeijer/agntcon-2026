@@ -267,6 +267,11 @@ to eight cases, within-judge instability increased from six to eight, and no agg
 This does not show that the rule made the evaluator worse. It shows that the principle was clearer
 than the threshold for “unsupported,” giving humans a better next question to answer.
 
+On screen this is the slide-12 grey zone drawn twice: the same fifty reviewed cases against the
+boundary band, before the rule and, on click, after it. The band widens rather than narrows, and the
+count of split cases goes from four to eight. The dot positions are the slide-12 illustration reused;
+only the counts are measured. The instability and no-flip numbers are spoken, not printed.
+
 ### Slide: The grey-zone loop
 
 Present the proposed version-two process as an acceleration layer before full annotation. Run the
