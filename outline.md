@@ -25,6 +25,14 @@ Honesty constraints:
 
 ---
 
+## Where this departs from the submitted abstract
+
+The deck is the source of truth. The submitted abstract gave section 4 five minutes and section 5
+three and a half, and named no software-factory section; the delivered talk takes a minute from the
+first and half a minute from the second to fund section 6. There is no live walkthrough, and the
+prompt-optimization beat is delivered as the grey-zone loop rather than as its own slide.
+`abstract.md` records the same list.
+
 ## Spine: the three questions
 
 The three questions are no longer given their own slide; they are spoken over the opening. Each
@@ -37,7 +45,7 @@ though nothing enumerates it up front.
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
 | 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
 
-Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
+Sections 5, 6 and 7 are the payoff rather than a fourth question: what it costs to run this forever.
 
 Moving or renaming a block means updating that block's eyebrow, the spoken opening, and this table
 together.
@@ -116,6 +124,13 @@ work runs on without explaining it mid-argument. The case slide follows immediat
 
 ## 2. Start with humans, not infrastructure (5 min)
 
+### Slide: The case
+
+The running example, stated once so nothing later has to re-explain it. Sphere.com, a business
+analytics product; the agent answers questions over the company's own data; the yellow round mark
+with its small head is the stand-in logo. Everything measured in the rest of the talk comes from
+this one agent, on one criterion.
+
 ### Slide: Does the answer support the decision?
 
 The criterion is the heading, because it is what the next twelve slides argue about. Under it, one
@@ -191,15 +206,6 @@ you risk fixing the agent to satisfy a judge that is itself wrong.
 
 The concrete instance of both loops appears in section 6 ("A finding is not yet knowledge"), where
 one Sphere finding produces a skill update and an evaluator update from the same case.
-
-### Slide: Two lifecycles, not one
-
-Follows the two-suspects slide and gives the same idea a picture, revived from the earlier version
-of this deck. Two three-stage cycles turn side by side: application (build, ship, observe) and
-evaluation (criteria, label, align). Two dashed links between them carry the coupling — evaluation
-gates every release, and failures found in production become new cases — over a line naming what
-both loops act on: the same cases, the same prompt versions, the same human labels. The line to say
-out loud is the subtitle: the application loop only moves as fast as the evaluation loop it trusts.
 
 ### Slide: The quality-control process has not changed
 
@@ -428,7 +434,14 @@ the evaluator changes rather than the agent.
 4. Agent evaluation can inspect trajectories, tool use, context drift, and state—not only answers.
 5. Aligned findings can drive reviewed improvements through skills, PRs, and regression checks.
 
-Close with:
+### Slide: Trust the slice tested against humans
+
+The closing slide is not the takeaway list. It carries the grey-zone scatter one last time with a
+single boundary drawn through it, the eyebrow "what to keep", and the line that names when to stop:
+disagreement, drift or false passes showing the system has left the slice humans validated. The
+byline sits under it.
+
+Say out loud:
 
 > Trust automation only inside the slice tested against humans. Stop when disagreement, drift, or
 > false passes show that you have left it.

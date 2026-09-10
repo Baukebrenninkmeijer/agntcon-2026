@@ -6,9 +6,9 @@ This talk walks through evaluating such an agent end-to-end. Our running example
 
 We cover the full lifecycle:
 
-- Bootstrapping evaluation from 50 hand-reviewed examples when you have no labels.
+- Bootstrapping evaluation from a fifty-case review pool, thirty of them hand-labelled, when you have no labels at all.
 - Aligning an LLM-as-a-judge to human judgment with the same rigor you'd apply to outsourced annotators: agreement with the human labels, and repeated runs to see which verdicts hold still.
-- Scaling to continuous online evaluation with CI integration, error analysis, and prompt optimization driven by natural-language feedback.
+- Scaling to continuous online evaluation with CI integration, error analysis, and an evaluator prompt that gets revised from written human answers rather than tuned by hand.
 
 We also cover what we got wrong in earlier iterations and what we'd do differently today.
 
@@ -29,18 +29,29 @@ Throughout the talk we evaluate a data-analysis agent answering questions like "
 ## Outline (30 minutes, including 5 min Q&A)
 
 1. **Opening and the evaluation gap (3 min)** — two correct answers to the same question, a one-minute speaker and Orq introduction, why we came to this from wanting to optimise an agent, and why agents break classical evaluation.
-2. **Start with humans, not infrastructure (5 min)** — bootstrapping from ~50 hand-reviewed examples, binary pass/fail with written critiques, why this beats scored rubrics.
-3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Panel-of-judges to mitigate bias, disagreement used to find the questions the criterion never answered. A short live walkthrough.
-4. **Agent-specific evaluation (5 min)** — why the final answer is only the endpoint, and what the run itself exposes: tool-call efficiency, error recovery, instruction adherence. Handling non-determinism at scale.
-5. **Scaling: offline, online, continuous (3.5 min)** — CI integration and error analysis as the dominant time spend. Automated prompt optimization via natural-language feedback is named and shown on one slide, not walked through.
-6. **Takeaways and Q&A (6 min)**
+2. **Start with humans, not infrastructure (5 min)** — bootstrapping from a fifty-case review pool, binary pass/fail with written critiques, why this beats scored rubrics.
+3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Panel-of-judges to mitigate bias, disagreement used to find the questions the criterion never answered, and the written answers to those questions fed back into the evaluator prompt.
+4. **Agent-specific evaluation (4 min)** — why the final answer is only the endpoint, and what the run itself exposes: tool-call efficiency, error recovery, instruction adherence. Handling non-determinism at scale.
+5. **Scaling: offline, online, continuous (3 min)** — CI integration and error analysis as the dominant time spend.
+6. **Evals in the software factory (2 min)** — when most software ships without a human reading it, throughput stops being evidence of quality.
+7. **Takeaways and Q&A (6 min)**
 
 ## What you'll take away
 
-- A concrete process to bootstrap agent evaluation this week with ~50 examples and no ML infrastructure.
+- A concrete process to bootstrap agent evaluation this week with a few dozen examples and no ML infrastructure.
 - The alignment recipe for an LLM judge you can actually trust at scale.
 - How to evaluate the behavior of a run, not just its final output.
 - A CI/production pattern for continuous evaluation.
+
+## Deviations from the submitted abstract
+
+The delivered talk is the source of truth; this file records where it departs from what was
+submitted. Section 4 lost a minute and section 5 half a minute to fund a new section 6 on evals in
+the software factory, which the submitted outline did not name. The submitted version promised a
+short live walkthrough in section 3; there is no live demo, the walkthrough is narration over the
+grey-zone loop and the experiment grid. The submitted version also described prompt optimization
+driven by natural-language feedback as its own named slide; it is delivered instead as the
+grey-zone loop, where written human answers to boundary questions become the next evaluator prompt.
 
 ## Who this is for
 

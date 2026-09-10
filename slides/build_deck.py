@@ -124,7 +124,6 @@ queue = sorted(
     (case for case in case_signals if case["disagree"] or case["wobble"]),
     key=lambda case: (not case["disagree"], not case["wobble"], case["raw_agreement"]),
 )
-flagged_size = len(queue)
 # The recommended review batch: the four highest-signal flagged cases, plus four
 # unflagged cases sampled at random, so the human sees a control alongside the queue.
 review_batch = 4
@@ -247,12 +246,8 @@ html = r'''<!doctype html>
   .slide.active{opacity:1;pointer-events:auto}
   .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
   .eyebrow .qn{color:var(--orange-dark)}
-  .define{max-width:1280px;margin-top:76px;border-left:8px solid var(--orange);padding:14px 0 14px 46px;opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
   .slide[data-step="1"] .define{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){.define{transition:none;transform:none}}
-  .define .word{font-size:86px;font-weight:600;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
-  .define .gram{font-family:var(--mono);font-size:22px;letter-spacing:.08em;color:var(--ink2);margin:12px 0 26px}
-  .define .meaning{font-size:38px;line-height:1.32;color:var(--ink2)}
   h1{font-size:128px;line-height:1.01;letter-spacing:-.03em;font-weight:600;margin-bottom:36px}
   h2{font-size:82px;line-height:1.06;letter-spacing:-.025em;font-weight:600;margin-bottom:48px;max-width:1760px}
   h3{font-size:42px;line-height:1.15;font-weight:500;color:var(--ink);margin-bottom:20px}
@@ -260,7 +255,6 @@ html = r'''<!doctype html>
   .body{font-size:34px;line-height:1.42;color:var(--ink2)}
   .body b{color:var(--ink);font-weight:500}
   .hl{color:var(--orange-dark)}
-  .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
   body:has(.who-slide.active){background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
   .who-slide{padding:0;display:grid;place-items:center;overflow:hidden}
@@ -293,9 +287,6 @@ html = r'''<!doctype html>
   .orq-card .name{font-size:48px;font-weight:600;line-height:1.05}
   .orq-card .desc{font-size:26px;line-height:1.4;opacity:.92}
   .orq-card .peer{margin-top:auto;font-family:var(--mono);font-size:19px;letter-spacing:.02em;opacity:.72;padding-top:14px;border-top:1px solid currentColor}
-  .maybe-cut{filter:grayscale(1)}
-  .maybe-cut.active{opacity:.55}
-  .maybe-cut::after{content:"maybe cut";position:absolute;right:48px;top:42px;font-family:var(--mono);font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:2px solid var(--muted);border-radius:999px;padding:6px 18px}
   .funnel{width:1720px;margin-top:62px;overflow:visible}
   .funnel .fdot{fill:none;stroke:var(--orange);stroke-width:4;stroke-dasharray:5 7}
   .funnel .fline{fill:none;stroke:var(--orange);stroke-width:2.5;opacity:.38}
@@ -313,16 +304,12 @@ html = r'''<!doctype html>
   ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
-  .stats{display:grid;grid-auto-flow:column;gap:44px;margin-top:26px}
-  .stat{border-top:3px solid var(--teal-deep);padding-top:25px}
-  .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
   .criterion-q{font-size:100px;line-height:1.05;margin-bottom:30px;max-width:1700px}
   .setup-strip{display:flex;gap:110px;margin-top:120px;border-top:3px solid var(--teal-deep);padding-top:34px}
   .setup-strip div{display:flex;align-items:baseline;gap:24px}
   .setup-strip b{font-size:88px;font-weight:600;letter-spacing:-.04em}
   .setup-strip span{font-size:31px;color:var(--ink2)}
-  .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
   .ask{margin-top:46px;font-size:40px;color:var(--ink);font-weight:500}
   .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:38px;max-width:1500px}
   .answer{border-top:6px solid var(--teal);padding:34px 0 0;min-height:0}
@@ -330,10 +317,8 @@ html = r'''<!doctype html>
   .answer .tag{font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--ink2);margin-bottom:22px}
   .answer p{font-size:33px;line-height:1.38;color:var(--ink2)}
   .answer strong{color:var(--ink);font-weight:500}
-  .answer .quiet{font-size:27px;color:var(--muted);margin-top:18px}
   .answer mark{background:rgba(77,162,150,.24);color:var(--ink);padding:.06em .12em;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
   .answer code{font-family:var(--mono);font-size:.88em;color:var(--teal-deep)}
-  .source{position:absolute;left:48px;bottom:26px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.04em}
   .checks{display:flex;flex-direction:column;gap:26px}
   .check{display:grid;grid-template-columns:58px 1fr;gap:26px;align-items:center;font-size:35px;color:var(--ink2)}
   .check i{width:58px;height:58px;border:3px solid var(--teal);border-radius:50%;display:grid;place-items:center;font-style:normal;color:var(--teal);font-size:31px}
@@ -344,14 +329,11 @@ html = r'''<!doctype html>
   .life-axis .name{font-family:var(--sans);font-size:38px;font-weight:600;fill:var(--ink)}
   .life-axis .meta{font-family:var(--sans);font-size:26px;fill:var(--ink2)}
   .life-axis .band{fill:rgba(37,35,46,.10)}
-  .life-axis .tick{fill:var(--bg)}
   .life-axis .beat{fill:var(--ink2)}
   svg text{font-family:var(--sans)}
   .lbl{fill:var(--ink2);font-size:28px}
   .lbl.dark{fill:var(--ink)}
   .lbl.small{font-size:21px;fill:var(--muted);font-family:var(--mono);letter-spacing:.08em}
-  .stroke-t{stroke:var(--teal);fill:none;stroke-width:5}
-  .stroke-o{stroke:var(--orange);fill:none;stroke-width:6}
   .stroke-d{stroke:var(--muted);fill:none;stroke-width:3}
   .cols.origin-layout{grid-template-columns:1.5fr .85fr;gap:60px}
   .origin{display:block;width:100%;max-width:640px;margin:0 auto}
@@ -465,8 +447,6 @@ html = r'''<!doctype html>
   .grid-cap.step1,.slide[data-step="1"] .grid-cap.step0{position:absolute;opacity:0}
   .slide[data-step="1"] .grid-cap.step1{position:static;opacity:1}
   @media (prefers-reduced-motion:reduce){.deck3d,.layer,.gridwrap .axis,.gridwrap .reps,.gridwrap .depth{transition-duration:.01ms}}
-  .queue-line{margin-top:44px;opacity:0;transition:opacity .4s ease}
-  .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
   .legend span{display:flex;align-items:center;gap:12px}
   .swatch{width:28px;height:28px;border-radius:50%;border:3px dashed var(--orange)}
@@ -475,7 +455,6 @@ html = r'''<!doctype html>
   .verdict{width:285px;height:205px;border:5px solid var(--teal);border-radius:24px;display:grid;place-items:center;background:var(--paper);font-size:54px;font-weight:600;color:var(--teal-deep)}
   .verdict.fail{border-color:var(--orange);color:var(--orange-dark)}
   .verdict-note{grid-column:1/-1;font-family:var(--mono);font-size:20px;line-height:1.4;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;text-align:center}
-  .replay{display:grid;grid-template-columns:1.2fr 90px 1fr;align-items:center;gap:20px}
   .phases{display:grid;grid-template-columns:1fr 1fr;gap:78px;margin-top:30px}
   .phase h3{font-size:40px;font-weight:600;line-height:1.15}
   .phase .lead{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--ink2);margin-bottom:8px}
@@ -542,7 +521,6 @@ html = r'''<!doctype html>
   .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:28px}
   .sphere-mark::before{content:"";position:absolute;left:50%;top:-32px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
   .sphere-word{font-size:62px;font-weight:600;letter-spacing:-.035em}
-  .cost .big{font-size:76px;font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--orange-dark)}
   .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
   .ambiguity{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:22px;align-items:start}
   .ambiguity section{padding:0;border:0}
@@ -800,48 +778,7 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 13 · Two lifecycles -->
-<section class="slide maybe-cut">
-  <h2>Two lifecycles, not one</h2>
-  <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
-  <svg class="twoloop" viewBox="0 0 1720 640" role="img" aria-label="The application cycle and the evaluation cycle, each three stages, coupled by a release gate and by new failures becoming new cases">
-    <defs>
-      <marker id="mT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L9 5 L0 9 z" fill="var(--teal)"/></marker>
-      <marker id="mO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1 L9 5 L0 9 z" fill="var(--orange)"/></marker>
-    </defs>
-
-    <path class="ring t" d="M480.8 136.2 A210 210 0 0 1 631.9 397.9" marker-end="url(#mT)"/>
-    <path class="ring t" d="M581.1 485.9 A210 210 0 0 1 278.9 485.9" marker-end="url(#mT)"/>
-    <path class="ring t" d="M228.1 397.9 A210 210 0 0 1 379.2 136.2" marker-end="url(#mT)"/>
-    <circle class="node t" cx="430" cy="130" r="13"/>
-    <circle class="node t" cx="612" cy="445" r="13"/>
-    <circle class="node t" cx="248" cy="445" r="13"/>
-    <text class="stage" x="430" y="185" text-anchor="middle">build</text>
-    <text class="stage" x="564" y="425" text-anchor="middle">ship</text>
-    <text class="stage" x="296" y="425" text-anchor="middle">observe</text>
-    <text class="ring-name" x="430" y="356" text-anchor="middle">application</text>
-
-    <path class="ring o" d="M1340.8 136.2 A210 210 0 0 1 1491.9 397.9" marker-end="url(#mO)"/>
-    <path class="ring o" d="M1441.1 485.9 A210 210 0 0 1 1138.9 485.9" marker-end="url(#mO)"/>
-    <path class="ring o" d="M1088.1 397.9 A210 210 0 0 1 1239.2 136.2" marker-end="url(#mO)"/>
-    <circle class="node o" cx="1290" cy="130" r="13"/>
-    <circle class="node o" cx="1472" cy="445" r="13"/>
-    <circle class="node o" cx="1108" cy="445" r="13"/>
-    <text class="stage" x="1290" y="185" text-anchor="middle">criteria</text>
-    <text class="stage" x="1424" y="425" text-anchor="middle">label</text>
-    <text class="stage" x="1156" y="425" text-anchor="middle">align</text>
-    <text class="ring-name" x="1290" y="356" text-anchor="middle">evaluation</text>
-
-    <line class="link o" x1="1072" y1="300" x2="668" y2="300" marker-end="url(#mO)"/>
-    <text class="stage" x="870" y="272" text-anchor="middle">gates every release</text>
-    <line class="link t" x1="668" y1="400" x2="1072" y2="400" marker-end="url(#mT)"/>
-    <text class="stage" x="870" y="372" text-anchor="middle">failures become cases</text>
-
-    <text class="stage dim" x="860" y="604" text-anchor="middle">same cases &#183; same prompt versions &#183; same human labels</text>
-  </svg>
-</section>
-
-<!-- 14 · Two ways to get labels -->
+<!-- 13 · Two ways to get labels -->
 <section class="slide">
   <h2>The quality-control process<br>has not changed</h2>
   <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
@@ -875,14 +812,14 @@ html = r'''<!doctype html>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 15 · Lazy -->
+<!-- 14 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
   <p class="sub">Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
   <p class="price">The most valuable thing</p>
 </section>
 
-<!-- 16 · Judge grid -->
+<!-- 15 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways of disagreement</h2>
   <p class="sub">Three judges &#183; three repetitions</p>
@@ -896,7 +833,7 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 17 · Lazy queue -->
+<!-- 16 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -927,7 +864,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Disagreement was a question -->
+<!-- 17 · Disagreement gives us a question -->
 <section class="slide">
   <h2>Disagreement gives us<br>a question</h2>
   <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
@@ -954,7 +891,7 @@ html = r'''<!doctype html>
   <p class="sub funnel-sub">The flagged cases produced no labels. They produced the question the criterion never answered.</p>
 </section>
 
-<!-- 19 · One human answer exposes another ambiguity -->
+<!-- 18 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -973,7 +910,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 20 · Grey-zone loop -->
+<!-- 19 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -995,20 +932,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 21 · Experiment grid -->
+<!-- 20 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 22 · Question 03 -->
+<!-- 21 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 23 · Agent evaluation -->
+<!-- 22 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -1035,7 +972,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Lifecycle -->
+<!-- 23 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1070,7 +1007,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 25 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1091,14 +1028,14 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 26 · Unreviewed -->
+<!-- 25 · Unreviewed -->
 <section class="slide statement">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <p class="sub">You cannot scale review. You can scale the thing that decides what is worth reviewing.</p>
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 26 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1121,7 +1058,7 @@ html = r'''<!doctype html>
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 28 · Close -->
+<!-- 27 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -1208,7 +1145,6 @@ html = (
     .replace("__CASE_DOTS__", case_dot_svg)
     .replace("__TRAJ_ROWS__", traj_svg)
     .replace("__TRAJ_H__", str(traj_height))
-    .replace("__FLAGGED__", str(flagged_size))
     .replace("__JUDGE_NAMES__", judge_names)
     .replace("__JUDGE_LAYERS__", judge_layers)
 )
