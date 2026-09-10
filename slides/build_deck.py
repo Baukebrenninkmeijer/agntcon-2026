@@ -882,7 +882,7 @@ html = r'''<!doctype html>
 
 <!-- 16 · Judge grid -->
 <section class="slide" data-steps="1">
-  <h2>Two ways a verdict fails to hold still</h2>
+  <h2>Two ways of disagreement</h2>
   <p class="sub">Three judges &#183; three repetitions</p>
   <div class="gridwrap">
     <div class="axis">__JUDGE_NAMES__</div>

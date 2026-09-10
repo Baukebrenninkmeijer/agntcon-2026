@@ -225,7 +225,7 @@ set apart below in mono teal, what this whole block is spending: the most valuab
 The line is let the LLM judges find the ambiguous cases and spend human time only there. How the judges
 find them is the next slide; what the queue looks like is the one after.
 
-### Slide: Two ways a verdict fails to hold still
+### Slide: Two ways of disagreement
 
 Both signals in one picture, on real verdicts. A three-by-three grid: rows are the three judges by
 name, columns are the three repetitions of the same case, each cell coloured by its verdict. Read
