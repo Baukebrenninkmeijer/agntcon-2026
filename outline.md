@@ -33,9 +33,9 @@ though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01` over `Start with humans` (slide 9) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 13-21 | `Question 02 · Trust the judge` (slide 13) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 22-23 | `Question 03` over the question itself (slide 22) |
+| 01 · How do you get a first signal with no labels? | section 2 | 7-11 | `Question 01` over `Start with humans` (slide 8) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -75,16 +75,6 @@ that loop with the signal arm crossed out.
 
 This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
 2026-09-09.
-
-### Slide: What that actually takes
-
-The answer to the slide before it, and the setup for everything after. Aligning a judge is three
-things: a human decides the boundary on a small set of cases, the judge is measured against those
-decisions, and only agreement lets it gate anything.
-
-Then the cost, stated once: the price is human attention, and the rest of the talk is how to spend
-less of it. That line is what the priority queue and the jury pay off later, so do not also explain
-the shortcut here.
 
 ### Slide: Evaluation moved from correctness to alignment
 
@@ -217,6 +207,8 @@ per case in the pool: the same two signals exist for all fifty. Verdicts come fr
 decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
 
 ### Slide: We are lazy—make the queue smarter
+
+The eyebrow carries the cost this whole block is spending: the price is human attention.
 
 We still need human judgment, but we do not have to review cases in random order.
 

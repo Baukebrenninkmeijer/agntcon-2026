@@ -287,9 +287,6 @@ html = r'''<!doctype html>
   .stroke-t{stroke:var(--teal);fill:none;stroke-width:5}
   .stroke-o{stroke:var(--orange);fill:none;stroke-width:6}
   .stroke-d{stroke:var(--muted);fill:none;stroke-width:3}
-  .align-steps{margin-top:56px;gap:34px}
-  .align-cost{margin-top:64px}
-  .align-cost b{color:var(--orange-dark)}
   .cols.origin-layout{grid-template-columns:1.5fr .85fr;gap:60px}
   .origin{display:block;width:100%;max-width:640px;margin:0 auto}
   .origin .arm{fill:none;stroke:var(--teal);stroke-width:5}
@@ -566,19 +563,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 5 · What alignment takes -->
-<section class="slide">
-  <div class="eyebrow">So align the judge first</div>
-  <h2>What that actually takes</h2>
-  <div class="checks align-steps">
-    <div class="check"><i>1</i><span>A human decides the boundary on a small set of cases</span></div>
-    <div class="check"><i>2</i><span>The judge is measured against those decisions</span></div>
-    <div class="check"><i>3</i><span>Only agreement lets it gate anything</span></div>
-  </div>
-  <p class="body align-cost">The price is human attention. <b class="hl">The rest of this talk is how to spend less of it.</b></p>
-</section>
-
-<!-- 6 · Lineage -->
+<!-- 5 · Lineage -->
 <section class="slide">
   <h2>Evaluation moved from correctness to alignment</h2>
   <svg class="lineage" viewBox="0 0 1840 420" aria-label="Evaluation evolved from checking known answers to aligning LLM judge labels with experts">
@@ -602,13 +587,13 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 7 · Ordering constraint -->
+<!-- 6 · Ordering constraint -->
 <section class="slide">
   <div class="eyebrow">The ordering constraint</div>
   <h2>You cannot use evals to improve an agent<br>before the eval is <span class="hl">aligned</span>.</h2>
 </section>
 
-<!-- 8 · Sphere -->
+<!-- 7 · Sphere -->
 <section class="slide">
   <div class="eyebrow">The case</div>
   <div class="cols wide">
@@ -625,7 +610,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 9 · Evaluation decisions -->
+<!-- 8 · Evaluation decisions -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 01</span></div>
   <h2>Start with humans</h2>
@@ -636,7 +621,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 10 · Binary -->
+<!-- 9 · Binary -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -655,7 +640,7 @@ html = r'''<!doctype html>
   <p class="binary-takeaway">An <b>unaligned boolean judge</b> is worse than an unaligned ordinal judge (for example, 1–5): every mistake becomes a hard boundary decision.</p>
 </section>
 
-<!-- 11 · Grey zone -->
+<!-- 10 · Grey zone -->
 <section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
@@ -679,13 +664,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 12 · Criterion -->
+<!-- 11 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
   <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
-<!-- 13 · Two loops -->
+<!-- 12 · Two loops -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
   <h2>Every failure has two suspects</h2>
@@ -703,7 +688,7 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 14 · Two lifecycles -->
+<!-- 13 · Two lifecycles -->
 <section class="slide">
   <h2>Two lifecycles, not one</h2>
   <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
@@ -744,7 +729,7 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 15 · Two ways to get labels -->
+<!-- 14 · Two ways to get labels -->
 <section class="slide">
   <h2>The quality-control process<br>has not changed</h2>
   <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
@@ -778,7 +763,7 @@ html = r'''<!doctype html>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 16 · Judge grid -->
+<!-- 15 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways a verdict fails to hold still</h2>
   <p class="sub">Three judges &#183; three repetitions &#183; one real case</p>
@@ -792,7 +777,7 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 17 · Lazy queue -->
+<!-- 16 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -817,6 +802,7 @@ html = r'''<!doctype html>
       <div class="legend"><span><i class="swatch"></i>judges disagree</span><span><i class="swatch w"></i>one judge unstable</span></div>
     </div>
     <div>
+      <div class="eyebrow">The price is human attention</div>
       <h2>We are lazy</h2>
       <p class="sub">Use the unaligned judge to decide what humans inspect first.</p>
       <ul class="plain">
@@ -828,7 +814,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 18 · Alignment -->
+<!-- 17 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Human alignment</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -841,7 +827,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 19 · One human answer exposes another ambiguity -->
+<!-- 18 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -860,7 +846,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 20 · Grey-zone loop -->
+<!-- 19 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -882,20 +868,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 21 · Experiment grid -->
+<!-- 20 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 22 · Question 03 -->
+<!-- 21 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 23 · Agent evaluation -->
+<!-- 22 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -922,7 +908,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Lifecycle -->
+<!-- 23 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -957,7 +943,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 25 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -978,7 +964,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The criterion moves between modes only while production stays inside the slice validated by humans.</p>
 </section>
 
-<!-- 26 · Finding to knowledge -->
+<!-- 25 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -989,7 +975,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 26 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -1004,7 +990,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 28 · Close -->
+<!-- 27 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
