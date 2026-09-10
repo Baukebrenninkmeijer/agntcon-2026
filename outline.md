@@ -53,11 +53,12 @@ Introduce Sphere.com, an Amsterdam-based B2B wholesaler of physical home applian
 The board is asking about quality of growth: discounts, refunds, cancellations, and regional and
 category mix. The analytics agent can query order data and explain the result.
 
-Put two plausible answers to the same question on screen. The case is `v4-avg-then-median-midmarket`
-from the review pool: a regional-chain lead choosing a representative order-value measure. Both
-answers report the mean of $2,572.98 and both are right; only the second says the median is
-$1,658.88, that the mean runs 55% above the middle order, and that the median is the measure the
-stated decision needs. Figures come from the recorded v4 response for that case.
+Put two plausible answers to the same question on screen: what was 2025 revenue? Both report
+$51,226,989.17 and both are right. Only the second says that this is booked revenue, that $40.4M was
+realized, and that cancelled, pending and refunded orders are the other $10.8M. No criterion has been
+introduced at this point in the talk and none is needed: the room can see which answer a person could
+act on. Figures come from the recorded v4 responses for `v4-total-gross-2025` and
+`v4-cancelled-then-realized`, whose status breakdown gives the realized total.
 
 That is the evaluation gap. Reference matching can verify a number, but it cannot determine whether
 the response used sound judgment about emphasis, explanation, caveats, and scope.
