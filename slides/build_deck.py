@@ -209,6 +209,19 @@ for row, run in enumerate(trajectories):
 traj_svg = "\n".join(traj_rows)
 traj_height = len(trajectories) * (_row_height + _row_gap) - _row_gap
 
+ORQMARK = """<symbol id="orqmark" viewBox="0 0 100 100">
+        <path fill="currentColor"
+          d="M82.9268 27.8049C82.9268 30.8783 82.9268 32.4151 82.3287 33.589C81.8026 34.6216 80.963 35.4611 79.9304 35.9872C78.7565 36.5854 77.2198 36.5854 74.1463 36.5854H72.1951C69.1217 36.5854 67.5849 36.5854 66.411 35.9872C65.3784 35.4611 64.5389 34.6216 64.0128 33.589C63.4146 32.4151 63.4146 30.8783 63.4146 27.8049V25.6098C63.4146 22.7662 63.4146 21.3444 62.9005 20.2417C62.3552 19.0724 61.4154 18.1326 60.2461 17.5873C59.1434 17.0732 57.7216 17.0732 54.8781 17.0732C52.0345 17.0732 50.6127 17.0732 49.51 16.559C48.3407 16.0137 47.4009 15.0739 46.8556 13.9046C46.3415 12.802 46.3415 11.3802 46.3415 8.53659C46.3415 5.69299 46.3415 4.27119 46.8556 3.16856C47.4009 1.99924 48.3407 1.05943 49.51 0.514165C50.6127 0 52.0446 0 54.9084 0C57.7723 0 59.2042 0 60.3068 0.514165C61.4761 1.05943 62.4159 1.99924 62.9612 3.16856C63.4754 4.27119 63.4754 5.69299 63.4754 8.53659C63.4754 11.3802 63.4754 12.802 63.9895 13.9046C64.5348 15.0739 65.4746 16.0137 66.6439 16.559C67.7466 17.0732 69.1684 17.0732 72.012 17.0732H74.1463C77.2198 17.0732 78.7565 17.0732 79.9304 17.6713C80.963 18.1974 81.8026 19.037 82.3287 20.0696C82.9268 21.2435 82.9268 22.7802 82.9268 25.8537V27.8049Z" />
+        <path fill="currentColor"
+          d="M27.8049 17.0732C30.8783 17.0732 32.4151 17.0732 33.589 17.6713C34.6216 18.1974 35.4611 19.037 35.9872 20.0696C36.5854 21.2435 36.5854 22.7802 36.5854 25.8537V27.8049C36.5854 30.8783 36.5854 32.4151 35.9872 33.589C35.4611 34.6216 34.6216 35.4611 33.589 35.9872C32.4151 36.5854 30.8783 36.5854 27.8049 36.5854L25.6098 36.5854C22.7662 36.5854 21.3444 36.5854 20.2417 37.0995C19.0724 37.6448 18.1326 38.5846 17.5873 39.7539C17.0732 40.8566 17.0732 42.2784 17.0732 45.122C17.0732 47.9656 17.0732 49.3874 16.559 50.49C16.0137 51.6593 15.0739 52.5991 13.9046 53.1444C12.802 53.6585 11.3802 53.6585 8.53659 53.6585C5.69299 53.6585 4.27119 53.6585 3.16856 53.1444C1.99924 52.5991 1.05943 51.6593 0.514165 50.49C1.81721e-07 49.3874 1.25306e-07 47.9554 1.236e-10 45.0916C-1.25059e-07 42.2277 -1.81721e-07 40.7958 0.514164 39.6932C1.05943 38.5239 1.99924 37.5841 3.16856 37.0388C4.27119 36.5246 5.69299 36.5246 8.53658 36.5246C11.3802 36.5246 12.802 36.5246 13.9046 36.0105C15.0739 35.4652 16.0137 34.5254 16.559 33.3561C17.0732 32.2534 17.0732 30.8316 17.0732 27.988V25.8537C17.0732 22.7802 17.0732 21.2435 17.6713 20.0696C18.1974 19.037 19.037 18.1974 20.0696 17.6713C21.2435 17.0732 22.7802 17.0732 25.8537 17.0732H27.8049Z" />
+        <path fill="currentColor"
+          d="M36.5854 91.4634C36.5854 88.6198 36.5854 87.198 36.0712 86.0954C35.5259 84.9261 34.5861 83.9863 33.4168 83.441C32.3142 82.9268 30.8924 82.9268 28.0488 82.9268H25.8537C22.7802 82.9268 21.2435 82.9268 20.0696 82.3287C19.037 81.8026 18.1974 80.963 17.6713 79.9304C17.0732 78.7565 17.0732 77.2198 17.0732 74.1463V72.1951C17.0732 69.1217 17.0732 67.5849 17.6713 66.411C18.1974 65.3784 19.037 64.5389 20.0696 64.0128C21.2435 63.4146 22.7802 63.4146 25.8537 63.4146L27.8049 63.4146C30.8783 63.4146 32.4151 63.4146 33.589 64.0128C34.6216 64.5389 35.4611 65.3784 35.9872 66.411C36.5854 67.5849 36.5854 69.1217 36.5854 72.1951V74.3295C36.5854 77.1731 36.5854 78.5949 37.0995 79.6975C37.6448 80.8669 38.5846 81.8067 39.7539 82.3519C40.8566 82.8661 42.2783 82.8661 45.1219 82.8661C47.9655 82.8661 49.3873 82.8661 50.49 83.3803C51.6593 83.9255 52.5991 84.8653 53.1444 86.0347C53.6585 87.1373 53.6585 88.5692 53.6585 91.433C53.6585 94.2969 53.6585 95.7288 53.1444 96.8314C52.5991 98.0008 51.6593 98.9406 50.49 99.4858C49.3873 100 47.9656 100 45.122 100C42.2784 100 40.8566 100 39.7539 99.4858C38.5846 98.9406 37.6448 98.0008 37.0995 96.8314C36.5854 95.7288 36.5854 94.307 36.5854 91.4634Z" />
+        <path fill="currentColor"
+          d="M72.1951 82.9268C69.1217 82.9268 67.5849 82.9268 66.411 82.3287C65.3784 81.8026 64.5389 80.963 64.0128 79.9304C63.4146 78.7565 63.4146 77.2198 63.4146 74.1463V72.1951C63.4146 69.1217 63.4146 67.5849 64.0128 66.411C64.5389 65.3784 65.3784 64.5389 66.411 64.0128C67.5849 63.4146 69.1217 63.4146 72.1951 63.4146H74.3902C77.2338 63.4146 78.6556 63.4146 79.7583 62.9005C80.9276 62.3552 81.8674 61.4154 82.4127 60.2461C82.9268 59.1434 82.9268 57.7216 82.9268 54.8781C82.9268 52.0345 82.9268 50.6127 83.441 49.51C83.9863 48.3407 84.9261 47.4009 86.0954 46.8556C87.198 46.3415 88.6198 46.3415 91.4634 46.3415C94.307 46.3415 95.7288 46.3415 96.8314 46.8556C98.0008 47.4009 98.9406 48.3407 99.4858 49.51C100 50.6127 100 52.0446 100 54.9084C100 57.7723 100 59.2042 99.4858 60.3068C98.9406 61.4761 98.0008 62.4159 96.8314 62.9612C95.7288 63.4754 94.307 63.4754 91.4634 63.4754C88.6198 63.4754 87.198 63.4754 86.0954 63.9895C84.9261 64.5348 83.9863 65.4746 83.441 66.6439C82.9268 67.7466 82.9268 69.1684 82.9268 72.012V74.1463C82.9268 77.2198 82.9268 78.7565 82.3287 79.9304C81.8026 80.963 80.963 81.8026 79.9304 82.3287C78.7565 82.9268 77.2198 82.9268 74.1463 82.9268H72.1951Z" />
+        <path fill="currentColor"
+          d="M50 58.5366C47.4439 58.5366 46.1659 58.5366 45.1504 58.1403C43.6417 57.5516 42.4483 56.3583 41.8596 54.8496C41.4634 53.834 41.4634 52.556 41.4634 50C41.4634 47.444 41.4634 46.166 41.8596 45.1504C42.4483 43.6417 43.6417 42.4484 45.1504 41.8597C46.1659 41.4634 47.4439 41.4634 50 41.4634C52.556 41.4634 53.834 41.4634 54.8495 41.8597C56.3582 42.4484 57.5516 43.6417 58.1403 45.1504C58.5365 46.166 58.5365 47.444 58.5365 50C58.5365 52.556 58.5365 53.834 58.1403 54.8496C57.5516 56.3583 56.3582 57.5516 54.8495 58.1403C53.834 58.5366 52.556 58.5366 50 58.5366Z" />
+      </symbol>"""
+
 html = r'''<!doctype html>
 <html lang="en">
 <head>
@@ -249,6 +262,7 @@ html = r'''<!doctype html>
   .hl{color:var(--orange-dark)}
   .tl{color:var(--teal-deep)}
   .mono{font-family:var(--mono)}
+  body:has(.who-slide.active){background:#022f2f}
   .who-slide{padding:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
   .who-slide::before{content:"";position:absolute;width:860px;height:860px;border-radius:50%;background:repeating-radial-gradient(circle, transparent 0 40px, rgba(255,255,255,.04) 40px 41px);pointer-events:none}
   .who{position:relative;display:flex;flex-direction:column;align-items:center;gap:30px;text-align:center}
@@ -259,6 +273,25 @@ html = r'''<!doctype html>
   .who-role{margin-top:10px;font-family:var(--mono);font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:#9fcfca}
   .who-line{margin-top:16px;font-family:var(--mono);font-size:21px;line-height:1.45;color:rgba(250,249,245,.62)}
   .who-slide .counter{color:rgba(250,249,245,.45)}
+  .orq-slide h2{margin-bottom:34px}
+  .orq-band{display:flex;align-items:center;gap:26px;background:var(--teal-deep);border-radius:22px;padding:26px 34px;color:var(--paper)}
+  .orq-band .mark{flex:none;width:66px;height:66px;display:grid;place-items:center;background:rgba(255,255,255,.12);border-radius:16px}
+  .orq-band .mark svg{width:40px;height:40px}
+  .orq-band p{font-size:32px;line-height:1.4}
+  .orq-band p b{font-weight:600}
+  .orq-band p span{color:#9fcfca}
+  .orq-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:24px}
+  .orq-card{border-radius:22px;padding:28px 30px;min-height:430px;display:flex;flex-direction:column;gap:14px}
+  .orq-card.build{background:var(--teal-deep);color:var(--paper)}
+  .orq-card.ship{background:#1cd3ac;color:#0a2f2c}
+  .orq-card.optimize{background:var(--orange-dark);color:var(--paper)}
+  .orq-card .top{display:flex;align-items:center;justify-content:space-between}
+  .orq-card .top svg{width:44px;height:44px;opacity:.95}
+  .orq-card .verb{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.16)}
+  .orq-card.ship .verb{background:rgba(10,47,44,.14)}
+  .orq-card .name{font-size:48px;font-weight:600;line-height:1.05}
+  .orq-card .desc{font-size:26px;line-height:1.4;opacity:.92}
+  .orq-card .peer{margin-top:auto;font-family:var(--mono);font-size:19px;letter-spacing:.02em;opacity:.72;padding-top:14px;border-top:1px solid currentColor}
   .byline{display:flex;gap:54px;margin-top:82px;font-family:var(--mono);font-size:23px;color:var(--muted)}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center}
   .cols.wide{grid-template-columns:1.25fr 1fr}
@@ -602,14 +635,45 @@ html = r'''<!doctype html>
     <div class="who-ring"><img src="data:image/jpeg;base64,__CARTOON__" alt="Bauke Brenninkmeijer"></div>
     <div>
       <div class="who-name">Bauke Brenninkmeijer</div>
-      <div class="who-role">Research Engineer &#183; orq.ai</div>
-      <div class="who-line">Helping you build better agents: observability, agents, experimentation, software automation</div>
-      <div class="who-line">6 years data science at ABN AMRO and ING &#183; Lead at Agentic AI Foundation Amsterdam</div>
+      <div class="who-role">Applied AI Researcher &#183; orq.ai</div>
+      <div class="who-line">Red teaming &#183; Evaluation &#183; Agent simulation</div>
+      <div class="who-line">Lead at Agentic AI Foundation Amsterdam</div>
     </div>
   </div>
 </section>
 
-<!-- 7 · Sphere -->
+<!-- 7 · What is orq.ai? -->
+<section class="slide orq-slide">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">__ORQMARK__</svg>
+  <div class="eyebrow">Context</div>
+  <h2>What is orq.ai?</h2>
+  <div class="orq-band">
+    <div class="mark"><svg><use href="#orqmark"/></svg></div>
+    <p><b>Generative AI collaboration platform.</b> <span>One control plane to build, ship, and optimize AI products.</span></p>
+  </div>
+  <div class="orq-cards">
+    <div class="orq-card build">
+      <div class="top"><svg><use href="#orqmark"/></svg><span class="verb">Build</span></div>
+      <div class="name">Agents</div>
+      <div class="desc">Deploy agents with tools, memory, and knowledge bases.</div>
+      <div class="peer">think Letta &#183; LangGraph &#183; CrewAI</div>
+    </div>
+    <div class="orq-card ship">
+      <div class="top"><svg><use href="#orqmark"/></svg><span class="verb">Ship</span></div>
+      <div class="name">Router</div>
+      <div class="desc">One API for model routing, failovers, caching, and budget.</div>
+      <div class="peer">think LiteLLM &#183; OpenRouter</div>
+    </div>
+    <div class="orq-card optimize">
+      <div class="top"><svg><use href="#orqmark"/></svg><span class="verb">Optimize</span></div>
+      <div class="name">Observability</div>
+      <div class="desc">Traces, usage, evaluation, and annotation.</div>
+      <div class="peer">think Langfuse &#183; LangSmith &#183; Arize</div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · Sphere -->
 <section class="slide">
   <div class="eyebrow">The case</div>
   <div class="cols wide">
@@ -626,7 +690,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 8 · Evaluation decisions -->
+<!-- 9 · Evaluation decisions -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 01</span></div>
   <h2>Start with humans</h2>
@@ -637,7 +701,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 9 · Binary -->
+<!-- 10 · Binary -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -656,7 +720,7 @@ html = r'''<!doctype html>
   <p class="binary-takeaway">An <b>unaligned boolean judge</b> is worse than an unaligned ordinal judge (for example, 1 to 5): every mistake becomes a hard boundary decision.</p>
 </section>
 
-<!-- 10 · Grey zone -->
+<!-- 11 · Grey zone -->
 <section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
@@ -680,13 +744,13 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 11 · Criterion -->
+<!-- 12 · Criterion -->
 <section class="slide statement">
   <div class="eyebrow">One criterion for this talk</div>
   <h2>Does the answer help the <span class="hl">decision</span>?</h2>
 </section>
 
-<!-- 12 · Two loops -->
+<!-- 13 · Two loops -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
   <h2>Every failure has two suspects</h2>
@@ -704,7 +768,7 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 13 · Two lifecycles -->
+<!-- 14 · Two lifecycles -->
 <section class="slide">
   <h2>Two lifecycles, not one</h2>
   <p class="sub">The application loop only moves as fast as the evaluation loop it trusts.</p>
@@ -745,7 +809,7 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 14 · Two ways to get labels -->
+<!-- 15 · Two ways to get labels -->
 <section class="slide">
   <h2>The quality-control process<br>has not changed</h2>
   <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
@@ -779,7 +843,7 @@ html = r'''<!doctype html>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 15 · Judge grid -->
+<!-- 16 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways a verdict fails to hold still</h2>
   <p class="sub">Three judges &#183; three repetitions &#183; one real case</p>
@@ -793,7 +857,7 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 16 · Lazy queue -->
+<!-- 17 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -830,7 +894,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Alignment -->
+<!-- 18 · Alignment -->
 <section class="slide">
   <div class="eyebrow">Human alignment</div>
   <h2>Develop on 30.<br>Measure on 20.</h2>
@@ -843,7 +907,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:58px">Consensus only shows that models agree. Human labels establish whether that agreement is useful.</p>
 </section>
 
-<!-- 18 · One human answer exposes another ambiguity -->
+<!-- 19 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -862,7 +926,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 19 · Grey-zone loop -->
+<!-- 20 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -884,20 +948,20 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Experiment grid -->
+<!-- 21 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 21 · Question 03 -->
+<!-- 22 · Question 03 -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 03</span></div>
   <h2>What changes<br>with agents?</h2>
 </section>
 
-<!-- 22 · Agent evaluation -->
+<!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
@@ -924,7 +988,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 24 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -959,7 +1023,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 25 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -980,7 +1044,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Finding to knowledge -->
+<!-- 26 · Finding to knowledge -->
 <section class="slide">
   <h2>What a failed eval teaches<br>the agent and the rubric</h2>
   <div class="learning-flow" aria-label="A failed evaluation becomes both a Sphere skill update and an evaluator update">
@@ -991,7 +1055,7 @@ html = r'''<!doctype html>
   <div class="learning-rerun">Then rerun <span class="mono">decision_support_quality</span></div>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Automate the preparation.<br>Keep the decision human.</h2>
@@ -1006,7 +1070,7 @@ html = r'''<!doctype html>
   <div class="feedback">↶ HUMAN FEEDBACK IMPROVES THE NEXT ANALYSIS</div>
 </section>
 
-<!-- 27 · Close -->
+<!-- 28 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>
@@ -1083,6 +1147,7 @@ html = (
     .replace("__MONO__", fonts["MONO"])
     .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__CARTOON__", cartoon)
+    .replace("__ORQMARK__", ORQMARK)
     .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
     .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))
     .replace("__GREY_DOTS__", grey_dot_svg)

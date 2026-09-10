@@ -92,11 +92,20 @@ in section 3 comes before the agent work in section 4, and it is stated once, pl
 ### Slide: Who is saying this
 
 A full-bleed slide on the deep teal, ported from the ADC red-teaming deck: the cartoon avatar in a
-ring, the name, the role, and two mono lines carrying the Orq one-liner and the rest of the bio. It
-is the only dark slide in the deck, which is what makes the break work. This sits last in section 1, so
+ring, the name, "Applied AI Researcher, orq.ai", and two mono lines: the three work areas (red
+teaming, evaluation, agent simulation) and the Agentic AI Foundation Amsterdam role. It is the only
+dark slide in the deck, which is what makes the break work. This sits last in section 1, so
 the whole problem lands before the speaker introduction: the two answers, the origin story, the
 lineage, and the ordering constraint all come first, and the bio arrives as a credential for what
-was just argued rather than as a preamble to it. The case slide follows immediately.
+was just argued rather than as a preamble to it.
+
+### Slide: What is orq.ai?
+
+Ported from the same ADC deck. A dark teal band gives the one-line platform description, then three
+cards name the parts: Agents (build), Router (ship), Observability (optimize), each with the
+comparable tools underneath so the audience can place the product without a pitch. Roughly 25
+seconds, spoken over, and it exists so the rest of the talk can refer to the platform the evaluation
+work runs on without explaining it mid-argument. The case slide follows immediately.
 
 ---
 
