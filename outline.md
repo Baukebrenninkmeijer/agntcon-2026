@@ -33,7 +33,7 @@ though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 9-11 | `Question 01` over `Start with humans` (slide 9) |
+| 01 · How do you get a first signal with no labels? | section 2 | 9-11 | `Question 01` over the criterion itself (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
 | 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
 
@@ -116,11 +116,13 @@ work runs on without explaining it mid-argument. The case slide follows immediat
 
 ## 2. Start with humans, not infrastructure (5 min)
 
-### Slide: Start with humans
+### Slide: Does the answer support the decision?
 
-Make three setup decisions visible before explaining any one of them: build fifty diverse cases
-around real business decisions, align one subjective criterion (`decision_support_quality`), and
-use two labels (`pass` or `fail`) with a written critique carrying the nuance.
+The criterion is the heading, because it is what the next twelve slides argue about. Under it, one
+line says it is a subjective criterion agreed by humans before any judge sees it, and a footer strip
+carries the only other number the slide needs: fifty distinct business situations. "Start with
+humans" is spoken, not printed, and the two labels (`pass` or `fail`, with a written critique) belong
+to the slide after this one, which is where they are explained.
 
 The fifty cases vary the situation rather than multiplying cosmetic personas. Each Sphere.com case
 includes the stakeholder, decision, delivery setting, communication need, and analytical question.

@@ -305,9 +305,11 @@ html = r'''<!doctype html>
   .stat{border-top:3px solid var(--teal-deep);padding-top:25px}
   .stat .n{font-size:126px;font-weight:600;line-height:1;letter-spacing:-.04em}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
-  .criterion{margin-top:82px;border-top:3px solid var(--orange);padding-top:34px}
-  .criterion .lab{font-family:var(--mono);font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
-  .criterion p{font-size:76px;font-weight:600;line-height:1.08;letter-spacing:-.025em}
+  .criterion-q{font-size:100px;line-height:1.05;margin-bottom:30px;max-width:1700px}
+  .setup-strip{display:flex;gap:110px;margin-top:120px;border-top:3px solid var(--teal-deep);padding-top:34px}
+  .setup-strip div{display:flex;align-items:baseline;gap:24px}
+  .setup-strip b{font-size:88px;font-weight:600;letter-spacing:-.04em}
+  .setup-strip span{font-size:31px;color:var(--ink2)}
   .ph{border:3px dashed var(--muted);border-radius:14px;padding:36px;color:var(--muted);font-family:var(--mono);font-size:23px;letter-spacing:.06em;text-transform:uppercase;display:grid;place-items:center;text-align:center;line-height:1.45;background:rgba(255,255,255,.45)}
   .ask{margin-top:46px;font-size:40px;color:var(--ink);font-weight:500}
   .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:38px;max-width:1500px}
@@ -724,15 +726,10 @@ html = r'''<!doctype html>
 <!-- 9 · Evaluation decisions -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 01</span></div>
-  <h2>Start with humans</h2>
-  <div class="stats">
-    <div class="stat"><div class="n">50</div><div class="l">distinct business situations</div></div>
-    <div class="stat"><div class="n">1</div><div class="l">subjective criterion:<br>decision-support quality</div></div>
-    <div class="stat"><div class="n hl">2</div><div class="l">labels: pass or fail<br>with a written critique</div></div>
-  </div>
-  <div class="criterion">
-    <div class="lab">The criterion</div>
-    <p>Does the answer support the <span class="hl">decision</span>?</p>
+  <h2 class="criterion-q">Does the answer support the <span class="hl">decision</span>?</h2>
+  <p class="sub">One subjective criterion, agreed by humans before any judge sees it.</p>
+  <div class="setup-strip">
+    <div><b>50</b><span>distinct business situations</span></div>
   </div>
 </section>
 
