@@ -725,7 +725,6 @@ html = r'''<!doctype html>
 
 <!-- 9 · Evaluation decisions -->
 <section class="slide">
-  <div class="eyebrow"><span class="qn">Question 01</span></div>
   <h2 class="criterion-q">Does the answer support the <span class="hl">decision</span>?</h2>
   <p class="sub">One subjective criterion, agreed by humans before any judge sees it.</p>
   <div class="setup-strip">

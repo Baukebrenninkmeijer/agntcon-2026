@@ -33,7 +33,7 @@ though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 9-11 | `Question 01` over the criterion itself (slide 9) |
+| 01 · How do you get a first signal with no labels? | section 2 | 9-11 | no eyebrow; the question is the heading (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
 | 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
 
