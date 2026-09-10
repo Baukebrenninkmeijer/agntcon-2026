@@ -77,7 +77,25 @@
   .cols.grey-layout{grid-template-columns:1.55fr .9fr;gap:54px}
   .statement h2{font-size:104px;margin:0;max-width:1800px}
   .statement .sub{margin-top:40px}
-  .price{margin-top:76px;font-family:var(--mono);font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep)}
+  body:has(.statement.inverted.active){background:var(--teal-deep)}
+  .statement.inverted{color:var(--paper)}
+  .statement.inverted::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 22% 34%,rgba(255,255,255,.07) 0%,transparent 58%);pointer-events:none}
+  .statement.inverted h2{color:var(--paper)}
+  .statement.inverted .sub{color:rgba(250,249,245,.74)}
+  .statement.inverted .fac-note{color:#9fcfca}
+  .statement.inverted .counter{color:rgba(250,249,245,.45)}
+  .ship-read{display:flex;flex-direction:column;gap:34px;margin-top:64px;max-width:1720px}
+  .ship-read .row span{display:block;font-family:var(--mono);font-size:23px;letter-spacing:.14em;color:rgba(250,249,245,.58);margin-bottom:13px}
+  .ship-read .track{height:46px;border-radius:8px;background:rgba(255,255,255,.13);overflow:hidden}
+  .ship-read .track i{display:block;height:100%;background:rgba(250,249,245,.86);border-radius:8px}
+  .ship-read .row.read span{color:var(--orange)}
+  .ship-read .row.read i{width:5%;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.16,1,.3,1)}
+  .slide[data-step="1"] .ship-read .row.read i{transform:none}
+  @media (prefers-reduced-motion:reduce){.ship-read .row.read i{transition:none}}
+  .price{position:relative;margin-top:76px;padding-top:26px}
+  .price::before{content:"";position:absolute;left:0;top:0;width:140px;border-top:4px solid var(--orange)}
+  .price .setup{display:block;font-family:var(--mono);font-size:25px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep)}
+  .price .value{display:block;margin-top:10px;font-size:76px;line-height:1.04;font-weight:600;letter-spacing:-.025em;color:var(--orange-dark)}
   ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
@@ -151,8 +169,7 @@
   .grey-loop-stage{position:relative;z-index:1;background:var(--bg);padding:0 14px;text-align:center}
   .grey-loop-stage .n{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 24px;background:var(--teal);color:var(--paper);font-family:var(--mono);font-size:23px}
   .grey-loop-stage.human .n{background:var(--orange);color:var(--ink)}
-  .grey-loop-stage h3{font-size:32px;line-height:1.16;margin:0 auto 13px;max-width:9em}
-  .grey-loop-stage p{font-size:22px;line-height:1.32;color:var(--ink2);max-width:12em;margin:0 auto}
+  .grey-loop-stage h3{font-size:38px;line-height:1.16;margin:0 auto;max-width:9em}
   .grey-loop-return{position:relative;height:68px;margin:20px 9% 0;border-right:4px solid rgba(77,162,150,.55);border-bottom:4px solid rgba(77,162,150,.55);border-left:4px solid rgba(77,162,150,.55);border-radius:0 0 34px 34px}
   .grey-loop-return::before{content:"";position:absolute;left:-11px;top:-8px;width:18px;height:18px;border-top:4px solid var(--teal);border-right:4px solid var(--teal);transform:rotate(-45deg)}
   .grey-loop-return span{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);background:var(--bg);padding:0 22px;font-family:var(--mono);font-size:19px;letter-spacing:.1em;color:var(--teal-deep);white-space:nowrap}
@@ -206,19 +223,19 @@
   .slide[data-step="2"] .dots .lane-count.done{opacity:1}
   .slide[data-step="2"] .dots .lane-count.start{opacity:0}
   .gridwrap{position:relative;height:600px;margin-top:26px;perspective:2400px}
-  .deck3d{position:absolute;left:660px;top:300px;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
-  .slide[data-step="1"] .deck3d{transform:translateX(30px) scale(.64) rotateX(12deg) rotateY(-27deg)}
-  .layer{position:absolute;left:-195px;top:-195px;width:390px;height:390px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;transform:translateZ(calc(var(--i) * -88px));opacity:0;transition:opacity .9s ease}
+  .deck3d{position:absolute;left:770px;top:310px;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
+  .slide[data-step="1"] .deck3d{transform:translateX(58px) scale(.76) rotateX(12deg) rotateY(-27deg)}
+  .layer{position:absolute;left:-230px;top:-230px;width:460px;height:460px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;transform:translateZ(calc(var(--i) * -88px));opacity:0;transition:opacity .9s ease}
   .layer.front{opacity:1}
   .slide[data-step="1"] .layer{opacity:.42}
   .slide[data-step="1"] .layer.front{opacity:1}
   .layer i{border-radius:10px;background:var(--teal)}
   .layer i.f{background:var(--orange-dark)}
   .layer i.n{background:var(--muted)}
-  .gridwrap .axis{position:absolute;left:0;top:105px;height:390px;width:420px;display:flex;flex-direction:column;justify-content:space-around;text-align:right;font-family:var(--mono);font-size:26px;color:var(--ink2);transition:opacity .6s ease}
-  .gridwrap .reps{position:absolute;left:465px;top:56px;width:390px;text-align:center;font-family:var(--mono);font-size:24px;color:var(--muted);transition:opacity .6s ease}
+  .gridwrap .axis{position:absolute;left:20px;top:80px;height:460px;width:480px;display:flex;flex-direction:column;justify-content:space-around;text-align:right;font-family:var(--mono);font-size:26px;color:var(--ink2);transition:opacity .6s ease}
+  .gridwrap .reps{position:absolute;left:540px;top:28px;width:460px;text-align:center;font-family:var(--mono);font-size:24px;color:var(--muted);transition:opacity .6s ease}
   .slide[data-step="1"] .gridwrap .axis,.slide[data-step="1"] .gridwrap .reps{opacity:0}
-  .gridwrap .depth{position:absolute;left:290px;top:500px;font-family:var(--mono);font-size:26px;color:var(--muted);opacity:0;transition:opacity .8s ease .5s}
+  .gridwrap .depth{position:absolute;left:330px;top:530px;font-family:var(--mono);font-size:26px;color:var(--muted);opacity:0;transition:opacity .8s ease .5s}
   .slide[data-step="1"] .gridwrap .depth{opacity:1}
   .grid-cap{transition:opacity .4s ease}
   .grid-cap.step1,.slide[data-step="1"] .grid-cap.step0{position:absolute;opacity:0}
@@ -228,10 +245,26 @@
   .legend span{display:flex;align-items:center;gap:12px}
   .swatch{width:28px;height:28px;border-radius:50%;border:3px dashed var(--orange)}
   .swatch.w{border-color:var(--ink);border-style:dotted}
-  .verdicts{display:grid;grid-template-columns:285px 285px;align-items:center;gap:26px 34px;margin-top:70px}
-  .verdict{width:285px;height:205px;border:5px solid var(--teal);border-radius:24px;display:grid;place-items:center;background:var(--paper);font-size:54px;font-weight:600;color:var(--teal-deep)}
-  .verdict.fail{border-color:var(--orange);color:var(--orange-dark)}
-  .verdict-note{grid-column:1/-1;font-family:var(--mono);font-size:20px;line-height:1.4;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;text-align:center}
+  .binary-slide{padding:0}
+  .binary-slide .tint{position:absolute;top:0;bottom:0;width:50%}
+  .binary-slide .tint.l{left:0;background:rgba(77,162,150,.10)}
+  .binary-slide .tint.r{right:0;background:rgba(255,151,71,.12)}
+  .binary-slide .seam{position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--ink);opacity:.85}
+  .binary-slide .head{position:absolute;left:48px;top:42px}
+  .binary-slide .head .eyebrow{margin-bottom:26px}
+  .binary-slide .benefits{position:absolute;right:48px;top:46px;width:640px;display:flex;flex-direction:column;gap:30px;text-align:right}
+  .binary-slide .benefits div{font-size:32px;line-height:1.3;color:var(--ink2);border-top:3px solid var(--muted);padding-top:16px}
+  .binary-slide .cases{position:absolute;left:0;right:0;top:52%}
+  .binary-slide .cases i{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--ink2);opacity:.45}
+  .binary-slide .forced{position:absolute;left:50%;top:52%;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .45s ease}
+  .binary-slide[data-step="1"] .forced{opacity:1}
+  .binary-slide .forced b{display:block;width:44px;height:44px;border-radius:50%;background:var(--orange);margin:-9px auto 0;box-shadow:0 0 0 10px rgba(249,248,246,.9)}
+  .binary-slide .forced span{display:inline-block;margin-top:60px;padding:8px 20px;border-radius:999px;background:rgba(249,248,246,.94);font-family:var(--mono);font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-dark);white-space:nowrap}
+  .binary-slide .zone{position:absolute;bottom:64px;font-size:96px;font-weight:600;letter-spacing:-.03em}
+  .binary-slide .zone.l{left:48px;color:var(--teal-deep)}
+  .binary-slide .zone.r{left:calc(50% + 48px);color:var(--orange-dark)}
+  .binary-slide .nuance{position:absolute;left:48px;bottom:34px;font-family:var(--mono);font-size:20px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){.binary-slide .forced{transition:none}}
   .phases{display:grid;grid-template-columns:1fr 1fr;gap:78px;margin-top:30px}
   .phase h3{font-size:40px;font-weight:600;line-height:1.15}
   .phase .lead{font-family:var(--mono);font-size:20px;letter-spacing:.12em;color:var(--ink2);margin-bottom:8px}
@@ -246,6 +279,12 @@
   .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
   .chart .lbl.dim{fill:var(--muted)}
   .fac-note{margin-top:64px;font-family:var(--mono);font-size:24px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
+  .factory-era{padding:0;overflow:hidden}
+  .factory-era svg{display:block;width:100%;height:100%}
+  .factory-era .timeline{stroke:url(#factory-fade);stroke-width:4}
+  .factory-era .terminal{fill:var(--orange)}
+  .factory-era .year{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--teal-deep);text-anchor:middle}
+  .factory-era .name{font-family:var(--sans);font-size:68px;font-weight:600;letter-spacing:-.025em;fill:var(--ink);text-anchor:middle}
   .twin{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px}
   .twin-card{border:4px solid var(--muted);border-radius:22px;background:var(--paper);padding:36px 38px}
   .twin-card.ok{border-color:var(--teal-deep)}
@@ -314,8 +353,6 @@
   .slide[data-step="1"] .ambiguity section.after{opacity:1}
   .ambiguity-takeaway{margin-top:30px;padding-top:25px;border-top:3px solid var(--muted);font-size:35px;line-height:1.3;color:var(--ink)}
   .ambiguity-takeaway b{color:var(--orange-dark);font-weight:500}
-  .binary-takeaway{position:absolute;left:48px;right:48px;bottom:72px;padding-top:22px;border-top:3px solid var(--muted);font-size:30px;line-height:1.3;color:var(--ink2)}
-  .binary-takeaway b{color:var(--orange-dark);font-weight:500}
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
@@ -508,20 +545,24 @@
 </section>
 
 <!-- 10 · Binary -->
-<section class="slide">
-  <div class="cols wide">
-    <div>
-      <div class="eyebrow">How do you create an eval?</div>
-      <h2>Pass or fail</h2>
-      <div class="verdicts"><div class="verdict">PASS</div><div class="verdict fail">FAIL</div><div class="verdict-note">The critique carries the nuance</div></div>
-    </div>
-    <ul class="plain">
-      <li>Clear enough to act on</li>
-      <li>No false precision from a 1 to 5 scale</li>
-      <li>Agreement and false passes become measurable</li>
-    </ul>
+<section class="slide binary-slide" data-steps="1">
+  <div class="tint l"></div>
+  <div class="tint r"></div>
+  <div class="seam"></div>
+  <div class="head">
+    <div class="eyebrow">How do you create an eval?</div>
+    <h2>Pass or fail</h2>
   </div>
-  <p class="binary-takeaway">The cost: <b>no "maybe" bucket</b>. An unaligned boolean judge is worse than an unaligned 1 to 5 judge, because every mistake becomes a hard boundary decision.</p>
+  <div class="benefits">
+    <div>Clear enough to act on</div>
+    <div>No false precision from a 1 to 5 scale</div>
+    <div>Agreement and false passes become measurable</div>
+  </div>
+  <div class="cases"><i style="left:7%;top:8px"></i><i style="left:13%;top:-46px"></i><i style="left:19%;top:34px"></i><i style="left:26%;top:-18px"></i><i style="left:32%;top:52px"></i><i style="left:38%;top:-34px"></i><i style="left:43%;top:14px"></i><i style="left:57%;top:-12px"></i><i style="left:62%;top:44px"></i><i style="left:68%;top:-40px"></i><i style="left:74%;top:22px"></i><i style="left:81%;top:-24px"></i><i style="left:88%;top:40px"></i><i style="left:93%;top:-6px"></i></div>
+  <div class="forced"><b></b><span>No space to stand</span></div>
+  <div class="zone l">PASS</div>
+  <div class="zone r">FAIL</div>
+  <p class="nuance">The critique carries the nuance</p>
 </section>
 
 <!-- 11 · Grey zone -->
@@ -663,7 +704,7 @@
 <section class="slide statement">
   <h2>But we are lazy</h2>
   <p class="sub">Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
-  <p class="price">The most valuable thing</p>
+  <p class="price"><span class="setup">The most valuable thing is</span><span class="value">human attention.</span></p>
 </section>
 
 <!-- 15 · Judge grid -->
@@ -894,11 +935,11 @@
   <div class="grey-loop">
     <div class="sealed-note">HELD-OUT TEST SET STAYS SEALED</div>
     <div class="grey-loop-grid">
-      <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3><p>Same frozen development cases</p></div>
-      <div class="grey-loop-stage"><span class="n">02</span><h3>Surface instability</h3><p>Disagreement and self-flips</p></div>
-      <div class="grey-loop-stage"><span class="n">03</span><h3>Collaborator reads the reasons</h3><p>Find competing interpretations</p></div>
-      <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3><p>The human chooses the rule</p></div>
-      <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3><p>Encode the accepted rule</p></div>
+      <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3></div>
+      <div class="grey-loop-stage"><span class="n">02</span><h3>Surface instability</h3></div>
+      <div class="grey-loop-stage"><span class="n">03</span><h3>Collaborator reads the reasons</h3></div>
+      <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3></div>
+      <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3></div>
     </div>
     <div class="grey-loop-return"><span>RERUN THE SAME FROZEN DEVELOPMENT CASES</span></div>
   </div>
@@ -1054,14 +1095,34 @@
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Unreviewed -->
-<section class="slide statement">
+<!-- 25 · Software factory era -->
+<section class="slide factory-era">
+  <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
+    <defs>
+      <linearGradient id="factory-fade" gradientUnits="userSpaceOnUse" x1="-240" y1="650" x2="1540" y2="650">
+        <stop offset="0%" stop-color="var(--muted)" stop-opacity="0"/>
+        <stop offset="58%" stop-color="var(--muted)" stop-opacity=".18"/>
+        <stop offset="100%" stop-color="var(--muted)" stop-opacity=".72"/>
+      </linearGradient>
+    </defs>
+    <line class="timeline" x1="-240" y1="650" x2="1540" y2="650"/>
+    <circle class="terminal" cx="1540" cy="650" r="27"/>
+    <text class="year" x="1540" y="582">2026</text>
+    <text class="name" x="1540" y="760">Software Factory</text>
+  </svg>
+</section>
+
+<!-- 26 · Unreviewed -->
+<section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
-  <p class="sub">You cannot scale review. You can scale the thing that decides what is worth reviewing.</p>
+  <div class="ship-read">
+    <div class="row"><span>SHIPPED</span><div class="track"><i style="width:100%"></i></div></div>
+    <div class="row read"><span>READ</span><div class="track"><i></i></div></div>
+  </div>
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1084,7 +1145,7 @@
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 27 · Close -->
+<!-- 28 · Close -->
 <section class="slide">
   <div class="cols wide">
     <div>

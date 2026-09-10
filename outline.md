@@ -153,19 +153,26 @@ split here; introduce it later when it becomes part of validating the judge.
 For every applicable case, the reviewer must choose `pass` or `fail` and explain why. The critique
 contains the nuance; the label makes the boundary operational.
 
-Three benefits on the slide, taken from the ECIR material:
+The slide is the binary: two tinted fields split by a single hard seam, `PASS` bottom left and
+`FAIL` bottom right, with nothing between them. Cases sit as dots in either field. On the first
+click one case appears on the seam itself, marked "no space to stand". `The critique carries the
+nuance` runs as a small caption under the pass field.
+
+Three benefits, taken from the ECIR material, sit right-aligned opposite the heading:
 
 - a binary decision is clear enough to act on;
 - no false precision from a 1–5 scale;
 - agreement and false passes become measurable.
 
-The cost gets stated once, at the bottom, and only once: binary grading offers no “maybe” bucket, so
-an unaligned boolean judge is worse than an unaligned 1–5 judge, because every mistake becomes a hard
-boundary decision instead of an imperfect position on a scale.
+The cost is no longer printed. Binary grading offers no “maybe” bucket, so an unaligned boolean
+judge is worse than an unaligned 1–5 judge, because every mistake becomes a hard boundary decision
+instead of an imperfect position on a scale. That is now narration, said once over the forced case
+on the seam; the bottom caveat block was removed to keep the slide a single image. The throughput
+and cognitive-load argument stays narration as well.
 
-Forcing the judge to choose does not remove ambiguity. It pushes every ambiguous case onto one side of
-the boundary, which is what makes alignment both harder and more important. The throughput and
-cognitive-load argument is narration, not a bullet.
+Forcing the judge to choose does not remove ambiguity. It pushes every ambiguous case onto one side
+of the boundary, which is what makes alignment both harder and more important. The forced case is
+the setup for the grey-zone slide, where the seam turns out to be a band rather than a line.
 
 `not_applicable` is reserved for cases where the criterion genuinely does not apply. It is not an
 escape hatch for uncertainty.
@@ -222,8 +229,9 @@ before applying them across the dataset.
 
 ### Slide: But we are lazy
 
-A statement slide, and the motive for the two that follow. The heading, one line under it, and then,
-set apart below in mono teal, what this whole block is spending: the most valuable thing.
+A statement slide, and the motive for the two that follow. The heading and one explanatory line lead
+to the conclusion: `The most valuable thing is` in small mono type, then `human attention.` in large
+orange type.
 The line is let the LLM judges find the ambiguous cases and spend human time only there. How the judges
 find them is the next slide; what the queue looks like is the one after.
 
@@ -239,8 +247,9 @@ when it returns different verdicts on repeated evaluations of the same case, and
 change across a model's three repetitions is enough to flag the case for review. The term recurs
 for the rest of the talk and is not re-explained.
 
-On the click, the grid rotates back into depth and forty-nine further layers appear behind it, one
-per case in the pool: the same two signals exist for all fifty. Verdicts come from the v3
+The initial three-by-three grid is deliberately large enough to read as the primary evidence. On the
+click, it rotates back into depth and forty-nine further layers appear behind it, one per case in the
+pool; the resulting stack remains large rather than collapsing into a thumbnail. Verdicts come from the v3
 decision-support jury run of 2026-09-08; the front layer is the case discussed out loud.
 
 ### Slide: The judge sorts the queue
@@ -296,11 +305,12 @@ only the counts are measured. The instability and no-flip numbers are spoken, no
 
 ### Slide: The grey-zone loop
 
-Present the proposed version-two process as an acceleration layer before full annotation. Run the
-jury on the same frozen development cases, use disagreement and self-flips only as signals, and let
-the collaborator read the reasons to identify competing interpretations. The collaborator formulates
-one boundary question; the human answers it; the accepted rule is encoded in the evaluator; then the
-same cases run again. Repeat until the important boundary questions have been answered.
+Present the proposed version-two process as an acceleration layer before full annotation. The slide
+shows only the five large step names: run the jury, surface instability, read the reasons, ask one
+boundary question, and update the evaluator. The collaborator formulates the question; the human
+answers it; the accepted rule is encoded in the evaluator; then the same cases run again. Repeat until
+the important boundary questions have been answered. The supporting detail belongs in narration, not
+under every step.
 
 Only after those iterations do the human decisions get applied across cases to create reference
 labels. The click-revealed lower strip makes this exit explicit with three real development cases:
@@ -394,15 +404,25 @@ factory’s job.
 
 ## 6. Evals in the software factory (2 min)
 
+### Slide: 2026 — Software Factory
+
+A quiet visual transition into the final argument. Only the end of a horizontal timeline is visible;
+it terminates at an orange marker labelled `2026` and `Software Factory`. There are no intermediate
+dates or invented milestones. This replaces explanatory copy on the following slide, so the section
+remains inside its existing two-minute allocation.
+
 ### Slide: Most software will ship without a human reading it
 
-A full-bleed statement, the same treatment as "But we are lazy" in section 3, so the deck already
-has the grammar for it. The claim is the premise the next slide needs: pull requests increasingly
-merge without anyone opening them.
+A full-bleed statement, but inverted: deep teal ground, paper type. It is the only inverted slide
+outside the speaker slide, so the colour flip marks the section break on its own. The claim is the
+premise the next slide needs: pull requests increasingly merge without anyone opening them.
 
-The line under it is the argument: you cannot scale review, you can scale the thing that decides
-what is worth reviewing. That is the same move as "the judge sorts the queue" in section 3, one
-level up, and it is worth naming the callback out loud.
+Under the headline sit two unlabelled bars, SHIPPED and READ. Shipped is full. Read arrives on the
+first click as a thin orange sliver. No percentage is claimed; the gap is the whole point, and it
+hands the gauge vocabulary to "Same throughput. Different factory." on the next slide.
+
+The slide carries no explanatory sub-line. The title and bar contrast do the work; connect it back to
+the review queue in narration if needed.
 
 ### Slide: Same throughput. Different factory.
 
