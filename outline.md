@@ -27,18 +27,20 @@ Honesty constraints:
 
 ## Spine: the three questions
 
-Slide 4 names three questions, and every block after the opening answers one of them. The block's
-first slide carries its question in the eyebrow, so the promise on slide 4 is visibly kept.
+The three questions are no longer given their own slide; they are spoken over the opening. Each
+block still carries its question in the first slide's eyebrow, so the structure stays visible even
+though nothing enumerates it up front.
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 9-13 | `Question 01 · Start with humans` (slide 10) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 14-22 | `Question 02 · Trust the judge` (slide 14) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 23-24 | `Question 03` over the question itself (slide 23) |
+| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01 · Start with humans` (slide 9) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 13-21 | `Question 02 · Trust the judge` (slide 13) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 22-23 | `Question 03` over the question itself (slide 22) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
-Moving or renaming a block means updating slide 4, that block's eyebrow, and this table together.
+Moving or renaming a block means updating that block's eyebrow, the spoken opening, and this table
+together.
 
 ---
 
@@ -63,10 +65,6 @@ the response used sound judgment about emphasis, explanation, caveats, and scope
 ### Slide: Who is saying this
 
 Three lines of bio. Orq is introduced out loud, not on the slide.
-
-### Slide: Three questions
-
-Name the three questions the talk answers, then hand each one to a block below.
 
 ### Slide: We came for optimization. We got stuck on the signal.
 
@@ -309,9 +307,8 @@ prompt iteration or more repetitions would supply the missing judgment.
 
 ### Slide: What changes with agents?
 
-A divider carrying only the question. Question 03 was named on slide 4 and then not heard from
-again until its block opened, so it gets stated once in full before the block starts: the heading asks
-what changes with agents, and nothing else is on screen.
+A divider carrying only the question. This is where question 03 is stated in full, since nothing
+enumerated it earlier: the heading asks what changes with agents, and nothing else is on screen.
 
 ### Slide: The answer is only the endpoint
 
