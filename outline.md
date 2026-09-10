@@ -32,9 +32,9 @@ first slide carries its question in the eyebrow, so the promise on slide 4 is vi
 
 | Question | Answered in | Deck slides | Block eyebrow |
 |---|---|---|---|
-| 01 · How do you get a first signal with no labels? | section 2 | 8-12 | `Question 01 · Start with humans` (slide 9) |
-| 02 · When can you trust a judge instead of a human? | section 3 | 13-21 | `Question 02 · Trust the judge` (slide 13) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 22-24 | `Question 03 · What changes with agents` (slide 22) |
+| 01 · How do you get a first signal with no labels? | section 2 | 9-13 | `Question 01 · Start with humans` (slide 10) |
+| 02 · When can you trust a judge instead of a human? | section 3 | 14-22 | `Question 02 · Trust the judge` (slide 14) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 23-24 | `Question 03` over the question itself (slide 23) |
 
 Sections 5 and 6 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -88,24 +88,17 @@ Then the cost, stated once: the price is human attention, and the rest of the ta
 less of it. That line is what the priority queue and the jury pay off later, so do not also explain
 the shortcut here.
 
-### Slide: Hard metrics gave way to judgement
+### Slide: Evaluation moved from correctness to alignment
 
-A timeline of what evaluation has measured: a countable target, then human relevance, then n-gram
-overlap, then an LLM judge. The task got more open-ended, the metric got softer, and agreement
-between judges became the thing that had to be measured. The field has done this before.
+A three-stage evolution at the level needed for the talk. Known-answer evaluation compares an
+output with ground truth. Human-judgement evaluation compares an annotation with an expert.
+LLM-judge evaluation compares judge labels with expert labels. The slide drops the earlier n-gram
+detour and closes on the consequence: the evaluator now needs its own evaluation.
 
 ### Slide: The ordering constraint
 
 You cannot use evals to improve an agent before the eval is aligned. This is why the alignment work
 in section 3 comes before the agent work in section 4, and it is stated once, plainly.
-
-### Slide: Agents widen the gap
-
-An agent is not a single model call. Its path can branch, its tool usage can differ, earlier context
-can disappear, and its actions can change external state.
-
-The final answer is therefore only the visible endpoint. We need a way to evaluate open-ended
-behavior without pretending that one ideal response exists.
 
 ---
 
@@ -147,6 +140,12 @@ escape hatch for uncertainty.
 
 The consistency and throughput benefits are also summarized in O’Reilly’s
 [What We Learned from a Year of Building with LLMs](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/).
+
+### Slide: The grey zone
+
+The consequence of the binary, shown rather than argued. The clear passes and clear fails sit at
+either end; between them is the band of cases where reasonable reviewers disagree. That band is
+where all the alignment work happens, and it is the slide the later grey-zone loop refers back to.
 
 ### Slide: One criterion at a time
 
@@ -306,6 +305,11 @@ what changes with agents, and nothing else is on screen.
 
 Keep this high level. Do not introduce a hierarchy of evaluation levels.
 
+On screen: the sub-line says agents require evaluating behavior rather than final answers. The
+fifty-run trajectory chart fills the left column with a `NR. OF TOKENS` axis marker under it and
+its description below that. The right column names three example behavioral evals - tool-call
+efficiency, error recovery, instruction adherence - so the abstract point lands as concrete evals.
+
 Agent evaluation can inspect:
 
 - the full trajectory rather than only the final text;
@@ -327,6 +331,13 @@ this stage.
 ---
 
 ## 5. Scaling: offline, online, continuous (3 min)
+
+### Slide: Build the eval once. Then it guards every commit.
+
+Opens section 5, before the operating modes, because the payoff has to land before the taxonomy.
+The aligned eval is written once and then runs on every change: a DISCOVERY phase over hard and
+edge cases, where a low pass rate means the eval is working, and a REGRESSION phase over known
+behavior and core paths, where anything failing stops the commit.
 
 ### Slide: Three operating modes
 

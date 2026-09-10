@@ -308,7 +308,16 @@ html = r'''<!doctype html>
   .traj .tr{opacity:0;transform:translateX(-26px)}
   .slide.active .traj .tr{animation:trIn .5s ease forwards}
   @keyframes trIn{to{opacity:1;transform:translateX(0)}}
-  .traj-legend{display:flex;gap:40px;font-size:25px;color:var(--ink2);margin-top:30px}
+  .traj{display:block;width:100%;height:auto}
+  .cols.traj-layout{grid-template-columns:1.42fr .58fr;gap:56px;align-items:start;margin-top:30px}
+  .traj-axis{margin-top:14px;font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted)}
+  .traj-caption{margin-top:26px;font-size:27px}
+  .traj-evals{padding-top:6px}
+  .traj-evals-label{font-family:var(--mono);font-size:20px;letter-spacing:.14em;color:var(--muted);margin-bottom:30px}
+  .traj-eval{border-top:4px solid var(--orange);padding-top:20px;margin-bottom:34px}
+  .traj-eval strong{display:block;font-size:33px;font-weight:500;color:var(--ink)}
+  .traj-eval p{margin-top:10px;font-size:24px;line-height:1.32;color:var(--ink2)}
+  .traj-legend{display:flex;gap:34px;font-size:23px;color:var(--ink2);margin-top:22px}
   .traj-legend span{display:flex;align-items:center;gap:13px}
   .traj-legend i{width:26px;height:26px;border-radius:5px;display:block}
   .dots .case{fill:var(--teal)}
@@ -554,31 +563,25 @@ html = r'''<!doctype html>
 
 <!-- 7 · Lineage -->
 <section class="slide">
-  <div class="eyebrow">We have been here before</div>
-  <h2>Hard metrics gave way to judgement.<br>Judgement had to be measured.</h2>
-  <svg class="lineage" viewBox="0 0 1840 420" aria-label="Timeline of evaluation metrics, from countable targets to LLM judges">
+  <h2>Evaluation moved from correctness to alignment</h2>
+  <svg class="lineage" viewBox="0 0 1840 420" aria-label="Evaluation evolved from checking known answers to aligning LLM judge labels with experts">
     <line x1="60" y1="120" x2="1780" y2="120" class="stroke-d"/>
     <g>
-      <circle cx="200" cy="120" r="18" fill="var(--teal)"/>
-      <text x="200" y="200" text-anchor="middle" class="lbl">countable target</text>
-      <text x="200" y="245" text-anchor="middle" class="lbl small">accuracy &#183; P/R/F1</text>
+      <circle cx="260" cy="120" r="18" fill="var(--teal)"/>
+      <text x="260" y="200" text-anchor="middle" class="lbl">Known answer</text>
+      <text x="260" y="245" text-anchor="middle" class="lbl small">COMPARE WITH GROUND TRUTH</text>
     </g>
     <g>
-      <circle cx="680" cy="120" r="18" fill="var(--teal)"/>
-      <text x="680" y="200" text-anchor="middle" class="lbl">human relevance</text>
-      <text x="680" y="245" text-anchor="middle" class="lbl small">assessors disagree</text>
+      <circle cx="920" cy="120" r="18" fill="var(--teal)"/>
+      <text x="920" y="200" text-anchor="middle" class="lbl">Human judgement</text>
+      <text x="920" y="245" text-anchor="middle" class="lbl small">COMPARE WITH AN EXPERT</text>
     </g>
     <g>
-      <circle cx="1160" cy="120" r="18" fill="var(--teal)"/>
-      <text x="1160" y="200" text-anchor="middle" class="lbl">n-gram overlap</text>
-      <text x="1160" y="245" text-anchor="middle" class="lbl small">stops correlating</text>
+      <circle cx="1580" cy="120" r="22" fill="var(--orange)"/>
+      <text x="1580" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
+      <text x="1580" y="245" text-anchor="middle" class="lbl small">COMPARE JUDGE LABELS WITH EXPERT LABELS</text>
     </g>
-    <g>
-      <circle cx="1640" cy="120" r="22" fill="var(--orange)"/>
-      <text x="1640" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
-      <text x="1640" y="245" text-anchor="middle" class="lbl small">agreement is the metric</text>
-    </g>
-    <text x="60" y="382" class="lbl">The task got more open-ended, the metric got softer, and <tspan fill="var(--orange-dark)">agreement between judges</tspan> became what had to be measured.</text>
+    <text x="60" y="382" class="lbl">The evaluator now needs <tspan fill="var(--orange-dark)">its own evaluation.</tspan></text>
   </svg>
 </section>
 
@@ -885,15 +888,27 @@ html = r'''<!doctype html>
 <!-- 24 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
-  <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
-  <svg class="traj" viewBox="0 0 1824 __TRAJ_H__" width="1824" height="__TRAJ_H__" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
-    __TRAJ_ROWS__
-  </svg>
-  <div class="traj-legend">
-    <span><i style="background:#25232e"></i>user turn</span>
-    <span><i style="background:#4da296"></i>assistant</span>
-    <span><i style="background:#ff9747"></i>tool call</span>
-    <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
+  <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
+  <div class="cols traj-layout">
+    <div>
+      <svg class="traj" viewBox="0 0 1824 __TRAJ_H__" preserveAspectRatio="xMinYMin meet" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
+        __TRAJ_ROWS__
+      </svg>
+      <div class="traj-axis">NR. OF TOKENS &#8594;</div>
+      <div class="traj-legend">
+        <span><i style="background:#25232e"></i>user turn</span>
+        <span><i style="background:#4da296"></i>assistant</span>
+        <span><i style="background:#ff9747"></i>tool call</span>
+        <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
+      </div>
+      <p class="body traj-caption">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
+    </div>
+    <div class="traj-evals">
+      <div class="traj-evals-label">EVALS ON THE BEHAVIOR</div>
+      <div class="traj-eval"><strong>Tool-call efficiency</strong><p>Did it query once, or five times for the same fact?</p></div>
+      <div class="traj-eval"><strong>Error recovery</strong><p>A query fails. Does the run recover, or answer anyway?</p></div>
+      <div class="traj-eval"><strong>Instruction adherence</strong><p>The user said do not save yet. Did it wait?</p></div>
+    </div>
   </div>
 </section>
 

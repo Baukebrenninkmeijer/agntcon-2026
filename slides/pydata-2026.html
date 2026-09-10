@@ -137,7 +137,16 @@
   .traj .tr{opacity:0;transform:translateX(-26px)}
   .slide.active .traj .tr{animation:trIn .5s ease forwards}
   @keyframes trIn{to{opacity:1;transform:translateX(0)}}
-  .traj-legend{display:flex;gap:40px;font-size:25px;color:var(--ink2);margin-top:30px}
+  .traj{display:block;width:100%;height:auto}
+  .cols.traj-layout{grid-template-columns:1.42fr .58fr;gap:56px;align-items:start;margin-top:30px}
+  .traj-axis{margin-top:14px;font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted)}
+  .traj-caption{margin-top:26px;font-size:27px}
+  .traj-evals{padding-top:6px}
+  .traj-evals-label{font-family:var(--mono);font-size:20px;letter-spacing:.14em;color:var(--muted);margin-bottom:30px}
+  .traj-eval{border-top:4px solid var(--orange);padding-top:20px;margin-bottom:34px}
+  .traj-eval strong{display:block;font-size:33px;font-weight:500;color:var(--ink)}
+  .traj-eval p{margin-top:10px;font-size:24px;line-height:1.32;color:var(--ink2)}
+  .traj-legend{display:flex;gap:34px;font-size:23px;color:var(--ink2);margin-top:22px}
   .traj-legend span{display:flex;align-items:center;gap:13px}
   .traj-legend i{width:26px;height:26px;border-radius:5px;display:block}
   .dots .case{fill:var(--teal)}
@@ -383,31 +392,25 @@
 
 <!-- 7 · Lineage -->
 <section class="slide">
-  <div class="eyebrow">We have been here before</div>
-  <h2>Hard metrics gave way to judgement.<br>Judgement had to be measured.</h2>
-  <svg class="lineage" viewBox="0 0 1840 420" aria-label="Timeline of evaluation metrics, from countable targets to LLM judges">
+  <h2>Evaluation moved from correctness to alignment</h2>
+  <svg class="lineage" viewBox="0 0 1840 420" aria-label="Evaluation evolved from checking known answers to aligning LLM judge labels with experts">
     <line x1="60" y1="120" x2="1780" y2="120" class="stroke-d"/>
     <g>
-      <circle cx="200" cy="120" r="18" fill="var(--teal)"/>
-      <text x="200" y="200" text-anchor="middle" class="lbl">countable target</text>
-      <text x="200" y="245" text-anchor="middle" class="lbl small">accuracy &#183; P/R/F1</text>
+      <circle cx="260" cy="120" r="18" fill="var(--teal)"/>
+      <text x="260" y="200" text-anchor="middle" class="lbl">Known answer</text>
+      <text x="260" y="245" text-anchor="middle" class="lbl small">COMPARE WITH GROUND TRUTH</text>
     </g>
     <g>
-      <circle cx="680" cy="120" r="18" fill="var(--teal)"/>
-      <text x="680" y="200" text-anchor="middle" class="lbl">human relevance</text>
-      <text x="680" y="245" text-anchor="middle" class="lbl small">assessors disagree</text>
+      <circle cx="920" cy="120" r="18" fill="var(--teal)"/>
+      <text x="920" y="200" text-anchor="middle" class="lbl">Human judgement</text>
+      <text x="920" y="245" text-anchor="middle" class="lbl small">COMPARE WITH AN EXPERT</text>
     </g>
     <g>
-      <circle cx="1160" cy="120" r="18" fill="var(--teal)"/>
-      <text x="1160" y="200" text-anchor="middle" class="lbl">n-gram overlap</text>
-      <text x="1160" y="245" text-anchor="middle" class="lbl small">stops correlating</text>
+      <circle cx="1580" cy="120" r="22" fill="var(--orange)"/>
+      <text x="1580" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
+      <text x="1580" y="245" text-anchor="middle" class="lbl small">COMPARE JUDGE LABELS WITH EXPERT LABELS</text>
     </g>
-    <g>
-      <circle cx="1640" cy="120" r="22" fill="var(--orange)"/>
-      <text x="1640" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
-      <text x="1640" y="245" text-anchor="middle" class="lbl small">agreement is the metric</text>
-    </g>
-    <text x="60" y="382" class="lbl">The task got more open-ended, the metric got softer, and <tspan fill="var(--orange-dark)">agreement between judges</tspan> became what had to be measured.</text>
+    <text x="60" y="382" class="lbl">The evaluator now needs <tspan fill="var(--orange-dark)">its own evaluation.</tspan></text>
   </svg>
 </section>
 
@@ -822,9 +825,11 @@
 <!-- 24 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <h2>The answer is only the endpoint</h2>
-  <p class="sub">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
-  <svg class="traj" viewBox="0 0 1824 596" width="1824" height="596" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
-    <g class="tr" style="animation-delay:0.00s"><rect class="seg user" x="0.0" y="0" width="26.4" height="8" rx="2"/><rect class="seg call" x="27.9" y="0" width="32.9" height="8" rx="2"/><rect class="seg result" x="62.4" y="0" width="33.5" height="8" rx="2"/><rect class="seg assistant final" x="97.4" y="0" width="57.4" height="8" rx="2"/></g>
+  <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
+  <div class="cols traj-layout">
+    <div>
+      <svg class="traj" viewBox="0 0 1824 596" preserveAspectRatio="xMinYMin meet" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">
+        <g class="tr" style="animation-delay:0.00s"><rect class="seg user" x="0.0" y="0" width="26.4" height="8" rx="2"/><rect class="seg call" x="27.9" y="0" width="32.9" height="8" rx="2"/><rect class="seg result" x="62.4" y="0" width="33.5" height="8" rx="2"/><rect class="seg assistant final" x="97.4" y="0" width="57.4" height="8" rx="2"/></g>
 <g class="tr" style="animation-delay:0.02s"><rect class="seg user" x="0.0" y="12" width="26.8" height="8" rx="2"/><rect class="seg assistant final" x="28.3" y="12" width="133.9" height="8" rx="2"/></g>
 <g class="tr" style="animation-delay:0.04s"><rect class="seg user" x="0.0" y="24" width="23.6" height="8" rx="2"/><rect class="seg call" x="25.1" y="24" width="26.8" height="8" rx="2"/><rect class="seg result" x="53.3" y="24" width="27.2" height="8" rx="2"/><rect class="seg assistant final" x="82.0" y="24" width="97.8" height="8" rx="2"/></g>
 <g class="tr" style="animation-delay:0.07s"><rect class="seg user" x="0.0" y="36" width="28.1" height="8" rx="2"/><rect class="seg call" x="29.6" y="36" width="32.9" height="8" rx="2"/><rect class="seg result" x="64.0" y="36" width="39.7" height="8" rx="2"/><rect class="seg call" x="105.2" y="36" width="38.3" height="8" rx="2"/><rect class="seg result" x="145.0" y="36" width="49.2" height="8" rx="2"/><rect class="seg assistant final" x="195.7" y="36" width="101.3" height="8" rx="2"/></g>
@@ -874,12 +879,22 @@
 <g class="tr" style="animation-delay:1.03s"><rect class="seg user" x="0.0" y="564" width="30.3" height="8" rx="2"/><rect class="seg call" x="31.8" y="564" width="20.1" height="8" rx="2"/><rect class="seg result" x="53.4" y="564" width="111.5" height="8" rx="2"/><rect class="seg call" x="166.5" y="564" width="21.6" height="8" rx="2"/><rect class="seg result" x="189.5" y="564" width="144.8" height="8" rx="2"/><rect class="seg call" x="335.8" y="564" width="33.3" height="8" rx="2"/><rect class="seg result" x="370.6" y="564" width="45.2" height="8" rx="2"/><rect class="seg call" x="417.3" y="564" width="117.6" height="8" rx="2"/><rect class="seg result" x="536.4" y="564" width="138.6" height="8" rx="2"/><rect class="seg call" x="676.4" y="564" width="183.6" height="8" rx="2"/><rect class="seg result" x="861.6" y="564" width="13.2" height="8" rx="2"/><rect class="seg assistant" x="876.2" y="564" width="277.8" height="8" rx="2"/><rect class="seg user" x="1155.5" y="564" width="15.1" height="8" rx="2"/><rect class="seg call" x="1172.1" y="564" width="32.5" height="8" rx="2"/><rect class="seg result" x="1206.1" y="564" width="37.9" height="8" rx="2"/><rect class="seg assistant" x="1245.5" y="564" width="112.5" height="8" rx="2"/><rect class="seg user" x="1359.5" y="564" width="14.5" height="8" rx="2"/><rect class="seg call" x="1375.5" y="564" width="68.6" height="8" rx="2"/><rect class="seg result" x="1445.6" y="564" width="76.9" height="8" rx="2"/><rect class="seg assistant final" x="1524.0" y="564" width="149.3" height="8" rx="2"/></g>
 <g class="tr" style="animation-delay:1.06s"><rect class="seg user" x="0.0" y="576" width="27.5" height="8" rx="2"/><rect class="seg call" x="29.0" y="576" width="20.1" height="8" rx="2"/><rect class="seg result" x="50.7" y="576" width="111.6" height="8" rx="2"/><rect class="seg call" x="163.8" y="576" width="35.1" height="8" rx="2"/><rect class="seg result" x="200.5" y="576" width="51.3" height="8" rx="2"/><rect class="seg call" x="253.2" y="576" width="26.9" height="8" rx="2"/><rect class="seg result" x="281.6" y="576" width="30.5" height="8" rx="2"/><rect class="seg call" x="313.6" y="576" width="49.2" height="8" rx="2"/><rect class="seg result" x="364.3" y="576" width="142.2" height="8" rx="2"/><rect class="seg call" x="508.0" y="576" width="64.7" height="8" rx="2"/><rect class="seg result" x="574.2" y="576" width="91.8" height="8" rx="2"/><rect class="seg call" x="667.5" y="576" width="52.9" height="8" rx="2"/><rect class="seg result" x="721.9" y="576" width="135.7" height="8" rx="2"/><rect class="seg call" x="859.1" y="576" width="62.3" height="8" rx="2"/><rect class="seg result" x="922.9" y="576" width="128.3" height="8" rx="2"/><rect class="seg call" x="1052.7" y="576" width="36.0" height="8" rx="2"/><rect class="seg result" x="1090.3" y="576" width="38.2" height="8" rx="2"/><rect class="seg call" x="1130.0" y="576" width="46.2" height="8" rx="2"/><rect class="seg result" x="1177.7" y="576" width="47.5" height="8" rx="2"/><rect class="seg assistant" x="1226.7" y="576" width="160.8" height="8" rx="2"/><rect class="seg user" x="1389.0" y="576" width="38.3" height="8" rx="2"/><rect class="seg call" x="1428.8" y="576" width="26.8" height="8" rx="2"/><rect class="seg result" x="1457.1" y="576" width="75.3" height="8" rx="2"/><rect class="seg call" x="1533.9" y="576" width="29.5" height="8" rx="2"/><rect class="seg result" x="1564.9" y="576" width="34.7" height="8" rx="2"/><rect class="seg assistant final" x="1601.1" y="576" width="212.8" height="8" rx="2"/></g>
 <g class="tr" style="animation-delay:1.08s"><rect class="seg user" x="0.0" y="588" width="33.9" height="8" rx="2"/><rect class="seg call" x="35.4" y="588" width="20.1" height="8" rx="2"/><rect class="seg result" x="57.1" y="588" width="111.6" height="8" rx="2"/><rect class="seg call" x="170.2" y="588" width="26.4" height="8" rx="2"/><rect class="seg result" x="198.1" y="588" width="39.6" height="8" rx="2"/><rect class="seg call" x="239.2" y="588" width="35.7" height="8" rx="2"/><rect class="seg result" x="276.4" y="588" width="50.9" height="8" rx="2"/><rect class="seg call" x="328.8" y="588" width="44.2" height="8" rx="2"/><rect class="seg result" x="374.5" y="588" width="192.4" height="8" rx="2"/><rect class="seg call" x="568.5" y="588" width="45.5" height="8" rx="2"/><rect class="seg result" x="615.5" y="588" width="73.1" height="8" rx="2"/><rect class="seg call" x="690.1" y="588" width="59.7" height="8" rx="2"/><rect class="seg result" x="751.3" y="588" width="77.1" height="8" rx="2"/><rect class="seg call" x="829.9" y="588" width="46.1" height="8" rx="2"/><rect class="seg result" x="877.4" y="588" width="93.5" height="8" rx="2"/><rect class="seg call" x="972.5" y="588" width="91.3" height="8" rx="2"/><rect class="seg result" x="1065.3" y="588" width="107.2" height="8" rx="2"/><rect class="seg assistant" x="1174.1" y="588" width="268.7" height="8" rx="2"/><rect class="seg user" x="1444.3" y="588" width="33.8" height="8" rx="2"/><rect class="seg call" x="1479.6" y="588" width="82.6" height="8" rx="2"/><rect class="seg result" x="1563.7" y="588" width="94.9" height="8" rx="2"/><rect class="seg assistant final" x="1660.1" y="588" width="162.4" height="8" rx="2"/></g>
-  </svg>
-  <div class="traj-legend">
-    <span><i style="background:#25232e"></i>user turn</span>
-    <span><i style="background:#4da296"></i>assistant</span>
-    <span><i style="background:#ff9747"></i>tool call</span>
-    <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
+      </svg>
+      <div class="traj-axis">NR. OF TOKENS &#8594;</div>
+      <div class="traj-legend">
+        <span><i style="background:#25232e"></i>user turn</span>
+        <span><i style="background:#4da296"></i>assistant</span>
+        <span><i style="background:#ff9747"></i>tool call</span>
+        <span><i style="background:#8c8a91;opacity:.55"></i>tool result</span>
+      </div>
+      <p class="body traj-caption">Fifty Sphere.com cases. Each bar is one run, each block one message, sized by how much context it added.</p>
+    </div>
+    <div class="traj-evals">
+      <div class="traj-evals-label">EVALS ON THE BEHAVIOR</div>
+      <div class="traj-eval"><strong>Tool-call efficiency</strong><p>Did it query once, or five times for the same fact?</p></div>
+      <div class="traj-eval"><strong>Error recovery</strong><p>A query fails. Does the run recover, or answer anyway?</p></div>
+      <div class="traj-eval"><strong>Instruction adherence</strong><p>The user said do not save yet. Did it wait?</p></div>
+    </div>
   </div>
 </section>
 
