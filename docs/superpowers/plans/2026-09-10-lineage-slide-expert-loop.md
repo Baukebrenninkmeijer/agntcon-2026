@@ -30,20 +30,20 @@
 - Consumes: the deck's existing `data-steps="1"` and `.slide[data-step="1"]` convention
 - Produces: slide 4 with a stable initial state and one expert-loop reveal state
 
-- [ ] **Step 1: Add the slide state and content groups**
+- [x] **Step 1: Add the slide state and content groups**
 
 Change slide 4 to `section class="slide lineage-slide" data-steps="1"`. Wrap its existing heading and
 lineage SVG in `<div class="lineage-content">...</div>`. Add a sibling inline SVG with class
 `lineage-loops`, three circles named Agent, Judge, and Expert, and two pairs of opposing curved teal
 arrows.
 
-- [ ] **Step 2: Add the transitions**
+- [x] **Step 2: Add the transitions**
 
 Add CSS that leaves `.lineage-content` unchanged at step zero, translates it upward at step one, and
 brings `.lineage-loops` from below the canvas to a final centerline about 30% above the bottom. Keep
 the diagram nearly full width. Add a `prefers-reduced-motion` rule that removes transition travel.
 
-- [ ] **Step 3: Regenerate and run static checks**
+- [x] **Step 3: Regenerate and run static checks**
 
 Run:
 
@@ -57,19 +57,19 @@ git diff --check
 Expected: Ruff reports `All checks passed!`, Python compilation exits zero, the generator writes
 `slides/pydata-2026.html`, and the diff check exits zero.
 
-- [ ] **Step 4: Render both states**
+- [x] **Step 4: Render both states**
 
 Open slide 4 in an isolated headless-Chrome profile at 2048×1152. Capture step zero, send one forward
 keyboard event, and capture step one. Inspect both images for full-width lineage content, correct
 vertical movement, a large low-positioned two-loop diagram, and no clipping or overlap.
 
-- [ ] **Step 5: Synchronize narrative and delivery status**
+- [x] **Step 5: Synchronize narrative and delivery status**
 
 Update `outline.md` to describe the click reveal after the lineage explanation. Add fresh validation
 evidence and the next handoff to the living delivery plan. Mark the implementation verified only
 after reviewing both renders.
 
-- [ ] **Step 6: Commit the implementation**
+- [x] **Step 6: Commit the implementation**
 
 ```bash
 git add slides/build_deck.py slides/pydata-2026.html outline.md \
@@ -82,3 +82,10 @@ git commit -m "slides: reveal expert alignment loop"
 Expected: one commit containing the reviewed design correction, implementation, generated deck,
 outline, and delivery evidence.
 
+## Completion Evidence
+
+Implemented on 2026-09-10. Ruff, Python compilation, deck regeneration, and `git diff --check`
+passed. Fresh 2048×1152 headless-Chrome renders verified slide 4 before and after one forward step.
+The initial state retains the prior composition. The reveal keeps the lineage full-width, clears the
+closing sentence, and places the large two-loop diagram in the lower portion without clipping or
+overlap.

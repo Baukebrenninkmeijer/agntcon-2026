@@ -354,7 +354,7 @@ html = r'''<!doctype html>
   .lineage-loops .entity{fill:var(--paper);stroke:var(--ink);stroke-width:4}
   .lineage-loops .name{font-size:36px;fill:var(--ink)}
   .lineage-slide[data-step="1"] .lineage-content{transform:translateY(-20px)}
-  .lineage-slide[data-step="1"] .lineage{transform:translateY(-100px)}
+  .lineage-slide[data-step="1"] .lineage{transform:translateY(-145px)}
   .lineage-slide[data-step="1"] .lineage-loops{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){.lineage-content,.lineage-slide .lineage,.lineage-loops{transition:none}}
   .gz .d.a{fill:var(--ink)}.gz .d.b{fill:var(--teal)}
