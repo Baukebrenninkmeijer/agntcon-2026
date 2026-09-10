@@ -71,6 +71,9 @@ feed the judge's critiques back into the agent and let it improve itself. That w
 judge can be trusted: an unaligned judge optimizes the agent toward its own mistakes. The diagram is
 that loop with the signal arm crossed out.
 
+On screen this is two lines, "Self-improvement runs on the judge's critiques. A wrong judge, wrong
+improvements." The loop and its consequence are spoken over the diagram rather than written out.
+
 This slide is the motivation the deck was missing; it was cut in `c280a25` and restored on
 2026-09-09.
 

@@ -532,7 +532,7 @@ html = r'''<!doctype html>
     <div>
       <div class="eyebrow">Where this started</div>
       <h2>We came for optimization.<br>We got stuck on the signal.</h2>
-      <p class="body">Feed the judge's critiques back into the agent and let it improve itself. That works, <b>but only if you can trust the judge</b>. An unaligned judge optimizes the agent toward its own mistakes.</p>
+      <p class="body">Self-improvement runs on the judge's critiques. <b>A wrong judge, wrong improvements.</b></p>
     </div>
     <svg class="origin" viewBox="0 0 720 640" role="img" aria-label="An optimization loop between the agent and the judge, with the signal arm broken">
       <defs>
