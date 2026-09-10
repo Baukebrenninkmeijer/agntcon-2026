@@ -418,10 +418,10 @@ html = r'''<!doctype html>
   .slide.active .traj .tr{animation:trIn .5s ease forwards}
   @keyframes trIn{to{opacity:1;transform:translateX(0)}}
   .traj{display:block;width:100%;height:auto}
-  .cols.traj-layout{grid-template-columns:1.72fr .28fr;gap:0;align-items:start;margin-top:30px}
+  .cols.traj-layout{display:block;position:relative;margin-top:30px}
   .traj-axis{margin-top:14px;font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--muted)}
   .traj-caption{margin-top:26px;font-size:27px}
-  .traj-evals{position:relative;z-index:2;width:360px;margin-left:-118px;padding:12px 0 0 38px;background:linear-gradient(90deg,rgba(248,247,245,.9),var(--bg) 16%)}
+  .traj-evals{position:absolute;z-index:2;right:0;top:6px;width:360px;padding:12px 0 0 38px;background:linear-gradient(90deg,rgba(248,247,245,.9),var(--bg) 16%)}
   .traj-evals-label{font-family:var(--mono);font-size:17px;letter-spacing:.14em;color:var(--muted);margin-bottom:24px}
   .traj-eval{position:relative;padding-top:11px;margin-bottom:24px}
   .traj-eval::before{content:"";position:absolute;left:0;top:0;width:42px;border-top:2px solid rgba(224,145,72,.62)}
@@ -883,7 +883,7 @@ html = r'''<!doctype html>
 <!-- 15 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
-  <p class="sub">Let the LLM judges find the ambiguous cases, and spend human time only there.</p>
+  <p class="sub">Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
   <p class="price">The most valuable thing</p>
 </section>
 
@@ -927,7 +927,7 @@ html = r'''<!doctype html>
     </div>
     <div>
       <h2>The judge<br>sorts the queue</h2>
-      <p class="sub">Flagged cases go first. A random sample rides along to catch what the judges agreed on and got wrong.</p>
+      <p class="sub">Flagged cases go first. A random sample comes along to catch the cases the judges agreed on and got wrong.</p>
       <p class="body queue-line">__FLAGGED__ of 50 were flagged. Review four of them, plus four sampled at random.</p>
     </div>
   </div>
@@ -935,7 +935,7 @@ html = r'''<!doctype html>
 
 <!-- 18 · Disagreement was a question -->
 <section class="slide">
-  <h2>Disagreement was a question,<br>not noise</h2>
+  <h2>Disagreement gives us<br>questions</h2>
   <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
     <text class="flab" x="60" y="-10">CASES THE PANEL SPLIT ON</text>
     <path class="fline" d="M104 24 C 418 24, 820 215.0, 1038 215.0"/>
@@ -957,7 +957,7 @@ html = r'''<!doctype html>
     <text class="tlab" x="1296" y="203.0">ONE BOUNDARY</text>
     <text class="tlab" x="1296" y="243.0">QUESTION</text>
   </svg>
-  <p class="sub funnel-sub">They gave us no labels. They gave us one question the criterion never answered.</p>
+  <p class="sub funnel-sub">The flagged cases produced no labels. They produced the question the criterion never answered.</p>
 </section>
 
 <!-- 19 · One human answer exposes another ambiguity -->
