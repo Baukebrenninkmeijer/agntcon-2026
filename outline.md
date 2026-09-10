@@ -127,7 +127,7 @@ contains the nuance; the label makes the boundary operational.
 The practical benefits highlighted in the ECIR material are:
 
 - a binary decision is clear and actionable;
-- it avoids false precision from inconsistently interpreted 1–5 scales;
+- it gives up the precision of a 1–5 scale in exchange for an operational boundary;
 - it lowers cognitive load and increases annotation throughput;
 - agreement, precision, recall, and false-pass rate become directly measurable.
 
@@ -137,6 +137,10 @@ boundary.
 
 That makes alignment harder and more important. Instability and disagreement reveal where the
 judge does not know how humans place the boundary.
+
+State the tradeoff plainly at the bottom of the slide: an unaligned boolean judge is worse than an
+unaligned ordinal judge because every mistake becomes a hard boundary decision rather than an
+imperfect position on a scale.
 
 `not_applicable` is reserved for cases where the criterion genuinely does not apply. It is not an
 escape hatch for uncertainty.
