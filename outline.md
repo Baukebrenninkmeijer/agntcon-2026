@@ -46,7 +46,7 @@ together.
 
 ## 1. The evaluation gap (3 min)
 
-### Slide: Two correct answers, one useful answer
+### Slide: Two correct answers, only one you want
 
 Introduce Sphere.com, an Amsterdam-based B2B wholesaler of physical home appliances.
 

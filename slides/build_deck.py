@@ -512,7 +512,7 @@ html = r'''<!doctype html>
 <!-- 2 · Evaluation gap -->
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
-  <h2>Two correct answers.<br>One useful decision.</h2>
+  <h2>Two correct answers.<br>Only one you want</h2>
   <p class="ask">&#8220;Where is the station?&#8221;</p>
   <div class="compare">
     <div class="answer">
