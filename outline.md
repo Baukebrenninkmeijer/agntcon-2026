@@ -104,17 +104,20 @@ in section 3 comes before the agent work in section 4, and it is stated once, pl
 
 ## 2. Start with humans, not infrastructure (5 min)
 
-### Slide: Begin with a small human-reviewed corpus
+### Slide: Decisions for an eval
 
-Build roughly fifty diverse cases around real decisions. Each Sphere.com case includes the
-stakeholder, decision, delivery setting, communication need, and analytical question.
+Make three setup decisions visible before explaining any one of them: build fifty diverse cases
+around real business decisions, align one subjective criterion (`decision_support_quality`), and
+use two labels (`pass` or `fail`) with a written critique carrying the nuance.
 
-The cases vary the situation rather than multiplying cosmetic personas. Include easy cases,
-ambiguous requests, multi-turn corrections, missing data, and answers that look plausible but are
-not useful for the decision.
+The fifty cases vary the situation rather than multiplying cosmetic personas. Each Sphere.com case
+includes the stakeholder, decision, delivery setting, communication need, and analytical question.
+Include easy cases, ambiguous requests, multi-turn corrections, missing data, and answers that look
+plausible but are not useful for the decision.
 
 Until review is complete, call this the **fifty-case review pool**. It becomes “roughly fifty
-hand-reviewed examples” only after those judgments exist.
+hand-reviewed examples” only after those judgments exist. Do not show the 30/20 development/test
+split here; introduce it later when it becomes part of validating the judge.
 
 ### Slide: How do you create an eval?
 

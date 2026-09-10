@@ -608,15 +608,14 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 10 · Review pool -->
+<!-- 10 · Evaluation decisions -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 01</span> · Start with humans</div>
-  <h2>A fifty-case review pool</h2>
+  <h2>Decisions for an eval</h2>
   <div class="stats">
     <div class="stat"><div class="n">50</div><div class="l">distinct business situations</div></div>
-    <div class="stat"><div class="n">30</div><div class="l">development cases</div></div>
-    <div class="stat"><div class="n">20</div><div class="l">held-out test cases</div></div>
-    <div class="stat"><div class="n hl">0</div><div class="l">human labels so far</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">subjective criterion:<br>decision-support quality</div></div>
+    <div class="stat"><div class="n hl">2</div><div class="l">labels: pass or fail<br>with a written critique</div></div>
   </div>
 </section>
 
