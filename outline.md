@@ -220,11 +220,10 @@ before applying them across the dataset.
 
 ### Slide: But we are lazy
 
-The text half of what used to be one crowded slide. The eyebrow carries the cost this whole block is
-spending, the price is human attention. Under the heading: let the LLM judges find the ambiguous
-cases and spend the humans only there, then the three lines that say how, ending on the one that
-matters, those cases go to the front of the human queue. No diagram, so it can be read from the back
-row and spoken in about twenty seconds.
+A statement slide, and the motive for the two that follow. The eyebrow carries the cost this whole
+block is spending, the price is human attention. The heading and one line under it are the whole
+slide: let the LLM judges find the ambiguous cases and spend the humans only there. How the judges
+find them is the next slide; what the queue looks like is the one after.
 
 ### Slide: Two ways a verdict fails to hold still
 

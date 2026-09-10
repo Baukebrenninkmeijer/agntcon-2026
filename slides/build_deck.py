@@ -457,7 +457,6 @@ html = r'''<!doctype html>
   .grid-cap.step1,.slide[data-step="1"] .grid-cap.step0{position:absolute;opacity:0}
   .slide[data-step="1"] .grid-cap.step1{position:static;opacity:1}
   @media (prefers-reduced-motion:reduce){.deck3d,.layer,.gridwrap .axis,.gridwrap .reps,.gridwrap .depth{transition-duration:.01ms}}
-  .lazy-list{margin-top:52px;max-width:1500px}
   .queue-line{margin-top:44px;opacity:0;transition:opacity .4s ease}
   .slide[data-step="2"] .queue-line{opacity:1}
   .legend{display:flex;gap:34px;font-size:24px;color:var(--ink2);margin-top:20px}
@@ -874,15 +873,10 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 15 · Lazy -->
-<section class="slide">
+<section class="slide statement">
   <div class="eyebrow">The price is human attention</div>
   <h2>But we are lazy</h2>
   <p class="sub">Let the LLM judges find the ambiguous cases, and spend the humans only there.</p>
-  <ul class="plain lazy-list">
-    <li>Each judge votes three times, so both signals show up</li>
-    <li>Judges disagree with each other, or one judge disagrees with itself</li>
-    <li><b class="hl">Those cases go to the front of the human queue</b></li>
-  </ul>
 </section>
 
 <!-- 16 · Judge grid -->
