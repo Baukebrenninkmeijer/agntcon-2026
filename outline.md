@@ -282,7 +282,7 @@ For the live walkthrough, open the single dev-only Orq Experiment that places pr
 v3 side by side. Its boolean cells separate human alignment, panel consensus, and within-judge
 stability: v3 is visibly more stable while human agreement remains unchanged.
 
-### Slide: Disagreement gives us questions
+### Slide: Disagreement gives us a question
 
 The bridge out of the queue and into the grey-zone work. A funnel: the cases the panel split on, drawn
 as dashed orange dots, converge on one dark teal circle carrying a question mark, labelled one boundary

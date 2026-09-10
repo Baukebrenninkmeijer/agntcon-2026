@@ -935,7 +935,7 @@ html = r'''<!doctype html>
 
 <!-- 18 · Disagreement was a question -->
 <section class="slide">
-  <h2>Disagreement gives us<br>questions</h2>
+  <h2>Disagreement gives us<br>a question</h2>
   <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
     <text class="flab" x="60" y="-10">CASES THE PANEL SPLIT ON</text>
     <path class="fline" d="M104 24 C 418 24, 820 215.0, 1038 215.0"/>
