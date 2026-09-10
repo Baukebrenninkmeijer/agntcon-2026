@@ -711,7 +711,7 @@ html = r'''<!doctype html>
 
 <!-- 15 · Two ways to get labels -->
 <section class="slide">
-  <h2>The quality-control process<br>has not changed.</h2>
+  <h2>The quality-control process<br>has not changed</h2>
   <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
     <g class="then">
       <text class="tag" x="0" y="98">THEN</text>
