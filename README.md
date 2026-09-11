@@ -1,8 +1,8 @@
 # Building the evaluation flywheel
 
-Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md), and the
-worked example behind it: a data-analysis agent over a local DuckDB dataset, with its traces, case
-corpus, jury runs and alignment artifacts.
+Companion repository for the PyData 2026 talk Evaluating Agents at Scale, and the worked example
+behind it: a data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury
+runs and alignment artifacts.
 
 The method runs on two installable pieces. The
 [orq.ai agent skills](https://github.com/orq-ai/assistant-plugins) carry evaluation steps as
