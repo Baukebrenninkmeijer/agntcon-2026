@@ -1,6 +1,6 @@
 # Analytics Chatbot Design
 
-> **Revision, 2026-09-03:** The operational loop and function execution remain local, but the model, instructions, and function declarations now live in a hosted orq Agent. The evaluation layer is now in scope through `docs/superpowers/plans/2026-09-03-orq-agent-simulation.md`. This revision supersedes the original hosted-agent and evaluator exclusions below; it does not introduce remote function execution or a self-learning loop.
+> **Revision, 2026-09-03:** The operational loop and function execution remain local, but the model, instructions, and function declarations now live in a hosted orq Agent. The evaluation layer is now in scope; its current state lives in the [delivery plan](../plans/2026-09-03-project-status-and-handoff.md). This revision supersedes the original hosted-agent and evaluator exclusions below; it does not introduce remote function execution or a self-learning loop.
 
 ## Purpose
 
