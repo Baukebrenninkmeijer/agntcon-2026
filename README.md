@@ -1,4 +1,10 @@
-# Building the evaluation flywheel
+<img src="docs/assets/banner.png" alt="Building the evaluation flywheel: fifty cases, aligned judges, agent evals" width="100%">
+
+<p>
+  <img src="https://img.shields.io/badge/python-3.11%2B-025558" alt="Python 3.11+">
+  <img src="https://img.shields.io/badge/evaluatorq-1.35.0-025558" alt="evaluatorq 1.35.0">
+  <img src="https://img.shields.io/badge/talk-PyData%202026-df5325" alt="PyData 2026 talk">
+</p>
 
 Companion repository for the PyData 2026 talk Evaluating Agents at Scale, and the worked example
 behind it: a data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury
@@ -54,6 +60,11 @@ For agents, the final answer is only the endpoint. A run also exposes the trajec
 and whether it stayed inside its instructions, so the behavior can be evaluated too.
 
 ![Slide: fifty horizontal bars, one per agent run, each built from coloured blocks for user turns, assistant messages, tool calls and tool results, sized by tokens.](docs/assets/readme/agent-trajectories.png)
+
+Where that leaves the automation:
+
+> Trust automation only inside the slice tested against humans. Stop when disagreement, drift, or
+> false passes show that you have left it.
 
 ## What is in here
 
