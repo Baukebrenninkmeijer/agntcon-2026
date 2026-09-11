@@ -41,7 +41,7 @@ cartoon = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
 ).decode()
 
-REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel"
+REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
 LINKEDIN_URL = "https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/"
 
 
@@ -623,11 +623,11 @@ html = r'''<!doctype html>
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
-  .start-card{margin-top:56px;width:1724px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
-    box-shadow:0 24px 58px rgba(37,35,46,.10);padding:46px 52px;font-family:var(--mono);font-size:30px;line-height:2.15;color:var(--ink2);white-space:nowrap}
+  .start-card{margin-top:64px;width:1180px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
+    box-shadow:0 24px 58px rgba(37,35,46,.10);padding:52px 56px;font-family:var(--mono);font-size:38px;line-height:2.1;color:var(--ink2);white-space:nowrap}
   .start-card span{color:var(--muted)}
   .start-card b{color:var(--teal-deep);font-weight:500}
-  .start-qr{position:absolute;right:82px;top:112px;transform:rotate(3deg);width:300px;box-shadow:0 26px 58px rgba(37,35,46,.20);border-radius:20px}
+  .start-qr{position:absolute;right:104px;top:50%;transform:translate(0,-50%) rotate(3deg);width:420px;box-shadow:0 26px 58px rgba(37,35,46,.20);border-radius:20px}
   .start-qr .gh{display:block;width:62px;height:62px;margin:6px auto 22px;fill:var(--ink)}
   .qa-slide{padding-left:408px}
   .qa-slide h2{font-size:184px;line-height:1;margin:0}
@@ -1192,7 +1192,6 @@ html = r'''<!doctype html>
   <div class="start-card">
     <div><span>$</span> npx skills add <b>orq-ai/assistant-plugins</b></div>
     <div><span>$</span> pip install <b>evaluatorq</b></div>
-    <div><span>$</span> git clone <b>https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel.git</b></div>
   </div>
   <div class="start-qr">
     <div class="qr"><img src="__QR_REPO__" alt="QR code linking to the talk repository"></div>

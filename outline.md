@@ -475,17 +475,15 @@ abstract promises, as a paper command card under the eyebrow "what to keep":
 ```
 $ npx skills add orq-ai/assistant-plugins
 $ pip install evaluatorq
-$ git clone https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel.git
 ```
 
-The clone line carries the full URL now that the repository is public, so the card is a command
-anyone can copy rather than a hint. Fitting it dropped the card's type from 38 to 30 pixels and
-widened the card to the content width, which moved the QR code up beside the heading. It still
-sits tilted like a conference sticker with the GitHub mark under it instead of a printed URL, and
-it points at the same repository, whose README opens with the same
-three steps and maps each step of this talk to the skill that runs it. The instruction that cannot
-be installed, label fifty cases yourself with a pass or fail and one sentence why, is spoken rather
-than printed, so the slide stays one card and one code.
+Two lines, not three. The clone command is gone: even as a full URL it was a line of noise the QR
+already carries, and it pushed the card's type down to a size nobody reads from the back. The QR
+sits to the right, tilted like a conference sticker, with the GitHub mark under it instead of a
+printed URL. The repository it points at opens with the same steps and maps each step of this talk
+to the skill that runs it. The instruction that cannot be installed, label fifty cases yourself
+with a pass or fail and one sentence why, is spoken rather than printed, so the slide stays one
+card and one code.
 
 Say out loud, over this slide, the rule the deck used to print:
 
@@ -495,8 +493,8 @@ Say out loud, over this slide, the rule the deck used to print:
 ### Slide: Q&A
 
 The billboard for the five minutes of questions. Inverted deep teal like the software-factory
-statement, `Q&A` set large, the byline under it, and a QR code to
-`linkedin.com/in/bauke-brenninkmeijer` on the right so the room can connect while they decide
-whether to ask something.
+statement, `Q&A` set large, the byline under it, and a LinkedIn QR code on
+the right with the LinkedIn logo under it instead of a typed URL, so the room can connect while
+they decide whether to ask something.
 
 ### Q&A (5 min)
