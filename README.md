@@ -57,6 +57,12 @@ happens.
 
 ![Slide: two overlapping classes of points with a curved boundary through the overlap, titled "The grey zone".](docs/assets/readme/grey-zone.png)
 
+A panel of judges run repeatedly over those cases does not resolve the band, and that is the point.
+The cases the panel splits on produce no label. They produce the question the criterion never
+answered, which a human answers once and the evaluator prompt then inherits.
+
+![Slide: several dotted case markers on the left, their paths converging into a single point that opens into one question.](docs/assets/readme/disagreement-question.png)
+
 For agents, the final answer is only the endpoint. A run also exposes the trajectory, the tool calls
 and whether it stayed inside its instructions, so the behavior can be evaluated too.
 
