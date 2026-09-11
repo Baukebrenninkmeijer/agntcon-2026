@@ -269,7 +269,7 @@ html = r'''<!doctype html>
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-  #stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;transform:translate(-50%,-50%) scale(1)}
+  #stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;transform:translate(-50%,-50%) scale(1);z-index:1}
   .slide{position:absolute;inset:0;padding:42px 48px;display:flex;flex-direction:column;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
   .slide.active{opacity:1;pointer-events:auto}
   .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:38px}
@@ -284,6 +284,15 @@ html = r'''<!doctype html>
   .body b{color:var(--ink);font-weight:500}
   .hl{color:var(--orange-dark)}
   .mono{font-family:var(--mono)}
+  .title-slide{overflow:hidden}
+  #title-orbits-screen{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;opacity:0}
+  body:has(.title-slide.active) #title-orbits-screen{opacity:1}
+  .title-orbit{position:absolute;border-radius:50%}
+  .title-orbit.outer{width:min(58vw,82vh);aspect-ratio:1;right:-6vw;top:-38vh;border:min(2.4vw,3.4vh) solid rgba(77,162,150,.24)}
+  .title-orbit.inner{width:min(46vw,66vh);aspect-ratio:1;right:-1vw;top:-29vh;border:min(1.4vw,2vh) solid rgba(2,85,88,.22)}
+  .title-orbit-dot{position:absolute;border-radius:50%;box-shadow:0 0 0 min(1vw,1.5vh) var(--bg)}
+  .title-orbit-dot.orange{width:min(3vw,4.5vh);aspect-ratio:1;right:34vw;top:39vh;background:rgba(255,151,71,.9)}
+  .title-orbit-dot.teal{width:min(2.5vw,3.7vh);aspect-ratio:1;right:10vw;top:33vh;background:rgba(2,85,88,.72)}
   body:has(.who-slide.active){background:radial-gradient(circle at 50% 40%, #0a6b66 0%, var(--teal-deep) 46%, #022f2f 100%)}
   .who-slide{padding:0;display:grid;place-items:center;overflow:hidden}
   .who-slide::before{content:"";position:absolute;width:860px;height:860px;border-radius:50%;background:repeating-radial-gradient(circle, transparent 0 40px, rgba(255,255,255,.04) 40px 41px);pointer-events:none}
@@ -390,7 +399,7 @@ html = r'''<!doctype html>
   .lineage{display:block;width:100%;max-width:1720px;margin:56px auto 0}
   .lineage-content{width:100%;transition:transform .55s cubic-bezier(.16,1,.3,1)}
   .lineage-slide .lineage{transition:transform .55s cubic-bezier(.16,1,.3,1)}
-  .lineage-loops{position:absolute;left:90px;right:90px;bottom:120px;width:calc(100% - 180px);height:320px;opacity:0;transform:translateY(190px);transition:opacity .45s ease,transform .55s cubic-bezier(.16,1,.3,1);pointer-events:none}
+  .lineage-loops{position:absolute;left:90px;right:90px;bottom:200px;width:calc(100% - 180px);height:320px;opacity:0;transform:translateY(190px);transition:opacity .45s ease,transform .55s cubic-bezier(.16,1,.3,1);pointer-events:none}
   .lineage-loops .loop{fill:none;stroke:var(--teal);stroke-width:5}
   .lineage-loops .entity{fill:var(--paper);stroke:var(--ink);stroke-width:4}
   .lineage-loops .name{font-size:36px;fill:var(--ink)}
@@ -531,7 +540,7 @@ html = r'''<!doctype html>
   .fac-note{margin-top:64px;font-family:var(--mono);font-size:24px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
   .factory-era{padding:0;overflow:hidden}
   .factory-era svg{display:block;width:100%;height:100%}
-  .factory-era .timeline{stroke:url(#factory-fade);stroke-width:4}
+  .factory-era .timeline{stroke:var(--muted);stroke-width:4}
   .factory-era .terminal{fill:var(--orange)}
   .factory-era .year{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--teal-deep);text-anchor:middle}
   .factory-era .name{font-family:var(--sans);font-size:68px;font-weight:600;letter-spacing:-.025em;fill:var(--ink);text-anchor:middle}
@@ -622,11 +631,13 @@ html = r'''<!doctype html>
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
-  .hands-slide ol{list-style:none;display:flex;flex-direction:column;gap:44px;margin-top:8px}
-  .hands-slide li{display:flex;gap:40px;align-items:baseline;font-size:56px;line-height:1.15;font-weight:500;letter-spacing:-.02em;max-width:1800px}
+  .hands-slide .eyebrow{font-size:38px;margin-bottom:44px}
+  .hands-slide ol{list-style:none;display:flex;flex-direction:column;gap:34px;margin-top:8px}
+  .hands-slide li{display:flex;gap:40px;align-items:baseline;font-size:68px;line-height:1.12;font-weight:500;letter-spacing:-.02em;max-width:1800px;text-wrap:balance}
   .hands-slide li .n{font-family:var(--mono);font-size:28px;letter-spacing:.1em;color:var(--orange-dark);flex:none;width:56px}
   .hands-slide li.later{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
-  .hands-slide[data-step="1"] li.later{opacity:1;transform:none}
+  .hands-slide[data-step="1"] li:nth-child(-n+2),.hands-slide[data-step="2"] li:nth-child(-n+3),
+  .hands-slide[data-step="3"] li{opacity:1;transform:none}
   .start-card{margin-top:64px;width:1180px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
     box-shadow:0 24px 58px rgba(37,35,46,.10);padding:52px 56px;font-family:var(--mono);font-size:38px;line-height:2.1;color:var(--ink2);white-space:nowrap}
   .start-card span{color:var(--muted)}
@@ -643,10 +654,16 @@ html = r'''<!doctype html>
 </style>
 </head>
 <body>
+<div id="title-orbits-screen" aria-hidden="true">
+  <div class="title-orbit outer"></div>
+  <div class="title-orbit inner"></div>
+  <i class="title-orbit-dot orange"></i>
+  <i class="title-orbit-dot teal"></i>
+</div>
 <div id="stage">
 
 <!-- 1 · Title -->
-<section class="slide active">
+<section class="slide active title-slide">
   <div class="eyebrow">PyData Amsterdam 2026</div>
   <h1>Building the<br>evaluation flywheel</h1>
   <p class="sub">How human judgment becomes an evaluator you can run on every change.</p>
@@ -654,11 +671,13 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 2 · Show of hands -->
-<section class="slide hands-slide" data-steps="1">
+<section class="slide hands-slide" data-steps="3">
   <div class="eyebrow">Show of hands</div>
   <ol>
     <li><span class="n">01</span>Who has built an eval?</li>
-    <li class="later"><span class="n">02</span>Who has had unexpected behavior from an eval or an agent?</li>
+    <li class="later"><span class="n">02</span>Who runs an eval on every change, in CI or<br>on production traffic?</li>
+    <li class="later"><span class="n">03</span>Who has checked an LLM judge against human labels?</li>
+    <li class="later"><span class="n">04</span>Who would let agents merge PRs autonomously?</li>
   </ol>
 </section>
 
@@ -751,7 +770,7 @@ html = r'''<!doctype html>
 
 <!-- 6 · Ordering constraint -->
 <section class="slide">
-  <div class="eyebrow">The ordering constraint</div>
+  <div class="eyebrow">Tldr;</div>
   <h2>You cannot use evals to improve an agent<br>before the eval is <span class="hl">aligned</span>.</h2>
 </section>
 
@@ -819,7 +838,6 @@ html = r'''<!doctype html>
 <!-- 10 · Evaluation decisions -->
 <section class="slide">
   <h2 class="criterion-q">Does the answer support the <span class="hl">decision</span>?</h2>
-  <p class="sub">One subjective criterion, agreed by humans before any judge sees it.</p>
   <div class="setup-strip">
     <div><b>50</b><span>distinct business situations</span></div>
   </div>
@@ -1079,7 +1097,7 @@ html = r'''<!doctype html>
 
 <!-- 23 · Lifecycle -->
 <section class="slide">
-  <h2>Build the eval once.<br>Then it guards every commit.</h2>
+  <h2>The Eval Lifecycle</h2>
   <div class="phases">
     <div class="phase">
       <div class="lead">DISCOVERY</div>
@@ -1115,7 +1133,7 @@ html = r'''<!doctype html>
 <!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
-  <h2>Offline, online, continuous</h2>
+  <h2>When and where to run evaluations</h2>
   <svg class="life-axis" viewBox="0 0 1800 510" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
     <line class="rel" x1="800" y1="40" x2="800" y2="300"/>
     <text class="mono" x="812" y="56">RELEASE</text>
@@ -1136,13 +1154,6 @@ html = r'''<!doctype html>
 <!-- 25 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
-    <defs>
-      <linearGradient id="factory-fade" gradientUnits="userSpaceOnUse" x1="-240" y1="650" x2="1540" y2="650">
-        <stop offset="0%" stop-color="var(--muted)" stop-opacity="0"/>
-        <stop offset="58%" stop-color="var(--muted)" stop-opacity=".18"/>
-        <stop offset="100%" stop-color="var(--muted)" stop-opacity=".72"/>
-      </linearGradient>
-    </defs>
     <line class="timeline" x1="-240" y1="650" x2="1540" y2="650"/>
     <circle class="terminal" cx="1540" cy="650" r="27"/>
     <text class="year" x="1540" y="582">2026</text>
