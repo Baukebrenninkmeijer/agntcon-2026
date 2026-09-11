@@ -1,11 +1,17 @@
 # Building the evaluation flywheel
 
-Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md). It holds
-the method as reusable agent skills plus the `evaluatorq` runner, and the worked example the talk is
-built on: a data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury runs
-and alignment artifacts.
+Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md).
 
-Everything stays human-reviewed and versioned. Nothing in here writes back to its own configuration.
+The method in the talk runs on two pieces you can install today. The
+[orq.ai agent skills](https://github.com/orq-ai/assistant-plugins) carry each step as a workflow
+your coding agent can execute: trace analysis, dataset generation, judge building, judge alignment,
+experiments. [`evaluatorq`](https://github.com/orq-ai/evaluatorq) is the runner underneath them,
+executing deterministic checks, LLM judges, juries, multi-turn simulations and red teaming over
+your datapoints, with [its own documentation](https://orq-ai.github.io/evaluatorq/).
+
+This repository is the worked example the talk is built on: a data-analysis agent over a local
+DuckDB dataset, with its traces, case corpus, jury runs and alignment artifacts. Everything stays
+human-reviewed and versioned. Nothing in here writes back to its own configuration.
 
 ## Start here
 
