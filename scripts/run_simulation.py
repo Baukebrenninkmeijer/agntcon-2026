@@ -17,7 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--cases",
         type=Path,
-        default=Path("orq/resources/datasets/simulation-cases.jsonl"),
+        default=Path("orq/resources/datasets/simulation-cases-v4.jsonl"),
     )
     parser.add_argument("--case-id", help="run exactly one stable case id")
     parser.add_argument("--limit", type=int, default=1, help="maximum cases to run")

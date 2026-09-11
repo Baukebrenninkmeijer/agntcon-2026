@@ -1,8 +1,7 @@
-"""Evaluatorq-native evaluation of imported, trace-backed conversations.
+"""Evaluatorq-native jury evaluation of stored, trace-backed conversations.
 
-The simulation/import layer owns trace retrieval.  This module owns the stable
-row contract, rubric-specific evidence projection, applicability routing, and
-the single native evaluatorq experiment call.
+This module owns the stable row contract, rubric-specific evidence projection, and
+the single native evaluatorq experiment call. Replay never reruns the agent.
 """
 
 from __future__ import annotations
@@ -15,13 +14,6 @@ from typing import Any, Literal
 from evaluatorq import DataPoint, EvaluationResult, evaluatorq, job, llm_jury
 from evaluatorq.types import DataPointResult, Evaluator, ScorerParameter
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-
-from analytics_chatbot.evaluation_ops.hosted_evaluators import orq_evaluator
-from analytics_chatbot.evaluation_ops.trace_import import (
-    TraceImportError,
-    import_orq_trace,
-    import_run_audit,
-)
 
 SCHEMA_VERSION = "trace-eval-v1"
 DEFAULT_JUDGES = (
@@ -362,13 +354,9 @@ __all__ = [
     "DecisionContextEvidence",
     "SCHEMA_VERSION",
     "TraceBackedEvaluationRow",
-    "TraceImportError",
     "VERDICT_LABELS",
     "build_atomic_evaluator",
     "build_atomic_evaluators",
-    "import_orq_trace",
-    "import_run_audit",
-    "orq_evaluator",
     "replay_trace_response",
     "run_trace_evaluation",
 ]
