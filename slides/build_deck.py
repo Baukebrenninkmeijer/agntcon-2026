@@ -41,6 +41,15 @@ cartoon = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
 ).decode()
 
+# Brand mark, inlined so CSS can recolour it per slide. The source keeps its own fills; strip them
+# and let `currentColor` win, otherwise the logo stays ink-black on the inverted slides.
+orq_logo = (
+    (pathlib.Path(__file__).parent / "assets" / "orq-logo.svg")
+    .read_text(encoding="utf-8")
+    .replace('fill="#141319"', 'fill="currentColor"')
+    .replace('<svg width="367" height="100" ', '<svg class="orq-logo" ')
+)
+
 REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
 LINKEDIN_URL = "https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/"
 
@@ -635,10 +644,15 @@ html = r'''<!doctype html>
   .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:360px;text-align:center}
   .qa-qr .li{display:block;width:73px;height:73px;margin:26px auto 0;color:rgba(250,249,245,.72)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
+  #brand{position:absolute;left:48px;bottom:22px;width:150px;color:var(--muted);opacity:.72;pointer-events:none;z-index:5}
+  #brand .orq-logo{display:block;width:100%;height:auto}
+  body:has(.who-slide.active) #brand,
+  body:has(.statement.inverted.active) #brand{color:rgba(250,249,245,.66)}
 </style>
 </head>
 <body>
 <div id="stage">
+<div id="brand">__ORQ_LOGO__</div>
 
 <!-- 1 · Title -->
 <section class="slide active">
@@ -1279,6 +1293,7 @@ html = (
     .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__CARTOON__", cartoon)
     .replace("__ORQMARK__", ORQMARK)
+    .replace("__ORQ_LOGO__", orq_logo)
     .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
     .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))
     .replace("__GREY_DOTS__", grey_dot_svg)
