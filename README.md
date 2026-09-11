@@ -35,8 +35,8 @@ failures, adds stable controls, and calls no model and no network:
 ```bash
 uv run scripts/prepare_jury_annotations.py \
   --cases orq/resources/datasets/simulation-cases-v4.jsonl \
-  --results runs/<accepted-v4-observations>.jsonl \
-  --jury runs/<decision-support-jury-v1>.jsonl \
+  --results orq/resources/datasets/decision-support-v4/observations.jsonl \
+  --jury orq/resources/datasets/decision-support-v4/jury-prompt-v3/jury-results.jsonl \
   --output-dir runs/<new-jury-annotation-run>
 ```
 
@@ -73,7 +73,7 @@ Where that leaves the automation:
 |---|---|
 | `src/analytics_chatbot/` | The agent: gateway client, guarded SQL tool, insight tool, run store, CLI |
 | `orq/resources/` | Definitions for the hosted agent, its two local tools and its evaluators |
-| `scripts/` | Simulation, jury, replay, annotation-prep and resource-sync entry points |
+| `scripts/` | Case generation, simulation, jury, annotation-prep, comparison-upload and resource-sync entry points |
 | `slides/` | `build_deck.py` generates the single-file deck `pydata-2026.html` |
 | `abstract.md`, `outline.md` | The talk's contract and its maintained outline |
 | `docs/superpowers/plans/` | The living delivery plan and task log. Start there before changing anything |
@@ -141,57 +141,43 @@ follows pagination, refuses duplicate resource keys and never creates a project.
 safe: the second pass reports only no-ops. `--kinds tool`, `--kinds agent` or `--kinds evaluator`
 narrows it to a reviewed subset.
 
-The bundle holds one pending `analytics-decision-support-quality` jury and two Python evaluators.
-The jury is reference-free, uses the approved three-model panel with three repetitions, and accepts
-only the full ordered conversation plus final response. Its `pending_human_labels` status blocks
-remote apply and it has zero human labels, so a hosted apply needs separate operator authorization.
-Read-only snapshots and dry-run plans are always allowed.
+The bundle holds one `analytics-decision-support-quality` jury and two Python trajectory
+evaluators. The jury is reference-free, uses a three-model panel with three repetitions, and accepts
+only the full ordered conversation plus final response. It is in `shadow` status with 30 human
+labels: it may sync, but it is not a gate. An evaluator in `pending_human_labels` status is refused
+by the sync. Read-only snapshots and dry-run plans are always allowed.
 
-## Current v4 review pool
+## The v4 evaluation data
 
-The Sphere.com v4 corpus has 50 decision-context-enriched definitions with a frozen 30 development /
-20 test split, and zero observations, jury results and human labels. These are not reviewed
-examples, and running them needs the simulation, evaluatorq-release and paid-call approvals recorded
-in the delivery plan.
+Everything the talk shows is tracked under
+[`orq/resources/datasets/decision-support-v4/`](orq/resources/datasets/decision-support-v4/README.md):
 
-## Historical v1-v3 evidence
+- 50 Sphere.com case definitions with decision context and a frozen 30 development / 20 test split
+  (`simulation-cases-v4.jsonl` one level up);
+- the 50 accepted observed conversations;
+- three immutable 50-row jury runs, one per prompt version: the baseline rubric, the first
+  human-rules revision, and prompt v3;
+- 30 human development labels (27 pass, three fail) with a written explanation each. The 20 test
+  cases stay sealed;
+- the development-only comparison of all three prompt versions, the Experiment behind the deck's
+  judge-grid slide.
 
-Superseded correctness-first work, kept because the talk refers to it. This is not the current v4
-path.
-
-```bash
-uv run python scripts/generate_simulation_cases.py
-uv run python scripts/run_agent_smoke.py
-uv run python scripts/run_simulation.py --limit 50 --max-turns 3 \
-  --output runs/evaluatorq-simulation-50-20260905.jsonl
-
-uv run python scripts/generate_simulation_cases.py --variant edge-v2   # harder multi-turn corpus
-```
-
-The one approved live edge-v2 run produced 50 unique rows: eight one-turn, 22 two-turn and 20
-three-turn conversations, of which 40 reached their simulated goal. The ten behavioral failures were
-kept. Do not rerun the frozen v2 corpus to replace them. Simulation outcomes are not validity gates,
-and expected-tool misses are informational QC warnings.
-
-Those observations were replayed against a pinned hosted evaluator:
+The pipeline that produced them, in order. Only the first and fourth steps are free. The others call
+models or upload to Orq, and the jury and upload scripts refuse to run without an approval flag:
 
 ```bash
-uv run python scripts/run_evaluatorq_replay.py \
-  --evaluator-version 1.0.0 \
-  --output runs/evaluatorq-correctness-v1.0.0-20260905.jsonl \
-  --datapoint-parallelism 10 --llm-parallelism 10
+uv run python scripts/generate_simulation_cases.py      # 50 cases with DuckDB oracles (offline)
+uv run python scripts/run_simulation.py --limit 50 --output runs/<observations>.jsonl
+uv run python scripts/run_decision_support_jury.py \
+  --cases orq/resources/datasets/simulation-cases-v4.jsonl \
+  --results runs/<observations>.jsonl --output runs/<jury>.jsonl --approve-calls
+uv run scripts/prepare_jury_annotations.py ...          # review queue (offline, see above)
+uv run python scripts/upload_decision_support_jury_comparison.py \
+  --output runs/<receipt>.json --approve-upload
 ```
 
-It resolves the `analytics-answer-correctness` key at runtime, verifies the version exists, rejects
-`latest`, and runs all 50 stored responses with `inference=False`. The accepted baseline exported
-50/50 populated scores: 47 pass and three fail. Repeating `--evaluator-version` after an approved
-update creates side-by-side columns such as `answer_correctness@1.0.0` and
-`answer_correctness@1.0.1` over identical rows.
-
-One caveat as of 2026-09-05: the evaluatorq ingest route accepts the requested project path but
-ignores it, so uploaded Experiments land in the workspace's Default project
-([BOPS-1180](https://linear.app/orqai/issue/BOPS-1180/evaluatorq-experiments-ignore-path-always-land-in-the-default-project)).
-Do not retry a run just to move it.
+`generate_simulation_cases.py` regenerates the tracked corpus byte for byte; a test holds it to
+that.
 
 ## Observability and safety
 
@@ -231,9 +217,15 @@ ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -
 
 [`abstract.md`](abstract.md) is what was promised to the conference and [`outline.md`](outline.md) is
 the maintained 30-minute outline. Build the deck with `uv run python slides/build_deck.py` and open
-`slides/pydata-2026.html`. The [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md)
+`slides/pydata-2026.html`. The deck's typeface, ES Klarheit Kurrent, is licensed and not in this
+repository; set `DECK_FONT_DIR` to a folder holding it to embed it, otherwise the deck uses system
+fonts. The [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md)
 covers component boundaries and trace semantics, and the
 [flywheel diagram](docs/assets/evaluation-flywheel.svg) is available as a slide-ready SVG.
 
 Bauke Brenninkmeijer, [LinkedIn](https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/),
 [Orq.ai](https://orq.ai)
+
+## License
+
+[MIT](LICENSE).

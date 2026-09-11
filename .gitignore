@@ -9,3 +9,6 @@ data/*.duckdb
 data/*.duckdb.*
 runs/
 .superpowers/
+dist/
+.conductor/
+.ropeproject/
