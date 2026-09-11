@@ -1022,7 +1022,7 @@ html = r'''<!doctype html>
 
 <!-- 21 · Agent evaluation -->
 <section class="slide" data-steps="1">
-  <div class="eyebrow"><span class="qn">Question 03</span> &#183; What changes with agents?</div>
+  <div class="eyebrow">What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
   <div class="cols traj-layout">

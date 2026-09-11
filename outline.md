@@ -43,7 +43,7 @@ though nothing enumerates it up front.
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 9-11 | no eyebrow; the question is the heading (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21 | `Question 03 · What changes with agents?` (slide 21) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21 | `What changes with agents?` (slide 21) |
 
 Sections 5, 6 and 7 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -337,10 +337,10 @@ prompt iteration or more repetitions would supply the missing judgment.
 
 ### Slide: The answer is only the endpoint
 
-Section 4 is one slide. Question 03 rides in its eyebrow, `Question 03 · What changes with
-agents?`, the same way question 02 rides in the eyebrow of the two-suspects slide. A divider
-carrying only the question would be a whole slide of section for a section with nothing else in
-it.
+Section 4 is one slide. The question rides in its eyebrow as `What changes with agents?`, without
+a number: nothing on screen enumerates the three questions, so a `Question 03` label would point
+at a list the audience never saw. A divider carrying only the question would be a whole slide of
+section for a section with nothing else in it.
 
 Keep this high level. Do not introduce a hierarchy of evaluation levels.
 
