@@ -41,15 +41,6 @@ cartoon = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
 ).decode()
 
-# Brand mark, inlined so CSS can recolour it per slide. The source keeps its own fills; strip them
-# and let `currentColor` win, otherwise the logo stays ink-black on the inverted slides.
-orq_logo = (
-    (pathlib.Path(__file__).parent / "assets" / "orq-logo.svg")
-    .read_text(encoding="utf-8")
-    .replace('fill="#141319"', 'fill="currentColor"')
-    .replace('<svg width="367" height="100" ', '<svg class="orq-logo" ')
-)
-
 REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
 LINKEDIN_URL = "https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/"
 
@@ -631,6 +622,11 @@ html = r'''<!doctype html>
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
+  .hands-slide ol{list-style:none;display:flex;flex-direction:column;gap:44px;margin-top:8px}
+  .hands-slide li{display:flex;gap:40px;align-items:baseline;font-size:56px;line-height:1.15;font-weight:500;letter-spacing:-.02em;max-width:1800px}
+  .hands-slide li .n{font-family:var(--mono);font-size:28px;letter-spacing:.1em;color:var(--orange-dark);flex:none;width:56px}
+  .hands-slide li.later{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
+  .hands-slide[data-step="1"] li.later{opacity:1;transform:none}
   .start-card{margin-top:64px;width:1180px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
     box-shadow:0 24px 58px rgba(37,35,46,.10);padding:52px 56px;font-family:var(--mono);font-size:38px;line-height:2.1;color:var(--ink2);white-space:nowrap}
   .start-card span{color:var(--muted)}
@@ -644,15 +640,10 @@ html = r'''<!doctype html>
   .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:360px;text-align:center}
   .qa-qr .li{display:block;width:73px;height:73px;margin:26px auto 0;color:rgba(250,249,245,.72)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
-  #brand{position:absolute;left:48px;bottom:22px;width:150px;color:var(--muted);opacity:.72;pointer-events:none;z-index:5}
-  #brand .orq-logo{display:block;width:100%;height:auto}
-  body:has(.who-slide.active) #brand,
-  body:has(.statement.inverted.active) #brand{color:rgba(250,249,245,.66)}
 </style>
 </head>
 <body>
 <div id="stage">
-<div id="brand">__ORQ_LOGO__</div>
 
 <!-- 1 · Title -->
 <section class="slide active">
@@ -662,7 +653,16 @@ html = r'''<!doctype html>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span><span>September 2026</span></div>
 </section>
 
-<!-- 2 · Evaluation gap -->
+<!-- 2 · Show of hands -->
+<section class="slide hands-slide" data-steps="1">
+  <div class="eyebrow">Show of hands</div>
+  <ol>
+    <li><span class="n">01</span>Who has built an eval?</li>
+    <li class="later"><span class="n">02</span>Who has had unexpected behavior from an eval or an agent?</li>
+  </ol>
+</section>
+
+<!-- 3 · Evaluation gap -->
 <section class="slide">
   <div class="eyebrow">The evaluation gap</div>
   <h2>Two correct answers.<br>Only one you want</h2>
@@ -679,7 +679,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 3 · Origin -->
+<!-- 4 · Origin -->
 <section class="slide">
   <div class="cols origin-layout">
     <div>
@@ -706,7 +706,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 4 · Lineage -->
+<!-- 5 · Lineage -->
 <section class="slide lineage-slide" data-steps="1">
   <div class="lineage-content">
     <h2>Evaluation moved from correctness to alignment</h2>
@@ -749,13 +749,13 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 5 · Ordering constraint -->
+<!-- 6 · Ordering constraint -->
 <section class="slide">
   <div class="eyebrow">The ordering constraint</div>
   <h2>You cannot use evals to improve an agent<br>before the eval is <span class="hl">aligned</span>.</h2>
 </section>
 
-<!-- 6 · Speaker -->
+<!-- 7 · Speaker -->
 <section class="slide who-slide">
   <div class="who">
     <div class="who-ring"><img src="data:image/jpeg;base64,__CARTOON__" alt="Bauke Brenninkmeijer"></div>
@@ -768,7 +768,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 7 · What is orq.ai? -->
+<!-- 8 · What is orq.ai? -->
 <section class="slide orq-slide">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">__ORQMARK__</svg>
   <div class="eyebrow">Context</div>
@@ -799,7 +799,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 8 · Sphere -->
+<!-- 9 · Sphere -->
 <section class="slide">
   <div class="eyebrow">The case</div>
   <div class="cols wide">
@@ -816,7 +816,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 9 · Evaluation decisions -->
+<!-- 10 · Evaluation decisions -->
 <section class="slide">
   <h2 class="criterion-q">Does the answer support the <span class="hl">decision</span>?</h2>
   <p class="sub">One subjective criterion, agreed by humans before any judge sees it.</p>
@@ -825,7 +825,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 10 · Binary -->
+<!-- 11 · Binary -->
 <section class="slide binary-slide" data-steps="1">
   <div class="tint l"></div>
   <div class="tint r"></div>
@@ -846,7 +846,7 @@ html = r'''<!doctype html>
   <p class="nuance">The critique carries the nuance</p>
 </section>
 
-<!-- 11 · Grey zone -->
+<!-- 12 · Grey zone -->
 <section class="slide" data-steps="2">
   <div class="cols grey-layout">
     <svg class="gz" viewBox="0 0 1200 700" width="1220" height="710" aria-label="Several plausible boundaries through an overlapping grey zone">
@@ -870,7 +870,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 12 · Two loops -->
+<!-- 13 · Two loops -->
 <section class="slide">
   <div class="eyebrow"><span class="qn">Question 02</span> · Trust the judge</div>
   <h2>Every failure has two suspects</h2>
@@ -888,7 +888,7 @@ html = r'''<!doctype html>
   <p class="dual-loop-note">Aligning the judge to humans is how you tell the two apart.</p>
 </section>
 
-<!-- 13 · Two ways to get labels -->
+<!-- 14 · Two ways to get labels -->
 <section class="slide">
   <h2>The quality-control process<br>has not changed</h2>
   <svg class="analogy" viewBox="0 0 1720 430" role="img" aria-label="Both annotation methods compare a delegate's labels with an expert's labels">
@@ -922,14 +922,14 @@ html = r'''<!doctype html>
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 14 · Lazy -->
+<!-- 15 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
   <p class="sub">We don't want to annotate all 50 cases.<br>Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
   <p class="price"><span class="setup">The most valuable thing is</span><span class="value">human attention.</span></p>
 </section>
 
-<!-- 15 · Judge grid -->
+<!-- 16 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways of disagreement</h2>
   <p class="sub">Three judges &#183; three repetitions</p>
@@ -943,7 +943,7 @@ html = r'''<!doctype html>
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 16 · Lazy queue -->
+<!-- 17 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -974,7 +974,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 17 · Disagreement gives us a question -->
+<!-- 18 · Disagreement gives us a question -->
 <section class="slide">
   <h2>Disagreement gives us<br>a question</h2>
   <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
@@ -1001,7 +1001,7 @@ html = r'''<!doctype html>
   <p class="sub funnel-sub">The flagged cases produced no labels. They produced the question the criterion never answered.</p>
 </section>
 
-<!-- 18 · One human answer exposes another ambiguity -->
+<!-- 19 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -1020,7 +1020,7 @@ html = r'''<!doctype html>
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 19 · Grey-zone loop -->
+<!-- 20 · Grey-zone loop -->
 <section class="slide" data-steps="1">
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -1042,14 +1042,14 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 20 · Experiment grid -->
+<!-- 21 · Experiment grid -->
 <section class="slide">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 21 · Agent evaluation -->
+<!-- 22 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
@@ -1077,7 +1077,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 22 · Lifecycle -->
+<!-- 23 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1112,7 +1112,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 23 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1133,7 +1133,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 24 · Software factory era -->
+<!-- 25 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
     <defs>
@@ -1150,7 +1150,7 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 25 · Unreviewed -->
+<!-- 26 · Unreviewed -->
 <section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <div class="ship-read">
@@ -1160,7 +1160,7 @@ html = r'''<!doctype html>
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1187,7 +1187,7 @@ html = r'''<!doctype html>
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 27 · Conclusion -->
+<!-- 28 · Conclusion -->
 <section class="slide">
   <div class="eyebrow">Conclusion</div>
   <h2>The evaluation flywheel</h2>
@@ -1198,7 +1198,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 28 · Get started -->
+<!-- 29 · Get started -->
 <section class="slide">
   <div class="eyebrow">What to keep</div>
   <h2>Run this on your own agent</h2>
@@ -1212,7 +1212,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 29 · Q&A -->
+<!-- 30 · Q&A -->
 <section class="slide statement inverted qa-slide">
   <div class="eyebrow">Questions</div>
   <h2>Q&amp;A</h2>
@@ -1293,7 +1293,6 @@ html = (
     .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__CARTOON__", cartoon)
     .replace("__ORQMARK__", ORQMARK)
-    .replace("__ORQ_LOGO__", orq_logo)
     .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
     .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))
     .replace("__GREY_DOTS__", grey_dot_svg)
