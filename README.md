@@ -1,7 +1,6 @@
 <img src="docs/assets/banner.png" alt="Building the evaluation flywheel: fifty cases, aligned judges, agent evals" width="100%">
 
 <p>
-  <a href="https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel/actions/workflows/offline-ci.yml"><img src="https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel/actions/workflows/offline-ci.yml/badge.svg?branch=main" alt="Offline CI"></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-025558" alt="Python 3.11+"></a>
   <a href="https://github.com/orq-ai/evaluatorq"><img src="https://img.shields.io/badge/evaluatorq-1.35.0-025558" alt="evaluatorq 1.35.0"></a>
   <a href="https://github.com/orq-ai/assistant-plugins"><img src="https://img.shields.io/badge/skills-orq--ai%2Fassistant--plugins-4da296" alt="orq.ai agent skills"></a>
