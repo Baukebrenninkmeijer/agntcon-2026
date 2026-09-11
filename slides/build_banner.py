@@ -2,7 +2,7 @@
 
 """Generate the README banner as one self-contained SVG.
 
-Fonts are embedded (when DECK_FONT_DIR is set) so the banner keeps the deck's typography wherever it is rendered, and the
+Fonts are embedded so the banner keeps the deck's typography wherever it is rendered, and the
 scatter reuses the grey-zone construction from `build_deck.py`: two overlapping classes with one
 boundary drawn through the overlap.
 """
@@ -13,8 +13,10 @@ import os
 import pathlib
 import random
 
-# Licensed typeface: embedded only when DECK_FONT_DIR points at a local copy.
-FONT_DIR = os.environ.get("DECK_FONT_DIR")
+# Same typeface as the deck. DECK_FONT_DIR overrides the location.
+FONT_DIR = os.environ.get(
+    "DECK_FONT_DIR", str(pathlib.Path.home() / ".claude/skills/orq-chart-style/fonts")
+)
 OUTPUT = pathlib.Path(__file__).parents[1] / "docs" / "assets" / "banner.svg"
 
 WIDTH, HEIGHT = 1280, 400
@@ -25,7 +27,7 @@ def b64(name: str) -> str:
 
 
 def font_faces() -> str:
-    if not FONT_DIR:
+    if not FONT_DIR or not pathlib.Path(FONT_DIR).is_dir():
         return ""
     return f"""      @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600}}
       @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400}}

@@ -13,5 +13,3 @@ dist/
 .conductor/
 .ropeproject/
 review-arian*.md
-slides/pydata-2026.local.html
-docs/assets/banner.local.svg

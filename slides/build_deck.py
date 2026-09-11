@@ -9,13 +9,15 @@ import random
 
 import segno
 
-# The deck's typeface (ES Klarheit Kurrent) is licensed, so it is embedded only when
-# DECK_FONT_DIR points at a local copy. Without it the deck falls back to system fonts.
-FONT_DIR = os.environ.get("DECK_FONT_DIR")
+# The deck's typeface (ES Klarheit Kurrent) is embedded in the build. DECK_FONT_DIR overrides the
+# location; on a machine without the font the build falls back to system fonts.
+FONT_DIR = os.environ.get(
+    "DECK_FONT_DIR", str(pathlib.Path.home() / ".claude/skills/orq-chart-style/fonts")
+)
 
 
 def font_faces() -> str:
-    if not FONT_DIR:
+    if not FONT_DIR or not pathlib.Path(FONT_DIR).is_dir():
         return ""
 
     def b64(name: str) -> str:
@@ -1285,9 +1287,6 @@ html = (
     .replace("__JUDGE_LAYERS__", judge_layers)
 )
 
-# The public deck is font-free. A build that embeds the licensed typeface goes to its own
-# Git-ignored file, so presenting with real typography never risks committing the font.
-name = "pydata-2026.local.html" if FONT_DIR else "pydata-2026.html"
-output = pathlib.Path(__file__).with_name(name)
+output = pathlib.Path(__file__).with_name("pydata-2026.html")
 output.write_text(html)
 print(f"wrote {output}")
