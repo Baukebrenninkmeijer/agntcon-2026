@@ -433,6 +433,12 @@ is rotting, the same criterion started failing.
 The point is that the throughput number is identical in both. A factory reports how much moved; it
 cannot tell these two apart. Only an eval can.
 
+Under the dashed rule each card carries an eval pass-rate line over commits, labelled only
+`EVAL PASS RATE` and `COMMITS →`. The lines draw in on the first click. For the first stretch
+they are the same line; then A stays flat while B slides down gradually, because rot is slow, not
+a cliff. Teal and orange match the verdict words, so the throughput gauge above stays identical
+while the quality below splits.
+
 No numbers on the slide. The gauges are unlabelled, and the argument is borrowed from Warp's own
 write-up on evals and scorers, without their marketing figures.
 
@@ -446,13 +452,19 @@ the evaluator changes rather than the agent.
 
 ## 7. Takeaways and Q&A (6 min)
 
-### Takeaways (1 min)
+### Slide: The evaluation flywheel (1 min)
 
-1. Humans define the boundary; the judge does not invent it.
-2. Binary verdicts make the boundary actionable and make ambiguity visible as disagreement.
-3. Repeated juries can route human attention, but consensus is not ground truth.
-4. Agent evaluation can inspect trajectories, tool use, context drift, and state—not only answers.
-5. Aligned findings can drive reviewed improvements through skills, PRs, and regression checks.
+A quiet conclusion slide replaces the spoken five-point takeaway list. Three large, progressively
+indented lines synthesize the process in its operating order:
+
+1. `Judge disagreement directs attention.`
+2. `Human judgement sets the boundary.`
+3. `The resulting eval guards every change.`
+
+Orange emphasizes the judge signal, teal the human decision, and dark ink the regression outcome.
+The slide introduces no new claim: it connects the jury signal, expert alignment, and continuous
+evaluation already established in the preceding sections. It therefore uses the existing one-minute
+takeaway allocation rather than extending the talk.
 
 ### Slide: Run this on your own agent
 
@@ -463,12 +475,14 @@ abstract promises, as a paper command card under the eyebrow "what to keep":
 ```
 $ npx skills add orq-ai/assistant-plugins
 $ pip install evaluatorq
-$ git clone building-the-evaluation-flywheel
+$ git clone https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel.git
 ```
 
-A QR code sits to the right, tilted like a conference sticker, with the GitHub mark under it
-instead of the printed URL. It points at
-`github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel`, whose README opens with the same
+The clone line carries the full URL now that the repository is public, so the card is a command
+anyone can copy rather than a hint. Fitting it dropped the card's type from 38 to 30 pixels and
+widened the card to the content width, which moved the QR code up beside the heading. It still
+sits tilted like a conference sticker with the GitHub mark under it instead of a printed URL, and
+it points at the same repository, whose README opens with the same
 three steps and maps each step of this talk to the skill that runs it. The instruction that cannot
 be installed, label fifty cases yourself with a pass or fail and one sentence why, is spoken rather
 than printed, so the slide stays one card and one code.

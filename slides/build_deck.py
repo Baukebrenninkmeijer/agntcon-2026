@@ -545,6 +545,12 @@ html = r'''<!doctype html>
   .twin-gauge i{display:block;height:100%;width:86%;background:var(--ink2);border-radius:999px}
   .twin-caption{margin-top:18px;font-size:27px;color:var(--ink2)}
   .twin-rule{margin:34px 0 26px;border-top:3px dashed var(--muted)}
+  .twin-spark{display:block;width:100%;height:150px;overflow:visible}
+  .twin-spark path{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.4s ease-in-out}
+  .twin-card.ok .twin-spark path{stroke:var(--teal-deep)}
+  .twin-card.bad .twin-spark path{stroke:var(--orange-dark)}
+  .slide[data-step="1"] .twin-spark path{stroke-dashoffset:0}
+  .twin-axes{display:flex;justify-content:space-between;margin:8px 0 22px;font-family:var(--mono);font-size:20px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
   .twin-verdict{display:flex;align-items:baseline;gap:18px}
   .twin-verdict b{font-size:44px;font-weight:600;letter-spacing:-.02em}
   .twin-verdict span{font-size:27px;color:var(--ink2)}
@@ -617,18 +623,18 @@ html = r'''<!doctype html>
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
-  .start-card{margin-top:64px;width:1300px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
-    box-shadow:0 24px 58px rgba(37,35,46,.10);padding:52px 56px;font-family:var(--mono);font-size:38px;line-height:2.1;color:var(--ink2);white-space:nowrap}
+  .start-card{margin-top:56px;width:1724px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
+    box-shadow:0 24px 58px rgba(37,35,46,.10);padding:46px 52px;font-family:var(--mono);font-size:30px;line-height:2.15;color:var(--ink2);white-space:nowrap}
   .start-card span{color:var(--muted)}
   .start-card b{color:var(--teal-deep);font-weight:500}
-  .start-qr{position:absolute;right:82px;top:50%;transform:translate(0,-50%) rotate(3deg);width:420px;box-shadow:0 26px 58px rgba(37,35,46,.20);border-radius:20px}
+  .start-qr{position:absolute;right:82px;top:112px;transform:rotate(3deg);width:300px;box-shadow:0 26px 58px rgba(37,35,46,.20);border-radius:20px}
   .start-qr .gh{display:block;width:62px;height:62px;margin:6px auto 22px;fill:var(--ink)}
   .qa-slide{padding-left:408px}
   .qa-slide h2{font-size:184px;line-height:1;margin:0}
   .qa-slide .eyebrow{color:#9fcfca}
   .qa-slide .byline{margin-top:54px;color:rgba(250,249,245,.72)}
   .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:360px;text-align:center}
-  .qa-qr .url{margin-top:22px;font-family:var(--mono);font-size:22px;letter-spacing:.04em;color:rgba(250,249,245,.72);line-height:1.4}
+  .qa-qr .li{display:block;width:73px;height:73px;margin:26px auto 0;color:rgba(250,249,245,.72)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -1142,7 +1148,7 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 26 · Software factory -->
-<section class="slide">
+<section class="slide" data-steps="1">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
   <div class="twin">
@@ -1151,6 +1157,8 @@ html = r'''<!doctype html>
       <div class="twin-gauge"><i></i></div>
       <p class="twin-caption">Most pull requests merge untouched.</p>
       <div class="twin-rule"></div>
+      <svg class="twin-spark" viewBox="0 -6 800 150" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 26.2 L20 24.5 L40 29.5 L60 23.7 L80 28.4 L100 26.7 L120 23.6 L140 28.1 L160 23.4 L180 27.3 L200 23.7 L220 23.9 L240 27.2 L260 31.3 L280 24.2 L300 25.2 L320 29.3 L340 32.5 L360 28.8 L380 27.0 L400 32.8 L420 23.5 L440 31.6 L460 25.9 L480 24.4 L500 24.2 L520 26.1 L540 31.2 L560 24.8 L580 28.8 L600 29.4 L620 26.7 L640 28.5 L660 23.6 L680 23.6 L700 25.1 L720 29.8 L740 27.3 L760 26.1 L780 28.9 L800 27.5"/></svg>
+      <div class="twin-axes"><span>Eval pass rate</span><span>Commits &#8594;</span></div>
       <div class="twin-verdict"><b>Holding</b><span>the criterion still passes</span></div>
     </div>
     <div class="twin-card bad">
@@ -1158,6 +1166,8 @@ html = r'''<!doctype html>
       <div class="twin-gauge"><i></i></div>
       <p class="twin-caption">Most pull requests merge untouched.</p>
       <div class="twin-rule"></div>
+      <svg class="twin-spark" viewBox="0 -6 800 150" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 26.2 L20 24.5 L40 29.5 L60 23.7 L80 28.4 L100 26.7 L120 23.6 L140 28.1 L160 23.4 L180 27.3 L200 23.7 L220 23.9 L240 27.2 L260 31.3 L280 24.2 L300 25.2 L320 29.3 L340 32.8 L360 31.3 L380 32.4 L400 41.5 L420 35.7 L440 47.6 L460 45.9 L480 48.5 L500 52.5 L520 58.8 L540 68.4 L560 66.7 L580 75.4 L600 80.8 L620 83.0 L640 89.8 L660 90.0 L680 95.1 L700 101.8 L720 111.9 L740 114.7 L760 119.1 L780 127.3 L800 131.5"/></svg>
+      <div class="twin-axes"><span>Eval pass rate</span><span>Commits &#8594;</span></div>
       <div class="twin-verdict"><b>Rotting</b><span>the same criterion started failing</span></div>
     </div>
   </div>
@@ -1182,7 +1192,7 @@ html = r'''<!doctype html>
   <div class="start-card">
     <div><span>$</span> npx skills add <b>orq-ai/assistant-plugins</b></div>
     <div><span>$</span> pip install <b>evaluatorq</b></div>
-    <div><span>$</span> git clone <b>building-the-evaluation-flywheel</b></div>
+    <div><span>$</span> git clone <b>https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel.git</b></div>
   </div>
   <div class="start-qr">
     <div class="qr"><img src="__QR_REPO__" alt="QR code linking to the talk repository"></div>
@@ -1197,7 +1207,7 @@ html = r'''<!doctype html>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span></div>
   <div class="qa-qr">
     <div class="qr"><img src="__QR_LINKEDIN__" alt="QR code linking to Bauke Brenninkmeijer on LinkedIn"></div>
-    <p class="url">linkedin.com/in/<br>bauke-brenninkmeijer</p>
+    <svg class="li" viewBox="0 0 24 24" role="img" aria-label="LinkedIn"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 4.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
   </div>
 </section>
 
