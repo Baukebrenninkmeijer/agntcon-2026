@@ -44,7 +44,6 @@ def test_sync_plan_orders_tools_agent_and_mixed_evaluators() -> None:
         ("create", "evaluator", "analytics-state-change-policy"),
         ("create", "evaluator", "analytics-tool-execution-integrity"),
         ("create", "evaluator", "analytics-decision-support-quality"),
-        ("create", "evaluator", "podcast-claudish"),
     ]
 
 

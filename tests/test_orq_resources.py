@@ -20,7 +20,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     assert bundle.project.key == "pydata2026"
     assert bundle.project.project_id == TEST_PROJECT_ID
     assert [tool.key for tool in bundle.tools] == ["query-sql", "save-insight"]
-    assert len(bundle.evaluators) == 4
+    assert len(bundle.evaluators) == 3
 
     query = bundle.tool_payloads()[0]
     assert query["path"] == "pydata2026/tools"
@@ -56,7 +56,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
         if isinstance(evaluator, LlmEvaluatorResource)
     ]
     llm_keys = {evaluator.key for evaluator in llm_resources}
-    assert llm_keys == {"analytics-decision-support-quality", "podcast-claudish"}
+    assert llm_keys == {"analytics-decision-support-quality"}
     decision_support_resources = [
         evaluator
         for evaluator in llm_resources
@@ -153,16 +153,13 @@ def test_project_id_placeholder_requires_its_environment_variable(
         load_resource_bundle(RESOURCE_ROOT)
 
 
-def test_pending_llm_evaluators_are_blocked_from_remote_sync(tmp_path: Path) -> None:
+def test_pending_llm_evaluators_are_blocked_from_remote_sync() -> None:
     bundle = load_resource_bundle(RESOURCE_ROOT)
-    pending = [
-        evaluator
-        for evaluator in bundle.evaluators
-        if getattr(evaluator, "validation", None) is not None
-        and evaluator.validation.status == "pending_human_labels"
-    ]
-    if not pending:
-        pytest.skip("no pending LLM evaluators in the tracked bundle")
+    for evaluator in bundle.evaluators:
+        if isinstance(evaluator, LlmEvaluatorResource):
+            evaluator.validation = EvaluatorValidation(
+                status="pending_human_labels", human_labeled_examples=0
+            )
 
     with pytest.raises(ResourceError, match=r"`shadow` or `validated`"):
         bundle.assert_llm_evaluators_syncable()
