@@ -1,79 +1,55 @@
-# analytics-chatbot
+# Building the evaluation flywheel
 
-The operational data-analysis agent for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md).
-It answers business questions against a deterministic local DuckDB dataset, calls the model through
-the orq AI Gateway, and records the final response, tool trajectory, and state changes needed by the
-evaluation loop. Improvements remain human-reviewed and versioned; there is no self-learning loop.
+Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md). It holds
+the method as reusable agent skills plus the `evaluatorq` runner, and the worked example the talk is
+built on: a data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury runs
+and alignment artifacts.
 
-## The production evaluation flywheel
+Everything stays human-reviewed and versioned. Nothing in here writes back to its own configuration.
 
-![Production evaluation flywheel: interactions with the Sphere.com analytics agent create traces; recorded responses are replayed as evaluatorq DataPoints and assessed by deterministic checks plus one pending decision-support-quality jury before human alignment and reviewed improvements.](docs/assets/evaluation-flywheel.svg)
+## Start here
 
-Production interactions call guarded local tools, emit Orq traces, and write exact local run audits.
-A read-only adapter imports hydrated supported traces—or a successfully finalized audit when the
-public trace omits replay evidence—into an evaluatorq `DataPoint` without guessing. Its current
-generic replay input is being adapted to the versioned row that preserves retrievals, errors, and
-state. evaluatorq replays the recorded answer without calling the target agent. The current
-subjective path routes only the full agent-visible conversation and final response to one repeated
-three-model `decision_support_quality` jury. Human labels and disagreement analysis must calibrate
-that jury before reviewed changes return to the agent or evaluator.
-
-The visual also marks delivery state without conflating it with architecture: the local runtime,
-trace capture, DataPoint contract, and evaluator framework are integrated; trace import, hosted
-resources, and the hosted/local bridge are active; human alignment and the improvement loop remain
-dependency-gated. The SVG is the canonical, slide-ready asset.
-
-## Setup
-
-Requirements: Python 3.11+, `uv`, and an orq project API key with Responses write access.
-The package loads `.env` with `python-dotenv` using `override=True`, so its project-scoped key wins
-over a stale inherited shell value.
+**1. Install the skills.** These are the [orq.ai agent skills](https://github.com/orq-ai/assistant-plugins),
+in the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Cursor, Codex,
+Gemini CLI and other compatible agents.
 
 ```bash
-uv sync
-cp .env.example .env
-# Add the pydata2026 project's ORQ_API_KEY to .env.
-uv run analytics-chatbot seed-data
+npx skills add orq-ai/assistant-plugins
+export ORQ_API_KEY=your-key-here
 ```
 
-## Sync hosted Orq resources
+In Claude Code you can install the plugin instead, which also brings MCP tools and trace hooks:
 
-Repository-owned definitions for the hosted agent, its two local function tools, and evaluators
-live under `orq/resources/`. Preview the semantic reconciliation plan first, then apply it
-explicitly:
+```
+/plugin marketplace add orq-ai/assistant-plugins
+/plugin install orq-skills@orq-claude-plugin
+```
+
+**2. Install the runner.** [`evaluatorq`](https://pypi.org/project/evaluatorq/) executes evaluations
+over datapoints: deterministic checks, LLM judges, juries and multi-turn simulations. This
+repository pins version 1.35.0.
 
 ```bash
-make sync-orq
-make sync-orq-apply
+pip install evaluatorq
 ```
 
-Both commands require the existing `pydata2026` project's `ORQ_API_KEY` in `.env`. The sync verifies
-the locked project key and ID, follows list pagination, refuses duplicate resource keys, and never
-creates a project. Repeating the apply command is safe: a successful second pass reports only
-no-op resources.
+**3. Pick the skill for the step you are on.**
 
-The repository contains one pending `analytics-decision-support-quality` LLM jury and two
-historical Python evaluator definitions. The jury is reference-free, uses the approved three-model
-panel with three repetitions, and accepts only the full ordered conversation plus final response.
-Its `pending_human_labels` status blocks remote apply; it has zero human labels, and no hosted apply
-is authorized by the repository change. An authenticated read-only snapshot and dry-run semantic
-plan remain allowed; applying hosted changes requires separate, explicit operator authorization.
-The Python evaluators are stdlib-only, AST-checked, and unit-executed locally. To reconcile only an
-already-reviewed subset, pass `--kinds tool`, `--kinds agent`, or `--kinds evaluator` to the sync
-script; the Makefile target always covers the complete bundle.
+| Where you are | Skill |
+|---|---|
+| Traces, but no idea what is failing | `orq-analyze-traces` builds a failure taxonomy the other skills read |
+| No labelled cases yet | `orq-generate-synthetic-dataset` |
+| Need a judge for one failure mode | `orq-build-evaluator` writes a binary Pass/Fail judge validated against human labels |
+| Your judge disagrees with you | `orq-evaluator-alignment` finds the ambiguous cases and rewrites the prompt from your answers |
+| Want the numbers side by side | `orq-run-experiment` |
+| Want to fix the agent | `orq-improve-agent` |
+| Need multi-turn or adversarial data | `orq-simulate-agent`, `orq-red-team` |
 
-## Current v4 review pool
-
-The current Sphere.com v4 corpus contains 50 decision-context-enriched definitions with the frozen
-30-development/20-test assignment. It has zero observations, zero jury results, and zero human
-labels. Do not describe these definitions as reviewed examples or run them without the separate
-simulation, evaluatorq-release, and paid-call approvals recorded in the living delivery plan.
-
-After accepted observations and a separately approved jury run exist, the repository-local
-`orq-jury-to-alignment` skill prepares human annotation without another model call. Its offline
-producer ranks ties and clean abstentions first, keeps panel disagreement distinct from
-within-judge wobble, excludes mechanical failures, adds five stable controls, and writes no test
-outcomes into the development review directory:
+One skill here is not part of that public set:
+[`.agents/skills/orq-jury-to-alignment`](.agents/skills/orq-jury-to-alignment/SKILL.md), the offline
+bridge from a finished jury run to human annotation. It ranks ties and clean abstentions first,
+keeps panel disagreement separate from within-judge wobble, drops mechanical failures, adds stable
+controls, and calls no model and no network:
 
 ```bash
 uv run scripts/prepare_jury_annotations.py \
@@ -83,151 +59,174 @@ uv run scripts/prepare_jury_annotations.py \
   --output-dir runs/<new-jury-annotation-run>
 ```
 
-The installed `orq-evaluator-alignment` annotation view can open the resulting `queue.json` and
-save provenance-bound human labels. Its single-judge rewrite and retest stages are not valid jury
-comparisons and are intentionally outside this handoff.
+The `orq-evaluator-alignment` annotation view opens the resulting `queue.json` and saves
+provenance-bound labels. Its single-judge rewrite and retest stages are not valid jury comparisons
+and stay out of that handoff.
 
-## Historical v1-v3 execution evidence
+## What the talk argues
 
-Generate the deterministic 50-case evaluatorq input corpus and run a bounded simulation with:
+Reviewers label every applicable case pass or fail and write one sentence explaining why. The label
+makes the boundary operational, the critique carries the nuance.
 
-```bash
-uv run python scripts/generate_simulation_cases.py
-uv run python scripts/run_agent_smoke.py
-uv run python scripts/run_simulation.py \
-  --limit 50 \
-  --max-turns 3 \
-  --output runs/evaluatorq-simulation-50-20260905.jsonl
-```
+![Slide: a field split into a pass side and a fail side by one hard boundary, with cases on both sides and one case sitting on the line itself, marked "no space to stand".](docs/assets/readme/binary-verdict.png)
 
-These commands and the following replay results document the superseded v1-v3 correctness-first
-work; they are not the current v4 execution path. The historical harder multi-turn corpus is
-generated separately:
+Forcing the choice does not remove ambiguity. It pushes the ambiguous cases onto one side of a line
+that several reasonable reviewers would draw differently. That band is where the alignment work
+happens.
 
-```bash
-uv run python scripts/generate_simulation_cases.py --variant edge-v2
-```
+![Slide: two overlapping classes of points with a curved boundary through the overlap, titled "The grey zone".](docs/assets/readme/grey-zone.png)
 
-Its single approved live run used the tracked v2 definitions, a distinct
-evaluation name, and distinct ignored output/report paths. It produced 50
-unique rows: eight one-turn, 22 two-turn, and 20 three-turn conversations.
-Forty rows achieved their simulated goal and ten behavioral failures were
-retained. Do not rerun the frozen v2 corpus to replace failures.
+For agents, the final answer is only the endpoint. A run also exposes the trajectory, the tool calls
+and whether it stayed inside its instructions, so the behavior can be evaluated too.
 
-`scripts/run_simulation.py` loads `.env` with `override=True` before importing evaluatorq, passes
-`save=True`, and exports the returned raw `SimulationResult` rows to `--output`. Datapoints run with
-bounded concurrency while each conversation retains isolated state. On 2026-09-05 the explicitly
-approved baseline run produced 50 unique local outputs. The separate edge-v2
-run produced 50 more. Simulation outcomes are not structural validity gates:
-the adapter retains failed behavior and reports expected-tool misses as QC
-warnings. Preserve and replay all 50 v2 rows; warnings are informational and do
-not filter the corpus. Simulation outputs and exact local run artifacts remain
-under ignored runtime directories.
+![Slide: fifty horizontal bars, one per agent run, each built from coloured blocks for user turns, assistant messages, tool calls and tool results, sized by tokens.](docs/assets/readme/agent-trajectories.png)
 
-Historically, the frozen edge-v2 observations were replayed through an explicit hosted evaluator
-version with:
+## What is in here
+
+| Path | Contents |
+|---|---|
+| `src/analytics_chatbot/` | The agent: gateway client, guarded SQL tool, insight tool, run store, CLI |
+| `orq/resources/` | Definitions for the hosted agent, its two local tools and its evaluators |
+| `scripts/` | Simulation, jury, replay, annotation-prep and resource-sync entry points |
+| `slides/` | `build_deck.py` generates the single-file deck `pydata-2026.html` |
+| `abstract.md`, `outline.md` | The talk's contract and its maintained outline |
+| `docs/superpowers/plans/` | The living delivery plan and task log. Start there before changing anything |
+| `runs/`, `data/` | Git-ignored run artifacts and the generated DuckDB dataset |
+
+## Setup
+
+You need Python 3.11+, `uv`, and an orq project API key with Responses write access. The package
+loads `.env` with `override=True`, so its project-scoped key beats a stale inherited shell value.
 
 ```bash
-uv run python scripts/run_evaluatorq_replay.py \
-  --evaluator-version 1.0.0 \
-  --output runs/evaluatorq-correctness-v1.0.0-20260905.jsonl \
-  --datapoint-parallelism 10 \
-  --llm-parallelism 10
+uv sync
+cp .env.example .env
+# Add ORQ_API_KEY and ORQ_PROJECT_ID to .env.
+uv run analytics-chatbot seed-data
 ```
 
-The command resolves the stable `analytics-answer-correctness` key at runtime,
-verifies the requested version exists, rejects `latest`, and runs all 50 stored
-responses with evaluatorq `inference=False`. It uploads a native Orq Experiment
-with `pydata2026` as the requested project path and hides local score output by
-default. As of 2026-09-05, production still has the known backend issue
-[BOPS-1180](https://linear.app/orqai/issue/BOPS-1180/evaluatorq-experiments-ignore-path-always-land-in-the-default-project):
-the evaluatorq ingest route accepts but ignores that path and places the Experiment
-in the workspace's Default project. Do not retry merely to change placement until
-that fix leaves Testing. The latest uniquely named 50-row run is retained only as a
-[diagnostic run with an invalid empty correctness column](https://my.orq.ai/<workspace>/experiments/01M1RGTTZV0XPJ1DWHE0EASXYZ?runId=01M1RGTTZTBA7FSQV07K85HGG8):
-its export contains zero populated scores. The replay scorer now calls the pinned
-evaluator through one shared asynchronous HTTP client because orq-ai-sdk 4.14.7 drops
-the current top-level v3 evaluator response. Run a fresh uniquely named baseline and
-verify 50/50 exported scores before using it for alignment.
-The async scorer has been validated end to end with a
-[three-row evaluatorq smoke Experiment](https://my.orq.ai/<workspace>/experiments/01M1RJ2TZR2WMEEED158F5V72W?runId=01M1RJ2TZQF4QVGRAC10BN0R34):
-the Orq JSONL export contains three rows and three populated
-`answer_correctness@1.0.0` values.
-The accepted [50-row correctness baseline](https://my.orq.ai/<workspace>/experiments/01M1RJVCF5SGV97CRZBWC993BQ?runId=01M1RJVCF5NCTVMFXEX1FB28TX)
-also exports 50/50 populated scores: 47 `pass` and three `fail`. Its validated
-local alignment artifact is written to
-`runs/evaluatorq-correctness-v1.0.0-20260905.jsonl`; `runs/` is gitignored.
-Repeat `--evaluator-version` after an
-approved evaluator update to create distinct side-by-side columns such as
-`answer_correctness@1.0.0` and `answer_correctness@1.0.1` over identical rows.
-Runtime evaluator IDs remain untracked.
+No workspace identifiers live in the tree. `orq/resources/project.yaml` declares
+`project_id: ${ORQ_PROJECT_ID}` and the loader resolves it from the environment, failing loudly when
+it is unset. Point it at your own orq.ai project; the rest of the definitions are portable.
 
-Data generation uses a Polars `LazyFrame`, streams 25,000 fixed-seed orders to Parquet, then
-materializes explicitly typed decimal columns in DuckDB. The generated database and manifest are
-ignored by Git.
-
-## Run it
+## Run the agent
 
 ```bash
 uv run analytics-chatbot ask "What was net revenue by region in 2025?"
-uv run analytics-chatbot ask \
-  "Calculate EMEA revenue and save that insight" \
-  --show-trajectory
+uv run analytics-chatbot ask "Calculate EMEA revenue and save that insight" --show-trajectory
 uv run analytics-chatbot chat
 uv run analytics-chatbot show-run RUN_ID
 ```
 
-For evaluation cases, attach stable attribution without creating high-cardinality tags:
+Evaluation runs take stable attribution without creating high-cardinality tags:
 
 ```bash
 uv run analytics-chatbot ask "What is month-over-month EMEA growth in Q3 2025?" \
-  --run-kind eval \
-  --split test \
-  --case-id revenue-growth-07 \
-  --identity evaluation-runner \
-  --json
+  --run-kind eval --split test --case-id revenue-growth-07 \
+  --identity evaluation-runner --json
 ```
 
-Python usage:
+From Python:
 
 ```python
 from analytics_chatbot import AnalyticsChatbot
 from analytics_chatbot.config import TraceContext
 
 agent = AnalyticsChatbot()
-conversation = agent.new_conversation()
 result = agent.ask(
     "What was net revenue by product category in 2025?",
-    conversation=conversation,
+    conversation=agent.new_conversation(),
     context=TraceContext(run_kind="eval", evaluation_split="dev", case_id="case-01"),
 )
-print(result.answer)
-print(result.tool_calls)
+print(result.answer, result.tool_calls)
 ```
+
+## Hosted resources
+
+Preview the reconciliation plan, then apply it explicitly:
+
+```bash
+make sync-orq
+make sync-orq-apply
+```
+
+Both need the project's `ORQ_API_KEY` in `.env`. The sync checks the locked project key and id,
+follows pagination, refuses duplicate resource keys and never creates a project. Applying twice is
+safe: the second pass reports only no-ops. `--kinds tool`, `--kinds agent` or `--kinds evaluator`
+narrows it to a reviewed subset.
+
+The bundle holds one pending `analytics-decision-support-quality` jury and two Python evaluators.
+The jury is reference-free, uses the approved three-model panel with three repetitions, and accepts
+only the full ordered conversation plus final response. Its `pending_human_labels` status blocks
+remote apply and it has zero human labels, so a hosted apply needs separate operator authorization.
+Read-only snapshots and dry-run plans are always allowed.
+
+## Current v4 review pool
+
+The Sphere.com v4 corpus has 50 decision-context-enriched definitions with a frozen 30 development /
+20 test split, and zero observations, jury results and human labels. These are not reviewed
+examples, and running them needs the simulation, evaluatorq-release and paid-call approvals recorded
+in the delivery plan.
+
+## Historical v1-v3 evidence
+
+Superseded correctness-first work, kept because the talk refers to it. This is not the current v4
+path.
+
+```bash
+uv run python scripts/generate_simulation_cases.py
+uv run python scripts/run_agent_smoke.py
+uv run python scripts/run_simulation.py --limit 50 --max-turns 3 \
+  --output runs/evaluatorq-simulation-50-20260905.jsonl
+
+uv run python scripts/generate_simulation_cases.py --variant edge-v2   # harder multi-turn corpus
+```
+
+The one approved live edge-v2 run produced 50 unique rows: eight one-turn, 22 two-turn and 20
+three-turn conversations, of which 40 reached their simulated goal. The ten behavioral failures were
+kept. Do not rerun the frozen v2 corpus to replace them. Simulation outcomes are not validity gates,
+and expected-tool misses are informational QC warnings.
+
+Those observations were replayed against a pinned hosted evaluator:
+
+```bash
+uv run python scripts/run_evaluatorq_replay.py \
+  --evaluator-version 1.0.0 \
+  --output runs/evaluatorq-correctness-v1.0.0-20260905.jsonl \
+  --datapoint-parallelism 10 --llm-parallelism 10
+```
+
+It resolves the `analytics-answer-correctness` key at runtime, verifies the version exists, rejects
+`latest`, and runs all 50 stored responses with `inference=False`. The accepted baseline exported
+50/50 populated scores: 47 pass and three fail. Repeating `--evaluator-version` after an approved
+update creates side-by-side columns such as `answer_correctness@1.0.0` and
+`answer_correctness@1.0.1` over identical rows.
+
+One caveat as of 2026-09-05: the evaluatorq ingest route accepts the requested project path but
+ignores it, so uploaded Experiments land in the workspace's Default project
+([BOPS-1180](https://linear.app/orqai/issue/BOPS-1180/evaluatorq-experiments-ignore-path-always-land-in-the-default-project)).
+Do not retry a run just to move it.
 
 ## Observability and safety
 
 Every gateway request uses model `deepseek/deepseek-v4-flash`, trace name
-`PyData2026-AnalyticsChatbot`, and a stable conversation thread tagged `pydata2026`,
-`analytics-chatbot`, and the bounded run kind. Identity is used for caller/evaluation-actor grouping. String metadata
-contains dataset version, agent version, evaluation split, case ID, interface, and run kind. The
-public reporting surface can aggregate by project, identity, and tag; arbitrary metadata is useful
-for filtering traces rather than `group_by`.
+`PyData2026-AnalyticsChatbot`, and a conversation thread tagged `pydata2026`, `analytics-chatbot` and
+the run kind. Metadata carries dataset version, agent version, evaluation split, case id, interface
+and run kind. Reporting aggregates by project, identity and tag; metadata is for filtering traces
+rather than grouping.
 
-Each turn also writes an exact ordered JSONL record beneath `runs/RUN_ID/`. Successful runs atomically
-become `events.jsonl`; interrupted runs retain `events.partial.jsonl`. This local artifact joins the
-gateway steps, tool inputs/results, token usage, failures, and insight snapshots into one evaluation
-record.
+Each turn also writes an ordered JSONL record under `runs/RUN_ID/`. Finished runs become
+`events.jsonl`, interrupted ones keep `events.partial.jsonl`. That file joins gateway steps, tool
+inputs and results, token usage, failures and insight snapshots into one evaluation record.
 
-SQL is parsed before execution, restricted to one read-only statement, executed through a read-only
-DuckDB connection, capped at 200 rows, and interrupted after 10 seconds by default. The source data
-is never mutated. `save_insight` is only exposed when the user explicitly asks to save, remember,
-store, keep, or preserve a finding, and it writes only within the active run directory.
+SQL is parsed before execution, limited to a single read-only statement, run through a read-only
+DuckDB connection, capped at 200 rows and interrupted after 10 seconds. The source data is never
+mutated. `save_insight` is only exposed when the user explicitly asks to save something, and it
+writes inside the active run directory.
 
 ## Tests
 
-The offline CI gate requires no Orq credentials and runs the same checks on pull requests and pushes
-to `main`. Run it locally with the locked environment:
+The offline gate needs no credentials and matches CI:
 
 ```bash
 uv sync --locked --dev
@@ -236,14 +235,19 @@ uv run --no-sync pytest -m "not live and not simulation_live and not alignment_l
 uv build
 ```
 
-CI also loads and validates `orq/resources` when the repository's local resource loader is present.
-It never runs resource synchronization or any other command that contacts Orq. Live tests remain
-explicitly opt-in:
+CI also validates `orq/resources` and never contacts Orq. Live tests are opt-in:
 
 ```bash
 ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -q
 ```
 
-See the [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md) for the
-component boundaries and trace semantics, or [open the flywheel SVG directly](docs/assets/evaluation-flywheel.svg)
-for presentation use.
+## The talk
+
+[`abstract.md`](abstract.md) is what was promised to the conference and [`outline.md`](outline.md) is
+the maintained 30-minute outline. Build the deck with `uv run python slides/build_deck.py` and open
+`slides/pydata-2026.html`. The [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md)
+covers component boundaries and trace semantics, and the
+[flywheel diagram](docs/assets/evaluation-flywheel.svg) is available as a slide-ready SVG.
+
+Bauke Brenninkmeijer, [LinkedIn](https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/),
+[Orq.ai](https://orq.ai)

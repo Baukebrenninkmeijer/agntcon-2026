@@ -6,6 +6,8 @@ import math
 import pathlib
 import random
 
+import segno
+
 FONT_DIR = pathlib.Path("/Users/baukebrenninkmeijer/.claude/skills/orq-chart-style/fonts")
 
 
@@ -27,6 +29,14 @@ experiment_grid = base64.b64encode(
 cartoon = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
 ).decode()
+
+REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel"
+LINKEDIN_URL = "https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/"
+
+
+def qr_data_uri(url: str) -> str:
+    """Scannable QR as an inline SVG data URI. Medium error correction survives projector glare."""
+    return segno.make(url, error="m").svg_data_uri(scale=1, border=2, dark="#25232e", light=None)
 
 
 # Preserved grey-zone visual: overlapping classes and several defensible boundaries.
@@ -589,6 +599,20 @@ html = r'''<!doctype html>
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
+  .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
+  .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
+  .start-card{margin-top:64px;width:1300px;background:var(--paper);border:3px solid rgba(37,35,46,.14);border-radius:22px;
+    box-shadow:0 24px 58px rgba(37,35,46,.10);padding:52px 56px;font-family:var(--mono);font-size:38px;line-height:2.1;color:var(--ink2);white-space:nowrap}
+  .start-card span{color:var(--muted)}
+  .start-card b{color:var(--teal-deep);font-weight:500}
+  .start-qr{position:absolute;right:82px;top:50%;transform:translate(0,-50%) rotate(3deg);width:420px;box-shadow:0 26px 58px rgba(37,35,46,.20);border-radius:20px}
+  .start-qr .gh{display:block;width:62px;height:62px;margin:6px auto 22px;fill:var(--ink)}
+  .qa-slide{padding-left:408px}
+  .qa-slide h2{font-size:184px;line-height:1;margin:0}
+  .qa-slide .eyebrow{color:#9fcfca}
+  .qa-slide .byline{margin-top:54px;color:rgba(250,249,245,.72)}
+  .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:360px;text-align:center}
+  .qa-qr .url{margin-top:22px;font-family:var(--mono);font-size:22px;letter-spacing:.04em;color:rgba(250,249,245,.72);line-height:1.4}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
@@ -1129,19 +1153,29 @@ html = r'''<!doctype html>
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 28 · Close -->
+<!-- 28 · Get started -->
 <section class="slide">
-  <div class="cols wide">
-    <div>
-      <div class="eyebrow">What to keep</div>
-      <h2>Trust the slice<br>tested against humans</h2>
-      <p class="body">Stop when disagreement, drift or false passes show that the system has left it.</p>
-      <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span></div>
-    </div>
-    <svg class="gz" viewBox="0 0 1200 700" width="760" height="443" aria-label="One boundary through the grey zone">
-      __GREY_DOTS__
-      <path class="p" d="__GREY_P3__"/>
-    </svg>
+  <div class="eyebrow">What to keep</div>
+  <h2>Run this on your own agent</h2>
+  <div class="start-card">
+    <div><span>$</span> npx skills add <b>orq-ai/assistant-plugins</b></div>
+    <div><span>$</span> pip install <b>evaluatorq</b></div>
+    <div><span>$</span> git clone <b>building-the-evaluation-flywheel</b></div>
+  </div>
+  <div class="start-qr">
+    <div class="qr"><img src="__QR_REPO__" alt="QR code linking to the talk repository"></div>
+    <svg class="gh" viewBox="0 0 16 16" role="img" aria-label="GitHub"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+  </div>
+</section>
+
+<!-- 29 · Q&A -->
+<section class="slide statement inverted qa-slide">
+  <div class="eyebrow">Questions</div>
+  <h2>Q&amp;A</h2>
+  <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span></div>
+  <div class="qa-qr">
+    <div class="qr"><img src="__QR_LINKEDIN__" alt="QR code linking to Bauke Brenninkmeijer on LinkedIn"></div>
+    <p class="url">linkedin.com/in/<br>bauke-brenninkmeijer</p>
   </div>
 </section>
 
@@ -1215,6 +1249,8 @@ html = (
     .replace("__GREY_P3__", grey_paths[2])
     .replace("__CASE_DOTS__", case_dot_svg)
     .replace("__BINARY_CASES__", binary_cases)
+    .replace("__QR_REPO__", qr_data_uri(REPO_URL))
+    .replace("__QR_LINKEDIN__", qr_data_uri(LINKEDIN_URL))
     .replace("__TRAJ_ROWS__", traj_svg)
     .replace("__TRAJ_H__", str(traj_height))
     .replace("__JUDGE_NAMES__", judge_names)

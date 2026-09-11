@@ -454,16 +454,35 @@ the evaluator changes rather than the agent.
 4. Agent evaluation can inspect trajectories, tool use, context drift, and state—not only answers.
 5. Aligned findings can drive reviewed improvements through skills, PRs, and regression checks.
 
-### Slide: Trust the slice tested against humans
+### Slide: Run this on your own agent
 
-The closing slide is not the takeaway list. It carries the grey-zone scatter one last time with a
-single boundary drawn through it, the eyebrow "what to keep", and the line that names when to stop:
-disagreement, drift or false passes showing the system has left the slice humans validated. The
-byline sits under it.
+The closing slide is not the takeaway list and no longer repeats the grey-zone scatter, which by
+this point in the deck carries no new information. It is the "process you can run next week" the
+abstract promises, as a paper command card under the eyebrow "what to keep":
 
-Say out loud:
+```
+$ npx skills add orq-ai/assistant-plugins
+$ pip install evaluatorq
+$ git clone building-the-evaluation-flywheel
+```
+
+A QR code sits to the right, tilted like a conference sticker, with the GitHub mark under it
+instead of the printed URL. It points at
+`github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel`, whose README opens with the same
+three steps and maps each step of this talk to the skill that runs it. The instruction that cannot
+be installed, label fifty cases yourself with a pass or fail and one sentence why, is spoken rather
+than printed, so the slide stays one card and one code.
+
+Say out loud, over this slide, the rule the deck used to print:
 
 > Trust automation only inside the slice tested against humans. Stop when disagreement, drift, or
 > false passes show that you have left it.
+
+### Slide: Q&A
+
+The billboard for the five minutes of questions. Inverted deep teal like the software-factory
+statement, `Q&A` set large, the byline under it, and a QR code to
+`linkedin.com/in/bauke-brenninkmeijer` on the right so the room can connect while they decide
+whether to ask something.
 
 ### Q&A (5 min)
