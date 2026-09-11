@@ -23,10 +23,10 @@ def font_faces() -> str:
 
     return "\n  ".join(
         [
-            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400;font-display:swap}}',
-            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Md.woff2")}) format("woff2");font-weight:500;font-display:swap}}',
-            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600;font-display:swap}}',
-            f'@font-face{{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,{b64("ESKlarheitKurrentMono-Md.ttf")}) format("truetype");font-weight:500;font-display:swap}}',
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400;font-display:block}}',
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Md.woff2")}) format("woff2");font-weight:500;font-display:block}}',
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600;font-display:block}}',
+            f'@font-face{{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,{b64("ESKlarheitKurrentMono-Md.ttf")}) format("truetype");font-weight:500;font-display:block}}',
         ]
     )
 
@@ -550,6 +550,14 @@ html = r'''<!doctype html>
   .twin-card.bad .twin-verdict b{color:var(--orange-dark)}
   .twin-foot{margin-top:46px;font-size:31px;color:var(--ink)}
   .twin-foot b{color:var(--teal-deep);font-weight:500}
+  .conclusion-lines{display:flex;flex-direction:column;gap:18px;margin-top:54px;max-width:1660px}
+  .conclusion-line{font-size:61px;line-height:1.16;letter-spacing:-.018em;color:var(--ink2);margin:0;padding:20px 0}
+  .conclusion-line:nth-child(2){margin-left:110px}
+  .conclusion-line:nth-child(3){margin-left:220px}
+  .conclusion-line b{font-weight:600}
+  .conclusion-line.signal b{color:var(--orange-dark)}
+  .conclusion-line.human b{color:var(--teal-deep)}
+  .conclusion-line.guard b{color:var(--ink)}
   .dual-loop{display:grid;grid-template-columns:auto 60px 1fr 60px 1fr;grid-template-rows:1fr 1fr;align-items:center;column-gap:0;row-gap:38px;margin-top:44px}
   .dual-loop .finding{grid-row:1 / span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;width:420px;border:4px solid var(--ink);border-radius:22px;background:var(--paper);padding:34px}
   .dual-loop .finding strong{display:block;font-size:40px;line-height:1.15;color:var(--ink)}
@@ -1154,7 +1162,18 @@ html = r'''<!doctype html>
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 27 · Get started -->
+<!-- 27 · Conclusion -->
+<section class="slide">
+  <div class="eyebrow">Conclusion</div>
+  <h2>The evaluation flywheel</h2>
+  <div class="conclusion-lines">
+    <p class="conclusion-line signal">Judge disagreement <b>directs attention.</b></p>
+    <p class="conclusion-line human">Human judgement <b>sets the boundary.</b></p>
+    <p class="conclusion-line guard">The resulting eval <b>guards every change.</b></p>
+  </div>
+</section>
+
+<!-- 28 · Get started -->
 <section class="slide">
   <div class="eyebrow">What to keep</div>
   <h2>Run this on your own agent</h2>
@@ -1169,7 +1188,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 28 · Q&A -->
+<!-- 29 · Q&A -->
 <section class="slide statement inverted qa-slide">
   <div class="eyebrow">Questions</div>
   <h2>Q&amp;A</h2>
@@ -1228,6 +1247,17 @@ html = r'''<!doctype html>
   if (match) current = Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1));
   fit();
   render();
+  // Chrome sometimes keeps a stale raster of the scaled #stage layer after the first paint, which
+  // dropped the "Continuous" row from the operating-modes slide until the next reload. Force one
+  // real invalidation of the transformed layer after load, and again once fonts resolve.
+  const repaint = () => {
+    stage.style.transform = 'none';
+    void stage.offsetWidth;
+    fit();
+  };
+  requestAnimationFrame(() => requestAnimationFrame(repaint));
+  addEventListener('load', repaint);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(repaint);
 })();
 </script>
 </body>
