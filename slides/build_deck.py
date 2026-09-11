@@ -896,7 +896,7 @@ html = r'''<!doctype html>
 <!-- 14 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
-  <p class="sub">Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
+  <p class="sub">We don't want to annotate all 50 cases.<br>Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
   <p class="price"><span class="setup">The most valuable thing is</span><span class="value">human attention.</span></p>
 </section>
 
@@ -1020,14 +1020,9 @@ html = r'''<!doctype html>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
 </section>
 
-<!-- 21 · Question 03 -->
-<section class="slide">
-  <div class="eyebrow"><span class="qn">Question 03</span></div>
-  <h2>What changes<br>with agents?</h2>
-</section>
-
-<!-- 22 · Agent evaluation -->
+<!-- 21 · Agent evaluation -->
 <section class="slide" data-steps="1">
+  <div class="eyebrow"><span class="qn">Question 03</span> &#183; What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
   <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
   <div class="cols traj-layout">
@@ -1053,7 +1048,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 22 · Lifecycle -->
 <section class="slide">
   <h2>Build the eval once.<br>Then it guards every commit.</h2>
   <div class="phases">
@@ -1088,7 +1083,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 23 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>Offline, online, continuous</h2>
@@ -1109,7 +1104,7 @@ html = r'''<!doctype html>
   <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Software factory era -->
+<!-- 24 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
     <defs>
@@ -1126,7 +1121,7 @@ html = r'''<!doctype html>
   </svg>
 </section>
 
-<!-- 26 · Unreviewed -->
+<!-- 25 · Unreviewed -->
 <section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <div class="ship-read">
@@ -1136,7 +1131,7 @@ html = r'''<!doctype html>
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 26 · Software factory -->
 <section class="slide">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1159,7 +1154,7 @@ html = r'''<!doctype html>
   <p class="twin-foot">The factory reports how much moved. <b>Only an eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 28 · Get started -->
+<!-- 27 · Get started -->
 <section class="slide">
   <div class="eyebrow">What to keep</div>
   <h2>Run this on your own agent</h2>
@@ -1174,7 +1169,7 @@ html = r'''<!doctype html>
   </div>
 </section>
 
-<!-- 29 · Q&A -->
+<!-- 28 · Q&A -->
 <section class="slide statement inverted qa-slide">
   <div class="eyebrow">Questions</div>
   <h2>Q&amp;A</h2>

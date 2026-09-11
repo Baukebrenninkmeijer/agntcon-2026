@@ -43,7 +43,7 @@ though nothing enumerates it up front.
 |---|---|---|---|
 | 01 · How do you get a first signal with no labels? | section 2 | 9-11 | no eyebrow; the question is the heading (slide 9) |
 | 02 · When can you trust a judge instead of a human? | section 3 | 12-20 | `Question 02 · Trust the judge` (slide 12) |
-| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21-22 | `Question 03` over the question itself (slide 21) |
+| 03 · What do you evaluate in an agent that is not the final answer? | section 4 | 21 | `Question 03 · What changes with agents?` (slide 21) |
 
 Sections 5, 6 and 7 are the payoff rather than a fourth question: what it costs to run this forever.
 
@@ -229,11 +229,11 @@ before applying them across the dataset.
 
 ### Slide: But we are lazy
 
-A statement slide, and the motive for the two that follow. The heading and one explanatory line lead
-to the conclusion: `The most valuable thing is` in small mono type, then `human attention.` in large
-orange type.
-The line is let the LLM judges find the ambiguous cases and spend human time only there. How the judges
-find them is the next slide; what the queue looks like is the one after.
+A statement slide, and the motive for the two that follow. The setup makes the constraint explicit:
+`We don't want to annotate all 50 cases.` It then retains the mechanism: let the LLM judges find the
+ambiguous cases and spend human time only there. This leads to the conclusion: `The most valuable thing
+is` in small mono type, then `human attention.` in large orange type. How the judges route that attention
+is the next slide; what the queue looks like is the one after.
 
 ### Slide: Two ways of disagreement
 
@@ -335,12 +335,12 @@ prompt iteration or more repetitions would supply the missing judgment.
 
 ## 4. What makes agent evaluation different (4 min)
 
-### Slide: What changes with agents?
-
-A divider carrying only the question. This is where question 03 is stated in full, since nothing
-enumerated it earlier: the heading asks what changes with agents, and nothing else is on screen.
-
 ### Slide: The answer is only the endpoint
+
+Section 4 is one slide. Question 03 rides in its eyebrow, `Question 03 · What changes with
+agents?`, the same way question 02 rides in the eyebrow of the two-suspects slide. A divider
+carrying only the question would be a whole slide of section for a section with nothing else in
+it.
 
 Keep this high level. Do not introduce a hierarchy of evaluation levels.
 
