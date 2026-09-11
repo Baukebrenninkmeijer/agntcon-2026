@@ -1285,6 +1285,9 @@ html = (
     .replace("__JUDGE_LAYERS__", judge_layers)
 )
 
-output = pathlib.Path(__file__).with_name("pydata-2026.html")
+# The public deck is font-free. A build that embeds the licensed typeface goes to its own
+# Git-ignored file, so presenting with real typography never risks committing the font.
+name = "pydata-2026.local.html" if FONT_DIR else "pydata-2026.html"
+output = pathlib.Path(__file__).with_name(name)
 output.write_text(html)
 print(f"wrote {output}")
