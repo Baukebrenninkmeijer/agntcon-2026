@@ -1,61 +1,29 @@
 # Building the evaluation flywheel
 
-Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md).
+Companion repository for the PyData 2026 talk, [Evaluating Agents at Scale](abstract.md), and the
+worked example behind it: a data-analysis agent over a local DuckDB dataset, with its traces, case
+corpus, jury runs and alignment artifacts.
 
-The method in the talk runs on two pieces you can install today. The
-[orq.ai agent skills](https://github.com/orq-ai/assistant-plugins) carry each step as a workflow
-your coding agent can execute: trace analysis, dataset generation, judge building, judge alignment,
-experiments. [`evaluatorq`](https://github.com/orq-ai/evaluatorq) is the runner underneath them,
-executing deterministic checks, LLM judges, juries, multi-turn simulations and red teaming over
-your datapoints, with [its own documentation](https://orq-ai.github.io/evaluatorq/).
-
-This repository is the worked example the talk is built on: a data-analysis agent over a local
-DuckDB dataset, with its traces, case corpus, jury runs and alignment artifacts. Everything stays
-human-reviewed and versioned. Nothing in here writes back to its own configuration.
+The method runs on two installable pieces. The
+[orq.ai agent skills](https://github.com/orq-ai/assistant-plugins) carry evaluation steps as
+workflows a coding agent can execute, and [`evaluatorq`](https://github.com/orq-ai/evaluatorq)
+([docs](https://orq-ai.github.io/evaluatorq/)) is the runner underneath them. Everything here stays
+human-reviewed and versioned; nothing writes back to its own configuration.
 
 ## Start here
 
-**1. Install the skills.** These are the [orq.ai agent skills](https://github.com/orq-ai/assistant-plugins),
-in the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Cursor, Codex,
-Gemini CLI and other compatible agents.
-
 ```bash
-npx skills add orq-ai/assistant-plugins
+npx skills add orq-ai/assistant-plugins   # skills, in any compatible coding agent
+uv add evaluatorq                         # the runner; this repo pins 1.35.0
 export ORQ_API_KEY=your-key-here
 ```
 
-In Claude Code you can install the plugin instead, which also brings MCP tools and trace hooks:
+Two skills matter for this repository, both about turning jury output into human labels.
 
-```
-/plugin marketplace add orq-ai/assistant-plugins
-/plugin install orq-skills@orq-claude-plugin
-```
-
-**2. Install the runner.** [`evaluatorq`](https://pypi.org/project/evaluatorq/) executes evaluations
-over datapoints: deterministic checks, LLM judges, juries and multi-turn simulations. This
-repository pins version 1.35.0.
-
-```bash
-pip install evaluatorq
-```
-
-**3. Pick the skill for the step you are on.**
-
-| Where you are | Skill |
-|---|---|
-| Traces, but no idea what is failing | `orq-analyze-traces` builds a failure taxonomy the other skills read |
-| No labelled cases yet | `orq-generate-synthetic-dataset` |
-| Need a judge for one failure mode | `orq-build-evaluator` writes a binary Pass/Fail judge validated against human labels |
-| Your judge disagrees with you | `orq-evaluator-alignment` finds the ambiguous cases and rewrites the prompt from your answers |
-| Want the numbers side by side | `orq-run-experiment` |
-| Want to fix the agent | `orq-improve-agent` |
-| Need multi-turn or adversarial data | `orq-simulate-agent`, `orq-red-team` |
-
-One skill here is not part of that public set:
-[`.agents/skills/orq-jury-to-alignment`](.agents/skills/orq-jury-to-alignment/SKILL.md), the offline
-bridge from a finished jury run to human annotation. It ranks ties and clean abstentions first,
-keeps panel disagreement separate from within-judge wobble, drops mechanical failures, adds stable
-controls, and calls no model and no network:
+[`.agents/skills/orq-jury-to-alignment`](.agents/skills/orq-jury-to-alignment/SKILL.md) lives here
+and is the offline bridge from a finished jury run to annotation. It ranks ties and clean
+abstentions first, keeps panel disagreement separate from within-judge wobble, drops mechanical
+failures, adds stable controls, and calls no model and no network:
 
 ```bash
 uv run scripts/prepare_jury_annotations.py \
@@ -65,7 +33,7 @@ uv run scripts/prepare_jury_annotations.py \
   --output-dir runs/<new-jury-annotation-run>
 ```
 
-The `orq-evaluator-alignment` annotation view opens the resulting `queue.json` and saves
+`orq-evaluator-alignment`, from the public set, then opens the resulting `queue.json` and saves
 provenance-bound labels. Its single-judge rewrite and retest stages are not valid jury comparisons
 and stay out of that handoff.
 
