@@ -198,16 +198,15 @@ writes inside the active run directory.
 
 ## Tests
 
-The offline gate needs no credentials and matches CI:
+The offline tests need no credentials and never contact Orq:
 
 ```bash
 uv sync --locked --dev
 uv run --no-sync ruff check .
-uv run --no-sync pytest -m "not live and not simulation_live and not alignment_live" -q
-uv build
+uv run --no-sync pytest -m "not live" -q
 ```
 
-CI also validates `orq/resources` and never contacts Orq. Live tests are opt-in:
+Live tests are opt-in:
 
 ```bash
 ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -q

@@ -2,7 +2,7 @@
 
 ## Maintain the Living Work Plan
 
-For every task that changes implementation, hosted resources, evaluation behavior, CI, architecture, delivery status, or operational reality, read and maintain [the PyData 2026 evaluation delivery plan and task log](docs/superpowers/plans/2026-09-03-project-status-and-handoff.md).
+For every task that changes implementation, hosted resources, evaluation behavior, architecture, delivery status, or operational reality, read and maintain [the PyData 2026 evaluation delivery plan and task log](docs/superpowers/plans/2026-09-03-project-status-and-handoff.md).
 
 When reality changes, update the plan in the same task and commit as the change. Keep all affected workstream statuses, acceptance evidence, architecture decisions, risks or blockers, integration state, status date, changelog entry, and next actions accurate. Preserve explicit dependencies and handoffs so the next agent can continue from Git alone.
 
