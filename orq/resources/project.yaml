@@ -1,3 +1,4 @@
 kind: project
 key: pydata2026
+# Workspace-scoped identifier. Kept out of the tree; set ORQ_PROJECT_ID in the ignored .env.
 project_id: ${ORQ_PROJECT_ID}

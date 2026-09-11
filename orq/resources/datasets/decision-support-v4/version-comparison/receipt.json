@@ -3,7 +3,7 @@
   "development_rows": 30,
   "experiment_name": "decision-support-quality-prompt-comparison",
   "experiment_path": "pydata2026",
-  "experiment_url": "https://my.orq.ai/<workspace>/experiments/01M20HXBVGJGSP31DMJ2MXDQEG?runId=01M20HXBVG64SBWTH5RZMDK0HS",
+  "experiment_url": "https://my.orq.ai/<workspace>/experiments/<orq-id>?runId=<run-id>",
   "judge_calls": 0,
   "local_scores": 270,
   "prompt_versions": 3,

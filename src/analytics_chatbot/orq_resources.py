@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import os
 import re
 from collections.abc import Sequence
 from pathlib import Path
@@ -389,6 +390,30 @@ def _load_yaml(path: Path, *, require_instructions_block: bool = False) -> dict[
     return loaded
 
 
+_ENV_PLACEHOLDER = re.compile(r"^\$\{([A-Z0-9_]+)\}$")
+
+
+def _resolve_env_placeholders(path: Path, mapping: dict[str, Any]) -> dict[str, Any]:
+    """Substitute `${VAR}` scalars from the environment.
+
+    Workspace-scoped identifiers stay out of the tree; the value lives in the ignored `.env`.
+    """
+
+    resolved = dict(mapping)
+    for key, value in mapping.items():
+        if not isinstance(value, str):
+            continue
+        match = _ENV_PLACEHOLDER.match(value)
+        if match is None:
+            continue
+        name = match.group(1)
+        found = os.environ.get(name)
+        if not found:
+            raise ResourceError(f"{path}: {key} needs environment variable {name}")
+        resolved[key] = found
+    return resolved
+
+
 def load_resource_bundle(root: Path) -> ResourceBundle:
     """Load and cross-validate one repository resource bundle."""
 
@@ -401,7 +426,9 @@ def load_resource_bundle(root: Path) -> ResourceBundle:
         raise ResourceError(f"{root}: expected exactly one agent YAML")
     try:
         return ResourceBundle(
-            project=ProjectResource.model_validate(_load_yaml(project_path)),
+            project=ProjectResource.model_validate(
+                _resolve_env_placeholders(project_path, _load_yaml(project_path))
+            ),
             tools=[ToolResource.model_validate(_load_yaml(path)) for path in tool_paths],
             agent=AgentResource.model_validate(
                 _load_yaml(agent_paths[0], require_instructions_block=True)

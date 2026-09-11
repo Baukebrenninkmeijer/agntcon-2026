@@ -108,7 +108,9 @@ async def test_approved_upload_is_one_three_job_experiment(tmp_path: Path) -> No
 
     async def fake_runner(name: str, **kwargs: Any) -> list[object]:
         captured.update(name=name, **kwargs)
-        kwargs["_experiment_url_out"].append("https://my.orq.ai/example/comparison")
+        kwargs["_experiment_url_out"].append(
+            "https://my.orq.ai/example-workspace/experiments/01AAAAAAAAAAAAAAAAAAAAAAAA?runId=01BBBBBBBBBBBBBBBBBBBBBBBB"
+        )
         return [object() for _ in kwargs["data"]]
 
     receipt = await uploader.run(_args(tmp_path, approve_upload=True), evaluator_runner=fake_runner)
@@ -120,6 +122,9 @@ async def test_approved_upload_is_one_three_job_experiment(tmp_path: Path) -> No
     assert len(captured["data"]) == 30
     assert len(captured["jobs"]) == 3
     assert len(captured["evaluators"]) == 3
-    assert receipt["experiment_url"] == "https://my.orq.ai/example/comparison"
+    assert (
+        receipt["experiment_url"]
+        == "https://my.orq.ai/<workspace>/experiments/<orq-id>?runId=<run-id>"
+    )
     assert receipt["judge_calls"] == 0
     assert json.loads((tmp_path / "receipt.json").read_text()) == receipt

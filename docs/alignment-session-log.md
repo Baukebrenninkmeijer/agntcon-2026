@@ -1,7 +1,7 @@
 # Answer-correctness alignment session log
 
 Running log of the judge-alignment sessions for `analytics-answer-correctness`
-(orq evaluator `01M1RF70QY6TXQ4YF67CA8EKJG`). One entry per session, newest last.
+(orq evaluator `<orq-id>`). One entry per session, newest last.
 Questions, answers, and findings are recorded verbatim enough to be replayed; artifacts
 live under `runs/alignment-<corpus>-<date>/` (gitignored) and are named per entry.
 

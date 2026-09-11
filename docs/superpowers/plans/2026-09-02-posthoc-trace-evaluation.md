@@ -914,8 +914,8 @@ Expected: tests PASS, Ruff reports no diagnostics, and Git reports no whitespace
 
 ```bash
 ANALYTICS_CHATBOT_LIVE_EVALUATION=1 \
-ANALYTICS_CHATBOT_LIVE_TRACE_ID=3eeb24ec7104c4ea2adc05b0f2994b38 \
-ANALYTICS_CHATBOT_LIVE_EVALUATOR_ID=01KE75M4Z6AWN5EBRHBSYDF97K \
+ANALYTICS_CHATBOT_LIVE_TRACE_ID=<trace-id> \
+ANALYTICS_CHATBOT_LIVE_EVALUATOR_ID=<orq-id> \
 uv run pytest tests/test_live_evaluation.py -m live -q
 ```
 

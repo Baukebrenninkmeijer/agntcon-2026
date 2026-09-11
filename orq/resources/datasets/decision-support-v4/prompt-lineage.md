@@ -14,6 +14,6 @@ same evaluator to prompt v3 as Orq version `1.0.1` on 8 September 2026. Both hos
 available in the evaluator's immutable version history. A reconciliation after the v3 update
 returns `noop`, meaning the current repository YAML and hosted latest version match.
 
-Prompt v3 was measured on 8 September 2026 as run `01M20F16K491SBD344Z5T2S63Q`. Its immutable
+Prompt v3 was measured on 8 September 2026 as run `<orq-id>`. Its immutable
 tracked evidence and development-only analysis are under `jury-prompt-v3/`. It remains the active
 shadow version but did not pass the development alignment gate.

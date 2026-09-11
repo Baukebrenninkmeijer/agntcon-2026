@@ -5,8 +5,8 @@ This directory records the dev-only evaluatorq Experiment that places all three
 results and the 30 confirmed human labels. It does not call a judge model and does not include any
 held-out test row.
 
-- Experiment: `01M20HXBVGJGSP31DMJ2MXDQEG`
-- Run: `01M20HXBVG64SBWTH5RZMDK0HS`
+- Experiment: `<orq-id>`
+- Run: `<orq-id>`
 - Rows: 30 development identities
 - Jobs: `Prompt v1 · baseline`, `Prompt v2 · human rules`, `Prompt v3 · materiality`
 - Evaluators: `aligned_with_human`, `panel_consensus`, `within_judge_stability`

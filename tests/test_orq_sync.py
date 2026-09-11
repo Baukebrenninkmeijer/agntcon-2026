@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from conftest import TEST_PROJECT_ID
 
 from analytics_chatbot.evaluation_ops import DEFAULT_JUDGES
 from analytics_chatbot.orq_resources import load_resource_bundle
@@ -20,7 +21,7 @@ RESOURCE_ROOT = Path(__file__).parents[1] / "orq" / "resources"
 def empty_snapshot() -> RemoteSnapshot:
     return RemoteSnapshot(
         project_key="pydata2026",
-        project_id="${ORQ_PROJECT_ID}",
+        project_id=TEST_PROJECT_ID,
         models={
             "deepseek/deepseek-v4-flash": True,
             "wafer/DeepSeek-V4-Flash-0731-Fast": True,

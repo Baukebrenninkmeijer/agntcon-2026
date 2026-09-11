@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from conftest import TEST_PROJECT_ID
 
 from analytics_chatbot.evaluation_ops import DEFAULT_JUDGES
 from analytics_chatbot.orq_resources import (
@@ -17,7 +18,7 @@ def test_repository_resources_compile_to_sdk_payloads() -> None:
     bundle = load_resource_bundle(RESOURCE_ROOT)
 
     assert bundle.project.key == "pydata2026"
-    assert bundle.project.project_id == "${ORQ_PROJECT_ID}"
+    assert bundle.project.project_id == TEST_PROJECT_ID
     assert [tool.key for tool in bundle.tools] == ["query-sql", "save-insight"]
     assert len(bundle.evaluators) == 4
 
@@ -141,6 +142,15 @@ def test_python_evaluators_execute_against_documented_log_shape() -> None:
             "tool_calls": [{"tool_name": "save_insight", "response": {}}],
         }
     )
+
+
+def test_project_id_placeholder_requires_its_environment_variable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("ORQ_PROJECT_ID", raising=False)
+
+    with pytest.raises(ResourceError, match="ORQ_PROJECT_ID"):
+        load_resource_bundle(RESOURCE_ROOT)
 
 
 def test_pending_llm_evaluators_are_blocked_from_remote_sync(tmp_path: Path) -> None:

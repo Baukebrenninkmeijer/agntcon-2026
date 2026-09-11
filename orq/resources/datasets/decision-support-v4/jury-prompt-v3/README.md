@@ -4,8 +4,8 @@ This directory is the immutable tracked copy of the prompt v3 evaluatorq jury ru
 8 September 2026. The run replayed the 50 frozen Sphere.com responses without target inference and
 used the configured three judges with three repetitions each.
 
-- Experiment: `01M1Y60F67NA0G94AVBPGF8VA8`
-- Run: `01M20F16K491SBD344Z5T2S63Q`
+- Experiment: `<orq-id>`
+- Run: `<orq-id>`
 - Workload: 50 rows, 450 judge calls
 - Result contract: 50 complete `decision-support-jury-v1` records
 - Operational outcome: zero failed judges, failed repetitions, replacements, malformed rows, ties,

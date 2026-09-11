@@ -8,6 +8,7 @@ import asyncio
 import hashlib
 import json
 import os
+import re
 import tempfile
 from collections.abc import Awaitable, Callable, Mapping, Sequence
 from pathlib import Path
@@ -101,6 +102,17 @@ def _index(rows: Sequence[dict[str, Any]], *, source: str) -> dict[tuple[str, st
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.expanduser().resolve(strict=True).read_bytes()).hexdigest()
+
+
+def redact_experiment_url(url: str) -> str:
+    """Strip workspace slug and hosted identifiers so the tracked receipt carries no IDs.
+
+    The operator still sees the live URL on stdout; only the committed artifact is redacted.
+    """
+
+    redacted = re.sub(r"(my\.orq\.ai/)[^/]+/", r"\1<workspace>/", url)
+    redacted = re.sub(r"\b01[0-9A-HJKMNP-TV-Z]{24}\b", "<orq-id>", redacted)
+    return re.sub(r"(\?runId=)[^&]+", r"\1<run-id>", redacted)
 
 
 def _version_job(function_name: str, display_name: str) -> Callable[..., Awaitable[dict[str, Any]]]:
@@ -307,7 +319,7 @@ async def run(
         "schema_version": "decision-support-jury-comparison-v1",
         "experiment_name": EXPERIMENT_NAME,
         "experiment_path": EXPERIMENT_PATH,
-        "experiment_url": experiment_urls[0],
+        "experiment_url": redact_experiment_url(experiment_urls[0]),
         "development_rows": 30,
         "prompt_versions": 3,
         "boolean_evaluators": 3,
