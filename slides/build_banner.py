@@ -2,24 +2,34 @@
 
 """Generate the README banner as one self-contained SVG.
 
-Fonts are embedded so the banner keeps the deck's typography wherever it is rendered, and the
+Fonts are embedded (when DECK_FONT_DIR is set) so the banner keeps the deck's typography wherever it is rendered, and the
 scatter reuses the grey-zone construction from `build_deck.py`: two overlapping classes with one
 boundary drawn through the overlap.
 """
 
 import base64
 import math
+import os
 import pathlib
 import random
 
-FONT_DIR = pathlib.Path("/Users/baukebrenninkmeijer/.claude/skills/orq-chart-style/fonts")
+# Licensed typeface: embedded only when DECK_FONT_DIR points at a local copy.
+FONT_DIR = os.environ.get("DECK_FONT_DIR")
 OUTPUT = pathlib.Path(__file__).parents[1] / "docs" / "assets" / "banner.svg"
 
 WIDTH, HEIGHT = 1280, 400
 
 
 def b64(name: str) -> str:
-    return base64.b64encode((FONT_DIR / name).read_bytes()).decode()
+    return base64.b64encode((pathlib.Path(FONT_DIR) / name).read_bytes()).decode()
+
+
+def font_faces() -> str:
+    if not FONT_DIR:
+        return ""
+    return f"""      @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600}}
+      @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400}}
+      @font-face{{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,{b64("ESKlarheitKurrentMono-Md.ttf")}) format("truetype");font-weight:500}}"""
 
 
 def scatter() -> str:
@@ -52,9 +62,7 @@ def boundary() -> str:
 svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}" role="img" aria-label="Building the evaluation flywheel: a human-aligned evaluation loop for an LLM data-analysis agent">
   <defs>
     <style>
-      @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600}}
-      @font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400}}
-      @font-face{{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,{b64("ESKlarheitKurrentMono-Md.ttf")}) format("truetype");font-weight:500}}
+{font_faces()}
       .sans{{font-family:"Kurrent",Inter,-apple-system,system-ui,sans-serif}}
       .mono{{font-family:"Kurrent Mono",ui-monospace,"SF Mono",Menlo,monospace}}
     </style>

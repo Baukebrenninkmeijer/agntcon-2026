@@ -3,24 +3,33 @@
 import base64
 import json
 import math
+import os
 import pathlib
 import random
 
 import segno
 
-FONT_DIR = pathlib.Path("/Users/baukebrenninkmeijer/.claude/skills/orq-chart-style/fonts")
+# The deck's typeface (ES Klarheit Kurrent) is licensed, so it is embedded only when
+# DECK_FONT_DIR points at a local copy. Without it the deck falls back to system fonts.
+FONT_DIR = os.environ.get("DECK_FONT_DIR")
 
 
-def b64(name: str) -> str:
-    return base64.b64encode((FONT_DIR / name).read_bytes()).decode()
+def font_faces() -> str:
+    if not FONT_DIR:
+        return ""
 
+    def b64(name: str) -> str:
+        return base64.b64encode((pathlib.Path(FONT_DIR) / name).read_bytes()).decode()
 
-fonts = {
-    "RG": b64("ESKlarheitKurrent-Rg.woff2"),
-    "MD": b64("ESKlarheitKurrent-Md.woff2"),
-    "SB": b64("ESKlarheitKurrent-Smbd.woff2"),
-    "MONO": b64("ESKlarheitKurrentMono-Md.ttf"),
-}
+    return "\n  ".join(
+        [
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Rg.woff2")}) format("woff2");font-weight:400;font-display:swap}}',
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Md.woff2")}) format("woff2");font-weight:500;font-display:swap}}',
+            f'@font-face{{font-family:"Kurrent";src:url(data:font/woff2;base64,{b64("ESKlarheitKurrent-Smbd.woff2")}) format("woff2");font-weight:600;font-display:swap}}',
+            f'@font-face{{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,{b64("ESKlarheitKurrentMono-Md.ttf")}) format("truetype");font-weight:500;font-display:swap}}',
+        ]
+    )
+
 
 experiment_grid = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "experiment-grid.jpg").read_bytes()
@@ -249,10 +258,7 @@ html = r'''<!doctype html>
 <title>Building the evaluation flywheel</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23025558%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2247%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Cpath%20d%3D%22M6%2046%20C22%2046%2026%2018%2058%2018%22%20stroke%3D%22%23ff9747%22%20stroke-width%3D%228%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <style>
-  @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__RG__) format("woff2");font-weight:400;font-display:swap}
-  @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__MD__) format("woff2");font-weight:500;font-display:swap}
-  @font-face{font-family:"Kurrent";src:url(data:font/woff2;base64,__SB__) format("woff2");font-weight:600;font-display:swap}
-  @font-face{font-family:"Kurrent Mono";src:url(data:font/ttf;base64,__MONO__) format("truetype");font-weight:500;font-display:swap}
+  __FONT_FACES__
   :root{
     --bg:#f9f8f6;--paper:#fff;--ink:#25232e;--ink2:#55535c;--muted:#8c8a91;
     --orange:#ff9747;--orange-dark:#df5325;--red:#c94f45;--teal:#4da296;--teal-deep:#025558;
@@ -1234,10 +1240,7 @@ html = r'''<!doctype html>
 '''
 
 html = (
-    html.replace("__RG__", fonts["RG"])
-    .replace("__MD__", fonts["MD"])
-    .replace("__SB__", fonts["SB"])
-    .replace("__MONO__", fonts["MONO"])
+    html.replace("__FONT_FACES__", font_faces())
     .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__CARTOON__", cartoon)
     .replace("__ORQMARK__", ORQMARK)
