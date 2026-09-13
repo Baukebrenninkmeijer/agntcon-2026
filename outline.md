@@ -31,6 +31,8 @@ The deck is the source of truth. The submitted abstract gave section 4 five minu
 three and a half, and named no software-factory section; the delivered talk takes a minute from the
 first and half a minute from the second to fund section 6. There is no live walkthrough, and the
 prompt-optimization beat is delivered as the grey-zone loop rather than as its own slide.
+The opening adds a show of hands, paid for by cutting the speaker and Orq introduction from a
+minute to thirty seconds.
 `abstract.md` records the same list.
 
 ## Spine: the three questions
@@ -53,6 +55,23 @@ together.
 ---
 
 ## 1. The evaluation gap (3 min)
+
+### Slide: Building the evaluation flywheel
+
+The title copy, subtitle, and byline stay unchanged. Two large translucent rings anchor to the
+viewport and crop into the top-right corner, with one orange and one teal marker. This keeps the
+corner treatment stable across nearby screen aspect ratios. The rings foreshadow the evaluator and
+application lifecycles named in the outline without labelling or explaining them before the talk begins.
+
+### Slide: Show of hands
+
+Straight after the title, before anything is defined. Four questions, one per click, set large with
+orange mono numbers: who has built an eval; who runs an eval on every change, in CI or on
+production traffic; who has checked an LLM judge against human labels; who would let agents merge
+PRs autonomously. Each one previews a later section: the first tells you how much of section 2 to
+skim, the second is section 5, the third is the alignment argument of section 3, and the last is
+the software factory close. Seven or eight seconds a question, about
+thirty seconds in all; read the hands, don't count them.
 
 ### Slide: Two correct answers, only one you want
 
@@ -92,10 +111,10 @@ output with ground truth. Human-judgement evaluation compares an annotation with
 LLM-judge evaluation compares judge labels with expert labels. The slide drops the earlier n-gram
 detour and closes on the consequence: the evaluator now needs its own evaluation.
 
-On click, the full-width lineage moves upward without shrinking. A large horizontal diagram rises
-into the lower portion: Agent and Judge form one feedback loop, while Judge and Expert form the
-second. The shared judge makes the control visible: the agent can learn from the judge only while
-the judge learns from expert decisions.
+On click, the title and full-width lineage move farther upward without shrinking, creating more
+space above the graph. The large horizontal diagram keeps its lower position: Agent and Judge form
+one feedback loop, while Judge and Expert form the second. The shared judge makes the control visible:
+the agent can learn from the judge only while the judge learns from expert decisions.
 
 ### Slide: The ordering constraint
 
@@ -157,6 +176,8 @@ The slide is the binary: two tinted fields split by a single hard seam, `PASS` b
 `FAIL` bottom right, with nothing between them. Cases sit as dots in either field. On the first
 click one case appears on the seam itself, marked "no space to stand". `The critique carries the
 nuance` runs as a small caption under the pass field.
+The split background extends to the physical viewport edges, so screens taller than 16:9 do not
+introduce neutral bands above or below the composition.
 
 Three benefits, taken from the ECIR material, sit right-aligned opposite the heading:
 
@@ -371,7 +392,7 @@ this stage.
 
 ## 5. Scaling: offline, online, continuous (3 min)
 
-### Slide: Build the eval once. Then it guards every commit.
+### Slide: The Eval Lifecycle
 
 Opens section 5, before the operating modes, because the payoff has to land before the taxonomy.
 The aligned eval is written once and then runs on every change: a DISCOVERY phase over hard and
@@ -406,10 +427,10 @@ factory’s job.
 
 ### Slide: 2026 — Software Factory
 
-A quiet visual transition into the final argument. Only the end of a horizontal timeline is visible;
-it terminates at an orange marker labelled `2026` and `Software Factory`. There are no intermediate
-dates or invented milestones. This replaces explanatory copy on the following slide, so the section
-remains inside its existing two-minute allocation.
+A quiet visual transition into the final argument. A solid muted timeline enters from the left and
+terminates at an orange marker labelled `2026` and `Software Factory`. There are no intermediate dates
+or invented milestones. This replaces explanatory copy on the following slide, so the section remains
+inside its existing two-minute allocation.
 
 ### Slide: Most software will ship without a human reading it
 

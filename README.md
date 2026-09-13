@@ -17,10 +17,12 @@ workflows a coding agent can execute, and [`evaluatorq`](https://github.com/orq-
 ([docs](https://orq-ai.github.io/evaluatorq/)) is the runner underneath them. Everything here stays
 human-reviewed and versioned; nothing writes back to its own configuration.
 
+![The grey-zone evaluation loop: run the jury, surface instability, inspect the reasons with a collaborator, ask one boundary question, update the evaluator, and rerun the frozen development cases.](slides/screenshots/20-grey-zone-loop.png)
+
 ## Start here
 
 ```bash
-git clone https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel.git
+git clone https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026.git
 npx skills add orq-ai/assistant-plugins   # skills, in any compatible coding agent
 uv add evaluatorq                         # the runner; this repo pins 1.35.0
 export ORQ_API_KEY=your-key-here
@@ -60,9 +62,12 @@ happens.
 
 A panel of judges run repeatedly over those cases does not resolve the band, and that is the point.
 The cases the panel splits on produce no label. They produce the question the criterion never
-answered, which a human answers once and the evaluator prompt then inherits.
+answered, which a human answers and the evaluator prompt then inherits. That answer can expose the
+next ambiguity, so the loop repeats before labels are applied.
 
-![Slide: several dotted case markers on the left, their paths converging into a single point that opens into one question.](docs/assets/readme/disagreement-question.png)
+![Slide: cases the panel split on converge into one boundary question.](slides/screenshots/18-disagreement-to-question.png)
+
+![Slide: after one human rule is added, the panel splits on more cases and exposes the next ambiguity.](slides/screenshots/19-answer-exposes-ambiguity.png)
 
 For agents, the final answer is only the endpoint. A run also exposes the trajectory, the tool calls
 and whether it stayed inside its instructions, so the behavior can be evaluated too.

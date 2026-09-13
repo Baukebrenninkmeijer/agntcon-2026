@@ -12,4 +12,5 @@ runs/
 dist/
 .conductor/
 .ropeproject/
+.DS_Store
 review-arian*.md

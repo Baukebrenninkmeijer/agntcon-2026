@@ -28,7 +28,7 @@ Throughout the talk we evaluate a data-analysis agent answering questions like "
 
 ## Outline (30 minutes, including 5 min Q&A)
 
-1. **Opening and the evaluation gap (3 min)** — two correct answers to the same question, a one-minute speaker and Orq introduction, why we came to this from wanting to optimise an agent, and why agents break classical evaluation.
+1. **Opening and the evaluation gap (3 min)** — a thirty-second show of hands on the room's own evals, judges and agents, two correct answers to the same question, a thirty-second speaker and Orq introduction, why we came to this from wanting to optimise an agent, and why agents break classical evaluation.
 2. **Start with humans, not infrastructure (5 min)** — bootstrapping from a fifty-case review pool, binary pass/fail with written critiques, why this beats scored rubrics.
 3. **Align an LLM-as-a-judge (7 min)** — treat the judge like a model you validate. Panel-of-judges to mitigate bias, disagreement used to find the questions the criterion never answered, and the written answers to those questions fed back into the evaluator prompt.
 4. **Agent-specific evaluation (4 min)** — why the final answer is only the endpoint, and what the run itself exposes: tool-call efficiency, error recovery, instruction adherence. Handling non-determinism at scale.
@@ -51,7 +51,8 @@ the software factory, which the submitted outline did not name. The submitted ve
 short live walkthrough in section 3; there is no live demo, the walkthrough is narration over the
 grey-zone loop and the experiment grid. The submitted version also described prompt optimization
 driven by natural-language feedback as its own named slide; it is delivered instead as the
-grey-zone loop, where written human answers to boundary questions become the next evaluator prompt.
+grey-zone loop, where written human answers to boundary questions become the next evaluator prompt. The opening adds a show of hands that the submitted version did not have; the speaker and Orq
+introduction shrinks from a minute to thirty seconds to pay for it.
 
 ## Who this is for
 

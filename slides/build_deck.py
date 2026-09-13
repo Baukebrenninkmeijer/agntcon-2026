@@ -258,9 +258,22 @@ html = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Building the evaluation flywheel</title>
+<meta name="description" content="How human judgement becomes an evaluator you can run on every change.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Building the evaluation flywheel">
+<meta property="og:description" content="How human judgement becomes an evaluator you can run on every change.">
+<meta property="og:url" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/pydata-2026.html">
+<meta property="og:image" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/screenshots/20-grey-zone-loop.png">
+<meta property="og:image:width" content="1920">
+<meta property="og:image:height" content="1080">
+<meta property="og:image:alt" content="The grey-zone evaluation loop, from judge disagreement through a human boundary decision to an updated evaluator.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Building the evaluation flywheel">
+<meta name="twitter:description" content="How human judgement becomes an evaluator you can run on every change.">
+<meta name="twitter:image" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/screenshots/20-grey-zone-loop.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23025558%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2247%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Cpath%20d%3D%22M6%2046%20C22%2046%2026%2018%2058%2018%22%20stroke%3D%22%23ff9747%22%20stroke-width%3D%228%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <style>
-  __FONT_FACES__
+__FONT_FACES__
   :root{
     --bg:#f9f8f6;--paper:#fff;--ink:#25232e;--ink2:#55535c;--muted:#8c8a91;
     --orange:#ff9747;--orange-dark:#df5325;--red:#c94f45;--teal:#4da296;--teal-deep:#025558;
@@ -345,7 +358,7 @@ html = r'''<!doctype html>
   .statement.inverted .fac-note{color:#9fcfca}
   .statement.inverted .counter{color:rgba(250,249,245,.45)}
   .ship-read{display:flex;flex-direction:column;gap:34px;margin-top:64px;max-width:1720px}
-  .ship-read .row span{display:block;font-family:var(--mono);font-size:23px;letter-spacing:.14em;color:rgba(250,249,245,.58);margin-bottom:13px}
+  .ship-read .row span{display:block;font-family:var(--mono);font-size:46px;letter-spacing:.14em;color:rgba(250,249,245,.58);margin-bottom:13px}
   .ship-read .track{height:46px;border-radius:8px;background:rgba(255,255,255,.13);overflow:hidden}
   .ship-read .track i{display:block;height:100%;background:rgba(250,249,245,.86);border-radius:8px}
   .ship-read .row.read span{color:var(--orange)}
@@ -360,11 +373,11 @@ html = r'''<!doctype html>
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
   .stat .l{font-size:27px;line-height:1.3;color:var(--ink2);margin-top:14px}
-  .criterion-q{font-size:100px;line-height:1.05;margin-bottom:30px;max-width:1700px}
+  .criterion-q{font-size:115px;line-height:1.05;margin-bottom:30px;max-width:1824px}
   .setup-strip{display:flex;gap:110px;margin-top:120px;border-top:3px solid var(--teal-deep);padding-top:34px}
   .setup-strip div{display:flex;align-items:baseline;gap:24px}
-  .setup-strip b{font-size:88px;font-weight:600;letter-spacing:-.04em}
-  .setup-strip span{font-size:31px;color:var(--ink2)}
+  .setup-strip b{font-size:101px;font-weight:600;letter-spacing:-.04em}
+  .setup-strip span{font-size:36px;color:var(--ink2)}
   .ask{margin-top:46px;font-size:40px;color:var(--ink);font-weight:500}
   .compare{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:38px;max-width:1500px}
   .answer{border-top:6px solid var(--teal);padding:34px 0 0;min-height:0}
@@ -379,9 +392,9 @@ html = r'''<!doctype html>
   .life-axis{display:block;width:100%;margin-top:30px}
   .life-axis .ax{stroke:var(--ink);stroke-width:3}
   .life-axis .rel{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
-  .life-axis .mono{font-family:var(--mono);font-size:21px;letter-spacing:.11em;fill:var(--muted)}
-  .life-axis .name{font-family:var(--sans);font-size:38px;font-weight:600;fill:var(--ink)}
-  .life-axis .meta{font-family:var(--sans);font-size:26px;fill:var(--ink2)}
+  .life-axis .mono{font-family:var(--mono);font-size:24px;letter-spacing:.11em;fill:var(--muted)}
+  .life-axis .name{font-family:var(--sans);font-size:44px;font-weight:600;fill:var(--ink)}
+  .life-axis .meta{font-family:var(--sans);font-size:30px;fill:var(--ink2)}
   .life-axis .band{fill:rgba(37,35,46,.10)}
   .life-axis .beat{fill:var(--ink2)}
   svg text{font-family:var(--sans)}
@@ -397,13 +410,15 @@ html = r'''<!doctype html>
   .origin .side{font-family:var(--mono);font-size:24px;fill:var(--ink2)}
   .origin .break{stroke:var(--orange-dark);stroke-width:7;fill:none;stroke-linecap:round}
   .lineage{display:block;width:100%;max-width:1720px;margin:56px auto 0}
+  .lineage .lbl{font-size:38px}
+  .lineage .lbl.small{font-size:26px}
   .lineage-content{width:100%;transition:transform .55s cubic-bezier(.16,1,.3,1)}
   .lineage-slide .lineage{transition:transform .55s cubic-bezier(.16,1,.3,1)}
-  .lineage-loops{position:absolute;left:90px;right:90px;bottom:200px;width:calc(100% - 180px);height:320px;opacity:0;transform:translateY(190px);transition:opacity .45s ease,transform .55s cubic-bezier(.16,1,.3,1);pointer-events:none}
+  .lineage-loops{position:absolute;left:90px;right:90px;bottom:120px;width:calc(100% - 180px);height:320px;opacity:0;transform:translateY(190px);transition:opacity .45s ease,transform .55s cubic-bezier(.16,1,.3,1);pointer-events:none}
   .lineage-loops .loop{fill:none;stroke:var(--teal);stroke-width:5}
   .lineage-loops .entity{fill:var(--paper);stroke:var(--ink);stroke-width:4}
   .lineage-loops .name{font-size:36px;fill:var(--ink)}
-  .lineage-slide[data-step="1"] .lineage-content{transform:translateY(-20px)}
+  .lineage-slide[data-step="1"] .lineage-content{transform:translateY(-150px)}
   .lineage-slide[data-step="1"] .lineage{transform:translateY(-145px)}
   .lineage-slide[data-step="1"] .lineage-loops{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){.lineage-content,.lineage-slide .lineage,.lineage-loops{transition:none}}
@@ -505,10 +520,11 @@ html = r'''<!doctype html>
   .swatch{width:28px;height:28px;border-radius:50%;border:3px dashed var(--orange)}
   .swatch.w{border-color:var(--ink);border-style:dotted}
   .binary-slide{padding:0}
+  body:has(.binary-slide.active){background-color:var(--bg);background-image:linear-gradient(to right,rgba(77,162,150,.10) 0 calc(50% - 2px),rgba(37,35,46,.85) calc(50% - 2px) calc(50% + 2px),rgba(255,151,71,.12) calc(50% + 2px) 100%)}
   .binary-slide .tint{position:absolute;top:0;bottom:0;width:50%}
-  .binary-slide .tint.l{left:0;background:rgba(77,162,150,.10)}
-  .binary-slide .tint.r{right:0;background:rgba(255,151,71,.12)}
-  .binary-slide .seam{position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--ink);opacity:.85}
+  .binary-slide .tint.l{left:0}
+  .binary-slide .tint.r{right:0}
+  .binary-slide .seam{position:absolute;left:50%;top:0;bottom:0;width:4px}
   .binary-slide .head{position:absolute;left:48px;top:42px}
   .binary-slide .head .eyebrow{margin-bottom:26px}
   .binary-slide .benefits{position:absolute;right:48px;top:46px;width:640px;display:flex;flex-direction:column;gap:30px;text-align:right}
@@ -537,13 +553,13 @@ html = r'''<!doctype html>
   .chart .dip{fill:var(--orange-dark)}
   .chart .lbl{font-family:var(--mono);font-size:20px;letter-spacing:.1em;fill:var(--ink2)}
   .chart .lbl.dim{fill:var(--muted)}
-  .fac-note{margin-top:64px;font-family:var(--mono);font-size:24px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
+  .fac-note{margin-top:64px;font-family:var(--mono);font-size:48px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
   .factory-era{padding:0;overflow:hidden}
   .factory-era svg{display:block;width:100%;height:100%}
   .factory-era .timeline{stroke:var(--muted);stroke-width:4}
   .factory-era .terminal{fill:var(--orange)}
-  .factory-era .year{font-family:var(--mono);font-size:26px;letter-spacing:.14em;fill:var(--teal-deep);text-anchor:middle}
-  .factory-era .name{font-family:var(--sans);font-size:68px;font-weight:600;letter-spacing:-.025em;fill:var(--ink);text-anchor:middle}
+  .factory-era .year{font-family:var(--mono);font-size:34px;letter-spacing:.14em;fill:var(--teal-deep);text-anchor:middle}
+  .factory-era .name{font-family:var(--sans);font-size:88px;font-weight:600;letter-spacing:-.025em;fill:var(--ink);text-anchor:middle}
   .twin{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px}
   .twin-card{border:4px solid var(--muted);border-radius:22px;background:var(--paper);padding:36px 38px}
   .twin-card.ok{border-color:var(--teal-deep)}
@@ -606,6 +622,8 @@ html = r'''<!doctype html>
   .analogy .head{font-size:38px;font-weight:500;fill:var(--ink);text-anchor:middle}
   .analogy .sub{font-size:27px;fill:var(--ink2);text-anchor:middle}
   .analogy-note{margin-top:52px;color:var(--orange-dark)}
+  .case-slide .cols{grid-template-columns:1fr auto;gap:70px}
+  .case-slide .sphere-brand,.case-slide .sub,.case-slide .checks{zoom:1.4}
   .sphere-brand{display:flex;align-items:flex-end;gap:26px;margin-bottom:50px}
   .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:28px}
   .sphere-mark::before{content:"";position:absolute;left:50%;top:-32px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
@@ -648,7 +666,7 @@ html = r'''<!doctype html>
   .qa-slide h2{font-size:184px;line-height:1;margin:0}
   .qa-slide .eyebrow{color:#9fcfca}
   .qa-slide .byline{margin-top:54px;color:rgba(250,249,245,.72)}
-  .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:360px;text-align:center}
+  .qa-qr{position:absolute;left:1130px;top:50%;transform:translateY(-50%);width:540px;text-align:center}
   .qa-qr .li{display:block;width:73px;height:73px;margin:26px auto 0;color:rgba(250,249,245,.72)}
   .counter{position:absolute;right:48px;bottom:24px;font-family:var(--mono);font-size:18px;color:var(--muted);letter-spacing:.08em}
 </style>
@@ -733,20 +751,20 @@ html = r'''<!doctype html>
       <line x1="60" y1="120" x2="1780" y2="120" class="stroke-d"/>
       <g>
         <circle cx="260" cy="120" r="18" fill="var(--teal)"/>
-        <text x="260" y="200" text-anchor="middle" class="lbl">Known answer</text>
-        <text x="260" y="245" text-anchor="middle" class="lbl small">COMPARE WITH GROUND TRUTH</text>
+        <text x="260" y="212" text-anchor="middle" class="lbl">Known answer</text>
+        <text x="260" y="264" text-anchor="middle" class="lbl small">COMPARE WITH GROUND TRUTH</text>
       </g>
       <g>
         <circle cx="920" cy="120" r="18" fill="var(--teal)"/>
-        <text x="920" y="200" text-anchor="middle" class="lbl">Human judgement</text>
-        <text x="920" y="245" text-anchor="middle" class="lbl small">COMPARE WITH AN EXPERT</text>
+        <text x="920" y="212" text-anchor="middle" class="lbl">Human judgement</text>
+        <text x="920" y="264" text-anchor="middle" class="lbl small">COMPARE WITH AN EXPERT</text>
       </g>
       <g>
         <circle cx="1580" cy="120" r="22" fill="var(--orange)"/>
-        <text x="1580" y="200" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
-        <text x="1580" y="245" text-anchor="middle" class="lbl small">COMPARE WITH EXPERT LABELS</text>
+        <text x="1580" y="212" text-anchor="middle" class="lbl" fill="var(--ink)">LLM judge</text>
+        <text x="1580" y="264" text-anchor="middle" class="lbl small">COMPARE WITH EXPERT LABELS</text>
       </g>
-      <text x="60" y="382" class="lbl">The evaluator now needs <tspan fill="var(--orange-dark)">its own evaluation.</tspan></text>
+      <text x="60" y="360" class="lbl">The evaluator now needs <tspan fill="var(--orange-dark)">its own evaluation.</tspan></text>
     </svg>
   </div>
   <svg class="lineage-loops" viewBox="0 0 1600 320" role="img" aria-label="Two feedback loops connecting Agent, Judge and Expert">
@@ -819,7 +837,7 @@ html = r'''<!doctype html>
 </section>
 
 <!-- 9 · Sphere -->
-<section class="slide">
+<section class="slide case-slide">
   <div class="eyebrow">The case</div>
   <div class="cols wide">
     <div>
@@ -1134,30 +1152,30 @@ html = r'''<!doctype html>
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>When and where to run evaluations</h2>
-  <svg class="life-axis" viewBox="0 0 1800 510" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
+  <svg class="life-axis" viewBox="0 0 1800 520" role="img" aria-label="Offline runs before release, online after it, and continuous spans both">
     <line class="rel" x1="800" y1="40" x2="800" y2="300"/>
     <text class="mono" x="812" y="56">RELEASE</text>
     <rect x="40" y="86" width="720" height="76" rx="8" fill="var(--teal)"/>
-    <text class="name" x="40" y="212">Offline</text>
-    <text class="meta" x="40" y="252">The curated 50, when you ask.</text>
+    <text class="name" x="40" y="216">Offline</text>
+    <text class="meta" x="40" y="262">The curated 50, when you ask.</text>
     <rect x="840" y="86" width="920" height="76" rx="8" fill="var(--orange)"/>
-    <text class="name" x="840" y="212">Online</text>
-    <text class="meta" x="840" y="252">Sampled production traces, as traffic arrives.</text>
+    <text class="name" x="840" y="216">Online</text>
+    <text class="meta" x="840" y="262">Sampled production traces, as traffic arrives.</text>
     <line class="ax" x1="40" y1="304" x2="1760" y2="304"/>
     <g class="beat"><rect x="40" y="330" width="130" height="68" rx="8"/><rect x="184" y="330" width="130" height="68" rx="8"/><rect x="329" y="330" width="130" height="68" rx="8"/><rect x="474" y="330" width="130" height="68" rx="8"/><rect x="618" y="330" width="130" height="68" rx="8"/><rect x="762" y="330" width="130" height="68" rx="8"/><rect x="907" y="330" width="130" height="68" rx="8"/><rect x="1052" y="330" width="130" height="68" rx="8"/><rect x="1196" y="330" width="130" height="68" rx="8"/><rect x="1340" y="330" width="130" height="68" rx="8"/><rect x="1485" y="330" width="130" height="68" rx="8"/><rect x="1630" y="330" width="130" height="68" rx="8"/></g>
-    <text class="name" x="40" y="456">Continuous</text>
-    <text class="meta" x="40" y="496">Both, on every change and then on a schedule.</text>
+    <text class="name" x="40" y="460">Continuous</text>
+    <text class="meta" x="40" y="506">Both, on every change and then on a schedule.</text>
   </svg>
-  <p class="body" style="margin-top:36px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
+  <p class="body" style="margin-top:36px;font-size:39px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
 <!-- 25 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
-    <line class="timeline" x1="-240" y1="650" x2="1540" y2="650"/>
-    <circle class="terminal" cx="1540" cy="650" r="27"/>
-    <text class="year" x="1540" y="582">2026</text>
-    <text class="name" x="1540" y="760">Software Factory</text>
+    <line class="timeline" x1="-240" y1="650" x2="1420" y2="650"/>
+    <circle class="terminal" cx="1420" cy="650" r="35"/>
+    <text class="year" x="1420" y="572">2026</text>
+    <text class="name" x="1420" y="785">Software Factory</text>
   </svg>
 </section>
 
