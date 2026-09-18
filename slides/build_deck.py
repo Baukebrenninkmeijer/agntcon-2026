@@ -376,6 +376,7 @@ __FONT_FACES__
   .criterion-q{font-size:115px;line-height:1.05;margin-bottom:30px;max-width:1824px}
   .setup-strip{display:flex;gap:110px;margin-top:120px;border-top:3px solid var(--teal-deep);padding-top:34px}
   .setup-strip div{display:flex;align-items:baseline;gap:24px}
+  .setup-strip .goal{font-family:var(--mono);font-size:23px;letter-spacing:.1em;color:var(--teal-deep)}
   .setup-strip b{font-size:101px;font-weight:600;letter-spacing:-.04em}
   .setup-strip span{font-size:36px;color:var(--ink2)}
   .ask{margin-top:46px;font-size:40px;color:var(--ink);font-weight:500}
@@ -857,7 +858,7 @@ __FONT_FACES__
 <section class="slide">
   <h2 class="criterion-q">Does the answer support the <span class="hl">decision</span>?</h2>
   <div class="setup-strip">
-    <div><b>50</b><span>distinct business situations</span></div>
+    <div><span class="goal">GOAL</span><b>50</b><span>annotated datapoints</span></div>
   </div>
 </section>
 

@@ -152,9 +152,9 @@ this one agent, on one criterion.
 
 ### Slide: Does the answer support the decision?
 
-The criterion is the heading, because it is what the next twelve slides argue about. Under it, one
-line says it is a subjective criterion agreed by humans before any judge sees it, and a footer strip
-carries the only other number the slide needs: fifty distinct business situations. "Start with
+The criterion is the heading, because it is what the next twelve slides argue about. Under it, a
+footer strip states the goal of fifty annotated datapoints. The cases cover fifty distinct business
+situations; the goal label must not suggest all fifty have already received human labels. "Start with
 humans" is spoken, not printed, and the two labels (`pass` or `fail`, with a written critique) belong
 to the slide after this one, which is where they are explained.
 
