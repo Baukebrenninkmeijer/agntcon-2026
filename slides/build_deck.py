@@ -583,6 +583,14 @@ __FONT_FACES__
   .twin-card.unknown .twin-verdict b{color:var(--muted)}
   .twin-foot{margin-top:46px;font-size:31px;color:var(--ink)}
   .twin-foot b{color:var(--teal-deep);font-weight:500}
+  .weak-benchmark{padding:0}
+  .weak-benchmark svg{display:block;width:100%;height:100%;font-family:var(--sans)}
+  .weak-benchmark .mono{font-family:var(--mono);font-size:23px;letter-spacing:2px}
+  .weak-benchmark .head{font-size:69px;font-weight:600;letter-spacing:-1.8px}
+  .weak-benchmark .label{font-size:33px;fill:#55535c}
+  .weak-benchmark .name{font-size:60px;font-weight:500}
+  .weak-benchmark .output{font-size:38px}
+  .weak-benchmark .arrow{fill:none;stroke:#8c8a91;stroke-width:3}
   .conclusion-slide{justify-content:flex-start;padding:54px 84px}
   .conclusion-slide .eyebrow{margin-bottom:34px}
   .conclusion-slide h2{margin-bottom:44px}
@@ -1063,7 +1071,7 @@ __FONT_FACES__
 </section>
 
 <!-- 20 · Grey-zone loop -->
-<section class="slide" data-steps="1">
+<section class="slide" >
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
   <div class="grey-loop">
@@ -1077,14 +1085,29 @@ __FONT_FACES__
     </div>
     <div class="grey-loop-return"><span>RERUN THE SAME FROZEN DEVELOPMENT CASES</span></div>
   </div>
-  <div class="case-proof" aria-label="Three real development cases labelled after the boundary questions were resolved">
-    <div class="proof-case"><strong>PASS</strong><h4>Clarify the metric first</h4><p>Valid evidence supports the scoped answer.</p></div>
-    <div class="proof-case fail"><strong>FAIL</strong><h4>Best month net</h4><p>Visible evidence contradicts the stated definition.</p></div>
-    <div class="proof-case"><strong>PASS</strong><h4>Earlier context still counts</h4><p>The response established the context earlier in the conversation.</p></div>
-  </div>
 </section>
 
-<!-- 21 · Agent evaluation -->
+<!-- 21 · Weak-label benchmark -->
+<section class="slide weak-benchmark">
+<svg viewBox="0 0 1600 900" role="img" aria-label="The coding-agent block points to agreement. The LLM-judge block points to precision and recall.">
+<defs><marker id="join" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8c8a91"/></marker></defs>
+<text x="65" y="68" class="mono" fill="#025558">AFTER THE GREY-ZONE LOOP</text>
+<text x="65" y="157" class="head" fill="#25232e">Can a judge reproduce our decisions?</text>
+<text x="410" y="282" text-anchor="middle" class="label">Conversation + criteria</text>
+<text x="1190" y="282" text-anchor="middle" class="label">Case + evaluator prompt</text>
+<rect x="65" y="321" width="690" height="235" rx="18" fill="#ff9747" fill-opacity=".14"/>
+<rect x="845" y="321" width="690" height="235" rx="18" fill="#025558" fill-opacity=".07"/>
+<text x="410" y="417" text-anchor="middle" class="name" fill="#25232e">Coding agent</text>
+<text x="410" y="492" text-anchor="middle" class="output" fill="#df5325">Weak labels</text>
+<text x="1190" y="417" text-anchor="middle" class="name" fill="#025558">LLM judges</text>
+<text x="1190" y="492" text-anchor="middle" class="output" fill="#025558">Verdicts</text>
+<path d="M410 575V674" class="arrow" marker-end="url(#join)"/><path d="M1190 575V674" class="arrow" marker-end="url(#join)"/>
+<text x="410" y="749" text-anchor="middle" font-size="58" font-weight="500" fill="#025558">Agreement</text><text x="1190" y="749" text-anchor="middle" font-size="58" font-weight="500" fill="#025558">Precision / recall</text>
+
+<text x="800" y="755" text-anchor="middle" font-size="82" font-weight="600" fill="#025558">→</text></svg>
+</section>
+
+<!-- 22 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
@@ -1112,7 +1135,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 22 · Lifecycle -->
+<!-- 23 · Lifecycle -->
 <section class="slide">
   <h2>The Eval Lifecycle</h2>
   <div class="phases">
@@ -1147,7 +1170,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 23 · Operating modes -->
+<!-- 24 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>When and where to run evaluations</h2>
@@ -1168,7 +1191,7 @@ __FONT_FACES__
   <p class="body" style="margin-top:36px;font-size:39px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 24 · Software factory era -->
+<!-- 25 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
     <line class="timeline" x1="-240" y1="650" x2="1420" y2="650"/>
@@ -1178,7 +1201,7 @@ __FONT_FACES__
   </svg>
 </section>
 
-<!-- 25 · Unreviewed -->
+<!-- 26 · Unreviewed -->
 <section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <div class="ship-read">
@@ -1188,7 +1211,7 @@ __FONT_FACES__
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 26 · Software factory -->
+<!-- 27 · Software factory -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1215,12 +1238,12 @@ __FONT_FACES__
   <p class="twin-foot">The factory reports how much moved. <b>Only a human-aligned eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 27 · Divine hand takes the wheel -->
+<!-- 28 · Divine hand takes the wheel -->
 <section class="slide wheel-slide">
   <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A Renaissance-style divine figure with an AI network halo takes a car's steering wheel while painted angels resemble Sam Altman, Dario Amodei, and Elon Musk">
 </section>
 
-<!-- 28 · Conclusion -->
+<!-- 29 · Conclusion -->
 <section class="slide conclusion-slide">
   <div class="eyebrow">Conclusion</div>
   <h2>The evaluation flywheel</h2>
@@ -1231,7 +1254,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 29 · Get started -->
+<!-- 30 · Get started -->
 <section class="slide">
   <div class="eyebrow">What to keep</div>
   <h2>Run this on your own agent</h2>
@@ -1245,7 +1268,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 30 · Q&A -->
+<!-- 31 · Q&A -->
 <section class="slide statement inverted qa-slide">
   <div class="eyebrow">Questions</div>
   <h2>Q&amp;A</h2>

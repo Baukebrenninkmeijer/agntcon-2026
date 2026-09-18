@@ -333,14 +333,23 @@ answers it; the accepted rule is encoded in the evaluator; then the same cases r
 the important boundary questions have been answered. The supporting detail belongs in narration, not
 under every step.
 
-Only after those iterations do the human decisions get applied across cases to create reference
-labels. The click-revealed lower strip makes this exit explicit with three real development cases:
-clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
-context established earlier in the conversation still counts. Orange remains reserved for the human
-step in the loop; the failed case uses red.
+### Slide: Can a judge reproduce our decisions?
 
-The experiment grid is omitted from the live deck. The grey-zone loop's reference-label examples
-and the spoken alignment gate carry its point within the fixed time budget. The detailed development
+The coding agent applies the conversation and decided criteria to produce weak labels. LLM judges
+receive the case and evaluator prompt and produce verdicts. Two tinted blocks show this context
+difference. Thin grey arrows connect the left block to Agreement and the right block to Precision /
+recall. A larger teal text arrow between those metrics marks the transition in what can be measured.
+The labels remain explicitly named weak labels; there are no metric definitions or footer qualifier.
+
+Narration makes clear that precision and recall compare judge verdicts with the weak reference labels;
+human confirmation is a separate step. The earlier agreement measure concerned judge consistency.
+This slide replaces the grey-zone loop’s three-example click reveal, keeping the explanation within
+the existing seven-minute alignment section. The three examples remain supporting material:
+clarifying the metric first passes, the visibly contradictory net-revenue definition fails, and
+context established earlier still counts.
+
+The experiment grid remains omitted from the live deck. The benchmark slide and spoken alignment
+gate carry its point within the fixed time budget. The detailed development
 result remains supporting evidence for questions: prompt v3 is more stable, but its aggregate still
 misses all three human failures. Preserve v3 as evidence of a judge capability limit, keep it in
 shadow, and do not imply that another prompt iteration or more repetitions would supply the missing

@@ -49,7 +49,7 @@ The delivered talk is the source of truth; this file records where it departs fr
 submitted. Section 4 lost a minute and section 5 half a minute to fund a new section 6 on evals in
 the software factory, which the submitted outline did not name. The submitted version promised a
 short live walkthrough in section 3; there is no live demo, the walkthrough is narration over the
-grey-zone loop and the experiment grid. The submitted version also described prompt optimization
+grey-zone loop and the weak-label benchmark. The benchmark slide replaces the loop’s labelled-example reveal within the same time budget. The submitted version also described prompt optimization
 driven by natural-language feedback as its own named slide; it is delivered instead as the
 grey-zone loop, where written human answers to boundary questions become the next evaluator prompt. The opening adds a show of hands that the submitted version did not have; the speaker and Orq
 introduction shrinks from a minute to thirty seconds to pay for it.
