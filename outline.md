@@ -470,7 +470,8 @@ the evaluator changes rather than the agent.
 A captionless, full-slide Renaissance-style visual beat immediately after the factory comparison: a
 divine figure reaches through clouds and takes a car's steering wheel. A glowing network halo and
 gold circuit-like details in the robe and hand make the AI implication visible while the figure stays
-human and painterly. The deadpan joke turns the temptation to trust AI with the whole factory into a
+human and painterly. Three foreground angels have painted likenesses of Sam Altman, Dario Amodei,
+and Elon Musk. The deadpan joke turns the temptation to trust AI with the whole factory into a
 literal image. No robot or new claim appears on the slide. Pause briefly, then move into the flywheel
 conclusion. This uses the time freed by cutting the experiment-grid slide; the software-factory
 section remains within its two-minute allocation.
@@ -479,8 +480,8 @@ section remains within its two-minute allocation.
 
 ### Slide: The evaluation flywheel (1 min)
 
-A quiet conclusion slide replaces the spoken five-point takeaway list. Three large, progressively
-indented lines synthesize the process in its operating order:
+Three oversized verbs — FIND., DECIDE., GUARD. — form equal horizontal rows, separated by fine
+neutral rules. The existing takeaways align beside them in two lines, all visible immediately:
 
 1. `Judge disagreement directs attention.`
 2. `Human judgement sets the boundary.`

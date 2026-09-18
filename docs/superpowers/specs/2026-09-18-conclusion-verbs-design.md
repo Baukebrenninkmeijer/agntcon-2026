@@ -33,4 +33,4 @@ The change consists of scoped conclusion styles and markup in `slides/build_deck
 
 ## Review state
 
-Visual option B selected. Spec self-review completed: no placeholders, conflicting requirements, or unresolved design choices. Written-spec review pending before implementation planning, as required by the invoked brainstorming skill.
+Visual option B selected. Spec self-review completed: no placeholders, conflicting requirements, or unresolved design choices. Written spec approved by the author’s subsequent build instruction; implementation authorized.

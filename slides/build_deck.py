@@ -38,7 +38,7 @@ cartoon = base64.b64encode(
 ).decode()
 
 divine_wheel = base64.b64encode(
-    (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel-renaissance-ai.png").read_bytes()
+    (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel-renaissance-ai-founders.png").read_bytes()
 ).decode()
 
 REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
@@ -583,14 +583,17 @@ __FONT_FACES__
   .twin-card.unknown .twin-verdict b{color:var(--muted)}
   .twin-foot{margin-top:46px;font-size:31px;color:var(--ink)}
   .twin-foot b{color:var(--teal-deep);font-weight:500}
-  .conclusion-lines{display:flex;flex-direction:column;gap:18px;margin-top:54px;max-width:1660px}
-  .conclusion-line{font-size:61px;line-height:1.16;letter-spacing:-.018em;color:var(--ink2);margin:0;padding:20px 0}
-  .conclusion-line:nth-child(2){margin-left:110px}
-  .conclusion-line:nth-child(3){margin-left:220px}
-  .conclusion-line b{font-weight:600}
-  .conclusion-line.signal b{color:var(--orange-dark)}
-  .conclusion-line.human b{color:var(--teal-deep)}
-  .conclusion-line.guard b{color:var(--ink)}
+  .conclusion-slide{justify-content:flex-start;padding:54px 84px}
+  .conclusion-slide .eyebrow{margin-bottom:34px}
+  .conclusion-slide h2{margin-bottom:44px}
+  .conclusion-lines{width:100%}
+  .conclusion-line{display:grid;grid-template-columns:45% 1fr;align-items:center;height:248px;border-top:2px solid rgba(140,138,145,.25)}
+  .conclusion-line strong{font-size:176px;line-height:1;font-weight:600;letter-spacing:-.04em}
+  .conclusion-line p{font-size:46px;line-height:1.3;color:var(--ink2);margin:0}
+  .conclusion-line p span{color:var(--ink)}
+  .conclusion-line.signal strong{color:var(--orange-dark)}
+  .conclusion-line.human strong{color:var(--teal-deep)}
+  .conclusion-line.guard strong{color:var(--ink)}
   .dual-loop{display:grid;grid-template-columns:auto 60px 1fr 60px 1fr;grid-template-rows:1fr 1fr;align-items:center;column-gap:0;row-gap:38px;margin-top:44px}
   .dual-loop .finding{grid-row:1 / span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;width:420px;border:4px solid var(--ink);border-radius:22px;background:var(--paper);padding:34px}
   .dual-loop .finding strong{display:block;font-size:40px;line-height:1.15;color:var(--ink)}
@@ -1214,17 +1217,17 @@ __FONT_FACES__
 
 <!-- 27 · Divine hand takes the wheel -->
 <section class="slide wheel-slide">
-  <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A Renaissance-style divine figure with a glowing network halo takes a car's steering wheel">
+  <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A Renaissance-style divine figure with an AI network halo takes a car's steering wheel while painted angels resemble Sam Altman, Dario Amodei, and Elon Musk">
 </section>
 
 <!-- 28 · Conclusion -->
-<section class="slide">
+<section class="slide conclusion-slide">
   <div class="eyebrow">Conclusion</div>
   <h2>The evaluation flywheel</h2>
   <div class="conclusion-lines">
-    <p class="conclusion-line signal">Judge disagreement <b>directs attention.</b></p>
-    <p class="conclusion-line human">Human judgement <b>sets the boundary.</b></p>
-    <p class="conclusion-line guard">The resulting eval <b>guards every change.</b></p>
+    <div class="conclusion-line signal"><strong>FIND.</strong><p><span>Judge disagreement</span><br>directs attention.</p></div>
+    <div class="conclusion-line human"><strong>DECIDE.</strong><p><span>Human judgement</span><br>sets the boundary.</p></div>
+    <div class="conclusion-line guard"><strong>GUARD.</strong><p><span>The resulting eval</span><br>guards every change.</p></div>
   </div>
 </section>
 
