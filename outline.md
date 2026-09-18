@@ -250,7 +250,7 @@ before applying them across the dataset.
 
 ### Slide: 90,203 tokens of conversation and tool evidence
 
-The slide shows only `90,203`, large and centered. Say aloud that the 50 accepted observed
+The slide shows only `90,203 tokens`, large and centered. Say aloud that the 50 accepted observed
 conversations contain that many `cl100k_base` tokens of stored transcript content and tool-call
 names and arguments. This is the evidence a human would have to read for a full manual review,
 and makes the attention cost concrete before the queueing method. The count
