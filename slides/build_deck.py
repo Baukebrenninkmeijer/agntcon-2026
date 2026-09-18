@@ -33,12 +33,12 @@ def font_faces() -> str:
     )
 
 
-experiment_grid = base64.b64encode(
-    (pathlib.Path(__file__).parent / "assets" / "experiment-grid.jpg").read_bytes()
-).decode()
-
 cartoon = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "cartoon-bauke.jpg").read_bytes()
+).decode()
+
+divine_wheel = base64.b64encode(
+    (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel.png").read_bytes()
 ).decode()
 
 REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
@@ -648,8 +648,8 @@ __FONT_FACES__
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
-  .maybe-cut > h2,.maybe-cut > .shot,.maybe-cut > .shot-caption{filter:grayscale(1);opacity:.35}
-  .maybe-cut::after{content:"MAYBE CUT";position:absolute;top:54px;right:60px;padding:12px 18px;border:2px solid var(--muted);border-radius:8px;font-family:var(--mono);font-size:22px;letter-spacing:.12em;color:var(--muted)}
+  .wheel-slide{padding:0;background:var(--paper)}
+  .wheel-slide img{display:block;width:100%;height:100%;object-fit:cover}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
   .hands-slide .eyebrow{font-size:38px;margin-bottom:44px}
@@ -1081,14 +1081,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 21 · Experiment grid -->
-<section class="slide maybe-cut">
-  <h2>Human labels reveal the judge limits</h2>
-  <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
-  <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
-</section>
-
-<!-- 22 · Agent evaluation -->
+<!-- 21 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
@@ -1116,7 +1109,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 22 · Lifecycle -->
 <section class="slide">
   <h2>The Eval Lifecycle</h2>
   <div class="phases">
@@ -1151,7 +1144,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 23 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>When and where to run evaluations</h2>
@@ -1172,7 +1165,7 @@ __FONT_FACES__
   <p class="body" style="margin-top:36px;font-size:39px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Software factory era -->
+<!-- 24 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
     <line class="timeline" x1="-240" y1="650" x2="1420" y2="650"/>
@@ -1182,7 +1175,7 @@ __FONT_FACES__
   </svg>
 </section>
 
-<!-- 26 · Unreviewed -->
+<!-- 25 · Unreviewed -->
 <section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <div class="ship-read">
@@ -1192,7 +1185,7 @@ __FONT_FACES__
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 26 · Software factory -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1217,6 +1210,11 @@ __FONT_FACES__
     </div>
   </div>
   <p class="twin-foot">The factory reports how much moved. <b>Only a human-aligned eval tells you which of these you are running.</b></p>
+</section>
+
+<!-- 27 · Divine hand takes the wheel -->
+<section class="slide wheel-slide">
+  <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A divine hand descends through clouds and takes a car's steering wheel">
 </section>
 
 <!-- 28 · Conclusion -->
@@ -1322,8 +1320,8 @@ __FONT_FACES__
 
 html = (
     html.replace("__FONT_FACES__", font_faces())
-    .replace("__EXPERIMENT_GRID__", experiment_grid)
     .replace("__CARTOON__", cartoon)
+    .replace("__DIVINE_WHEEL__", divine_wheel)
     .replace("__ORQMARK__", ORQMARK)
     .replace("__AMB_BEFORE__", ambiguity_zone(55, 4, "ambBefore"))
     .replace("__AMB_AFTER__", ambiguity_zone(165, 8, "ambAfter"))

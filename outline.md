@@ -339,22 +339,12 @@ clarifying the metric first passes, the visibly contradictory net-revenue defini
 context established earlier in the conversation still counts. Orange remains reserved for the human
 step in the loop; the failed case uses red.
 
-### Slide: Human labels reveal the judge limits
-
-Marked `MAYBE CUT` and greyed out for a timed run-through. Its main point may already be carried
-by the grey-zone loop's reference-label examples and the spoken alignment gate. Keep the slide in
-the deck until the cut is decided; removing `maybe-cut` restores its full treatment.
-
-Keep the real Orq experiment grid as evidence rather than presenting a detailed experiment report.
-The jury signals helped locate unresolved questions. The collaborator turned those signals into
-boundary questions, the human supplied the decisions, and those decisions became reference labels.
-Comparing the judge labels with the expert labels then exposed which judges could reproduce the
-human boundary.
-
-The detailed development result remains supporting evidence for questions: prompt v3 is more stable,
-but its aggregate still misses all three human failures. That is the stopping point for this talk:
-preserve v3 as evidence of a judge capability limit, keep it in shadow, and do not imply that another
-prompt iteration or more repetitions would supply the missing judgment.
+The experiment grid is omitted from the live deck. The grey-zone loop's reference-label examples
+and the spoken alignment gate carry its point within the fixed time budget. The detailed development
+result remains supporting evidence for questions: prompt v3 is more stable, but its aggregate still
+misses all three human failures. Preserve v3 as evidence of a judge capability limit, keep it in
+shadow, and do not imply that another prompt iteration or more repetitions would supply the missing
+judgment.
 
 ---
 
@@ -474,6 +464,14 @@ Narration, not slides: the loop behind this is an evaluator finding, a structura
 proposed skill or evaluator change that arrives as a pull request, and a human who decides. Nothing
 writes back to configuration on its own. If the finding shows the evaluator misread the boundary,
 the evaluator changes rather than the agent.
+
+### Slide: Let God take the wheel
+
+A captionless, full-slide visual beat immediately after the factory comparison: a divine hand reaches
+through clouds and takes a car's steering wheel. The deadpan joke turns the temptation to trust AI
+with the whole factory into a literal image. No robot or new claim appears on the slide. Pause briefly,
+then move into the flywheel conclusion. This uses the time freed by cutting the experiment-grid slide;
+the software-factory section remains within its two-minute allocation.
 
 ## 7. Takeaways and Q&A (6 min)
 
