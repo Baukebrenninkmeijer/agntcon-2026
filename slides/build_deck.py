@@ -38,7 +38,7 @@ cartoon = base64.b64encode(
 ).decode()
 
 divine_wheel = base64.b64encode(
-    (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel.png").read_bytes()
+    (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel-renaissance-ai.png").read_bytes()
 ).decode()
 
 REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
@@ -1214,7 +1214,7 @@ __FONT_FACES__
 
 <!-- 27 · Divine hand takes the wheel -->
 <section class="slide wheel-slide">
-  <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A divine hand descends through clouds and takes a car's steering wheel">
+  <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A Renaissance-style divine figure with a glowing network halo takes a car's steering wheel">
 </section>
 
 <!-- 28 · Conclusion -->

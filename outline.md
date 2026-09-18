@@ -467,11 +467,13 @@ the evaluator changes rather than the agent.
 
 ### Slide: Let God take the wheel
 
-A captionless, full-slide visual beat immediately after the factory comparison: a divine hand reaches
-through clouds and takes a car's steering wheel. The deadpan joke turns the temptation to trust AI
-with the whole factory into a literal image. No robot or new claim appears on the slide. Pause briefly,
-then move into the flywheel conclusion. This uses the time freed by cutting the experiment-grid slide;
-the software-factory section remains within its two-minute allocation.
+A captionless, full-slide Renaissance-style visual beat immediately after the factory comparison: a
+divine figure reaches through clouds and takes a car's steering wheel. A glowing network halo and
+gold circuit-like details in the robe and hand make the AI implication visible while the figure stays
+human and painterly. The deadpan joke turns the temptation to trust AI with the whole factory into a
+literal image. No robot or new claim appears on the slide. Pause briefly, then move into the flywheel
+conclusion. This uses the time freed by cutting the experiment-grid slide; the software-factory
+section remains within its two-minute allocation.
 
 ## 7. Takeaways and Q&A (6 min)
 
