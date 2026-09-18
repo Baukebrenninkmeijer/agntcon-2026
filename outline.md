@@ -452,17 +452,17 @@ the review queue in narration if needed.
 ### Slide: Same throughput. Different factory.
 
 Two identical cards, side by side. Same unlabelled gauge, same sentence: most pull requests merge
-untouched. Below a dashed rule they diverge. One is holding, its criterion still passes. The other
-is rotting, the same criterion started failing.
+untouched. Below a dashed rule, Factory A shows a holding pass rate for a human-aligned criterion.
+Factory B's pass-rate trend is hidden behind a large question mark and its human alignment is marked
+`Unverified`; its verdict is `Unknown`. It may be rotting, but throughput alone cannot establish that.
 
 The point is that the throughput number is identical in both. A factory reports how much moved; it
 cannot tell these two apart. Only an eval can.
 
-Under the dashed rule each card carries an eval pass-rate line over commits, labelled only
-`EVAL PASS RATE` and `COMMITS →`. The lines draw in on the first click. For the first stretch
-they are the same line; then A stays flat while B slides down gradually, because rot is slow, not
-a cliff. Teal and orange match the verdict words, so the throughput gauge above stays identical
-while the quality below splits.
+Under the dashed rule, Factory A carries an eval pass-rate line over commits, labelled
+`EVAL PASS RATE` and `COMMITS →`; the line draws in on the first click. Factory B keeps the same
+space but shows the question mark and `HUMAN ALIGNMENT · UNVERIFIED`. The identical throughput gauges
+above cannot distinguish the two factories without a quality signal checked against humans.
 
 No numbers on the slide. The gauges are unlabelled, and the argument is borrowed from Warp's own
 write-up on evals and scorers, without their marketing figures.
