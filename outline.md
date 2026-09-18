@@ -341,6 +341,10 @@ step in the loop; the failed case uses red.
 
 ### Slide: Human labels reveal the judge limits
 
+Marked `MAYBE CUT` and greyed out for a timed run-through. Its main point may already be carried
+by the grey-zone loop's reference-label examples and the spoken alignment gate. Keep the slide in
+the deck until the cut is decided; removing `maybe-cut` restores its full treatment.
+
 Keep the real Orq experiment grid as evidence rather than presenting a detailed experiment report.
 The jury signals helped locate unresolved questions. The collaborator turned those signals into
 boundary questions, the human supplied the decisions, and those decisions became reference labels.

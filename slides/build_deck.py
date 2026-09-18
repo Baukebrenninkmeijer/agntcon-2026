@@ -648,6 +648,8 @@ __FONT_FACES__
   .shot{width:100%;max-width:1520px;margin:26px auto 0;border:1px solid rgba(37,35,46,.12);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(37,35,46,.10)}
   .shot img{display:block;width:100%;height:auto}
   .shot-caption{font-family:var(--mono);font-size:23px;letter-spacing:.06em;color:var(--muted);margin-top:16px;text-align:center}
+  .maybe-cut > h2,.maybe-cut > .shot,.maybe-cut > .shot-caption{filter:grayscale(1);opacity:.35}
+  .maybe-cut::after{content:"MAYBE CUT";position:absolute;top:54px;right:60px;padding:12px 18px;border:2px solid var(--muted);border-radius:8px;font-family:var(--mono);font-size:22px;letter-spacing:.12em;color:var(--muted)}
   .qr{background:var(--paper);padding:26px;border-radius:20px;border:2px solid rgba(37,35,46,.12)}
   .qr img{display:block;width:100%;height:auto;image-rendering:pixelated}
   .hands-slide .eyebrow{font-size:38px;margin-bottom:44px}
@@ -1080,7 +1082,7 @@ __FONT_FACES__
 </section>
 
 <!-- 21 · Experiment grid -->
-<section class="slide">
+<section class="slide maybe-cut">
   <h2>Human labels reveal the judge limits</h2>
   <div class="shot"><img src="data:image/jpeg;base64,__EXPERIMENT_GRID__" alt="Orq experiment grid: three evaluator prompt versions scored by three evaluators over the frozen development cases"></div>
   <p class="shot-caption">Jury signals helped us find the unresolved questions. Once the human decisions became labels, we could see which judges reproduced them.</p>
