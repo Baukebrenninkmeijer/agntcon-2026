@@ -390,9 +390,6 @@ __FONT_FACES__
   .answer p{font-size:33px;line-height:1.38;color:var(--ink2)}
   .answer strong{color:var(--ink);font-weight:500}
   .answer code{font-family:var(--mono);font-size:.88em;color:var(--teal-deep)}
-  .checks{display:flex;flex-direction:column;gap:26px}
-  .check{display:grid;grid-template-columns:58px 1fr;gap:26px;align-items:center;font-size:35px;color:var(--ink2)}
-  .check i{width:58px;height:58px;border:3px solid var(--teal);border-radius:50%;display:grid;place-items:center;font-style:normal;color:var(--teal);font-size:31px}
   .life-axis{display:block;width:100%;margin-top:30px}
   .life-axis .ax{stroke:var(--ink);stroke-width:3}
   .life-axis .rel{stroke:var(--muted);stroke-width:3;stroke-dasharray:10 10}
@@ -593,6 +590,8 @@ __FONT_FACES__
   .weak-benchmark .label{font-size:33px;fill:#55535c}
   .weak-benchmark .name{font-size:60px;font-weight:500}
   .weak-benchmark .output{font-size:38px}
+  .weak-benchmark .title{font-size:46px;font-weight:500}
+  .weak-benchmark .metric{font-size:56px;font-weight:500}
   .weak-benchmark .arrow{fill:none;stroke:#8c8a91;stroke-width:3}
   .conclusion-slide{justify-content:flex-start;padding:54px 84px}
   .conclusion-slide .eyebrow{margin-bottom:34px}
@@ -637,8 +636,14 @@ __FONT_FACES__
   .analogy .head{font-size:38px;font-weight:500;fill:var(--ink);text-anchor:middle}
   .analogy .sub{font-size:27px;fill:var(--ink2);text-anchor:middle}
   .analogy-note{margin-top:52px;color:var(--orange-dark)}
-  .case-slide .cols{grid-template-columns:1fr auto;gap:70px}
-  .case-slide .sphere-brand,.case-slide .sub,.case-slide .checks{zoom:1.4}
+  .case-slide .eyebrow{color:#9fcfca}
+  .case-slide .cols{grid-template-columns:1fr 1.05fr;gap:90px;align-items:center}
+  .case-slide .sphere-word{color:var(--paper)}
+  .case-slide .sub{margin-top:40px;font-size:37px}
+  .case-list{list-style:none;counter-reset:cs}
+  .case-list li{counter-increment:cs;position:relative;padding:26px 0 26px 92px;font-size:40px;color:var(--paper);border-bottom:2px solid rgba(255,255,255,.18)}
+  .case-list li:first-child{border-top:2px solid rgba(255,255,255,.18)}
+  .case-list li::before{content:"0" counter(cs);position:absolute;left:0;top:30px;font-family:var(--mono);font-size:26px;letter-spacing:.1em;color:var(--orange)}
   .sphere-brand{display:flex;align-items:flex-end;gap:26px;margin-bottom:50px}
   .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:28px}
   .sphere-mark::before{content:"";position:absolute;left:50%;top:-32px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
@@ -854,19 +859,19 @@ __FONT_FACES__
 </section>
 
 <!-- 9 · Sphere -->
-<section class="slide case-slide">
+<section class="slide statement inverted case-slide">
   <div class="eyebrow">The case</div>
-  <div class="cols wide">
+  <div class="cols">
     <div>
       <div class="sphere-brand" aria-label="Sphere.com logo"><span class="sphere-mark"></span><span class="sphere-word">sphere.com</span></div>
       <p class="sub">A B2B wholesaler of physical home appliances. The board wants to understand the quality of growth.</p>
     </div>
-    <div class="checks">
-      <div class="check"><i>1</i><span>Discounts and realized revenue</span></div>
-      <div class="check"><i>2</i><span>Refunds and cancellations</span></div>
-      <div class="check"><i>3</i><span>Regional and category mix</span></div>
-      <div class="check"><i>4</i><span>Answers shaped for a business decision</span></div>
-    </div>
+    <ol class="case-list">
+      <li>Discounts and realized revenue</li>
+      <li>Refunds and cancellations</li>
+      <li>Regional and category mix</li>
+      <li>Answers shaped for a business decision</li>
+    </ol>
   </div>
 </section>
 
@@ -1027,7 +1032,6 @@ __FONT_FACES__
     </div>
     <div>
       <h2>The judge<br>sorts the queue</h2>
-      <p class="sub">Flagged cases go first. A random sample comes along to catch the cases the judges agreed on and got wrong.</p>
     </div>
   </div>
 </section>
@@ -1087,7 +1091,7 @@ __FONT_FACES__
     <div class="grey-loop-grid">
       <div class="grey-loop-stage"><span class="n">01</span><h3>Run the jury</h3></div>
       <div class="grey-loop-stage"><span class="n">02</span><h3>Surface instability</h3></div>
-      <div class="grey-loop-stage"><span class="n">03</span><h3>Collaborator reads the reasons</h3></div>
+      <div class="grey-loop-stage"><span class="n">03</span><h3>Coding Agent reads the reasons</h3></div>
       <div class="grey-loop-stage human"><span class="n">04</span><h3>Ask one boundary question</h3></div>
       <div class="grey-loop-stage"><span class="n">05</span><h3>Update the evaluator</h3></div>
     </div>
@@ -1097,29 +1101,40 @@ __FONT_FACES__
 
 <!-- 22 · Weak-label benchmark -->
 <section class="slide weak-benchmark">
-<svg viewBox="0 0 1600 900" role="img" aria-label="The coding-agent block points to agreement. The LLM-judge block points to precision and recall.">
+<svg viewBox="0 0 1600 900" role="img" aria-label="Stage one: the coding agent turns conversation and criteria into weak labels. Those labels travel down the right margin as the reference. Stage two: LLM judges turn the case and evaluator prompt into verdicts. Stage three compares the verdicts against the reference to give precision and recall.">
 <defs><marker id="join" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8c8a91"/></marker></defs>
 <text x="65" y="68" class="mono" fill="#025558">AFTER THE GREY-ZONE LOOP</text>
-<text x="65" y="157" class="head" fill="#25232e">Can a judge reproduce our decisions?</text>
-<text x="410" y="282" text-anchor="middle" class="label">Conversation + criteria</text>
-<text x="1190" y="282" text-anchor="middle" class="label">Case + evaluator prompt</text>
-<rect x="65" y="321" width="690" height="235" rx="18" fill="#ff9747" fill-opacity=".14"/>
-<rect x="845" y="321" width="690" height="235" rx="18" fill="#025558" fill-opacity=".07"/>
-<text x="410" y="417" text-anchor="middle" class="name" fill="#25232e">Coding agent</text>
-<text x="410" y="492" text-anchor="middle" class="output" fill="#df5325">Weak labels</text>
-<text x="1190" y="417" text-anchor="middle" class="name" fill="#025558">LLM judges</text>
-<text x="1190" y="492" text-anchor="middle" class="output" fill="#025558">Verdicts</text>
-<path d="M410 575V674" class="arrow" marker-end="url(#join)"/><path d="M1190 575V674" class="arrow" marker-end="url(#join)"/>
-<text x="410" y="749" text-anchor="middle" font-size="58" font-weight="500" fill="#025558">Agreement</text><text x="1190" y="749" text-anchor="middle" font-size="58" font-weight="500" fill="#025558">Precision / recall</text>
+<text x="65" y="152" class="head" fill="#25232e">Can a judge reproduce our decisions?</text>
 
-<text x="800" y="755" text-anchor="middle" font-size="82" font-weight="600" fill="#025558">→</text></svg>
+<text x="65" y="232" class="mono" fill="#df5325">01 &#183; CREATE THE REFERENCE</text>
+<rect x="65" y="255" width="460" height="150" rx="16" fill="#ff9747" fill-opacity=".14"/>
+<text x="95" y="320" class="title" fill="#25232e">Coding agent</text>
+<text x="95" y="368" class="label">Conversation + criteria</text>
+<path d="M541 330H592" class="arrow" marker-end="url(#join)"/>
+<rect x="615" y="255" width="520" height="150" rx="16" fill="none" stroke="#025558" stroke-width="3" stroke-dasharray="9 7"/>
+<text x="645" y="346" class="title" fill="#df5325">Weak labels</text>
+
+<text x="65" y="478" class="mono" fill="#025558">02 &#183; RUN THE JUDGES</text>
+<rect x="65" y="500" width="460" height="150" rx="16" fill="#025558" fill-opacity=".07"/>
+<text x="95" y="591" class="title" fill="#25232e">LLM judges</text>
+<path d="M541 575H592" class="arrow" marker-end="url(#join)"/>
+<rect x="615" y="500" width="520" height="150" rx="16" fill="#025558" fill-opacity=".07"/>
+<text x="645" y="591" class="title" fill="#025558">Verdicts</text>
+
+<path d="M1135 330H1340V646" class="arrow" marker-end="url(#join)"/>
+<path d="M1135 575H1240V646" class="arrow" marker-end="url(#join)"/>
+<text x="1358" y="470" class="mono" fill="#df5325">REFERENCE</text>
+
+<rect x="65" y="678" width="1470" height="150" rx="18" fill="#025558" fill-opacity=".07"/>
+<text x="95" y="731" class="mono" fill="#025558">03 &#183; COMPARE VERDICTS WITH THE REFERENCE</text>
+<text x="95" y="795" class="metric" fill="#025558">Precision / recall</text>
+<text x="780" y="795" class="label">Agreement could only measure consistency.</text>
+</svg>
 </section>
 
 <!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
-  <div class="eyebrow">What changes with agents?</div>
-  <h2>The answer is only the endpoint</h2>
-  <p class="sub">Agents require evaluating behavior, rather than final answers.</p>
+  <h2>What changes with agents?</h2>
   <div class="cols traj-layout">
     <div>
       <svg class="traj" viewBox="0 0 1824 __TRAJ_H__" preserveAspectRatio="xMinYMin meet" aria-label="Fifty agent trajectories, each split into user, assistant, tool call and tool result segments">

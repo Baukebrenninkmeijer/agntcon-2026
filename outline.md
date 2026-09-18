@@ -148,7 +148,9 @@ work runs on without explaining it mid-argument. The case slide follows immediat
 The running example, stated once so nothing later has to re-explain it. Sphere.com, a business
 analytics product; the agent answers questions over the company's own data; the yellow round mark
 with its small head is the stand-in logo. Everything measured in the rest of the talk comes from
-this one agent, on one criterion.
+this one agent, on one criterion. The slide runs on the deep teal ground rather than paper, so the
+running example reads as a set-piece; the four things the board is asking about sit beside the
+description as ruled rows numbered 01 to 04.
 
 ### Slide: Does the answer support the decision?
 
@@ -305,6 +307,10 @@ lane beside it. That
 half-and-half batch is the recommendation. Positions come from the canonical v4 jury run: six cases
 with jury disagreement, eight unstable, twelve flagged in total.
 
+Only the title is printed beside the chart. The lane rule, that flagged cases go first and a random
+sample rides along to catch the cases the judges agreed on and got wrong, is spoken over the reveal;
+the `REVIEW FIRST` and `CONTROL` lane labels and their counts carry it on screen.
+
 The jury accelerates annotation; it does not annotate for us. Humans still decide where the
 boundary belongs.
 
@@ -340,18 +346,25 @@ only the counts are measured. The instability and no-flip numbers are spoken, no
 
 Present the proposed version-two process as an acceleration layer before full annotation. The slide
 shows only the five large step names: run the jury, surface instability, read the reasons, ask one
-boundary question, and update the evaluator. The collaborator formulates the question; the human
+boundary question, and update the evaluator. The coding agent formulates the question; the human
 answers it; the accepted rule is encoded in the evaluator; then the same cases run again. Repeat until
 the important boundary questions have been answered. The supporting detail belongs in narration, not
 under every step.
 
 ### Slide: Can a judge reproduce our decisions?
 
-The coding agent applies the conversation and decided criteria to produce weak labels. LLM judges
-receive the case and evaluator prompt and produce verdicts. Two tinted blocks show this context
-difference. Thin grey arrows connect the left block to Agreement and the right block to Precision /
-recall. A larger teal text arrow between those metrics marks the transition in what can be measured.
-The labels remain explicitly named weak labels; there are no metric definitions or footer qualifier.
+The slide is three numbered stages, read top to bottom. Stage 01 creates the reference: the coding
+agent, the only block that names its input, works from the conversation and the decided criteria, and
+a dashed teal card holds the resulting weak labels. Stage 02 runs the judges, which produce verdicts.
+Every block but the coding agent carries its name alone; what the judges see is narrated, not drawn,
+so the one labelled input marks the context the coding agent has and the judges do not. A grey line
+leaves the weak-label card, runs down the right margin under the label REFERENCE, and meets a second
+line from the verdicts in the stage 03 band, where precision and recall are computed. The labels
+remain explicitly named weak labels; there are no metric definitions.
+
+Agreement is no longer drawn as an output of either block. It appears only in the stage 03 band, as
+the note that agreement could only measure consistency, which is what changed once a reference
+existed.
 
 Narration makes clear that precision and recall compare judge verdicts with the weak reference labels;
 human confirmation is a separate step. The earlier agreement measure concerned judge consistency.
@@ -371,18 +384,21 @@ judgment.
 
 ## 4. What makes agent evaluation different (4 min)
 
-### Slide: The answer is only the endpoint
+### Slide: What changes with agents?
 
-Section 4 is one slide. The question rides in its eyebrow as `What changes with agents?`, without
-a number: nothing on screen enumerates the three questions, so a `Question 03` label would point
-at a list the audience never saw. A divider carrying only the question would be a whole slide of
-section for a section with nothing else in it.
+Section 4 is one slide. The question is the slide's title, without a number: nothing on screen
+enumerates the three questions, so a `Question 03` label would point at a list the audience never
+saw. A divider carrying only the question would be a whole slide of section for a section with
+nothing else in it.
 
 Keep this high level. Do not introduce a hierarchy of evaluation levels.
 
-On screen: the sub-line says agents require evaluating behavior rather than final answers. The
-fifty-run trajectory chart fills the left column with a `NR. OF TOKENS` axis marker under it and
-its description below that. The right column names three example behavioral evals - tool-call
+On screen: the title alone, then the chart. The earlier headline and sub-line, which asserted that
+the answer is only the endpoint and that agents require evaluating behavior rather than final
+answers, are spoken instead of printed; the click reveal makes the same point by dimming every
+segment but the final one, so the endpoint shrinks to its real share of the run. The fifty-run
+trajectory chart fills the left column with a `NR. OF TOKENS` axis marker under it and its
+description below that. The right column names three example behavioral evals - tool-call
 efficiency, error recovery, instruction adherence - so the abstract point lands as concrete evals.
 
 Agent evaluation can inspect:

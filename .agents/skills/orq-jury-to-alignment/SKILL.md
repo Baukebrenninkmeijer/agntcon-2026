@@ -22,15 +22,11 @@ the existing single-judge rewrite or retest stages.
 
 ## Workflow
 
-1. From the repository root, read
-   `docs/superpowers/specs/2026-09-07-jury-to-alignment-skill-design.md` and the
-   current status in
-   `docs/superpowers/plans/2026-09-03-project-status-and-handoff.md`.
-2. Resolve the three user-supplied JSONL paths. If any is missing, report which
+1. Resolve the three user-supplied JSONL paths. If any is missing, report which
    prerequisite is absent and stop. Never substitute v1-v3 artifacts.
-3. Select a new output directory under `runs/`. The producer refuses an existing
+2. Select a new output directory under `runs/`. The producer refuses an existing
    path; do not delete or overwrite one to make a rerun fit.
-4. Run:
+3. Run:
 
    ```bash
    uv run scripts/prepare_jury_annotations.py \
@@ -40,10 +36,10 @@ the existing single-judge rewrite or retest stages.
      --output-dir <new-run-directory>
    ```
 
-5. Read `manifest.json`, `queue.json`, and `jury_errors.json`. Report the number
+4. Read `manifest.json`, `queue.json`, and `jury_errors.json`. Report the number
    of high-signal rows, stable controls, and excluded mechanical errors. Do not
    read or aggregate test verdicts; `test_manifest.json` contains identities only.
-6. Locate the installed `orq-evaluator-alignment` skill. Prefer a project-local
+5. Locate the installed `orq-evaluator-alignment` skill. Prefer a project-local
    install, then the harness's normal global skill directory. From that skill's
    directory, launch only:
 
@@ -51,10 +47,10 @@ the existing single-judge rewrite or retest stages.
    uv run scripts/serve_annotation.py --run_dir <absolute-new-run-directory>
    ```
 
-7. Tell the user the jury panel is collapsed by default to reduce anchoring.
+6. Tell the user the jury panel is collapsed by default to reduce anchoring.
    They can expand it to inspect every model and repetition after reading the
    decision evidence.
-8. After the UI closes, verify `annotations.json` exists and report labeled,
+7. After the UI closes, verify `annotations.json` exists and report labeled,
    deferred, and remaining counts. Stop. Further annotation is the user's next
    step; jury-native prompt comparison is separate future work.
 

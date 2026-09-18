@@ -17,7 +17,7 @@ workflows a coding agent can execute, and [`evaluatorq`](https://github.com/orq-
 ([docs](https://orq-ai.github.io/evaluatorq/)) is the runner underneath them. Everything here stays
 human-reviewed and versioned; nothing writes back to its own configuration.
 
-![The grey-zone evaluation loop: run the jury, surface instability, inspect the reasons with a collaborator, ask one boundary question, update the evaluator, and rerun the frozen development cases.](slides/screenshots/20-grey-zone-loop.png)
+![The grey-zone evaluation loop: run the jury, surface instability, inspect the reasons with a coding agent, ask one boundary question, update the evaluator, and rerun the frozen development cases.](slides/screenshots/20-grey-zone-loop.png)
 
 ## Start here
 
@@ -88,7 +88,6 @@ Where that leaves the automation:
 | `scripts/` | Case generation, simulation, jury, annotation-prep, comparison-upload and resource-sync entry points |
 | `slides/` | `build_deck.py` generates the single-file deck `pydata-2026.html` |
 | `abstract.md`, `outline.md` | The talk's contract and its maintained outline |
-| `docs/superpowers/plans/` | The living delivery plan and task log. Start there before changing anything |
 | `runs/`, `data/` | Git-ignored run artifacts and the generated DuckDB dataset |
 
 ## Setup
@@ -230,9 +229,8 @@ ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -
 the maintained 30-minute outline. Build the deck with `uv run python slides/build_deck.py` and open
 `slides/pydata-2026.html`. The deck's typeface, ES Klarheit Kurrent, is licensed and not in this
 repository; set `DECK_FONT_DIR` to a folder holding it to embed it, otherwise the deck uses system
-fonts. The [design specification](docs/superpowers/specs/2026-09-02-analytics-chatbot-design.md)
-covers component boundaries and trace semantics, and the
-[flywheel diagram](docs/assets/evaluation-flywheel.svg) is available as a slide-ready SVG.
+fonts. The [flywheel diagram](docs/assets/evaluation-flywheel.svg) is available as a slide-ready
+SVG.
 
 Bauke Brenninkmeijer, [LinkedIn](https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/),
 [Orq.ai](https://orq.ai)
