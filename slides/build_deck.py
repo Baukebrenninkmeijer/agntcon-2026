@@ -369,6 +369,10 @@ __FONT_FACES__
   .price::before{content:"";position:absolute;left:0;top:0;width:140px;border-top:4px solid var(--orange)}
   .price .setup{display:block;font-family:var(--mono);font-size:25px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep)}
   .price .value{display:block;margin-top:10px;font-size:76px;line-height:1.04;font-weight:600;letter-spacing:-.025em;color:var(--orange-dark)}
+  .token-volume .eyebrow{margin-bottom:52px}
+  .token-volume .token-count{font-size:244px;line-height:1;font-weight:600;letter-spacing:-.06em;color:var(--orange-dark)}
+  .token-volume h2{font-size:72px;line-height:1.1;margin:32px 0 0}
+  .token-volume .token-source{margin-top:72px;font-family:var(--mono);font-size:22px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
@@ -972,14 +976,22 @@ __FONT_FACES__
   <p class="body analogy-note">In both cases, agreement with the expert decides whether to trust the delegate.</p>
 </section>
 
-<!-- 15 · Lazy -->
+<!-- 15 · Transcript volume -->
+<section class="slide token-volume">
+  <div class="eyebrow">50 observed conversations</div>
+  <div class="token-count">90,203</div>
+  <h2>tokens of conversation<br>and tool evidence.</h2>
+  <p class="token-source">Stored transcripts + tool calls · cl100k_base</p>
+</section>
+
+<!-- 16 · Lazy -->
 <section class="slide statement">
   <h2>But we are lazy</h2>
-  <p class="sub">We don't want to annotate all 50 cases.<br>Let the LLM judges find the ambiguous cases, then spend human time only there.</p>
+  <p class="sub">Let the LLM judges find the ambiguous cases,<br>then spend human time only there.</p>
   <p class="price"><span class="setup">The most valuable thing is</span><span class="value">human attention.</span></p>
 </section>
 
-<!-- 16 · Judge grid -->
+<!-- 17 · Judge grid -->
 <section class="slide" data-steps="1">
   <h2>Two ways of disagreement</h2>
   <p class="sub">Three judges &#183; three repetitions</p>
@@ -993,7 +1005,7 @@ __FONT_FACES__
   <p class="body grid-cap step1">Both signals exist for every case in the pool.</p>
 </section>
 
-<!-- 17 · Lazy queue -->
+<!-- 18 · Lazy queue -->
 <section class="slide" data-steps="2">
   <div class="cols wide">
     <div>
@@ -1024,7 +1036,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 18 · Disagreement gives us a question -->
+<!-- 19 · Disagreement gives us a question -->
 <section class="slide">
   <h2>Disagreement gives us<br>a question</h2>
   <svg class="funnel" viewBox="0 0 1720 430" role="img" aria-label="The cases the panel split on converging on a single boundary question">
@@ -1051,7 +1063,7 @@ __FONT_FACES__
   <p class="sub funnel-sub">The flagged cases produced no labels. They produced the question the criterion never answered.</p>
 </section>
 
-<!-- 19 · One human answer exposes another ambiguity -->
+<!-- 20 · One human answer exposes another ambiguity -->
 <section class="slide" data-steps="1">
   <h2>One answer exposed another ambiguity</h2>
   <p class="sub">The human answered one boundary question: claims visible in the evidence must be valid. Then the rule went into the evaluator.</p>
@@ -1070,7 +1082,7 @@ __FONT_FACES__
   <p class="ambiguity-takeaway">We aligned the principle, but not <b>what counts as unsupported</b>.</p>
 </section>
 
-<!-- 20 · Grey-zone loop -->
+<!-- 21 · Grey-zone loop -->
 <section class="slide" >
   <h2>The grey-zone loop</h2>
   <p class="sub">Disagreement shows where the evaluator still needs a human decision.</p>
@@ -1087,7 +1099,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 21 · Weak-label benchmark -->
+<!-- 22 · Weak-label benchmark -->
 <section class="slide weak-benchmark">
 <svg viewBox="0 0 1600 900" role="img" aria-label="The coding-agent block points to agreement. The LLM-judge block points to precision and recall.">
 <defs><marker id="join" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8c8a91"/></marker></defs>
@@ -1107,7 +1119,7 @@ __FONT_FACES__
 <text x="800" y="755" text-anchor="middle" font-size="82" font-weight="600" fill="#025558">→</text></svg>
 </section>
 
-<!-- 22 · Agent evaluation -->
+<!-- 23 · Agent evaluation -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">What changes with agents?</div>
   <h2>The answer is only the endpoint</h2>
@@ -1135,7 +1147,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 23 · Lifecycle -->
+<!-- 24 · Lifecycle -->
 <section class="slide">
   <h2>The Eval Lifecycle</h2>
   <div class="phases">
@@ -1170,7 +1182,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 24 · Operating modes -->
+<!-- 25 · Operating modes -->
 <section class="slide">
   <div class="eyebrow">Scaling evaluation</div>
   <h2>When and where to run evaluations</h2>
@@ -1191,7 +1203,7 @@ __FONT_FACES__
   <p class="body" style="margin-top:36px;font-size:39px">The same criterion runs in all three, and it holds only while production stays inside the slice humans validated.</p>
 </section>
 
-<!-- 25 · Software factory era -->
+<!-- 26 · Software factory era -->
 <section class="slide factory-era">
   <svg viewBox="0 0 1920 1080" role="img" aria-label="A timeline whose visible endpoint is 2026, marked Software Factory">
     <line class="timeline" x1="-240" y1="650" x2="1420" y2="650"/>
@@ -1201,7 +1213,7 @@ __FONT_FACES__
   </svg>
 </section>
 
-<!-- 26 · Unreviewed -->
+<!-- 27 · Unreviewed -->
 <section class="slide statement inverted" data-steps="1">
   <h2>Most software will ship<br>without a human reading it.</h2>
   <div class="ship-read">
@@ -1211,7 +1223,7 @@ __FONT_FACES__
   <p class="fac-note">Evals in the software factory</p>
 </section>
 
-<!-- 27 · Software factory -->
+<!-- 28 · Software factory -->
 <section class="slide" data-steps="1">
   <div class="eyebrow">Evals in the software factory</div>
   <h2>Same throughput.<br>Different factory.</h2>
@@ -1238,12 +1250,12 @@ __FONT_FACES__
   <p class="twin-foot">The factory reports how much moved. <b>Only a human-aligned eval tells you which of these you are running.</b></p>
 </section>
 
-<!-- 28 · Divine hand takes the wheel -->
+<!-- 29 · Divine hand takes the wheel -->
 <section class="slide wheel-slide">
   <img src="data:image/png;base64,__DIVINE_WHEEL__" alt="A Renaissance-style divine figure with an AI network halo takes a car's steering wheel while painted angels resemble Sam Altman, Dario Amodei, and Elon Musk">
 </section>
 
-<!-- 29 · Conclusion -->
+<!-- 30 · Conclusion -->
 <section class="slide conclusion-slide">
   <div class="eyebrow">Conclusion</div>
   <h2>The evaluation flywheel</h2>
@@ -1254,7 +1266,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 30 · Get started -->
+<!-- 31 · Get started -->
 <section class="slide">
   <div class="eyebrow">What to keep</div>
   <h2>Run this on your own agent</h2>
@@ -1268,7 +1280,7 @@ __FONT_FACES__
   </div>
 </section>
 
-<!-- 31 · Q&A -->
+<!-- 32 · Q&A -->
 <section class="slide statement inverted qa-slide">
   <div class="eyebrow">Questions</div>
   <h2>Q&amp;A</h2>

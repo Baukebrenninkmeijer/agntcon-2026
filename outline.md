@@ -248,10 +248,21 @@ not the base flow taught on this slide. The unchanged comparison with expert ann
 version one of the process. The later grey-zone loop proposes a faster way to sharpen the criteria
 before applying them across the dataset.
 
+### Slide: 90,203 tokens of conversation and tool evidence
+
+The 50 accepted observed conversations contain 90,203 `cl100k_base` tokens of stored transcript
+content and tool-call names and arguments. This is the evidence a human would have to read for a
+full manual review, and makes the attention cost concrete before the queueing method. The count
+excludes metadata and repeated API input tokens. Source:
+`orq/resources/datasets/decision-support-v4/observations.jsonl` (SHA-256
+`bf560f5cd94aa916110a03fc46cf006bbbe5e006e839680427aed481c67740ab`). Treat it as a brief
+number reveal; the next slide loses its redundant 50-case setup sentence so the section keeps its
+seven-minute budget.
+
 ### Slide: But we are lazy
 
-A statement slide, and the motive for the two that follow. The setup makes the constraint explicit:
-`We don't want to annotate all 50 cases.` It then retains the mechanism: let the LLM judges find the
+A statement slide, and the motive for the two that follow. The preceding token-volume slide makes
+the manual-review constraint explicit. This slide gives the mechanism: let the LLM judges find the
 ambiguous cases and spend human time only there. This leads to the conclusion: `The most valuable thing
 is` in small mono type, then `human attention.` in large orange type. How the judges route that attention
 is the next slide; what the queue looks like is the one after.
