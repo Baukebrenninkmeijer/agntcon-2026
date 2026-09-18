@@ -250,9 +250,10 @@ before applying them across the dataset.
 
 ### Slide: 90,203 tokens of conversation and tool evidence
 
-The 50 accepted observed conversations contain 90,203 `cl100k_base` tokens of stored transcript
-content and tool-call names and arguments. This is the evidence a human would have to read for a
-full manual review, and makes the attention cost concrete before the queueing method. The count
+The slide shows only `90,203`, large and centered. Say aloud that the 50 accepted observed
+conversations contain that many `cl100k_base` tokens of stored transcript content and tool-call
+names and arguments. This is the evidence a human would have to read for a full manual review,
+and makes the attention cost concrete before the queueing method. The count
 excludes metadata and repeated API input tokens. Source:
 `orq/resources/datasets/decision-support-v4/observations.jsonl` (SHA-256
 `bf560f5cd94aa916110a03fc46cf006bbbe5e006e839680427aed481c67740ab`). Treat it as a brief

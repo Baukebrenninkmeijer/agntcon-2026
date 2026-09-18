@@ -369,10 +369,8 @@ __FONT_FACES__
   .price::before{content:"";position:absolute;left:0;top:0;width:140px;border-top:4px solid var(--orange)}
   .price .setup{display:block;font-family:var(--mono);font-size:25px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep)}
   .price .value{display:block;margin-top:10px;font-size:76px;line-height:1.04;font-weight:600;letter-spacing:-.025em;color:var(--orange-dark)}
-  .token-volume .eyebrow{margin-bottom:52px}
-  .token-volume .token-count{font-size:244px;line-height:1;font-weight:600;letter-spacing:-.06em;color:var(--orange-dark)}
-  .token-volume h2{font-size:72px;line-height:1.1;margin:32px 0 0}
-  .token-volume .token-source{margin-top:72px;font-family:var(--mono);font-size:22px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .token-volume{align-items:center}
+  .token-volume .token-count{font-size:300px;line-height:1;font-weight:600;letter-spacing:-.06em;color:var(--orange-dark)}
   ul.plain{list-style:none;display:flex;flex-direction:column;gap:26px;font-size:34px;line-height:1.35;color:var(--ink2)}
   ul.plain li{position:relative;padding-left:42px}
   ul.plain li::before{content:"";position:absolute;left:0;top:17px;width:14px;height:14px;border-radius:50%;background:var(--orange)}
@@ -978,10 +976,7 @@ __FONT_FACES__
 
 <!-- 15 · Transcript volume -->
 <section class="slide token-volume">
-  <div class="eyebrow">50 observed conversations</div>
   <div class="token-count">90,203</div>
-  <h2>tokens of conversation<br>and tool evidence.</h2>
-  <p class="token-source">Stored transcripts + tool calls · cl100k_base</p>
 </section>
 
 <!-- 16 · Lazy -->
