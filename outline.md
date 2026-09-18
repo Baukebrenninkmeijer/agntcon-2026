@@ -66,8 +66,8 @@ application lifecycles named in the outline without labelling or explaining them
 ### Slide: Show of hands
 
 Straight after the title, before anything is defined. Four questions, one per click, set large with
-orange mono numbers: who has built an eval; who runs an eval on every change, in CI or on
-production traffic; who has checked an LLM judge against human labels; who would let agents merge
+orange mono numbers: who has built an eval; who has a regression dataset for AI applications that
+is ran on changes; who has checked an LLM judge against human labels; who would let agents merge
 PRs autonomously. Each one previews a later section: the first tells you how much of section 2 to
 skim, the second is section 5, the third is the alignment argument of section 3, and the last is
 the software factory close. Seven or eight seconds a question, about
