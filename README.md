@@ -5,6 +5,7 @@
   <a href="https://github.com/orq-ai/evaluatorq"><img src="https://img.shields.io/badge/evaluatorq-1.35.0-025558" alt="evaluatorq 1.35.0"></a>
   <a href="https://github.com/orq-ai/assistant-plugins"><img src="https://img.shields.io/badge/skills-orq--ai%2Fassistant--plugins-4da296" alt="orq.ai agent skills"></a>
   <a href="abstract.md"><img src="https://img.shields.io/badge/talk-PyData%202026-df5325" alt="PyData 2026 talk"></a>
+  <a href="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/pydata-2026.html"><img src="https://img.shields.io/badge/slides-live%20deck-4da296" alt="Live slide deck"></a>
 </p>
 
 Companion repository for the PyData 2026 talk Evaluating Agents at Scale, and the worked example

@@ -262,15 +262,15 @@ html = r'''<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Building the evaluation flywheel">
 <meta property="og:description" content="How human judgement becomes an evaluator you can run on every change.">
-<meta property="og:url" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/pydata-2026.html">
-<meta property="og:image" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/screenshots/20-grey-zone-loop.png">
+<meta property="og:url" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/pydata-2026.html">
+<meta property="og:image" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/screenshots/20-grey-zone-loop.png">
 <meta property="og:image:width" content="1920">
 <meta property="og:image:height" content="1080">
 <meta property="og:image:alt" content="The grey-zone evaluation loop, from judge disagreement through a human boundary decision to an updated evaluator.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Building the evaluation flywheel">
 <meta name="twitter:description" content="How human judgement becomes an evaluator you can run on every change.">
-<meta name="twitter:image" content="https://baukebrenninkmeijer.github.io/building-the-evaluation-flywheel-pydata-2026/slides/screenshots/20-grey-zone-loop.png">
+<meta name="twitter:image" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/screenshots/20-grey-zone-loop.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23025558%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2247%22%20r%3D%227%22%20fill%3D%22%23f9f8f6%22%2F%3E%3Cpath%20d%3D%22M6%2046%20C22%2046%2026%2018%2058%2018%22%20stroke%3D%22%23ff9747%22%20stroke-width%3D%228%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <style>
 __FONT_FACES__
