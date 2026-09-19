@@ -41,7 +41,7 @@ divine_wheel = base64.b64encode(
     (pathlib.Path(__file__).parent / "assets" / "divine-hand-takes-the-wheel-renaissance-ai-founders.png").read_bytes()
 ).decode()
 
-REPO_URL = "https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026"
+REPO_URL = "https://github.com/Baukebrenninkmeijer/agntcon-2026"
 LINKEDIN_URL = "https://www.linkedin.com/in/bauke-brenninkmeijer-40143310b/"
 
 

@@ -22,7 +22,7 @@ human-reviewed and versioned; nothing writes back to its own configuration.
 ## Start here
 
 ```bash
-git clone https://github.com/Baukebrenninkmeijer/building-the-evaluation-flywheel-pydata-2026.git
+git clone https://github.com/Baukebrenninkmeijer/agntcon-2026.git
 npx skills add orq-ai/assistant-plugins   # skills, in any compatible coding agent
 uv add evaluatorq                         # the runner; this repo pins 1.35.0
 export ORQ_API_KEY=your-key-here
