@@ -644,9 +644,8 @@ __FONT_FACES__
   .case-list li{counter-increment:cs;position:relative;padding:26px 0 26px 92px;font-size:40px;color:var(--paper);border-bottom:2px solid rgba(255,255,255,.18)}
   .case-list li:first-child{border-top:2px solid rgba(255,255,255,.18)}
   .case-list li::before{content:"0" counter(cs);position:absolute;left:0;top:30px;font-family:var(--mono);font-size:26px;letter-spacing:.1em;color:var(--orange)}
-  .sphere-brand{display:flex;align-items:flex-end;gap:26px;margin-bottom:50px}
-  .sphere-mark{width:78px;height:78px;border-radius:50%;background:#f2c230;position:relative;flex:none;margin-top:28px}
-  .sphere-mark::before{content:"";position:absolute;left:50%;top:-32px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#f2c230}
+  .sphere-brand{display:flex;align-items:center;gap:30px;margin-bottom:50px}
+  .sphere-mark{width:132px;height:132px;flex:none;fill:#f2c230}
   .sphere-word{font-size:62px;font-weight:600;letter-spacing:-.035em}
   .cost .cap{font-size:31px;line-height:1.4;color:var(--ink2);margin-top:26px}
   .ambiguity{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:22px;align-items:start}
@@ -863,7 +862,7 @@ __FONT_FACES__
   <div class="eyebrow">The case</div>
   <div class="cols">
     <div>
-      <div class="sphere-brand" aria-label="Sphere.com logo"><span class="sphere-mark"></span><span class="sphere-word">sphere.com</span></div>
+      <div class="sphere-brand" aria-label="Sphere.com logo"><svg class="sphere-mark" viewBox="0 0 120 120" aria-hidden="true"><circle cx="56" cy="94" r="26"/><circle cx="66" cy="48" r="18"/><circle cx="58" cy="17" r="12"/></svg><span class="sphere-word">sphere.com</span></div>
       <p class="sub">A B2B wholesaler of physical home appliances. The board wants to understand the quality of growth.</p>
     </div>
     <ol class="case-list">

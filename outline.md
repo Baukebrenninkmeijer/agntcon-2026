@@ -146,9 +146,9 @@ work runs on without explaining it mid-argument. The case slide follows immediat
 ### Slide: The case
 
 The running example, stated once so nothing later has to re-explain it. Sphere.com, a business
-analytics product; the agent answers questions over the company's own data; the yellow round mark
-with its small head is the stand-in logo. Everything measured in the rest of the talk comes from
-this one agent, on one criterion. The slide runs on the deep teal ground rather than paper, so the
+analytics product; the agent answers questions over the company's own data; the stand-in logo is a
+leaning stack of three yellow spheres, wholesale goods piled up and not quite square. Everything
+measured in the rest of the talk comes from this one agent, on one criterion. The slide runs on the deep teal ground rather than paper, so the
 running example reads as a set-piece; the four things the board is asking about sit beside the
 description as ruled rows numbered 01 to 04.
 
