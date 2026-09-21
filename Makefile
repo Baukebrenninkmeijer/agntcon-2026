@@ -13,3 +13,9 @@ sync-orq-apply:
 # Build slides/pydata-2026.html with the embedded typeface.
 deck:
 	uv run python slides/build_deck.py
+
+.PHONY: hooks
+
+# Point Git at the tracked hooks; run once per clone or worktree.
+hooks:
+	git config core.hooksPath .githooks

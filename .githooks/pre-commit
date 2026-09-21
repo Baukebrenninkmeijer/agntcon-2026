@@ -1,0 +1,11 @@
+#!/bin/sh
+# Rebuild slides/pydata-2026.html whenever one of its sources is staged, so the
+# committed deck never lags the generator it came from.
+set -e
+
+sources=$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '^slides/(build_deck\.py|.*\.json)$' || true)
+[ -n "$sources" ] || exit 0
+
+make deck >/dev/null
+git add slides/pydata-2026.html
