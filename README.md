@@ -5,7 +5,7 @@
   <a href="https://github.com/orq-ai/evaluatorq"><img src="https://img.shields.io/badge/evaluatorq-1.35.0-025558" alt="evaluatorq 1.35.0"></a>
   <a href="https://github.com/orq-ai/assistant-plugins"><img src="https://img.shields.io/badge/skills-orq--ai%2Fassistant--plugins-4da296" alt="orq.ai agent skills"></a>
   <a href="abstract.md"><img src="https://img.shields.io/badge/talk-abstract-df5325" alt="Talk abstract"></a>
-  <a href="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/pydata-2026.html"><img src="https://img.shields.io/badge/slides-live%20deck-4da296" alt="Live slide deck"></a>
+  <a href="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/evaluation-flywheel.html"><img src="https://img.shields.io/badge/slides-live%20deck-4da296" alt="Live slide deck"></a>
 </p>
 
 Companion repository for a talk on evaluating agents at scale, and the worked example behind it: a
@@ -88,7 +88,7 @@ Where that leaves the automation:
 | `src/analytics_chatbot/` | The agent: gateway client, guarded SQL tool, insight tool, run store, CLI |
 | `orq/resources/` | Definitions for the hosted agent, its two local tools and its evaluators |
 | `scripts/` | Case generation, simulation, jury, annotation-prep, comparison-upload and resource-sync entry points |
-| `slides/` | `build_deck.py` generates the single-file deck `pydata-2026.html` |
+| `slides/` | `build_deck.py` generates the single-file deck `evaluation-flywheel.html` |
 | `abstract.md`, `outline.md` | The talk's contract and its maintained outline |
 | `runs/`, `data/` | Git-ignored run artifacts and the generated DuckDB dataset |
 
@@ -232,7 +232,7 @@ with a software engineering team* at the iO Engineering Manager Meetup.
 
 [`abstract.md`](abstract.md) is what was promised to the conference and [`outline.md`](outline.md) is
 the maintained 30-minute outline. Build the deck with `uv run python slides/build_deck.py` and open
-`slides/pydata-2026.html`. The deck's typeface, ES Klarheit Kurrent, is licensed and not in this
+`slides/evaluation-flywheel.html`. The deck's typeface, ES Klarheit Kurrent, is licensed and not in this
 repository; set `DECK_FONT_DIR` to a folder holding it to embed it, otherwise the deck uses system
 fonts. The [flywheel diagram](docs/assets/evaluation-flywheel.svg) is available as a slide-ready
 SVG.

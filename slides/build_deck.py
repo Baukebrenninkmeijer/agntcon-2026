@@ -262,7 +262,7 @@ html = r'''<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Building the evaluation flywheel">
 <meta property="og:description" content="How human judgement becomes an evaluator you can run on every change.">
-<meta property="og:url" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/pydata-2026.html">
+<meta property="og:url" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/evaluation-flywheel.html">
 <meta property="og:image" content="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/screenshots/20-grey-zone-loop.png">
 <meta property="og:image:width" content="1920">
 <meta property="og:image:height" content="1080">
@@ -1386,6 +1386,6 @@ html = (
     .replace("__JUDGE_LAYERS__", judge_layers)
 )
 
-output = pathlib.Path(__file__).with_name("pydata-2026.html")
+output = pathlib.Path(__file__).with_name("evaluation-flywheel.html")
 output.write_text(html)
 print(f"wrote {output}")

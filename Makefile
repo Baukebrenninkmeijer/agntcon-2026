@@ -10,7 +10,7 @@ sync-orq-apply:
 
 .PHONY: deck
 
-# Build slides/pydata-2026.html with the embedded typeface.
+# Build slides/evaluation-flywheel.html with the embedded typeface.
 deck:
 	uv run python slides/build_deck.py
 
