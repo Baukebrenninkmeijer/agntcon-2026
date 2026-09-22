@@ -1,6 +1,6 @@
 # Evaluating Agents at Scale — talk outline
 
-30 minutes: 25 speaking + 5 Q&A. PyData audience, technically literate and industry-heavy.
+30 minutes: 25 speaking + 5 Q&A. AGNTCon and MCPCon audience, technically literate and industry-heavy.
 
 The submitted abstract is the spine. Sphere.com and `decision_support_quality` are the running
 example, not the structure of the talk.
@@ -58,7 +58,8 @@ together.
 
 ### Slide: Building the evaluation flywheel
 
-The title copy, subtitle, and byline stay unchanged. Two large translucent rings anchor to the
+The title copy, subtitle, and byline stay unchanged, and the slide names no venue: the same deck is
+given at more than one event, so the byline carries the attribution on its own. Two large translucent rings anchor to the
 viewport and crop into the top-right corner, with one orange and one teal marker. This keeps the
 corner treatment stable across nearby screen aspect ratios. The rings foreshadow the evaluator and
 application lifecycles named in the outline without labelling or explaining them before the talk begins.

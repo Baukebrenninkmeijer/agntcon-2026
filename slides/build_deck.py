@@ -703,7 +703,6 @@ __FONT_FACES__
 
 <!-- 1 · Title -->
 <section class="slide active title-slide">
-  <div class="eyebrow">PyData Amsterdam 2026</div>
   <h1>Building the<br>evaluation flywheel</h1>
   <p class="sub">How human judgment becomes an evaluator you can run on every change.</p>
   <div class="byline"><span>Bauke Brenninkmeijer</span><span>Orq.ai</span><span>September 2026</span></div>

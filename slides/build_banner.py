@@ -89,7 +89,7 @@ svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}"
   <rect width="{WIDTH}" height="{HEIGHT}" fill="url(#rule)"/>
   <rect width="{WIDTH}" height="{HEIGHT}" fill="url(#fade)"/>
 
-  <text class="mono" x="88" y="120" font-size="15" letter-spacing="3.6" fill="rgba(250,249,245,.55)">PYDATA 2026 &#183; BAUKE BRENNINKMEIJER &#183; ORQ.AI</text>
+  <text class="mono" x="88" y="120" font-size="15" letter-spacing="3.6" fill="rgba(250,249,245,.55)">BAUKE BRENNINKMEIJER &#183; ORQ.AI</text>
   <text class="mono" x="88" y="196" font-size="17" letter-spacing="4.4" fill="#9fe8dd">FIFTY CASES &#183; ALIGNED JUDGES &#183; AGENT EVALS</text>
   <text class="sans" x="86" y="268" font-size="56" font-weight="600" letter-spacing="-1.6" fill="#faf9f5">building the evaluation flywheel</text>
   <text class="sans" x="88" y="316" font-size="22" font-weight="400" fill="rgba(250,249,245,.78)">Humans draw the boundary. The judge is validated against them. Then it scales.</text>

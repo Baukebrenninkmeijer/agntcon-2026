@@ -1,4 +1,4 @@
-"""Operational analytics chatbot for the PyData 2026 evaluation examples."""
+"""Operational analytics chatbot for the talk evaluation examples."""
 
 from analytics_chatbot.agent import AnalyticsChatbot
 from analytics_chatbot.config import Settings, TraceContext

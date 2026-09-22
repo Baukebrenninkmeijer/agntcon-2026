@@ -4,13 +4,13 @@
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-025558" alt="Python 3.11+"></a>
   <a href="https://github.com/orq-ai/evaluatorq"><img src="https://img.shields.io/badge/evaluatorq-1.35.0-025558" alt="evaluatorq 1.35.0"></a>
   <a href="https://github.com/orq-ai/assistant-plugins"><img src="https://img.shields.io/badge/skills-orq--ai%2Fassistant--plugins-4da296" alt="orq.ai agent skills"></a>
-  <a href="abstract.md"><img src="https://img.shields.io/badge/talk-PyData%202026-df5325" alt="PyData 2026 talk"></a>
+  <a href="abstract.md"><img src="https://img.shields.io/badge/talk-abstract-df5325" alt="Talk abstract"></a>
   <a href="https://baukebrenninkmeijer.github.io/agntcon-2026/slides/pydata-2026.html"><img src="https://img.shields.io/badge/slides-live%20deck-4da296" alt="Live slide deck"></a>
 </p>
 
-Companion repository for the PyData 2026 talk Evaluating Agents at Scale, and the worked example
-behind it: a data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury
-runs and alignment artifacts.
+Companion repository for a talk on evaluating agents at scale, and the worked example behind it: a
+data-analysis agent over a local DuckDB dataset, with its traces, case corpus, jury runs and
+alignment artifacts.
 
 The method runs on two installable pieces. The
 [orq.ai agent skills](https://github.com/orq-ai/assistant-plugins) carry evaluation steps as
@@ -226,6 +226,9 @@ ANALYTICS_CHATBOT_LIVE_TEST=1 uv run pytest tests/test_live_gateway.py -m live -
 ```
 
 ## The talk
+
+Given as *Evaluating Agents at Scale* at AGNTCon 2026 and MCPCon 2026, and as *How to start using AI
+with a software engineering team* at the iO Engineering Manager Meetup.
 
 [`abstract.md`](abstract.md) is what was promised to the conference and [`outline.md`](outline.md) is
 the maintained 30-minute outline. Build the deck with `uv run python slides/build_deck.py` and open

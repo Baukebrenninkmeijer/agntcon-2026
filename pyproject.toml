@@ -1,7 +1,7 @@
 [project]
 name = "analytics-chatbot"
 version = "0.1.0"
-description = "Observable analytics chatbot for the PyData 2026 agent evaluation talk"
+description = "Observable analytics chatbot for the agent evaluation talk"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"

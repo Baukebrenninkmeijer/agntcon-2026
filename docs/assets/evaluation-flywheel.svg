@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" width="1400" height="800" role="img" aria-labelledby="title description">
-  <title id="title">Production evaluation flywheel for the PyData 2026 analytics agent</title>
+  <title id="title">Production evaluation flywheel for the analytics agent</title>
   <desc id="description">A six-stage flywheel. Multi-turn interactions enter an Orq analytics agent that executes guarded tools locally and records traces. Traces become evaluatorq DataPoints. Recorded responses are replayed without rerunning the agent, then deterministic checks and one pending decision-support-quality jury assess them. The v4 pool has 50 definitions, zero observations, and zero human labels. Human review and hosted apply remain separately gated. Reviewed, versioned improvements return to the agent and evaluator.</desc>
 
   <defs>
